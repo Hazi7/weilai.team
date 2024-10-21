@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+
+env:
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       
 jobs:
   build-and-deploy:
@@ -27,3 +30,12 @@ jobs:
         with:
           push: true
           tags: lihazi/weilai:latest
+
+      - name: 拉取镜像 & 部署
+        run: |
+          ssh -o StrictHostKeyChecking=no root@49.235.191.34 << 'EOF'
+            docker pull lihazi/weilai:latest
+            docker stop weilai-container || true
+            docker rm weilai-container || true
+            docker run -d --name weilai-container -p 80:80 lihazi/weilai:latest
+          EOF
