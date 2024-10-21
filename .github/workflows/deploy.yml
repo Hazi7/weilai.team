@@ -28,7 +28,7 @@ jobs:
           push: true
           tags: lihazi/weilai:latest
 
-      - name: executing remote ssh commands using password
+      - name: 部署镜像
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -37,6 +37,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker pull lihazi/weilai
-            docket stop lihazi/weilai || true
-            docker rm lihazi/weilai || true
-            docker run -d -t lihazi/weilai -p 80:80 lihazi/weilai
+            docket stop weilai || true
+            docker rm weilai || true
+            docker run -d --name weilai -p 80:80 lihazi/weilai
