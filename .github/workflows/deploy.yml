@@ -37,6 +37,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker pull lihazi/weilai
-            docket stop weilai || true
+            docker stop weilai || true
             docker rm weilai || true
             docker run -d --name weilai -p 80:80 lihazi/weilai
