@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  ds
+
 </template>
 
 <style lang="scss" scoped></style>
