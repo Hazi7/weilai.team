@@ -36,7 +36,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker pull lihazi/weilai:latest
+            docker pull lihazi/weilai
             docket stop lihazi/weilai || true
             docker rm lihazi/weilai || true
             docker run -d -t lihazi/weilai -p 80:80 lihazi/weilai
