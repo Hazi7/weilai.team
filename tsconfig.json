@@ -1,23 +1,29 @@
 {
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.vue"
-  ],
-  "compilerOptions": {
-    "lib": [
-      "ES2020",
-      "DOM"
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.vue"
     ],
-    "target": "ES2020",
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "moduleResolution": "Bundler",
-    "moduleDetection": "force",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
-  }
+    "compilerOptions": {
+        "lib": [
+            "ES2020",
+            "DOM"
+        ],
+        "target": "ES2020",
+        "module": "ESNext",
+        "skipLibCheck": true,
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
+        "moduleResolution": "Bundler",
+        "moduleDetection": "force",
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        }
+    }
 }
