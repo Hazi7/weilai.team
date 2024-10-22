@@ -12,9 +12,9 @@ export default defineConfig({
 		},
 		preprocessorOptions: {
 			scss: {
-				api: "modern-compiler"
-			}
-		}
+				api: "modern-compiler",
+			},
+		},
 	},
 	plugins: [vue()],
 	build: {
