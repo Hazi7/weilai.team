@@ -1,9 +1,7 @@
 import animate from "tailwindcss-animate";
 export default {
 	darkMode: ["class"],
-  	content: [
-    	"./src/**/*.{ts,vue}",
-  	],
+	content: ["./src/**/*.{ts,vue}"],
 	prefix: "",
 	theme: {
 		container: {
