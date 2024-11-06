@@ -1,7 +1,5 @@
 <script setup lang="ts"></script>
 
-<template>
-    <RouterView></RouterView>
-</template>
+<template>用户中心</template>
 
 <style lang="scss" scoped></style>
