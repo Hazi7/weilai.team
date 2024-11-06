@@ -20,8 +20,6 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": resolve(__dirname, "./src"),
-            "@console": resolve(__dirname, "./src/modules/console"),
-            "@recruitment": resolve(__dirname, "./src/modules/recruitment"),
         },
     },
 });
