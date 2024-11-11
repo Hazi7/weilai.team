@@ -30,10 +30,12 @@
                                     </SidebarMenu>
                                 </SidebarGroup>
                                 <hr />
-                                <RouterView
-                                    :key="$route.path"
-                                    name="default"
-                                ></RouterView>
+                                <keep-alive include="SubNav">
+                                    <RouterView
+                                        :key="$route.path"
+                                        name="default"
+                                    ></RouterView>
+                                </keep-alive>
                             </SidebarGroupContent>
                         </SidebarGroup>
                     </SidebarContent>
@@ -56,7 +58,10 @@
             <!-- <RouterView to="">
           <span>{{}}</span>
         </RouterView> -->
-            <RouterView name="top" :key="$route.path"></RouterView>
+            <keep-alive include="TopNav">
+                <RouterView name="top" :key="$route.path"></RouterView>
+            </keep-alive>
+            <RouterView name="content" :key="$route.path"></RouterView>
         </div>
     </div>
 </template>

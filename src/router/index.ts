@@ -1,5 +1,6 @@
 import SubNav from "@/components/layouts/SubNav.vue";
 import TopNav from "@/components/layouts/TopNav.vue";
+import Hot from "@/pages/community/comprehensive/hot/index.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import routes from "~pages";
 const router = createRouter({
@@ -35,8 +36,9 @@ const router = createRouter({
                         {
                             path: "hot",
                             components: {
-                                top: TopNav,
                                 default: SubNav,
+                                top: TopNav,
+                                content: Hot,
                             },
                         },
                     ],

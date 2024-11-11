@@ -1,26 +1,22 @@
 <template>
     <div class="topNav">
+        111
         <Breadcrumb class="breadcrumb">
             <div class="top-title">
                 <span>{{ route.meta.title }}</span>
             </div>
             <BreadcrumbList class="top-ol">
-                <BreadcrumbItem
-                    v-for="item in subItems[subName]"
-                    class="top-item"
-                >
-                    <BreadcrumbLink
-                        :href="`/${firNav}/${subName as string}/${item.url}`"
-                        active-class="active"
-                    >
-                        {{ item.title }}
+                <BreadcrumbItem class="top-item">
+                    <BreadcrumbLink :href="``" active-class="active">
                     </BreadcrumbLink>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>
     </div>
+    <div class="content">内容</div>
 </template>
-<script setup lang="ts" name="TopNav">
+
+<script setup lang="ts" name="Container">
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -29,10 +25,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useRoute } from "vue-router";
 const route = useRoute();
+console.log(111);
+
+console.log(route);
 let subName = route.meta.name as keyof (keyof typeof tops);
 
 let firNav = route.meta.father as keyof typeof tops;
-console.log(route);
 
 const tops = {
     console: {
@@ -97,7 +95,7 @@ const tops = {
     },
 };
 let subItems = tops[firNav] as any;
-console.log(subItems[subName], 111);
+// console.log(subItems[subName], 111);
 </script>
 
 <style lang="scss" scoped>

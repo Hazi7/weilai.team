@@ -5,7 +5,7 @@ import DefaultLayout from "./layouts/DefaultLayout.vue";
 <template>
     <DefaultLayout></DefaultLayout>
 
-    <RouterView></RouterView>
+    <!-- <RouterView></RouterView> -->
 </template>
 
 <style lang="scss" scoped></style>
