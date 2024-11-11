@@ -1,7 +1,5 @@
-<script setup lang="ts">
-import SubNav from "../../components/layouts/SubNav.vue";
-</script>
+<script setup lang="ts"></script>
 
-<template><SubNav /></template>
+<template>社区</template>
 
 <style lang="scss" scoped></style>
