@@ -1,5 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import RecruitmentFrom from './RecruitmentFrom.vue';
+</script>
 
-<template>招新</template>
+<template>
+    <RecruitmentFrom></RecruitmentFrom>
+</template>
 
 <style lang="scss" scoped></style>
