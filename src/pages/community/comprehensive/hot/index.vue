@@ -8,6 +8,5 @@ console.log(222);
 
 <style scoped lang="scss">
 .hot-article {
-    background: black;
 }
 </style>

@@ -1,6 +1,6 @@
 import SubNav from "@/components/layouts/SubNav.vue";
 import TopNav from "@/components/layouts/TopNav.vue";
-import HotArticle from "@/pages/community/comprehensive/hot/HotArticle.vue";
+import HotArticle from "@/pages/community/comprehensive/hot/index.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import routes from "~pages";
 const router = createRouter({
