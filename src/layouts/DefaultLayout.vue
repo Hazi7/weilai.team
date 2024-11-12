@@ -43,25 +43,9 @@
             </SidebarProvider>
         </div>
         <div class="container">
-            <!-- <div class="topNav">
-          <div class="title">
-            <p>#{{ title }}</p>
-          </div>
-          <div class="top-label">
-            <div v-for="item in tops" class="top-item">
-              <router-link class="top-link" to=""
-                ><p>{{ item.title }}</p></router-link
-              >
-            </div>
-          </div>
-        </div> -->
-            <!-- <RouterView to="">
-          <span>{{}}</span>
-        </RouterView> -->
-            <keep-alive include="TopNav">
-                <RouterView name="top" :key="$route.path"></RouterView>
-            </keep-alive>
-            <RouterView name="content" :key="$route.path"></RouterView>
+            <RouterView name="top" :key="$route.path"></RouterView>
+
+            <RouterView name="content"></RouterView>
         </div>
     </div>
 </template>

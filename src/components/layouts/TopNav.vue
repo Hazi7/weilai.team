@@ -97,7 +97,6 @@ const tops = {
     },
 };
 let subItems = tops[firNav] as any;
-console.log(subItems[subName], 111);
 </script>
 
 <style lang="scss" scoped>

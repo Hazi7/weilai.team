@@ -1,6 +1,6 @@
 import SubNav from "@/components/layouts/SubNav.vue";
 import TopNav from "@/components/layouts/TopNav.vue";
-import Hot from "@/pages/community/comprehensive/hot/index.vue";
+import HotArticle from "@/pages/community/comprehensive/hot/HotArticle.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import routes from "~pages";
 const router = createRouter({
@@ -35,10 +35,16 @@ const router = createRouter({
                     children: [
                         {
                             path: "hot",
+                            name: "hot",
                             components: {
                                 default: SubNav,
                                 top: TopNav,
-                                content: Hot,
+                                content: HotArticle,
+                            },
+                            meta: {
+                                title: "综合",
+                                name: "comprehensive",
+                                father: "community",
                             },
                         },
                     ],
