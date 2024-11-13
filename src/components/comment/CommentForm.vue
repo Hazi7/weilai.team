@@ -1,44 +1,61 @@
 <script setup lang="ts">
-import {ref } from 'vue';
+import { ref,watch,computed,watchEffect,onMounted } from 'vue';
 import { Icon } from '@iconify/vue';
-const props = defineProps({
-  maxLength: {
-    type: Number,
-    default: 1000,
-  },
+import { marked } from 'marked';
+import dompurify from 'dompurify';
+
+const content = ref<string>('');
+const maxLength = 1000;
+const remaining = computed(() => maxLength - content.value.length);
+const renderedContent = ref<string>('');
+const fileInput = ref<HTMLInputElement | null>(null);
+const imageTags = ref<string[]>([]);
+const imageUrls = ref<string[]>([]); 
+
+// 更新内容并限制最大长度
+watch(content, (newContent) => {
+  if (newContent.length > maxLength) {
+    content.value = newContent.slice(0, maxLength);
+  }
 });
 
-const emit = defineEmits(['submit']);
-const content = ref('');
-const remaining = ref(props.maxLength);
-// 更新剩余字符数
-function updateRemaining() {
-  remaining.value = props.maxLength - content.value.length;
-}
+// 渲染的 Markdown 内容
+watchEffect(async () => {
+  const rawHTML = await marked(content.value);
+  renderedContent.value = dompurify.sanitize(rawHTML); 
+});
 
-// 插入表情符号
-function insertEmoji() {
-  //·····
-  updateRemaining();
-}
-
-// 支持Markdown语法
-//   function insertMarkdown() {
-  
-//   }
-
-//插入代码块
-function insertCode(){
-
-}
-// 提交评论
-function submitComment() {
-  if (content.value.trim()) {
-    emit('submit', content.value);
-    content.value = '';
-    updateRemaining();
+//图片输入
+const uploadImg = () => {
+  fileInput.value?.click();
+};
+const handleFileSelect = (event: Event) => {
+  const files = (event.target as HTMLInputElement).files;
+  if (files && imageUrls.value.length < 3) {
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const url = e.target?.result as string;
+        imageUrls.value.push(url); // 保存图片的data URL
+        const imgMarkdown = `![${file.name}](${url})`;
+        // 存储图片的Markdown格式
+        imageTags.value.push(imgMarkdown);
+      };
+      reader.readAsDataURL(file);
+    });
   }
-}
+};
+//删除图片
+const deleteImage = (index: number) => {
+  imageTags.value.splice(index, 1);
+  imageUrls.value.splice(index, 1);
+};
+onMounted(() => {
+  fileInput.value?.addEventListener('change', handleFileSelect);
+});
+
+//表情选择器
+
 </script>
 
 <template>
@@ -47,24 +64,31 @@ function submitComment() {
       <textarea
         v-model="content"
         placeholder="请输入你的评论......"
-        @input="updateRemaining"
+        :maxlength="maxLength"
       ></textarea>
+      <div class="image-preview">
+        <div v-for="(imageTag, index) in imageTags" :key="index" class="image-tag">
+            <img :src="imageTag.split('](')[1].slice(0, -1)" alt="uploaded-image" />
+            <div class="delete-btn" @click="deleteImage(index)"><Icon icon="iconoir:delete-circle" class="deleteIcon"/></div>
+        </div>
+     </div>
       <!-- 尾部操作区域 -->
       <div class="action-bar">
         <div class="letter">
           <span class="remaining">还可输入{{ remaining }} 个字符</span>
         </div>
-        <div class="emoji" @click="insertEmoji"><Icon icon="lineicons:emoji-smile" class="emojiIcon"/></div>
+        <div class="emoji"><Icon icon="lineicons:emoji-smile" class="emojiIcon"/></div>
         <div class="image">
-            <Icon icon="stash:image-plus" class="imageIcon"/>
+            <Icon icon="stash:image-plus" class="imageIcon" @click="uploadImg"/>
             <input ref="fileInput" type="file"  accept="image/*" hidden />
         </div>
-        <div class="code" @click="insertCode"><Icon icon="heroicons-outline:code" class="codeIcon"/></div>
+        <div class="code"><Icon icon="heroicons-outline:code" class="codeIcon"/></div>
         <!-- 提交按钮 -->
-        <button class="submit-btn" @click="submitComment">评论</button>
+        <button class="submit-btn">评论</button>
       </div>
     </div>
-  </template>
+    <!-- <div class="rendered-comment" v-html="renderedContent"></div> -->
+</template>
   
   <style scoped lang="scss">
   .comment-form {
@@ -84,7 +108,44 @@ function submitComment() {
        border-bottom: 1px solid #e2eaf4;
        padding: 14px;
        font-size: 16px;
-       color: rgb(104, 104, 104);
+       color: rgb(83, 82, 82);
+    }
+    .image-preview {
+        margin-left: 15px;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+           img {
+              max-width: 100px;
+              max-height: 100px;
+              object-fit: cover;
+              border-radius: 8px;
+            }
+    }
+    .image-tag{
+        position: relative; 
+        margin-right: 10px;
+    }
+    .delete-btn{
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 19px;
+        height: 19px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        border-radius: 10px;
+        display: none;
+        cursor: pointer;
+        .deleteIcon{
+            color: black;
+            font-size: 15px;
+        }
+    }
+    .image-tag:hover .delete-btn {
+        display:flex;
     }
     .action-bar {
        display: flex;
@@ -135,5 +196,5 @@ function submitComment() {
     }
 
 }
-  
+
   </style>
