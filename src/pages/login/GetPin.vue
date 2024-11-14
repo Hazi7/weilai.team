@@ -1,0 +1,21 @@
+<script setup lang="ts">
+import {
+    PinInput,
+    PinInputGroup,
+    PinInputInput,
+} from '@/components/ui/pin-input'
+import { ref } from 'vue'
+
+// const value = ref<string[]>([])
+// const handleComplete = (e: string[]) => alert(e.join(''))
+</script>
+
+<template>
+    <div>
+        <PinInput id="pin-input" v-model="value" placeholder="○" @complete="handleComplete">
+            <PinInputGroup>
+                <PinInputInput v-for="(id, index) in 6" :key="id" :index="index" />
+            </PinInputGroup>
+        </PinInput>
+    </div>
+</template>

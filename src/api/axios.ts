@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: process.env.VUE_APP_BASE_URL,
+    baseURL: 'http://49.232.183.67:8087',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
