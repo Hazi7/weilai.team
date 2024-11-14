@@ -12,7 +12,11 @@ import { Icon } from '@iconify/vue';
 // import { ToggleShow } from '@/components/recruitment';
 document.title = '招新管理';
 
+<<<<<<< HEAD:src/pages/recruitment/index.vue
 </script>
+=======
+<template>首页</template>
+>>>>>>> 46bd49baf92c6b6303f943d44ea8e69f4dbbe3ad:src/features/admin/pages/recruitment/index.vue
 
 <template>
 <div class="main">
