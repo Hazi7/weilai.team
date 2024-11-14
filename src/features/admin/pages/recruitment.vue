@@ -10,15 +10,15 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
 <route lang="json">
 {
   "meta": {
-    "title": "文章管理",
+    "title": "招新管理",
     "thirdNavItems": [
       {
-        "title": "文章管理",
+        "title": "招新管理",
         "path": "/admin/recruitment",
         "icon": "i-mdi-file-document-multiple-outline"
       },
       {
-        "title": "测试",
+        "title": "招新管理",
         "path": "/admin/recruitment/test",
         "icon": "i-mdi-file-document-multiple-outline"
       }

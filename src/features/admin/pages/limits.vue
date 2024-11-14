@@ -7,21 +7,14 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
   <RouterView></RouterView>
 </template>
 
-<style lang="scss" scoped></style>
-
 <route lang="json">
 {
   "meta": {
-    "title": "社区管理",
+    "title": "权限管理",
     "thirdNavItems": [
       {
-        "title": "文章管理",
-        "path": "/admin/community",
-        "icon": "i-mdi-file-document-multiple-outline"
-      },
-      {
-        "title": "测试",
-        "path": "/admin/community/test",
+        "title": "权限",
+        "path": "/admin/limits",
         "icon": "i-mdi-file-document-multiple-outline"
       }
     ]

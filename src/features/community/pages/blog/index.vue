@@ -1,5 +1,5 @@
 <script setup lang="ts"></script>
 
-<template>测试11</template>
+<template>博客</template>
 
 <style lang="scss" scoped></style>

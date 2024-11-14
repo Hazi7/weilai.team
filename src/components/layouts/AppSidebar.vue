@@ -6,12 +6,16 @@ import SidebarGroupContent from "@/components/ui/sidebar/SidebarGroupContent.vue
 import SidebarMenu from "@/components/ui/sidebar/SidebarMenu.vue";
 import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
-import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
-import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import { RouterLink, useRoute } from "vue-router";
+import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
+import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 
 const route = useRoute();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
+console.log(route);
+
+console.log(subNavItems);
+
 const items = [
   {
     title: "首页",
@@ -19,11 +23,11 @@ const items = [
   },
   {
     title: "社区",
-    url: "community",
+    url: "community/comprehensive",
   },
   {
     title: "控制台",
-    url: "admin",
+    url: "admin/profile",
   },
 ];
 

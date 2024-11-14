@@ -15,22 +15,22 @@ import DefaultLayout from "@/layouts/DefaultLayout.vue";
       {
         "title": "综合",
         "icon": "mdi-home",
-        "path": "/"
+        "path": "/community/comprehensive"
       },
       {
         "title": "交流",
         "icon": "mdi-home",
-        "path": "/"
+        "path": "/community/discussion"
       },
       {
         "title": "头脑风暴",
         "icon": "mdi-home",
-        "path": "/admin/community"
+        "path": "/community/brainstorm"
       },
       {
         "title": "博客",
         "icon": "mdi-home",
-        "path": "/admin/recruitment"
+        "path": "/community/blog"
       }
     ]
   }
