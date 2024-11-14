@@ -42,5 +42,6 @@ declare module 'vue-router/auto-routes' {
     '/community/comprehensive/user': RouteRecordInfo<'/community/comprehensive/user', '/community/comprehensive/user', Record<never, never>, Record<never, never>>,
     '/community/discussion': RouteRecordInfo<'/community/discussion', '/community/discussion', Record<never, never>, Record<never, never>>,
     '/community/discussion/': RouteRecordInfo<'/community/discussion/', '/community/discussion', Record<never, never>, Record<never, never>>,
+    '/personalCenter/': RouteRecordInfo<'/personalCenter/', '/personalCenter', Record<never, never>, Record<never, never>>,
   }
 }
