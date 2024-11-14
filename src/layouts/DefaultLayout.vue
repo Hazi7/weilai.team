@@ -1,141 +1,26 @@
-<template>
-    <div class="frame">
-        <div class="rightbar">
-            <!-- :style="{ '--sidebar-width': '20rem', '--sidebar-width-mobile': '20rem' }" -->
-            <SidebarProvider>
-                <Sidebar>
-                    <SidebarContent>
-                        <SidebarGroup>
-                            <SidebarGroupLabel>Application</SidebarGroupLabel>
-                            <SidebarGroupContent>
-                                <SidebarGroup>
-                                    <SidebarMenu>
-                                        <SidebarMenuItem>
-                                            <SidebarMenuButton
-                                                v-for="item in items"
-                                                :class="'btn'"
-                                                :key="item.url"
-                                            >
-                                                <RouterLink
-                                                    active-class="active"
-                                                    :to="`/${item.url}`"
-                                                    class="sidebar-link"
-                                                >
-                                                    <span>{{
-                                                        item.title
-                                                    }}</span>
-                                                </RouterLink>
-                                            </SidebarMenuButton>
-                                        </SidebarMenuItem>
-                                    </SidebarMenu>
-                                </SidebarGroup>
-                                <hr />
-                                <keep-alive include="SubNav">
-                                    <RouterView
-                                        :key="$route.path"
-                                        name="default"
-                                    ></RouterView>
-                                </keep-alive>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-                    </SidebarContent>
-                </Sidebar>
-            </SidebarProvider>
-        </div>
-        <div class="container">
-            <RouterView name="top" :key="$route.path"></RouterView>
-
-            <RouterView name="content"></RouterView>
-        </div>
-    </div>
-</template>
-<script setup lang="ts" name="Layouts">
-// import TopNav from "@/components/community/Topnav.vue";
-import Sidebar from "@/components/ui/sidebar/Sidebar.vue";
-import SidebarContent from "@/components/ui/sidebar/SidebarContent.vue";
-import SidebarGroup from "@/components/ui/sidebar/SidebarGroup.vue";
-import SidebarGroupContent from "@/components/ui/sidebar/SidebarGroupContent.vue";
-import SidebarGroupLabel from "@/components/ui/sidebar/SidebarGroupLabel.vue";
-import SidebarMenu from "@/components/ui/sidebar/SidebarMenu.vue";
-import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
-import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
+<script setup lang="ts">
+import TheSidebar from "@/components/layouts/AppSidebar.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
-import { defineProps } from "vue";
-import { RouterLink, RouterView } from "vue-router";
-defineProps(["title"]);
-// const tops = reactive([
-//   {
-//     title: "热门",
-//     url: "",
-//   },
-//   {
-//     title: "最新",
-//     url: "",
-//   },
-//   {
-//     title: "标签",
-//     url: "",
-//   },
-//   {
-//     title: "用户",
-//     url: "",
-//   },
-// ]);
-const items = [
-    {
-        title: "首页",
-        url: "",
-    },
-    {
-        title: "社区",
-        url: "community",
-    },
-    {
-        title: "控制台",
-        url: "console",
-    },
-    {
-        title: "知识库",
-        url: "knowledge",
-    },
-];
+import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
 </script>
 
+<template>
+  <div class="default-layout">
+    <SidebarProvider class="w-auto">
+      <TheSidebar>
+        <main>
+          <SidebarTrigger></SidebarTrigger>
+        </main>
+      </TheSidebar>
+    </SidebarProvider>
+    <div class="container">
+      <RouterView></RouterView>
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
-.frame {
-    background-color: #fafafa;
-    display: flex;
-}
-.rightbar {
-    width: 16rem;
-    background-color: white;
-}
-.sidebar-link {
-    width: 100%;
-    height: 100%;
-    display: block;
-    line-height: 40px;
-    padding: 0 10px;
-    text-decoration: none;
-}
-.btn {
-    &:hover {
-        background-color: #e7f3f9;
-        color: #5db0da;
-    }
-    font-size: 14px;
-    border-radius: 15px;
-    height: 40px;
-    color: #636b71;
-    padding: 0;
-    margin: 10px 0;
-}
-.active {
-    background-color: #e7f3f9;
-    color: #5db0da;
-}
-.container {
-    display: flex;
-    justify-content: center;
+.default-layout {
+  display: flex;
 }
 </style>

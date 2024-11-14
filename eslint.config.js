@@ -3,21 +3,21 @@ import pluginVue from "eslint-plugin-vue";
 import tseslint from "typescript-eslint";
 
 export default [
-    ...tseslint.configs.recommended,
-    ...pluginVue.configs["flat/recommended"],
-    {
-        files: ["*.vue", "**/*.vue"],
-        languageOptions: {
-            parserOptions: {
-                parser: "@typescript-eslint/parser",
-            },
-        },
-        rules: {
-            "vue/multi-word-component-names": "off",
-        },
+  ...tseslint.configs.recommended,
+  ...pluginVue.configs["flat/recommended"],
+  {
+    files: ["*.vue", "**/*.vue"],
+    languageOptions: {
+      parserOptions: {
+        parser: "@typescript-eslint/parser",
+      },
     },
-    eslintConfigPrettier,
-    {
-        ignores: ["dist/**/*/", "src/components/ui/**/*/"],
+    rules: {
+      "vue/multi-word-component-names": "off",
     },
+  },
+  eslintConfigPrettier,
+  {
+    ignores: ["dist/**/*/", "src/components/ui/**/*/"],
+  },
 ];
