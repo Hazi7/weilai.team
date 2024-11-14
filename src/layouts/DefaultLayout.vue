@@ -1,12 +1,26 @@
 <script setup lang="ts">
-import TheSidebar from "@/components/layouts/TheSidebar.vue";
+import TheSidebar from "@/components/layouts/AppSidebar.vue";
+import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
+import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
 </script>
 
 <template>
-  <div class="admin-layout flex">
-    <TheSidebar> </TheSidebar>
+  <div class="default-layout">
+    <SidebarProvider class="w-auto">
+      <TheSidebar>
+        <main>
+          <SidebarTrigger></SidebarTrigger>
+        </main>
+      </TheSidebar>
+    </SidebarProvider>
     <div class="container">
       <RouterView></RouterView>
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.default-layout {
+  display: flex;
+}
+</style>

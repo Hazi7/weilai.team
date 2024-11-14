@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TheTopNav from "@/components/layouts/TheThirdNav.vue";
+import TheTopNav from "@/components/layouts/AppThirdNav.vue";
 </script>
 
 <template>
