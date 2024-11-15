@@ -141,7 +141,7 @@ interface SubItemInterface {
               class="footer-menu"
             >
               <DropdownMenuItem class="footer-item">
-                <RouterLink to="/personCenter/overall"
+                <RouterLink to="/personalCenter/userInfo"
                   ><span> 个人资料</span></RouterLink
                 >
               </DropdownMenuItem>
