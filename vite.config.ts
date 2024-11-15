@@ -19,8 +19,8 @@ export default defineConfig({
           path: "community/",
         },
         {
-          src: "src/features/personCenter/pages",
-          path: "personCenter/",
+          src: "src/features/personalCenter/pages",
+          path: "personalCenter/",
         },
       ],
     }),

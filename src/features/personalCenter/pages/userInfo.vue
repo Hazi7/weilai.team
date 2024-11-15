@@ -16,7 +16,7 @@ import TheTopNav from "../../../components/layouts/AppThirdNav.vue";
     "thirdNavItems": [
       {
         "title": "资料",
-        "path": "/person/overall",
+        "path": "/personalCenter/userInfo",
         "icon": "i-mdi-file-document-multiple-outline"
       }
     ]
