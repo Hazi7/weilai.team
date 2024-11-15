@@ -1,5 +1,5 @@
 <template>
-  <div>推荐</div>
+  <div>标签</div>
 </template>
 
 <script setup lang="ts"></script>

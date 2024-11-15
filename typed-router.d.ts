@@ -25,6 +25,7 @@ declare module 'vue-router/auto-routes' {
     '/admin/community/': RouteRecordInfo<'/admin/community/', '/admin/community', Record<never, never>, Record<never, never>>,
     '/admin/contacts': RouteRecordInfo<'/admin/contacts', '/admin/contacts', Record<never, never>, Record<never, never>>,
     '/admin/contacts/': RouteRecordInfo<'/admin/contacts/', '/admin/contacts', Record<never, never>, Record<never, never>>,
+    '/admin/contacts/index copy': RouteRecordInfo<'/admin/contacts/index copy', '/admin/contacts/index copy', Record<never, never>, Record<never, never>>,
     '/admin/limits': RouteRecordInfo<'/admin/limits', '/admin/limits', Record<never, never>, Record<never, never>>,
     '/admin/limits/': RouteRecordInfo<'/admin/limits/', '/admin/limits', Record<never, never>, Record<never, never>>,
     '/admin/profile': RouteRecordInfo<'/admin/profile', '/admin/profile', Record<never, never>, Record<never, never>>,
@@ -42,6 +43,14 @@ declare module 'vue-router/auto-routes' {
     '/community/comprehensive/user': RouteRecordInfo<'/community/comprehensive/user', '/community/comprehensive/user', Record<never, never>, Record<never, never>>,
     '/community/discussion': RouteRecordInfo<'/community/discussion', '/community/discussion', Record<never, never>, Record<never, never>>,
     '/community/discussion/': RouteRecordInfo<'/community/discussion/', '/community/discussion', Record<never, never>, Record<never, never>>,
+    '/community/discussion/label': RouteRecordInfo<'/community/discussion/label', '/community/discussion/label', Record<never, never>, Record<never, never>>,
+    '/community/discussion/latest': RouteRecordInfo<'/community/discussion/latest', '/community/discussion/latest', Record<never, never>, Record<never, never>>,
+    '/community/discussion/user': RouteRecordInfo<'/community/discussion/user', '/community/discussion/user', Record<never, never>, Record<never, never>>,
+    '/community/notice': RouteRecordInfo<'/community/notice', '/community/notice', Record<never, never>, Record<never, never>>,
+    '/community/notice/': RouteRecordInfo<'/community/notice/', '/community/notice', Record<never, never>, Record<never, never>>,
     '/personalCenter/': RouteRecordInfo<'/personalCenter/', '/personalCenter', Record<never, never>, Record<never, never>>,
+    '/personCenter': RouteRecordInfo<'/personCenter', '/personCenter', Record<never, never>, Record<never, never>>,
+    '/personCenter/overall': RouteRecordInfo<'/personCenter/overall', '/personCenter/overall', Record<never, never>, Record<never, never>>,
+    '/personCenter/overall/': RouteRecordInfo<'/personCenter/overall/', '/personCenter/overall', Record<never, never>, Record<never, never>>,
   }
 }

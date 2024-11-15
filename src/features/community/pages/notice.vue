@@ -12,17 +12,11 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
 <route lang="json">
 {
   "meta": {
-    "title": "综合",
-    "icon": "material-symbols-light:overview-key-outline",
+    "title": "公告",
     "thirdNavItems": [
       {
-        "title": "热门",
-        "path": "/community/comprehensive",
-        "icon": "i-mdi-file-document-multiple-outline"
-      },
-      {
-        "title": "用户",
-        "path": "/community/comprehensive/user",
+        "title": "公告",
+        "path": "/community/notice",
         "icon": "i-mdi-file-document-multiple-outline"
       }
     ]
