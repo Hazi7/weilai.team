@@ -7,7 +7,7 @@ import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
 <template>
   <div class="default-layout">
     <SidebarProvider class="w-auto">
-      <TheSidebar>
+      <TheSidebar style="background-color: white">
         <main>
           <SidebarTrigger></SidebarTrigger>
         </main>
@@ -22,5 +22,6 @@ import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
 <style lang="scss" scoped>
 .default-layout {
   display: flex;
+  background-color: #fafafa;
 }
 </style>

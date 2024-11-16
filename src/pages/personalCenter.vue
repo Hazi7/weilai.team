@@ -2,6 +2,16 @@
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 </script>
 
-<template><DefaultLayout></DefaultLayout></template>
+<template>
+  <DefaultLayout></DefaultLayout>
+</template>
 
 <style lang="scss" scoped></style>
+
+<route lang="json">
+{
+  "meta": {
+    "subNavItems": []
+  }
+}
+</route>

@@ -9,6 +9,7 @@ import { useRoute } from "vue-router";
 import { Icon } from '@iconify/vue';
 const route = useRoute();
 const thirdNavItems = route.meta.thirdNavItems as ThirdItemInterface[];
+console.log(thirdNavItems);
 
 interface ThirdItemInterface {
   title: string;

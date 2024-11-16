@@ -18,6 +18,10 @@ export default defineConfig({
           src: "src/features/community/pages",
           path: "community/",
         },
+        {
+          src: "src/features/personalCenter/pages",
+          path: "personalCenter/",
+        },
       ],
     }),
     Vue(),
