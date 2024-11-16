@@ -37,7 +37,6 @@ export function useRequest<T = unknown>(): UseRequestResult<T> {
                 method,
                 ...(method !== "get" ? { data: requestData } : {}),
             });
-
             data.value = response;
         } catch (err) {
             error.value = err instanceof Error ? err : new Error(String(err));
