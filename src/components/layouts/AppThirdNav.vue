@@ -2,7 +2,6 @@
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
 } from "@/components/ui/breadcrumb";
 import { useRoute } from "vue-router";
@@ -30,9 +29,9 @@ interface ThirdItemInterface {
           :key="index"
           class="top-item"
         >
-          <BreadcrumbLink :href="item.path" active-class="active">
+          <RouterLink :to="item.path" active-class="active" class="top-link">
             {{ item.title }}
-          </BreadcrumbLink>
+          </RouterLink>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -42,9 +41,12 @@ interface ThirdItemInterface {
 <style lang="scss" scoped>
 $font: #8c9296;
 .topNav {
-  margin: 10px 10px;
+  position: fixed;
+  z-index: 100;
+  margin: 0px 10px;
   box-sizing: border-box;
   width: 100%;
+  background-color: #fafafa;
   border-bottom: 2px solid #eff1f1;
   display: flex;
   align-content: center;
@@ -56,6 +58,7 @@ $font: #8c9296;
   }
   .top-ol {
     height: 100%;
+    color: var(--secondary-foreground);
   }
   .top-title {
     width: 80px;
@@ -83,6 +86,6 @@ $font: #8c9296;
   }
 }
 .active {
-  border-bottom: 2px solid #e7f3f9;
+  border-bottom: 2px solid var(--primary-foreground);
 }
 </style>
