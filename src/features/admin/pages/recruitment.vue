@@ -13,14 +13,19 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
     "title": "招新管理",
     "thirdNavItems": [
       {
-        "title": "招新管理",
+        "title": "首页",
         "path": "/admin/recruitment",
-        "icon": "i-mdi-file-document-multiple-outline"
+        "icon": "bitcoin-icons:home-outline"
       },
       {
-        "title": "招新管理",
-        "path": "/admin/recruitment/test",
-        "icon": "i-mdi-file-document-multiple-outline"
+        "title": "候选人",
+        "path": "/admin/recruitment/candidates",
+        "icon": "la:user-tie"
+      },
+      {
+        "title": "面试",
+        "path": "/admin/recruitment/interview",
+        "icon": "heroicons:calendar-date-range"
       }
     ]
   }

@@ -6,7 +6,7 @@ import {
   BreadcrumbList,
 } from "@/components/ui/breadcrumb";
 import { useRoute } from "vue-router";
-
+import { Icon } from '@iconify/vue';
 const route = useRoute();
 const thirdNavItems = route.meta.thirdNavItems as ThirdItemInterface[];
 console.log(thirdNavItems);
@@ -31,7 +31,10 @@ interface ThirdItemInterface {
           class="top-item"
         >
           <BreadcrumbLink :href="item.path" active-class="active">
-            {{ item.title }}
+            <div class="top-label">
+              <Icon class="icon" :icon="item.icon" v-if="item.icon"/>   {{ item.title }}
+            </div>
+
           </BreadcrumbLink>
         </BreadcrumbItem>
       </BreadcrumbList>
@@ -55,10 +58,15 @@ $font: #8c9296;
     align-items: center;
   }
   .top-ol {
+    width: 100%;
     height: 100%;
+    position: relative;
+    left: 10px;
+    display: flex;
+    align-items: left;
   }
   .top-title {
-    width: 80px;
+    width: 100px;
     height: 30px;
     border: 2px solid #e0f1f6;
     border-radius: 15px;
@@ -69,8 +77,9 @@ $font: #8c9296;
   .top-item {
     height: 100%;
     text-align: center;
-    width: 60px;
-    justify-content: center;
+    width: 80px;
+    display: inline-block;
+    margin-left: 10px;
   }
 
   .top-label {
@@ -81,6 +90,18 @@ $font: #8c9296;
   .top-link {
     line-height: 50px;
   }
+  .top-label {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position:relative ;
+    .icon {
+    font-size: 1.2rem;
+    margin-right: 8px;
+  }
+  }
+
 }
 .active {
   border-bottom: 2px solid #e7f3f9;
