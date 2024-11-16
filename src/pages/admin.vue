@@ -13,14 +13,34 @@ import DefaultLayout from "@/layouts/DefaultLayout.vue";
   "meta": {
     "subNavItems": [
       {
+        "title": "概况",
+        "icon": "material-symbols-light:overview-key-outline",
+        "path": "/admin/profile"
+      },
+      {
+        "title": "通讯录",
+        "icon": "ph:address-book-tabs-light",
+        "path": "/admin/contacts"
+      },
+      {
         "title": "社区管理",
-        "icon": "mdi-home",
+        "icon": "material-symbols:article-outline",
         "path": "/admin/community"
       },
       {
         "title": "招新管理",
-        "icon": "mdi-home",
+        "icon": "arcticons:studentid",
         "path": "/admin/recruitment"
+      },
+      {
+        "title": "考勤管理",
+        "icon": "weui:time-outlined",
+        "path": "/admin/attendance"
+      },
+      {
+        "title": "权限管理",
+        "icon": "material-symbols-light:shield-lock-outline",
+        "path": "/admin/limits"
       }
     ]
   }

@@ -1,9 +1,9 @@
-import { defineConfig } from "vite";
-import { resolve } from "node:path";
-import VueRouter from "unplugin-vue-router/vite";
 import Vue from "@vitejs/plugin-vue";
 import autoprefixer from "autoprefixer";
+import { resolve } from "node:path";
 import tailwind from "tailwindcss";
+import VueRouter from "unplugin-vue-router/vite";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
@@ -13,6 +13,14 @@ export default defineConfig({
         {
           src: "src/features/admin/pages",
           path: "admin/",
+        },
+        {
+          src: "src/features/community/pages",
+          path: "community/",
+        },
+        {
+          src: "src/features/personalCenter/pages",
+          path: "personalCenter/",
         },
       ],
     }),

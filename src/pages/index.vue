@@ -1,5 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import DefaultLayout from "@/layouts/DefaultLayout.vue";
+</script>
 
-<template>首页</template>
+<template><DefaultLayout></DefaultLayout></template>
 
 <style lang="scss" scoped></style>
