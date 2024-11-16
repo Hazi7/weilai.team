@@ -77,27 +77,29 @@ onMounted(() => {
         <div class="letter">
           <span class="remaining">还可输入{{ remaining }} 个字符</span>
         </div>
-        <div class="emoji"><Icon icon="lineicons:emoji-smile" class="emojiIcon"/></div>
+        <div class="icon-group">
+          <div class="emoji"><Icon icon="lineicons:emoji-smile" class="emojiIcon"/></div>
         <div class="image">
             <Icon icon="stash:image-plus" class="imageIcon" @click="uploadImg"/>
             <input ref="fileInput" type="file"  accept="image/*" hidden />
         </div>
-        <div class="code"><Icon icon="heroicons-outline:code" class="codeIcon"/></div>
+        <!-- <div class="code"><Icon icon="heroicons-outline:code" class="codeIcon"/></div> -->
         <!-- 提交按钮 -->
         <button class="submit-btn">评论</button>
+        </div>
       </div>
     </div>
-    <!-- <div class="rendered-comment" v-html="renderedContent"></div> -->
 </template>
   
   <style scoped lang="scss">
+  $whiteColor: white;
   .comment-form {
-    border: 1px solid #e2eaf4;
+    border: 1px solid var(--border);
     border-radius: 10px;
     width: 100%;
     max-width: 650px;
-    margin: 20px auto;
     border-radius: 5px;
+    margin-bottom: 5px;
     textarea {
        width: 95%;
        height: 54px;
@@ -105,7 +107,7 @@ onMounted(() => {
        outline: none;
        margin-left: 2.5%;
        margin-top: 5px;
-       border-bottom: 1px solid #e2eaf4;
+       border-bottom: 1px solid var(--border);
        padding: 14px;
        font-size: 16px;
        color: rgb(83, 82, 82);
@@ -135,7 +137,7 @@ onMounted(() => {
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: white;
+        background-color: $whiteColor;
         border-radius: 10px;
         display: none;
         cursor: pointer;
@@ -147,32 +149,38 @@ onMounted(() => {
     .image-tag:hover .delete-btn {
         display:flex;
     }
+    
     .action-bar {
        display: flex;
+       justify-content: space-between;
+       .icon-group{
+          display: flex;
+          margin-right: 10px;
+        }
        .letter{
-           width:126px ;
+           justify-content: flex-start;
            font-size: 13px;
-           color: gray;
+           color: var(--secondary-foreground);
            margin-top: 5px;
-           margin-left: 29px;
+           margin-left: 25px;
        }
        .emojiIcon{
-           color: #7a7979;
+           color: var(--secondary-foreground);
            font-size: 25px;
            cursor: pointer;
            margin-right: 10px;
-           margin-left: 280px;
+          //  margin-left: 280px;
            margin-top: 3px;
        }
        .codeIcon{
-           color: #7a7979;
+           color: var(--secondary-foreground);
            font-size: 24px;
            cursor: pointer;
            margin-top: 3px;
            margin-right: 20px;
        }
        .imageIcon{
-           color: #7a7979;
+           color: var(--secondary-foreground);
            font-size: 26px;
            cursor: pointer;
            margin-top: 2px;
@@ -182,7 +190,7 @@ onMounted(() => {
            width: 70px;
            height: 30px;
            background-color: #5dbee8;
-           color: white;
+           color: $whiteColor;
            border: none;
            font-size: 14px;
            border-radius:15px;
@@ -196,5 +204,4 @@ onMounted(() => {
     }
 
 }
-
   </style>
