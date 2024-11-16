@@ -5,7 +5,6 @@ import {
   BreadcrumbList,
 } from "@/components/ui/breadcrumb";
 import { useRoute } from "vue-router";
-
 const route = useRoute();
 const thirdNavItems = route.meta.thirdNavItems as ThirdItemInterface[];
 console.log(thirdNavItems);
@@ -57,11 +56,12 @@ $font: #8c9296;
     align-items: center;
   }
   .top-ol {
+    width: 100%;
     height: 100%;
     color: var(--secondary-foreground);
   }
   .top-title {
-    width: 80px;
+    width: 100px;
     height: 30px;
     border: 2px solid #e0f1f6;
     border-radius: 15px;
@@ -72,8 +72,9 @@ $font: #8c9296;
   .top-item {
     height: 100%;
     text-align: center;
-    width: 60px;
-    justify-content: center;
+    width: 80px;
+    display: inline-block;
+    margin-left: 10px;
   }
 
   .top-label {
@@ -83,6 +84,17 @@ $font: #8c9296;
   }
   .top-link {
     line-height: 50px;
+  }
+  .top-label {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    .icon {
+      font-size: 1.2rem;
+      margin-right: 8px;
+    }
   }
 }
 .active {

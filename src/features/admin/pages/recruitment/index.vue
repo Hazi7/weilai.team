@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { HeaderNav } from "@/components/recruitment";
+// 引入组件
+
 import {
   Card,
   CardContent,
@@ -9,14 +10,37 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Icon } from "@iconify/vue";
-// import { ToggleShow } from '@/components/recruitment';
+import { ToggleShow } from "@/components/recruitment";
+
+// 引入vue函数
+import { ref } from "vue";
+
 document.title = "招新管理";
+// 定义切换组件的基本信息 传给子组件
+const items = ref([
+    {
+        index: 0,
+        title: '待我反馈',
+        isActive: true,
+    },
+    {
+        index: 1,
+        title: '我录取的',
+        isActive: false,
+    },
+    {
+        index: 2,
+        title: '我淘汰的',
+        isActive: false,
+    }
+]);
+
+//切换组件的样式控制
+const isActive=ref(false);
 </script>
 
 <template>
   <div class="main">
-    <header-nav id="header"></header-nav>
-
     <div id="left-side">
       <div id="quick-look-group">
         <Card class="card-message-show">
@@ -93,44 +117,36 @@ document.title = "招新管理";
     </div>
 
     <div id="content">
-      <div id="content-container"></div>
+      <div id="content-container">
+        <div class="toggle-outer">
+          <ToggleShow :items="items"></ToggleShow>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <style lang="scss" scoped>
+@use '@/assets/styles';
+
 .main {
-  width: calc(100% - 200px);
+  width: 100%;
   height: auto;
   background-color: #fff;
   position: relative;
-  left: 200px;
-  display: inline-block;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   top: 20px;
   box-sizing: content-box;
-  @media screen and (max-width: 768px) {
-    width: 100%;
-    left: 0px;
-  }
 }
 
-// #region 头部导航栏
-#header {
-  width: 100%;
-  height: 50px;
-  background-color: #fff;
-  position: relative;
-}
-// #endregion
-
-//#region 左侧导航栏
-
+//#region 左侧边栏
 #left-side {
   width: 20%;
   height: auto;
   background-color: #fff;
   position: relative;
   display: inline-block;
-  top: 20px;
   margin-top: 10px;
   border: none;
 }
@@ -183,12 +199,17 @@ document.title = "招新管理";
       text-align: left;
     }
     #control-group {
+      width: 100%;
+      height: auto;
       display: flex;
       flex-direction: column;
       justify-content: center;
       #control-item {
+        width: 100%;
+        height: 40px;
         display: flex;
         flex-direction: row;
+        margin-bottom: 20px;
         #control-icon {
           width: 60px;
           height: 40px;
@@ -220,9 +241,13 @@ document.title = "招新管理";
           align-items: center;
           text-align: left;
           margin-left: 10px;
+          font-size: 1em;
           p {
             font-size: 0.8em;
             color: #b1b2c6;
+          }
+          @media screen and (max-width: 768px) {
+            display: none;
           }
         }
 
@@ -248,15 +273,26 @@ document.title = "招新管理";
 //#region 中间内容区
 #content {
   width: 70%;
-  background-color: #4d2020;
+  background-color:var(--background);
   position: relative;
   display: inline-block;
   top: 20px;
+  left: 20px;
   border: none;
 }
 #content-container {
   width: 100%;
   height: auto;
+  .toggle-outer {
+    width: 100%;
+    height: auto;
+    padding: 10px 0px;
+    padding-left: 10px;
+    flex-direction: row;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+  }
+
 }
 
 //#endregion
