@@ -23,14 +23,14 @@ const { data, error, loading, getLogin } = UseLogin()
                 登录
             </CardTitle>
             <CardDescription>
-                在下方输入学号以登录账户
+                在下方输入学号或邮箱以登录账户
             </CardDescription>
         </CardHeader>
         <CardContent>
             <div class="grid gap-4">
                 <div class="grid gap-2">
-                    <Label for="stuId">ID</Label>
-                    <Input id="stuId" placeholder="ID" required v-model="account" />
+                    <Label for="stuId">学号 / 邮箱</Label>
+                    <Input id="stuId" placeholder="ID/Emile" required v-model="account" />
                 </div>
                 <div class="grid gap-2">
                     <div class="flex items-center">

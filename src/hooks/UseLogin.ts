@@ -8,6 +8,9 @@ export default function () {
     const { data, error, loading, executeRequest } = useRequest<User>();
 
     async function getLogin(account, password){
+        // if (account || password){
+        //     alert()
+        // }
         await executeRequest({ url: `/index/login?account=${account}&password=${password}`, method: 'post', data: { account, password } })  // 在这里传入请求的 URL 和 method
         console.log(data.value);
         if(data.value.code == 1000){
