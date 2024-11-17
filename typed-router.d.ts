@@ -25,7 +25,6 @@ declare module 'vue-router/auto-routes' {
     '/admin/community/': RouteRecordInfo<'/admin/community/', '/admin/community', Record<never, never>, Record<never, never>>,
     '/admin/contacts': RouteRecordInfo<'/admin/contacts', '/admin/contacts', Record<never, never>, Record<never, never>>,
     '/admin/contacts/': RouteRecordInfo<'/admin/contacts/', '/admin/contacts', Record<never, never>, Record<never, never>>,
-    '/admin/contacts/index copy': RouteRecordInfo<'/admin/contacts/index copy', '/admin/contacts/index copy', Record<never, never>, Record<never, never>>,
     '/admin/limits': RouteRecordInfo<'/admin/limits', '/admin/limits', Record<never, never>, Record<never, never>>,
     '/admin/limits/': RouteRecordInfo<'/admin/limits/', '/admin/limits', Record<never, never>, Record<never, never>>,
     '/admin/profile': RouteRecordInfo<'/admin/profile', '/admin/profile', Record<never, never>, Record<never, never>>,

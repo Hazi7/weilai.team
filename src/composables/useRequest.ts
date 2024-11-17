@@ -1,4 +1,4 @@
-import { shallowRef, Ref } from "vue";
+import { shallowRef, type Ref } from "vue";
 import apiClient from "../api/axios";
 
 // 定义 HTTP 方法的类型

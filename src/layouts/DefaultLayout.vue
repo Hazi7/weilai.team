@@ -24,4 +24,9 @@ import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
   display: flex;
   background-color: #fafafa;
 }
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+}
 </style>
