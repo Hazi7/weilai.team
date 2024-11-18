@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { CommentProps } from './index';
-import CommentItem from './CommentItem.vue'; // 引入 CommentItem 组件
+import CommentItem from './CommentItem.vue';
 
 
 const comments = ref<CommentProps[]>([

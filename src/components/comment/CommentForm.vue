@@ -1,42 +1,45 @@
 <script setup lang="ts">
-import { ref,watch,computed,watchEffect,onMounted } from 'vue';
+import { ref, watch, computed, watchEffect, onMounted } from 'vue';
 import { Icon } from '@iconify/vue';
 import { marked } from 'marked';
 import dompurify from 'dompurify';
+import axios from 'axios';
 
-const content = ref<string>('');
+const commentText = ref<string>('');
+const postId = ref<number>(12);
 const maxLength = 1000;
-const remaining = computed(() => maxLength - content.value.length);
+const remaining = computed(() => maxLength - commentText.value.length);
 const renderedContent = ref<string>('');
 const fileInput = ref<HTMLInputElement | null>(null);
 const imageTags = ref<string[]>([]);
-const imageUrls = ref<string[]>([]); 
+const photoUrls = ref<string[]>([]);
 
 // 更新内容并限制最大长度
-watch(content, (newContent) => {
+watch(commentText, (newContent) => {
   if (newContent.length > maxLength) {
-    content.value = newContent.slice(0, maxLength);
+    commentText.value = newContent.slice(0, maxLength);
   }
 });
 
-// 渲染的 Markdown 内容
+// 渲染的Markdown内容
 watchEffect(async () => {
-  const rawHTML = await marked(content.value);
-  renderedContent.value = dompurify.sanitize(rawHTML); 
+  const rawHTML = await marked(commentText.value);
+  renderedContent.value = dompurify.sanitize(rawHTML);
 });
 
-//图片输入
+// 图片输入
 const uploadImg = () => {
   fileInput.value?.click();
 };
+
 const handleFileSelect = (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
-  if (files && imageUrls.value.length < 3) {
-    Array.from(files).forEach(file => {
+  if (files && photoUrls.value.length < 3) {
+    Array.from(files).forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const url = e.target?.result as string;
-        imageUrls.value.push(url); // 保存图片的data URL
+        photoUrls.value.push(url); // 保存图片的data URL
         const imgMarkdown = `![${file.name}](${url})`;
         // 存储图片的Markdown格式
         imageTags.value.push(imgMarkdown);
@@ -45,24 +48,48 @@ const handleFileSelect = (event: Event) => {
     });
   }
 };
-//删除图片
+
+// 删除图片
 const deleteImage = (index: number) => {
+  // 使用splice方法的返回值更新相关数组
   imageTags.value.splice(index, 1);
-  imageUrls.value.splice(index, 1);
+  photoUrls.value.splice(index, 1);
 };
+
 onMounted(() => {
   fileInput.value?.addEventListener('change', handleFileSelect);
 });
 
-//表情选择器
+// 写一级评论
+const submitComment = async () => {
+  if (!commentText.value.trim()) {
+    console.log('评论内容不能为空');
+    return;
+  }
+  const dataToSend = {
+    postId: postId.value,
+    commentText: commentText.value,
+    photoUrls: photoUrls.value
+  };
+  console.log(dataToSend);
 
+  axios({
+    url: `http://49.232.183.67:8087/comment/writePostComment`,
+    method: "POST",
+    data: dataToSend
+  }).then((r) => {
+    console.log(r);
+  }).catch((e) => {
+    console.log(e);
+  });
+};
 </script>
 
 <template>
     <div class="comment-form">
       <!-- 评论输入框 -->
       <textarea
-        v-model="content"
+        v-model="commentText"
         placeholder="请输入你的评论......"
         :maxlength="maxLength"
       ></textarea>
@@ -85,7 +112,7 @@ onMounted(() => {
         </div>
         <!-- <div class="code"><Icon icon="heroicons-outline:code" class="codeIcon"/></div> -->
         <!-- 提交按钮 -->
-        <button class="submit-btn">评论</button>
+        <button class="submit-btn" @click="submitComment">评论</button>
         </div>
       </div>
     </div>
@@ -110,6 +137,7 @@ onMounted(() => {
        border-bottom: 1px solid var(--border);
        padding: 14px;
        font-size: 16px;
+       background-color: #fafafa;
        color: rgb(83, 82, 82);
     }
     .image-preview {
