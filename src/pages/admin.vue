@@ -10,6 +10,7 @@ import DefaultLayout from "@/layouts/DefaultLayout.vue";
 
 <route lang="json">
 {
+  "redirect": "/admin/profile",
   "meta": {
     "subNavItems": [
       {
