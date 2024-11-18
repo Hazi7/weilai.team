@@ -5,12 +5,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-vue-next'
 import ForgotPassword from './ForgotPassword.vue'
-import UseLogin from '@/hooks/UseLogin'
+import UseLogin from '@/composables/UseLogin'
 import { reactive, ref } from 'vue'
 
 const account = ref('')
 const password = ref('')
-const useData = reactive({})
 
 const { data, error, loading, getLogin } = UseLogin()
 
@@ -49,11 +48,6 @@ const { data, error, loading, getLogin } = UseLogin()
                     <Loader2 class="w-4 h-4 mr-2 animate-spin" />
                     登录中...
                 </Button>
-                <router-link to="">
-                    <Button variant="outline" class="w-full">
-                        邮箱登录
-                    </Button>
-                </router-link>
             </div>
         </CardContent>
     </Card>

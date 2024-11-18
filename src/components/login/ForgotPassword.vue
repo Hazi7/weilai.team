@@ -39,9 +39,12 @@ import GetPin from './GetPin.vue'
                     <Label for="username" class="text-right">
                         验证码
                     </Label>
-                    <Input id="username" value="@peduarte" class="col-span-3" />
-                    <!-- <GetPin /> -->
-                    <Button>获取验证码</Button>
+                    <div class="flex w-full max-w-sm items-center gap-1.5">
+                        <Input id="email" type="email" placeholder="Email" />
+                        <Button type="submit">
+                            获取验证码
+                        </Button>
+                    </div>
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
                     <Label for="username" class="text-right">
