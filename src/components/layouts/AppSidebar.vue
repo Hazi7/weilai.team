@@ -3,7 +3,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import Sidebar from "@/components/ui/sidebar/Sidebar.vue";
 import SidebarContent from "@/components/ui/sidebar/SidebarContent.vue";
@@ -12,12 +12,20 @@ import SidebarGroupContent from "@/components/ui/sidebar/SidebarGroupContent.vue
 import SidebarMenu from "@/components/ui/sidebar/SidebarMenu.vue";
 import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
+import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
 import { Icon } from "@iconify/vue";
 import { watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+} from "lucide-vue-next";
 const route = useRoute();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
 console.log(route.meta);
@@ -42,16 +50,40 @@ const items = [
   },
   {
     title: "社区",
-    url: "community/comprehensive",
+    url: "community/",
     icon: "fluent:people-community-20-regular",
   },
   {
     title: "控制台",
-    url: "admin/profile",
+    url: "admin/",
     icon: "lsicon:control-outline",
   },
 ];
 
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  teams: [
+    {
+      name: "Acme Inc",
+
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+
+      plan: "Startup",
+    },
+    {
+      name: "Evil Corp.",
+
+      plan: "Free",
+    },
+  ],
+};
 interface SubItemInterface {
   title: string;
   icon: string;
@@ -60,12 +92,16 @@ interface SubItemInterface {
 </script>
 
 <template>
-  <Sidebar class="sidebar">
+  
+  <div class="frame">
+    <div class="sidebar">
+      <SidebarProvider>
+        <Sidebar class="sidebar">
     <SidebarHeader
       ><div class="sidebar-logo">
         <img src="../../../public/logo.png" alt="" /></div
     ></SidebarHeader>
-    <SidebarContent>
+    <SidebarContent >
       <!-- 一级导航 -->
       <SidebarGroup>
         <SidebarGroupContent>
@@ -127,29 +163,42 @@ interface SubItemInterface {
       </SidebarMenu>
       <SidebarMenu>
         <SidebarMenuItem>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <SidebarMenuButton style="height: 60px">
+          <DropdownMenu >
+            <DropdownMenuTrigger as-child>
+              <SidebarMenuButton
+                size="lg"
+                class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              >
                 <img src="@/assets/img/headImg.jpg" alt="" class="avatar" />
-                爆米奇
-                <!-- <ChevronUp className="ml-auto" /> -->
+                <div class="grid flex-1 text-left text-sm leading-tight">
+                  <span class="truncate">爆米奇</span>
+                </div>
+                <ChevronsUpDown class="ml-auto size-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              side="top"
-              className="w-[--radix-popper-anchor-width]"
-              class="footer-menu"
-            >
-              <DropdownMenuItem class="footer-item">
-                <RouterLink to="/personalCenter/userInfo"
-                  ><span> 个人资料</span></RouterLink
-                >
+              class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
+              side="bottom"
+              :side-offset="4"
+            ><router-link to="/personalCenter/userInfo">
+              <DropdownMenuItem class="drop-menu-item">
+                <BadgeCheck />
+               个人资料
+              </DropdownMenuItem class="drop-menu-item">
+            </router-link> 
+              <DropdownMenuItem class="drop-menu-item">
+                <CreditCard />
+                Billing
+              </DropdownMenuItem class="drop-menu-item">
+      
+              <DropdownMenuItem class="drop-menu-item">
+                <Bell />
+                Notifications
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span>消息</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span>退出</span>
+
+              <DropdownMenuItem class="drop-menu-item">
+                <LogOut />
+                Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -157,6 +206,10 @@ interface SubItemInterface {
       </SidebarMenu>
     </SidebarFooter>
   </Sidebar>
+      </SidebarProvider>
+    </div>
+    
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -164,6 +217,21 @@ interface SubItemInterface {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+}
+.frame {
+  background-color: #fafafa;
+  display: flex;
+}
+.sidebar {
+ 
+  background-color: white;
+}
+.drop-menu-item {
+  background-color: white ;
+  width: 105%;
+  &:hover{
+    background-color: var(--secondary);
+  }
 }
 .publish-btn {
   height: 40px;
@@ -184,7 +252,10 @@ interface SubItemInterface {
     font-size: 16px;
   }
 }
+
+
 .sidebar {
+  height: 100vh;
   background-color: white;
   &__button {
     padding: 0;
@@ -235,5 +306,10 @@ interface SubItemInterface {
       background-color: var(--secondary);
     }
   }
+}
+
+@media screen and (max-width: 768px) {
+  
+  
 }
 </style>

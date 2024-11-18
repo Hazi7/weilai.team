@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/menubar';
 import { Button } from '@/components/ui/button';
 
-import { ref, defineProps } from 'vue';
+import {  defineProps } from 'vue';
 type Item= {
     index: number;
     title: string;
