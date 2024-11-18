@@ -1,9 +1,20 @@
 <script setup lang="ts">
-import { ref, watch, computed, watchEffect, onMounted } from 'vue';
+import { ref,watch, computed, watchEffect, onMounted,onUnmounted } from 'vue';
+import { useRequest } from '@/composables/useRequest';
 import { Icon } from '@iconify/vue';
 import { marked } from 'marked';
 import dompurify from 'dompurify';
-import axios from 'axios';
+
+//定义一级评论的数据类型
+interface CommentData {
+    postId: number;
+    commentText: string;
+    photoUrls: string[];
+    code?: number; 
+}
+
+// 使用useRequest获取请求相关数据和函数
+const { data, error,executeRequest } = useRequest<CommentData>();
 
 const commentText = ref<string>('');
 const postId = ref<number>(12);
@@ -14,24 +25,22 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const imageTags = ref<string[]>([]);
 const photoUrls = ref<string[]>([]);
 
+
 // 更新内容并限制最大长度
 watch(commentText, (newContent) => {
   if (newContent.length > maxLength) {
     commentText.value = newContent.slice(0, maxLength);
   }
 });
-
 // 渲染的Markdown内容
 watchEffect(async () => {
   const rawHTML = await marked(commentText.value);
   renderedContent.value = dompurify.sanitize(rawHTML);
 });
-
 // 图片输入
 const uploadImg = () => {
   fileInput.value?.click();
 };
-
 const handleFileSelect = (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
   if (files && photoUrls.value.length < 3) {
@@ -48,16 +57,18 @@ const handleFileSelect = (event: Event) => {
     });
   }
 };
-
 // 删除图片
 const deleteImage = (index: number) => {
-  // 使用splice方法的返回值更新相关数组
   imageTags.value.splice(index, 1);
   photoUrls.value.splice(index, 1);
 };
-
 onMounted(() => {
   fileInput.value?.addEventListener('change', handleFileSelect);
+});
+onUnmounted(() => {
+  if (fileInput.value) {
+    fileInput.value.removeEventListener('change', handleFileSelect);
+  }
 });
 
 // 写一级评论
@@ -72,17 +83,24 @@ const submitComment = async () => {
     photoUrls: photoUrls.value
   };
   console.log(dataToSend);
+  try {
+    await executeRequest({
+      url: '/comment/writePostComment',
+      method: 'post',
+      requestData: dataToSend,
+    });
+    console.log(data.value, error);
+    if (data.value && data.value.code == 200) {
+      console.log('评论成功');
+      commentText.value = '';
+      photoUrls.value = [];
+      imageTags.value = [];
+    }
+  } catch (err) {
+    console.error('评论失败', err instanceof Error ? err.message : String(err));
+  }
 
-  axios({
-    url: `http://49.232.183.67:8087/comment/writePostComment`,
-    method: "POST",
-    data: dataToSend
-  }).then((r) => {
-    console.log(r);
-  }).catch((e) => {
-    console.log(e);
-  });
-};
+}
 </script>
 
 <template>

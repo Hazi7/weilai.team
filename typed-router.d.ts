@@ -31,7 +31,6 @@ declare module 'vue-router/auto-routes' {
     '/admin/profile/': RouteRecordInfo<'/admin/profile/', '/admin/profile', Record<never, never>, Record<never, never>>,
     '/admin/recruitment': RouteRecordInfo<'/admin/recruitment', '/admin/recruitment', Record<never, never>, Record<never, never>>,
     '/admin/recruitment/': RouteRecordInfo<'/admin/recruitment/', '/admin/recruitment', Record<never, never>, Record<never, never>>,
-    '/admin/recruitment/test': RouteRecordInfo<'/admin/recruitment/test', '/admin/recruitment/test', Record<never, never>, Record<never, never>>,
     '/admin/recruitment/candidates': RouteRecordInfo<'/admin/recruitment/candidates', '/admin/recruitment/candidates', Record<never, never>, Record<never, never>>,
     '/admin/recruitment/interview': RouteRecordInfo<'/admin/recruitment/interview', '/admin/recruitment/interview', Record<never, never>, Record<never, never>>,
     '/application': RouteRecordInfo<'/application', '/application', Record<never, never>, Record<never, never>>,
@@ -54,6 +53,5 @@ declare module 'vue-router/auto-routes' {
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
     '/personalCenter': RouteRecordInfo<'/personalCenter', '/personalCenter', Record<never, never>, Record<never, never>>,
     '/personalCenter/userInfo': RouteRecordInfo<'/personalCenter/userInfo', '/personalCenter/userInfo', Record<never, never>, Record<never, never>>,
-    '/personalCenter/userInfo/': RouteRecordInfo<'/personalCenter/userInfo/', '/personalCenter/userInfo', Record<never, never>, Record<never, never>>,
   }
 }
