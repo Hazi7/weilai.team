@@ -16,7 +16,7 @@ export default function () {
         if(data.value.code == 1000){
             localStorage.setItem('token',data.value.data.token)
             console.log(this);
-            // this.$router.push({ path: '/home' })
+            // this.$router.push({ path: '/' })
         }
     }
 

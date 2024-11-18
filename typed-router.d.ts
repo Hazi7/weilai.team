@@ -33,9 +33,11 @@ declare module 'vue-router/auto-routes' {
     '/admin/recruitment': RouteRecordInfo<'/admin/recruitment', '/admin/recruitment', Record<never, never>, Record<never, never>>,
     '/admin/recruitment/': RouteRecordInfo<'/admin/recruitment/', '/admin/recruitment', Record<never, never>, Record<never, never>>,
     '/admin/recruitment/test': RouteRecordInfo<'/admin/recruitment/test', '/admin/recruitment/test', Record<never, never>, Record<never, never>>,
+    '/application': RouteRecordInfo<'/application', '/application', Record<never, never>, Record<never, never>>,
     '/community': RouteRecordInfo<'/community', '/community', Record<never, never>, Record<never, never>>,
     '/community/blog': RouteRecordInfo<'/community/blog', '/community/blog', Record<never, never>, Record<never, never>>,
     '/community/blog/': RouteRecordInfo<'/community/blog/', '/community/blog', Record<never, never>, Record<never, never>>,
+    '/community/blog/RecruitmentFrom': RouteRecordInfo<'/community/blog/RecruitmentFrom', '/community/blog/RecruitmentFrom', Record<never, never>, Record<never, never>>,
     '/community/brainstorm': RouteRecordInfo<'/community/brainstorm', '/community/brainstorm', Record<never, never>, Record<never, never>>,
     '/community/brainstorm/': RouteRecordInfo<'/community/brainstorm/', '/community/brainstorm', Record<never, never>, Record<never, never>>,
     '/community/comprehensive': RouteRecordInfo<'/community/comprehensive', '/community/comprehensive', Record<never, never>, Record<never, never>>,
@@ -48,6 +50,9 @@ declare module 'vue-router/auto-routes' {
     '/community/discussion/user': RouteRecordInfo<'/community/discussion/user', '/community/discussion/user', Record<never, never>, Record<never, never>>,
     '/community/notice': RouteRecordInfo<'/community/notice', '/community/notice', Record<never, never>, Record<never, never>>,
     '/community/notice/': RouteRecordInfo<'/community/notice/', '/community/notice', Record<never, never>, Record<never, never>>,
+    '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
     '/personalCenter': RouteRecordInfo<'/personalCenter', '/personalCenter', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo': RouteRecordInfo<'/personalCenter/userInfo', '/personalCenter/userInfo', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/': RouteRecordInfo<'/personalCenter/userInfo/', '/personalCenter/userInfo', Record<never, never>, Record<never, never>>,
   }
 }
