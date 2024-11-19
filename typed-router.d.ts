@@ -59,5 +59,13 @@ declare module 'vue-router/auto-routes' {
     '/message/all/': RouteRecordInfo<'/message/all/', '/message/all', Record<never, never>, Record<never, never>>,
     '/personalCenter': RouteRecordInfo<'/personalCenter', '/personalCenter', Record<never, never>, Record<never, never>>,
     '/personalCenter/userInfo': RouteRecordInfo<'/personalCenter/userInfo', '/personalCenter/userInfo', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myCollections': RouteRecordInfo<'/personalCenter/userInfo/myCollections', '/personalCenter/userInfo/myCollections', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myCollections/': RouteRecordInfo<'/personalCenter/userInfo/myCollections/', '/personalCenter/userInfo/myCollections', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myGrades': RouteRecordInfo<'/personalCenter/userInfo/myGrades', '/personalCenter/userInfo/myGrades', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myGrades/': RouteRecordInfo<'/personalCenter/userInfo/myGrades/', '/personalCenter/userInfo/myGrades', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myPosts': RouteRecordInfo<'/personalCenter/userInfo/myPosts', '/personalCenter/userInfo/myPosts', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myPosts/': RouteRecordInfo<'/personalCenter/userInfo/myPosts/', '/personalCenter/userInfo/myPosts', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/mySchedule': RouteRecordInfo<'/personalCenter/userInfo/mySchedule', '/personalCenter/userInfo/mySchedule', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/mySchedule/': RouteRecordInfo<'/personalCenter/userInfo/mySchedule/', '/personalCenter/userInfo/mySchedule', Record<never, never>, Record<never, never>>,
   }
 }
