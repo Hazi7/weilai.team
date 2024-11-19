@@ -4,6 +4,7 @@ import { useRequest } from '@/composables/useRequest';
 import { Icon } from '@iconify/vue';
 import { marked } from 'marked';
 import dompurify from 'dompurify';
+// import axios from 'axios';
 
 //定义一级评论的数据类型
 interface CommentData {
@@ -83,9 +84,8 @@ const submitComment = async () => {
     photoUrls: photoUrls.value
   };
   console.log(dataToSend);
-  try {
     await executeRequest({
-      url: '/comment/writePostComment',
+      url: `/comment/writePostComment`,
       method: 'post',
       requestData: dataToSend,
     });
@@ -95,12 +95,19 @@ const submitComment = async () => {
       commentText.value = '';
       photoUrls.value = [];
       imageTags.value = [];
-    }
-  } catch (err) {
-    console.error('评论失败', err instanceof Error ? err.message : String(err));
-  }
-
+    }else {
+      console.log('评论失败', error.value);
+   }
 }
+//获取一级评论
+async function getFirstComment() {
+  await executeRequest({
+    url: `/comment/getCommentOne?postId=${postId.value}`,
+    method: 'get',
+  });
+  console.log(data.value);
+}
+getFirstComment()
 </script>
 
 <template>

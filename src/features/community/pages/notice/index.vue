@@ -45,6 +45,7 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
   padding: 0 100px;
   width: 100%;
   height: auto;
+  margin-top: 100px;
 }
 .noticeItem {
   width: 730px;
