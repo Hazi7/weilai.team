@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex; margin-top: 50px;">
+    <div style="display: flex;">
         <container></container>
         <Rightbar></Rightbar>
     </div>
