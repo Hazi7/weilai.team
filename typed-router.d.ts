@@ -53,8 +53,6 @@ declare module 'vue-router/auto-routes' {
     '/community/notice/': RouteRecordInfo<'/community/notice/', '/community/notice', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
     '/message': RouteRecordInfo<'/message', '/message', Record<never, never>, Record<never, never>>,
-    '/message/all': RouteRecordInfo<'/message/all', '/message/all', Record<never, never>, Record<never, never>>,
-    '/message/all/': RouteRecordInfo<'/message/all/', '/message/all', Record<never, never>, Record<never, never>>,
     '/personalCenter': RouteRecordInfo<'/personalCenter', '/personalCenter', Record<never, never>, Record<never, never>>,
     '/personalCenter/userInfo': RouteRecordInfo<'/personalCenter/userInfo', '/personalCenter/userInfo', Record<never, never>, Record<never, never>>,
   }
