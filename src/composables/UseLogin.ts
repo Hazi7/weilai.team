@@ -3,7 +3,6 @@ import { useRouter } from 'vue-router';
 import { reactive } from 'vue'
 import { useRequest } from '@/composables/useRequest';
 
-
 export default function () {
     const router = useRouter();
     const { data, error, loading, executeRequest } = useRequest<User>();
@@ -16,6 +15,7 @@ export default function () {
         console.log(data.value);
         if (data.value.code == 1000) {
             localStorage.setItem('token', data.value.data.token)
+            // setLocalStorageWithExpire('token', data.value.data.token, 1000*60*30);
             router.push('/');
             // window.location.href = '/';
         }
