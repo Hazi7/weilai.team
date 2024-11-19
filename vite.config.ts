@@ -22,6 +22,10 @@ export default defineConfig({
           src: "src/features/personalCenter/pages",
           path: "personalCenter/",
         },
+        {
+          src: "src/features/message/pages",
+          path: "message/",
+        },
       ],
     }),
     Vue(),
@@ -39,6 +43,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
+      "@admin": resolve(__dirname, "./src/features/admin"),
+      "@community": resolve(__dirname, "./src/features/community"),
+      "@personalCenter": resolve(__dirname, "./src/features/personalCenter"),
+      "@login": resolve(__dirname, "./src/features/login"),
     },
   },
 });

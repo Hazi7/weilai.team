@@ -14,11 +14,6 @@ import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
 import { Icon } from "@iconify/vue";
-import { watch } from "vue";
-import { RouterLink, useRoute } from "vue-router";
-import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
-import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
-
 import {
   BadgeCheck,
   Bell,
@@ -26,6 +21,11 @@ import {
   CreditCard,
   LogOut,
 } from "lucide-vue-next";
+import { watch } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+import Button from "../ui/button/Button.vue";
+import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
+import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 const route = useRoute();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
 console.log(route.meta);
@@ -95,13 +95,13 @@ interface SubItemInterface {
   
   <div class="frame">
     <div class="sidebar">
-      <SidebarProvider>
-        <Sidebar class="sidebar">
-    <SidebarHeader
+      <SidebarProvider id="sidebar-provider">
+        <Sidebar id="sidebar" class="sidebar">
+    <SidebarHeader id="sidebar-header"
       ><div class="sidebar-logo">
         <img src="../../../public/logo.png" alt="" /></div
     ></SidebarHeader>
-    <SidebarContent >
+    <SidebarContent id="sidebar-content">
       <!-- 一级导航 -->
       <SidebarGroup>
         <SidebarGroupContent>
@@ -127,7 +127,7 @@ interface SubItemInterface {
       </SidebarGroup>
       <hr />
       <!-- 二级导航 -->
-      <SidebarGroup>
+      <SidebarGroup  id="sub-nav">
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem
@@ -143,6 +143,38 @@ interface SubItemInterface {
                 >
                   <Icon :icon="`${item.icon}`" />&nbsp;
                   <span>{{ item.title }}</span>
+                </RouterLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+      <hr />
+      <SidebarGroup>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem
+          
+              class="sidebar__item"
+            >
+              <SidebarMenuButton class="sidebar__button">
+                <RouterLink
+                  :to="`/personalCenter/userInfo`"
+                  active-class="sidebar__link--active"
+                  class="sidebar__link"
+                >
+                  <Icon icon="bi:person" />&nbsp;
+                  <span>个人资料</span>
+                </RouterLink>
+              </SidebarMenuButton>
+              <SidebarMenuButton class="sidebar__button">
+                <RouterLink
+                  :to="`/message`"
+                  active-class="sidebar__link--active"
+                  class="sidebar__link"
+                >
+                  <Icon icon="mage:box-3d-notification" />&nbsp;
+                  <span>消息</span>
                 </RouterLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -210,22 +242,42 @@ interface SubItemInterface {
     </div>
     
   </div>
+  <div class="main-menu">
+    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
+    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
+    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
+    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
+  
+    
+  </div>
 </template>
 
 <style lang="scss" scoped>
+.main-menu{
+  display: none;
+}
+
 .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
 }
 .frame {
+color :var(--secondary-foreground);
+  // #sub-nav{
+  //   padding: 0;
+  // }
+  top: 0;
   background-color: #fafafa;
   display: flex;
+  #sidebar {
+    background-color: white;
+  }
 }
 .sidebar {
- 
   background-color: white;
 }
+
 .drop-menu-item {
   background-color: white ;
   width: 105%;
@@ -252,10 +304,8 @@ interface SubItemInterface {
     font-size: 16px;
   }
 }
-
-
 .sidebar {
-  height: 100vh;
+  
   background-color: white;
   &__button {
     padding: 0;
@@ -307,9 +357,42 @@ interface SubItemInterface {
     }
   }
 }
+.main-menu{
+  
+}
 
 @media screen and (max-width: 768px) {
-  
-  
+  .main-menu{
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  height: 50px;
+  background-color: white
+}
+  .frame{
+    display: none;
+    position: fixed;
+    bottom: 0;
+    height: 100px;
+    overflow: hidden;
+    #sidebar{
+      position: fixed;
+      top: 90%;
+      bottom: 0;
+     max-height:100px;
+      &-header{
+        display: none;
+      }
+      #sub-nav{
+        display: none;
+      }
+      &-content{
+        max-height: 100px;
+      }
+    }
+    
+  }
 }
 </style>
