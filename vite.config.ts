@@ -23,6 +23,14 @@ export default defineConfig({
           path: "personalCenter/",
         },
         {
+          src: "src/features/login/pages",
+          path: "login/",
+        },
+        {
+          src: "src/features/application/pages",
+          path: "application/",
+        },
+        {
           src: "src/features/message/pages",
           path: "message/",
         },

@@ -1,42 +1,54 @@
 <script setup lang="ts">
-import { ref,watch,computed,watchEffect,onMounted } from 'vue';
+import { ref,watch, computed, watchEffect, onMounted,onUnmounted } from 'vue';
+import { useRequest } from '@/composables/useRequest';
 import { Icon } from '@iconify/vue';
 import { marked } from 'marked';
 import dompurify from 'dompurify';
 
-const content = ref<string>('');
+//定义一级评论的数据类型
+interface CommentData {
+    postId: number;
+    commentText: string;
+    photoUrls: string[];
+    code?: number; 
+}
+
+// 使用useRequest获取请求相关数据和函数
+const { data, error,executeRequest } = useRequest<CommentData>();
+
+const commentText = ref<string>('');
+const postId = ref<number>(12);
 const maxLength = 1000;
-const remaining = computed(() => maxLength - content.value.length);
+const remaining = computed(() => maxLength - commentText.value.length);
 const renderedContent = ref<string>('');
 const fileInput = ref<HTMLInputElement | null>(null);
 const imageTags = ref<string[]>([]);
-const imageUrls = ref<string[]>([]); 
+const photoUrls = ref<string[]>([]);
+
 
 // 更新内容并限制最大长度
-watch(content, (newContent) => {
+watch(commentText, (newContent) => {
   if (newContent.length > maxLength) {
-    content.value = newContent.slice(0, maxLength);
+    commentText.value = newContent.slice(0, maxLength);
   }
 });
-
-// 渲染的 Markdown 内容
+// 渲染的Markdown内容
 watchEffect(async () => {
-  const rawHTML = await marked(content.value);
-  renderedContent.value = dompurify.sanitize(rawHTML); 
+  const rawHTML = await marked(commentText.value);
+  renderedContent.value = dompurify.sanitize(rawHTML);
 });
-
-//图片输入
+// 图片输入
 const uploadImg = () => {
   fileInput.value?.click();
 };
 const handleFileSelect = (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
-  if (files && imageUrls.value.length < 3) {
-    Array.from(files).forEach(file => {
+  if (files && photoUrls.value.length < 3) {
+    Array.from(files).forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const url = e.target?.result as string;
-        imageUrls.value.push(url); // 保存图片的data URL
+        photoUrls.value.push(url); // 保存图片的data URL
         const imgMarkdown = `![${file.name}](${url})`;
         // 存储图片的Markdown格式
         imageTags.value.push(imgMarkdown);
@@ -45,24 +57,57 @@ const handleFileSelect = (event: Event) => {
     });
   }
 };
-//删除图片
+// 删除图片
 const deleteImage = (index: number) => {
   imageTags.value.splice(index, 1);
-  imageUrls.value.splice(index, 1);
+  photoUrls.value.splice(index, 1);
 };
 onMounted(() => {
   fileInput.value?.addEventListener('change', handleFileSelect);
 });
+onUnmounted(() => {
+  if (fileInput.value) {
+    fileInput.value.removeEventListener('change', handleFileSelect);
+  }
+});
 
-//表情选择器
+// 写一级评论
+const submitComment = async () => {
+  if (!commentText.value.trim()) {
+    console.log('评论内容不能为空');
+    return;
+  }
+  const dataToSend = {
+    postId: postId.value,
+    commentText: commentText.value,
+    photoUrls: photoUrls.value
+  };
+  console.log(dataToSend);
+  try {
+    await executeRequest({
+      url: '/comment/writePostComment',
+      method: 'post',
+      requestData: dataToSend,
+    });
+    console.log(data.value, error);
+    if (data.value && data.value.code == 200) {
+      console.log('评论成功');
+      commentText.value = '';
+      photoUrls.value = [];
+      imageTags.value = [];
+    }
+  } catch (err) {
+    console.error('评论失败', err instanceof Error ? err.message : String(err));
+  }
 
+}
 </script>
 
 <template>
     <div class="comment-form">
       <!-- 评论输入框 -->
       <textarea
-        v-model="content"
+        v-model="commentText"
         placeholder="请输入你的评论......"
         :maxlength="maxLength"
       ></textarea>
@@ -77,27 +122,29 @@ onMounted(() => {
         <div class="letter">
           <span class="remaining">还可输入{{ remaining }} 个字符</span>
         </div>
-        <div class="emoji"><Icon icon="lineicons:emoji-smile" class="emojiIcon"/></div>
+        <div class="icon-group">
+          <div class="emoji"><Icon icon="lineicons:emoji-smile" class="emojiIcon"/></div>
         <div class="image">
             <Icon icon="stash:image-plus" class="imageIcon" @click="uploadImg"/>
             <input ref="fileInput" type="file"  accept="image/*" hidden />
         </div>
-        <div class="code"><Icon icon="heroicons-outline:code" class="codeIcon"/></div>
+        <!-- <div class="code"><Icon icon="heroicons-outline:code" class="codeIcon"/></div> -->
         <!-- 提交按钮 -->
-        <button class="submit-btn">评论</button>
+        <button class="submit-btn" @click="submitComment">评论</button>
+        </div>
       </div>
     </div>
-    <!-- <div class="rendered-comment" v-html="renderedContent"></div> -->
 </template>
   
   <style scoped lang="scss">
+  $whiteColor: white;
   .comment-form {
-    border: 1px solid #e2eaf4;
+    border: 1px solid var(--border);
     border-radius: 10px;
     width: 100%;
     max-width: 650px;
-    margin: 20px auto;
     border-radius: 5px;
+    margin-bottom: 5px;
     textarea {
        width: 95%;
        height: 54px;
@@ -105,9 +152,10 @@ onMounted(() => {
        outline: none;
        margin-left: 2.5%;
        margin-top: 5px;
-       border-bottom: 1px solid #e2eaf4;
+       border-bottom: 1px solid var(--border);
        padding: 14px;
        font-size: 16px;
+       background-color: #fafafa;
        color: rgb(83, 82, 82);
     }
     .image-preview {
@@ -135,7 +183,7 @@ onMounted(() => {
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: white;
+        background-color: $whiteColor;
         border-radius: 10px;
         display: none;
         cursor: pointer;
@@ -147,32 +195,38 @@ onMounted(() => {
     .image-tag:hover .delete-btn {
         display:flex;
     }
+    
     .action-bar {
        display: flex;
+       justify-content: space-between;
+       .icon-group{
+          display: flex;
+          margin-right: 10px;
+        }
        .letter{
-           width:126px ;
+           justify-content: flex-start;
            font-size: 13px;
-           color: gray;
+           color: var(--secondary-foreground);
            margin-top: 5px;
-           margin-left: 29px;
+           margin-left: 25px;
        }
        .emojiIcon{
-           color: #7a7979;
+           color: var(--secondary-foreground);
            font-size: 25px;
            cursor: pointer;
            margin-right: 10px;
-           margin-left: 280px;
+          //  margin-left: 280px;
            margin-top: 3px;
        }
        .codeIcon{
-           color: #7a7979;
+           color: var(--secondary-foreground);
            font-size: 24px;
            cursor: pointer;
            margin-top: 3px;
            margin-right: 20px;
        }
        .imageIcon{
-           color: #7a7979;
+           color: var(--secondary-foreground);
            font-size: 26px;
            cursor: pointer;
            margin-top: 2px;
@@ -182,7 +236,7 @@ onMounted(() => {
            width: 70px;
            height: 30px;
            background-color: #5dbee8;
-           color: white;
+           color: $whiteColor;
            border: none;
            font-size: 14px;
            border-radius:15px;
@@ -196,5 +250,4 @@ onMounted(() => {
     }
 
 }
-
   </style>
