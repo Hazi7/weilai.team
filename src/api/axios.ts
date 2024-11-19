@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig, type AxiosResponse } from 'axios';
-import { useLocalStorageWithExpire } from "../composables/uselocalstorage";
-const {setLocalStorageWithExpire,getLocalStorageWithExpire}=useLocalStorageWithExpire()
+// import { useLocalStorageWithExpire } from "../composables/uselocalstorage";
+// const {setLocalStorageWithExpire,getLocalStorageWithExpire}=useLocalStorageWithExpire()
 const apiClient: AxiosInstance = axios.create({
   baseURL:"http://49.232.183.67:8087",
   timeout: 10000,
@@ -13,9 +13,11 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // 添加 token
-    const token = getLocalStorageWithExpire('token');
+    // const token = getLocalStorageWithExpire('token');
+    const token = localStorage.getItem('token');
     if (token && config.headers) {
-      setLocalStorageWithExpire('token',token,1800000)
+      // setLocalStorageWithExpire('token',token,1800000)
+      localStorage.setItem('token',token)
       config.headers.token = token;
     }
     return config;

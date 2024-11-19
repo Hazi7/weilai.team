@@ -1,10 +1,33 @@
 <script setup lang="ts">
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@/components/ui/command";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -17,22 +40,6 @@ import {
   SidebarMenuSubItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import { Bot, ChevronRight, SquareTerminal } from "lucide-vue-next";
-
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -42,9 +49,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
-import { MoreHorizontal } from "lucide-vue-next";
-
 import { Icon } from "@iconify/vue";
+import {
+  Bot,
+  ChevronRight,
+  MoreHorizontal,
+  SquareTerminal,
+} from "lucide-vue-next";
+import { ref } from "vue";
 const navMain = [
   {
     title: "2024未来软件工作室",
@@ -86,6 +98,23 @@ const navMain = [
     ],
   },
 ];
+const isVisible = ref(false);
+interface Item {
+  name: string;
+  description: string;
+}
+const onInputFocus = () => {
+  isVisible.value = true;
+};
+
+const onInputBlur = () => {
+  isVisible.value = false;
+};
+
+const items: Item[] = [
+  { name: "Item 1", description: "This is item 1" },
+  { name: "Item 1", description: "This is item 1" },
+];
 </script>
 
 <template>
@@ -99,7 +128,7 @@ const navMain = [
           style="padding: 15px; width: 20rem"
         >
           <div id="search">
-            <div class="search">
+            <!-- <div class="search">
               <span class="search-icon"
                 ><Icon
                   icon="bitcoin-icons:search-filled"
@@ -108,7 +137,38 @@ const navMain = [
                 />
               </span>
               <input type="text" placeholder="搜索" />
-            </div>
+            </div> -->
+            <Command class="command_box">
+              <CommandInput
+                placeholder="请输入关键词"
+                class="search_input"
+                ref="inputRef"
+                @keydown.enter="
+                  () => {
+                    console.log('enter');
+                  }
+                "
+                @focus="onInputFocus"
+                @blur="onInputBlur"
+              />
+
+              <CommandList
+                class="search_list"
+                v-show="items.length && isVisible"
+              >
+                <CommandEmpty>未找到搜索结果</CommandEmpty>
+                <CommandGroup heading="" class="p-0">
+                  <CommandItem
+                    :value="item.description"
+                    v-for="item in items"
+                    class="search_item"
+                  >
+                    <span>{{ item.name }}</span>
+                  </CommandItem>
+                </CommandGroup>
+                <CommandSeparator />
+              </CommandList>
+            </Command>
           </div>
           <div class="sidebar-link">
             <RouterLink to="">
@@ -224,7 +284,7 @@ const navMain = [
         </div>
         <hr />
         <TabsContent value="all" class="tc">
-          <Card>
+          <Card class="border-none shadow-none">
             <CardHeader>
               <div class="header-link">
                 <button>
@@ -429,10 +489,34 @@ th {
   color: var(--secondary-foreground);
 }
 #search {
-  height: 50px;
+  border-radius: 10px;
+  height: 45px;
   margin-bottom: 10px;
+  border: 1px solid #d0d9e4;
+
   .search {
     position: relative;
+    &_input {
+      border-style: none !important;
+    }
+    &_list {
+      box-shadow:
+        0px 2px 5px rgba(0, 0, 0, 0.1),
+        inset 0px 0.2px 0.5px rgba(0, 0, 0, 0.24);
+      border: 1px solid var(--secondary-border);
+      position: absolute;
+      top: 60px;
+      padding: 5px 0;
+      border-radius: 2px;
+      width: 280px;
+      z-index: 5;
+      background-color: white;
+    }
+    &_item {
+      &:hover {
+        background-color: #f8f8fa;
+      }
+    }
   }
   input {
     width: 100%;
@@ -447,6 +531,17 @@ th {
     top: 50%;
     left: 2%;
     transform: translateY(-50%);
+  }
+
+  .command_box {
+    background-color: white;
+
+    position: relative;
+    overflow: visible;
+    width: 250px;
+    float: right;
+    height: 45px;
+    border-radius: 25px;
   }
 }
 
