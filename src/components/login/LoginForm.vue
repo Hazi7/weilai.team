@@ -10,9 +10,7 @@ import { reactive, ref } from 'vue'
 
 const account = ref('')
 const password = ref('')
-
 const { data, error, loading, getLogin } = UseLogin()
-
 </script>
 
 <template>
