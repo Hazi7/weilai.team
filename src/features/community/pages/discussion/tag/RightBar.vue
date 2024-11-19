@@ -1,7 +1,23 @@
 <script setup lang="ts">
 import 'iconify-icon';
+import CommunityTag from '@/features/community/composables/CommunityTag';
+import { reactive } from 'vue';
 
-const tagList = ['java', 'python', 'c++', 'c', 'javascript', 'php', 'ruby',]
+interface TagLists {
+    value: string,
+    id: string
+}
+const tagLists: TagLists[] = reactive([])
+const { hotTagList, getHotTagList } = CommunityTag()
+getHotTagList().then(res => {
+    const tagList = hotTagList.value
+    tagList.forEach((value,item) => {
+        tagLists.push({value:value,id:item})
+    })
+    // tagList.value = hotTagList.value
+    // console.log(tagList.value);
+})
+// tagList = ['java', 'python', 'c++', 'c', 'javascript', 'php', 'ruby', '前端', 'go', 'html', 'css', 'TS']
 </script>
 
 <template>
@@ -14,7 +30,7 @@ const tagList = ['java', 'python', 'c++', 'c', 'javascript', 'php', 'ruby',]
             <iconify-icon icon="icon-park-outline:right" class="moreTag"></iconify-icon>
         </div>
         <div class="hotTagList">
-            <span class="tag" v-for="(tag, index) in tagList" :key="index">#{{ tag }}</span>
+            <span class="tag" v-for="(tag, index) in tagLists" :key="index">#{{ tag.value }}</span>
         </div>
     </div>
 </template>
@@ -22,7 +38,9 @@ const tagList = ['java', 'python', 'c++', 'c', 'javascript', 'php', 'ruby',]
 <style scoped lang="scss">
 .rightBarTag {
     margin-top: 100px;
-    border: 1px solid #999;
+    border: 2px solid #ffffff;
+    max-height: 168px;
+    overflow: hidden;
 
     .rightTagHead {
         width: 100%;
@@ -53,16 +71,42 @@ const tagList = ['java', 'python', 'c++', 'c', 'javascript', 'php', 'ruby',]
     .hotTagList {
         display: flex;
         flex-wrap: wrap;
-        padding: 20px 10px;
+        padding: 10px;
+        // max-height: 155px;
+        // overflow: hidden;
 
         .tag {
             color: #747272;
             font-size: 12px;
             padding: 0px 20px;
-            margin: 5px 5px;
+            margin: 8px 5px;
             // border: 1px solid #88a6dd;
             background-color: #e7f3f9;
             border-radius: 25px;
+        }
+
+        .tag:nth-child(n) {
+            background-color: #e7f3f9;
+        }
+
+        .tag:nth-child(2n) {
+            background-color: #f7e7f9;
+        }
+
+        .tag:nth-child(3n) {
+            background-color: #e7f9e7;
+        }
+
+        .tag:nth-child(4n) {
+            background-color: #f8f9e7;
+        }
+
+        .tag:nth-child(5n) {
+            background-color: #e8e7f9;
+        }
+
+        .tag:nth-child(6n) {
+            background-color: #f7e3dc;
         }
     }
 }
