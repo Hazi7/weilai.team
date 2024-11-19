@@ -41,7 +41,7 @@ export function useRequest<T = unknown>(): UseRequestResult<T> {
                 ...(method !== "get" ? { data: requestData } : {}),
             });
 
-            data.value = response.data; // 注意，Axios 的响应数据通常在 `response.data` 中
+            data.value = response;
         } catch (err) {
             error.value = err instanceof Error ? err : new Error(String(err));
         } finally {

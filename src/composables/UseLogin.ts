@@ -6,7 +6,7 @@ import { useRequest } from '@/composables/useRequest';
 
 export default function () {
     const router = useRouter();
-    const { data, error, loading, executeRequest } = useRequest<User>();
+    const { data, error, loading, executeRequest } = useRequest();
 
     async function getLogin(account, password) {
         // if (account || password){
