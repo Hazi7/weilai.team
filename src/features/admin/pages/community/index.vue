@@ -25,6 +25,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { MoreHorizontal } from "lucide-vue-next";
 
 import { Icon } from "@iconify/vue";
@@ -109,22 +115,38 @@ const navMain = [
                     <TableHead class="hidden md:table-cell" id="th"
                       >文章标题</TableHead
                     >
+                    <TableHead class="hidden md:table-cell"> 作者 </TableHead>
                     <TableHead class="hidden md:table-cell">发布时间</TableHead>
                     <TableHead class="hidden md:table-cell">
                       所属分类
                     </TableHead>
                     <TableHead class="hidden md:table-cell"> 状态 </TableHead>
-                    <TableHead class="hidden md:table-cell"> 学号 </TableHead>
+
                     <TableHead class="hidden md:table-cell"> 操作 </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow class="group-leader">
+                  <TableRow>
                     <TableCell class="hidden sm:table-cell"
                       ><input type="checkbox" name="" id=""
                     /></TableCell>
-                    <TableCell class="font-medium"> 爆米奇 </TableCell>
-                    <TableCell> 一组 </TableCell>
+                    <TableCell class="font-medium table_title">
+                      如何解决跨域问题如何解决跨域问题如何解决跨域问题解决跨域问题
+                    </TableCell>
+                    <TableCell class="table_writer">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger class="tooltip_trigger"
+                            >爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇</TooltipTrigger
+                          >
+                          <TooltipContent class="bg-white">
+                            <p>
+                              爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableCell>
                     <TableCell class="hidden md:table-cell"> 2023级 </TableCell>
                     <TableCell class="hidden md:table-cell">
                       计科235
@@ -344,6 +366,25 @@ th {
   span {
     display: inline-block;
     margin: 0 8px;
+  }
+}
+.table {
+  &_title {
+    max-width: 250px;
+  }
+  &_writer {
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+.tooltip {
+  &_trigger {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 150px;
   }
 }
 </style>

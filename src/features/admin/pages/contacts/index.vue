@@ -350,8 +350,7 @@ const items: Item[] = [
                             <span class="sr-only">Toggle menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuContent class="bg-white">
                           <DropdownMenuItem>Edit</DropdownMenuItem>
                           <DropdownMenuItem>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
@@ -385,7 +384,7 @@ const items: Item[] = [
                             <span class="sr-only">Toggle menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent>
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem>Edit</DropdownMenuItem>
                           <DropdownMenuItem>Delete</DropdownMenuItem>
@@ -587,5 +586,9 @@ th {
     display: inline-block;
     margin: 0 8px;
   }
+}
+
+.dropdown_menu_content {
+  background-color: white;
 }
 </style>
