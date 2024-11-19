@@ -164,7 +164,7 @@ interface SubItemInterface {
             >
               <SidebarMenuButton class="sidebar__button">
                 <RouterLink
-                  :to="`/personalCenter/userInfo`"
+                  :to="`/personalCenter/userInfo/myPosts`"
                   active-class="sidebar__link--active"
                   class="sidebar__link mb-1 "
                 >
@@ -217,7 +217,7 @@ interface SubItemInterface {
               class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
               side="bottom"
               :side-offset="4"
-            ><router-link to="/personalCenter/userInfo">
+            ><router-link to="/personalCenter/userInfo/myPosts">
               <DropdownMenuItem class="drop-menu-item">
                 <BadgeCheck />
                个人资料
