@@ -14,7 +14,6 @@ import ArticleList from "@/components/community/ArticleList.vue";
   position: relative;
 }
 .details {
-  margin-top: 80px;
   width: 350px;
   position: fixed;
   margin-left: 0px;

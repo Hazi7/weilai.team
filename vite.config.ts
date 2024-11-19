@@ -6,47 +6,55 @@ import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-    plugins: [
-        VueRouter({
-            routesFolder: [
-                "src/pages",
-                {
-                    src: "src/features/admin/pages",
-                    path: "admin/",
-                },
-                {
-                    src: "src/features/community/pages",
-                    path: "community/",
-                },
-                {
-                    src: "src/features/personalCenter/pages",
-                    path: "personalCenter/",
-                },
-                {
-                    src: "src/features/login/pages",
-                    path: "login/",
-                },
-                {
-                    src: "src/features/application/pages",
-                    path: "application/",
-                },
-            ],
-        }),
-        Vue(),
-    ],
-    css: {
-        postcss: {
-            plugins: [tailwind(), autoprefixer()],
+  plugins: [
+    VueRouter({
+      routesFolder: [
+        "src/pages",
+        {
+          src: "src/features/admin/pages",
+          path: "admin/",
         },
-        preprocessorOptions: {
-            scss: {
-                api: "modern-compiler",
-            },
+        {
+          src: "src/features/community/pages",
+          path: "community/",
         },
+        {
+          src: "src/features/personalCenter/pages",
+          path: "personalCenter/",
+        },
+        {
+          src: "src/features/login/pages",
+          path: "login/",
+        },
+        {
+          src: "src/features/application/pages",
+          path: "application/",
+        },
+        {
+          src: "src/features/message/pages",
+          path: "message/",
+        },
+      ],
+    }),
+    Vue(),
+  ],
+  css: {
+    postcss: {
+      plugins: [tailwind(), autoprefixer()],
     },
-    resolve: {
-        alias: {
-            "@": resolve(__dirname, "./src"),
-        },
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler",
+      },
     },
+  },
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "./src"),
+      "@admin": resolve(__dirname, "./src/features/admin"),
+      "@community": resolve(__dirname, "./src/features/community"),
+      "@personalCenter": resolve(__dirname, "./src/features/personalCenter"),
+      "@login": resolve(__dirname, "./src/features/login"),
+    },
+  },
 });
