@@ -12,7 +12,7 @@ import {
 
 import { ref , defineProps,defineEmits, computed} from 'vue';
 
-
+import { Icon } from '@iconify/vue'
 
 
 type ItemObj= {
@@ -52,7 +52,9 @@ const filter_condition = (e:Event) => {
     <div class="filter-condition">
         <DropdownMenu v-for="i in itemsObjArr " :key="i.id">
             <DropdownMenuTrigger>
-                {{ i.title }}
+               <div class="filter-title">
+                {{ i.title }} <Icon icon="pepicons-pencil:triangle-down" />
+               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuLabel>{{ i.label }}</DropdownMenuLabel>
@@ -76,5 +78,18 @@ const filter_condition = (e:Event) => {
     </div>
 </template>
 <style lang="scss" scoped>
-
+@use '@/assets/styles';
+$undertone: #647499;
+.filter-title{
+    width: 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+    border-radius: var(--radius);
+    padding: 10px;
+    border: 1px dashed var(--border);
+    font-size: 0.8em;
+    margin-right: 10px;
+}
 </style>
