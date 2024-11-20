@@ -278,7 +278,6 @@ const headers = ref([
     width: 100%;
     background-color:var(--background);
     position: relative;
-    top: 60px;
 }
 
 .filter-items{
