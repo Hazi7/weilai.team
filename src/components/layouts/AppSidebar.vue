@@ -14,11 +14,6 @@ import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
 import { Icon } from "@iconify/vue";
-import { watch } from "vue";
-import { RouterLink, useRoute } from "vue-router";
-import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
-import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
-
 import {
   BadgeCheck,
   Bell,
@@ -26,7 +21,13 @@ import {
   CreditCard,
   LogOut,
 } from "lucide-vue-next";
+import { watch } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
+import Button from "../ui/button/Button.vue";
+import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
+import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 const route = useRoute();
+const router=useRouter()
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
 console.log(route.meta);
 watch(
@@ -47,16 +48,19 @@ const items = [
     title: "首页",
     url: "",
     icon: "bitcoin-icons:home-outline",
+    redirect:""
   },
   {
     title: "社区",
     url: "community/",
     icon: "fluent:people-community-20-regular",
+    redirect:"community/comprehensive"
   },
   {
     title: "控制台",
     url: "admin/",
     icon: "lsicon:control-outline",
+      redirect:"admin/profile"
   },
 ];
 
@@ -95,13 +99,13 @@ interface SubItemInterface {
   
   <div class="frame">
     <div class="sidebar">
-      <SidebarProvider>
-        <Sidebar class="sidebar">
-    <SidebarHeader
+      <SidebarProvider id="sidebar-provider">
+        <Sidebar id="sidebar" class="sidebar">
+    <SidebarHeader id="sidebar-header"
       ><div class="sidebar-logo">
         <img src="../../../public/logo.png" alt="" /></div
     ></SidebarHeader>
-    <SidebarContent >
+    <SidebarContent id="sidebar-content">
       <!-- 一级导航 -->
       <SidebarGroup>
         <SidebarGroupContent>
@@ -116,6 +120,7 @@ interface SubItemInterface {
                   :to="`/${item.url}`"
                   active-class="sidebar__link--active"
                   class="sidebar__link"
+                  @click.prevent="() => {router.push(`/${item.redirect}`)}"
                 >
                   <Icon :icon="`${item.icon}`" />&nbsp;
                   <span>{{ item.title }}</span>
@@ -125,9 +130,9 @@ interface SubItemInterface {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
-      <hr />
+  
       <!-- 二级导航 -->
-      <SidebarGroup>
+      <SidebarGroup  id="sub-nav" v-show="subNavItems?.length" >
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem
@@ -143,6 +148,38 @@ interface SubItemInterface {
                 >
                   <Icon :icon="`${item.icon}`" />&nbsp;
                   <span>{{ item.title }}</span>
+                </RouterLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    
+      <SidebarGroup>
+        <SidebarGroupContent>
+          <SidebarMenu>
+            <SidebarMenuItem
+          
+              class="sidebar__item"
+            >
+              <SidebarMenuButton class="sidebar__button">
+                <RouterLink
+                  :to="`/personalCenter/userInfo/myPosts`"
+                  active-class="sidebar__link--active"
+                  class="sidebar__link mb-1 "
+                >
+                  <Icon icon="bi:person" />&nbsp;
+                  <span>个人资料</span>
+                </RouterLink>
+              </SidebarMenuButton>
+              <SidebarMenuButton class="sidebar__button">
+                <RouterLink
+                  :to="`/message/all`"
+                  active-class="sidebar__link--active"
+                  class="sidebar__link"
+                >
+                  <Icon icon="mage:box-3d-notification" />&nbsp;
+                  <span>消息</span>
                 </RouterLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -180,7 +217,7 @@ interface SubItemInterface {
               class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
               side="bottom"
               :side-offset="4"
-            ><router-link to="/personalCenter/userInfo">
+            ><router-link to="/personalCenter/userInfo/myPosts">
               <DropdownMenuItem class="drop-menu-item">
                 <BadgeCheck />
                个人资料
@@ -210,22 +247,44 @@ interface SubItemInterface {
     </div>
     
   </div>
+  <div class="main-menu">
+    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
+    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
+    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
+    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
+  
+    
+  </div>
 </template>
 
 <style lang="scss" scoped>
+.main-menu{
+  display: none;
+}
+
 .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
 }
 .frame {
+color :var(--secondary-foreground);
+  #sub-nav{
+    // padding: 0;
+   border-top: 1px solid #e5e7eb; 
+   border-bottom: 1px solid #e5e7eb;
+  }
+  top: 0;
   background-color: #fafafa;
   display: flex;
+  #sidebar {
+    background-color: white;
+  }
 }
 .sidebar {
- 
   background-color: white;
 }
+
 .drop-menu-item {
   background-color: white ;
   width: 105%;
@@ -252,10 +311,8 @@ interface SubItemInterface {
     font-size: 16px;
   }
 }
-
-
 .sidebar {
-  height: 100vh;
+  
   background-color: white;
   &__button {
     padding: 0;
@@ -307,9 +364,42 @@ interface SubItemInterface {
     }
   }
 }
+.main-menu{
+  
+}
 
 @media screen and (max-width: 768px) {
-  
-  
+  .main-menu{
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  height: 50px;
+  background-color: white
+}
+  .frame{
+    display: none;
+    position: fixed;
+    bottom: 0;
+    height: 100px;
+    overflow: hidden;
+    #sidebar{
+      position: fixed;
+      top: 90%;
+      bottom: 0;
+     max-height:100px;
+      &-header{
+        display: none;
+      }
+      #sub-nav{
+        display: none;
+      }
+      &-content{
+        max-height: 100px;
+      }
+    }
+    
+  }
 }
 </style>

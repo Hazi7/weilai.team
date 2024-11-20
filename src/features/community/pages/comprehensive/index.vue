@@ -3,7 +3,8 @@
     <div class="content">
       <!-- 放搜索框的位置 -->
       <div id="search">
-        <div class="search">
+        <Search />
+        <!-- <div class="search">
           <span class="search-icon"
             ><Icon
               icon="bitcoin-icons:search-filled"
@@ -12,8 +13,9 @@
             />
           </span>
           <input type="text" placeholder="搜索" />
-        </div>
+        </div> -->
       </div>
+
       <!-- 放内容 -->
       <div id="news">
         <div class="news-item">
@@ -191,13 +193,17 @@
           </div>
         </div>
       </div>
+      <div class="bg">
+        <div class="bg-top"></div>
+      </div>
     </div>
     <Rightbar />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue";
+// import { Icon } from "@iconify/vue";
+import Search from "@/features/community/components/Search.vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
 </script>
 
@@ -206,14 +212,13 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
   padding: 0 100px;
   width: 100%;
   height: auto;
-  margin-top: 80px;
+
   #search {
-    height: 50px;
     margin-bottom: 10px;
+    height: 45px;
     .search {
       float: right;
       position: relative;
-      z-index: 0;
     }
     input {
       width: 200px;
@@ -304,9 +309,22 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
 @media screen and (max-width: 768px) {
   .content {
     padding: 0 0;
+    .bg {
+      position: fixed;
+      top: 0;
+      z-index: 0;
+      width: 100%;
+      height: 20%;
+      background-color: #fafafa;
+      &-top {
+        background-image: linear-gradient(#dfe9f3, #ffffff00 100%);
+        height: 30%;
+      }
+    }
   }
 
   #news {
+    margin-top: 180px;
     .news-item {
       padding: 5px;
       margin-bottom: 8px;
@@ -329,6 +347,9 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
       }
       .news-content {
         padding: 10px 55px;
+        .news-title {
+          font-weight: 540;
+        }
         .news-details {
           font-size: 14.5px;
           color: #a7a7a7;
@@ -371,6 +392,12 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
     }
   }
   #search {
+    position: fixed;
+    z-index: 5;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
     .search {
       width: 100%;
       input {
