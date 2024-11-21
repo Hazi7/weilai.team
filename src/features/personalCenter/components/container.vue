@@ -15,6 +15,6 @@ import navBox from './navBox.vue';
 <style lang="scss" scoped>
 .container {
     width: 100%;
-    padding: 0 100px;
+    padding: 0px 100px 10px 100px;
 }
 </style>
