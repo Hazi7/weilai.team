@@ -39,6 +39,22 @@ const stuInform = reactive({
     code: '',
     file: File
 })
+
+function handleFileChange(event: any) {
+    const file = event.target.files[0]
+    if(file){
+        convertToBinary(file)
+    }
+}
+
+function convertToBinary (file: File){
+    const reader = new FileReader()
+    reader.onload = (e) => {
+        const binaryData = e.target?.result
+        stuInform.file = new Blob([binaryData])
+    }
+    reader.readAsArrayBuffer(file)
+}
 </script>
 
 <template>
@@ -63,7 +79,7 @@ const stuInform = reactive({
                             <Label for="last-name">班级</Label>
                             <Select v-model="stuInform.clazz">
                                 <SelectTrigger id=" category" aria-label="Select category">
-                                <SelectValue placeholder="请选择班级" />
+                                    <SelectValue placeholder="请选择班级" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem v-for="framework in frameworks" :key="framework.index"
@@ -112,7 +128,7 @@ const stuInform = reactive({
                         <div class="grid w-full max-w-sm items-center gap-1.5">
                             <Label for="tabular">报名表</Label>
                             <Input id="picture" type="file" accept=".doc,.docx" multiple
-                                @change="stuInform.file = $event.target.files[0]" />
+                            @change="handleFileChange" />
                         </div>
                         <!-- <input type="file" accept=".doc,.docx" multiple></input> -->
                     </div>

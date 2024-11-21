@@ -48,6 +48,8 @@ declare module 'vue-router/auto-routes' {
     '/community/discussion/': RouteRecordInfo<'/community/discussion/', '/community/discussion', Record<never, never>, Record<never, never>>,
     '/community/discussion/label': RouteRecordInfo<'/community/discussion/label', '/community/discussion/label', Record<never, never>, Record<never, never>>,
     '/community/discussion/latest': RouteRecordInfo<'/community/discussion/latest', '/community/discussion/latest', Record<never, never>, Record<never, never>>,
+    '/community/discussion/tag/': RouteRecordInfo<'/community/discussion/tag/', '/community/discussion/tag', Record<never, never>, Record<never, never>>,
+    '/community/discussion/tag/RightBar': RouteRecordInfo<'/community/discussion/tag/RightBar', '/community/discussion/tag/RightBar', Record<never, never>, Record<never, never>>,
     '/community/discussion/user': RouteRecordInfo<'/community/discussion/user', '/community/discussion/user', Record<never, never>, Record<never, never>>,
     '/community/notice': RouteRecordInfo<'/community/notice', '/community/notice', Record<never, never>, Record<never, never>>,
     '/community/notice/': RouteRecordInfo<'/community/notice/', '/community/notice', Record<never, never>, Record<never, never>>,
@@ -57,5 +59,13 @@ declare module 'vue-router/auto-routes' {
     '/message/all/': RouteRecordInfo<'/message/all/', '/message/all', Record<never, never>, Record<never, never>>,
     '/personalCenter': RouteRecordInfo<'/personalCenter', '/personalCenter', Record<never, never>, Record<never, never>>,
     '/personalCenter/userInfo': RouteRecordInfo<'/personalCenter/userInfo', '/personalCenter/userInfo', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myCollections': RouteRecordInfo<'/personalCenter/userInfo/myCollections', '/personalCenter/userInfo/myCollections', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myCollections/': RouteRecordInfo<'/personalCenter/userInfo/myCollections/', '/personalCenter/userInfo/myCollections', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myGrades': RouteRecordInfo<'/personalCenter/userInfo/myGrades', '/personalCenter/userInfo/myGrades', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myGrades/': RouteRecordInfo<'/personalCenter/userInfo/myGrades/', '/personalCenter/userInfo/myGrades', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myPosts': RouteRecordInfo<'/personalCenter/userInfo/myPosts', '/personalCenter/userInfo/myPosts', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/myPosts/': RouteRecordInfo<'/personalCenter/userInfo/myPosts/', '/personalCenter/userInfo/myPosts', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/mySchedule': RouteRecordInfo<'/personalCenter/userInfo/mySchedule', '/personalCenter/userInfo/mySchedule', Record<never, never>, Record<never, never>>,
+    '/personalCenter/userInfo/mySchedule/': RouteRecordInfo<'/personalCenter/userInfo/mySchedule/', '/personalCenter/userInfo/mySchedule', Record<never, never>, Record<never, never>>,
   }
 }

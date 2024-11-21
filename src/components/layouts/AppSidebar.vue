@@ -22,11 +22,12 @@ import {
   LogOut,
 } from "lucide-vue-next";
 import { watch } from "vue";
-import { RouterLink, useRoute } from "vue-router";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 const route = useRoute();
+const router=useRouter()
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
 console.log(route.meta);
 watch(
@@ -47,16 +48,19 @@ const items = [
     title: "首页",
     url: "",
     icon: "bitcoin-icons:home-outline",
+    redirect:""
   },
   {
     title: "社区",
     url: "community/",
     icon: "fluent:people-community-20-regular",
+    redirect:"community/comprehensive"
   },
   {
     title: "控制台",
     url: "admin/",
     icon: "lsicon:control-outline",
+      redirect:"admin/profile"
   },
 ];
 
@@ -116,6 +120,7 @@ interface SubItemInterface {
                   :to="`/${item.url}`"
                   active-class="sidebar__link--active"
                   class="sidebar__link"
+                  @click.prevent="() => {router.push(`/${item.redirect}`)}"
                 >
                   <Icon :icon="`${item.icon}`" />&nbsp;
                   <span>{{ item.title }}</span>
@@ -125,9 +130,9 @@ interface SubItemInterface {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
-      <hr />
+  
       <!-- 二级导航 -->
-      <SidebarGroup  id="sub-nav">
+      <SidebarGroup  id="sub-nav" v-show="subNavItems?.length" >
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem
@@ -149,7 +154,7 @@ interface SubItemInterface {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
-      <hr />
+    
       <SidebarGroup>
         <SidebarGroupContent>
           <SidebarMenu>
@@ -159,9 +164,9 @@ interface SubItemInterface {
             >
               <SidebarMenuButton class="sidebar__button">
                 <RouterLink
-                  :to="`/personalCenter/userInfo`"
+                  :to="`/personalCenter/userInfo/myPosts`"
                   active-class="sidebar__link--active"
-                  class="sidebar__link"
+                  class="sidebar__link mb-1 "
                 >
                   <Icon icon="bi:person" />&nbsp;
                   <span>个人资料</span>
@@ -169,7 +174,7 @@ interface SubItemInterface {
               </SidebarMenuButton>
               <SidebarMenuButton class="sidebar__button">
                 <RouterLink
-                  :to="`/message`"
+                  :to="`/message/all`"
                   active-class="sidebar__link--active"
                   class="sidebar__link"
                 >
@@ -212,7 +217,7 @@ interface SubItemInterface {
               class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
               side="bottom"
               :side-offset="4"
-            ><router-link to="/personalCenter/userInfo">
+            ><router-link to="/personalCenter/userInfo/myPosts">
               <DropdownMenuItem class="drop-menu-item">
                 <BadgeCheck />
                个人资料
@@ -264,9 +269,11 @@ interface SubItemInterface {
 }
 .frame {
 color :var(--secondary-foreground);
-  // #sub-nav{
-  //   padding: 0;
-  // }
+  #sub-nav{
+    // padding: 0;
+   border-top: 1px solid #e5e7eb; 
+   border-bottom: 1px solid #e5e7eb;
+  }
   top: 0;
   background-color: #fafafa;
   display: flex;

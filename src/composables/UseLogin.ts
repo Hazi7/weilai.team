@@ -2,20 +2,23 @@ import axios from 'axios'
 import { useRouter } from 'vue-router';
 import { reactive } from 'vue'
 import { useRequest } from '@/composables/useRequest';
+import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 
-
+const { setLocalStorageWithExpire, getLocalStorageWithExpire } = useLocalStorageWithExpire();
 export default function () {
     const router = useRouter();
-    const { data, error, loading, executeRequest } = useRequest<User>();
+    const { data, error, loading, executeRequest } = useRequest();
 
     async function getLogin(account, password) {
         // if (account || password){
         //     alert()
         // }
-        await executeRequest({ url: `/index/login?account=${account}&password=${password}`, method: 'post', data: { account, password } })  // 在这里传入请求的 URL 和 method
+        await executeRequest({ url: `/index/login?account=${account}&password=${password}`, method: 'post', data: { account, password }, headers: { 'Content-Type': 'multipart/form-data' } })  // 在这里传入请求的 URL 和 method
         console.log(data.value);
         if (data.value.code == 1000) {
-            localStorage.setItem('token', data.value.data.token)
+            // localStorage.setItem('token', data.value.data.token)
+            setLocalStorageWithExpire('token', data.value.data.token, 1000 * 60 * 30);
+            setLocalStorageWithExpire('userId', data.value.data.userId, 1000 * 60 * 30);
             router.push('/');
             // window.location.href = '/';
         }

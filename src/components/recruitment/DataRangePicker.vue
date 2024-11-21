@@ -11,19 +11,39 @@ import {
   getLocalTimeZone,
 } from '@internationalized/date'
 import { CalendarIcon } from '@radix-icons/vue'
-import { type Ref, ref } from 'vue'
-
-const df = new DateFormatter('en-US', {
-  dateStyle: 'medium',
+import { type Ref, ref , watch } from 'vue'
+import { Icon } from '@iconify/vue'
+const df = new DateFormatter('zh-CN', {
+  dateStyle: 'short',
 })
 
+
+
+const emit = defineEmits(['updateDateRange'])
+
+
 const value = ref({
-  start: new CalendarDate(2022, 1, 20),
-  end: new CalendarDate(2022, 1, 20).add({ days: 20 }),
+  start: new CalendarDate(2023, 1, 20),
+  end: new CalendarDate(2023, 1, 20).add({ days: 7 }),
 }) as Ref<DateRange>
+
+watch(value, (newVal) => {
+  if (!newVal.start && !newVal.end) {
+   return;
+  }
+  emit('updateDateRange', newVal)
+})
+
+const resetCondition = () => {
+  value.value ={
+    start: undefined,
+    end: undefined
+  }
+}
 </script>
 
 <template>
+
   <Popover>
     <PopoverTrigger as-child>
       <Button
@@ -32,6 +52,7 @@ const value = ref({
           'w-[280px] justify-start text-left font-normal',
           !value && 'text-muted-foreground',
         )"
+         style="position: relative; "
       >
         <CalendarIcon class="mr-2 h-4 w-4" />
         <template v-if="value.start">
@@ -44,12 +65,19 @@ const value = ref({
           </template>
         </template>
         <template v-else>
-          Pick a date
+          请选择时间段
         </template>
+        <Icon icon="pepicons-pencil:triangle-down" style="position: absolute; right: 13%;"/>
+        <Icon icon="bitcoin-icons:cross-outline"   style="position: absolute; right: 6%;" @click="resetCondition"/>
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="w-auto p-0">
-      <RangeCalendar v-model="value" initial-focus :number-of-months="2" @update:start-value="(startDate) => value.start = startDate" />
+    <PopoverContent class="w-auto p-0" style=" background-color: white; color: black">
+      <RangeCalendar v-model="value" initial-focus :number-of-months="2"
+        @update:start-value="(startDate) => value.start = startDate"
+          locale="zh-CN">
+      </RangeCalendar>
     </PopoverContent>
   </Popover>
 </template>
+<style scoped>
+</style>
