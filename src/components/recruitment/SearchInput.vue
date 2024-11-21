@@ -1,16 +1,39 @@
 <script setup lang="ts">
 //vue3
-import { defineEmits } from 'vue';
+import { defineEmits,ref,watch } from 'vue';
 
 const emit = defineEmits(['input_src']);
+const inputRef = ref<HTMLInputElement | null>(null);
+const placeholderText = ref<string>('');
+const originalPlaceholder = ref<string>('');
 const input_src=(e:Event)=>{
     if(e){
         emit('input_src', (e.target as HTMLInputElement).value);
     }
     return;
 };
+// TODO: 这里有个bug
+const focusHandler = () => {
+    originalPlaceholder.value = placeholderText.value; // 保存原始的 placeholder
+    placeholderText.value = ''; // 清空 placeholder
+};
 
+const blurHandler = () => {
+    if (!inputRef.value?.value) {
+        placeholderText.value = originalPlaceholder.value; // 恢复原始的 placeholder
+    }
+};
 
+const props = defineProps({
+    message: {
+        type: String,
+        default: 'Search',
+    },
+});
+
+watch(() => props.message, (newMessage) => {
+    placeholderText.value = newMessage;
+}, { immediate: true });
 
 
 </script>
@@ -19,6 +42,9 @@ const input_src=(e:Event)=>{
         <form>
 	<label for="search">Search</label>
 	<input required="false" pattern=".*\S.*" type="search" class="input" id="search"
+ :placeholder="placeholderText"
+    @focus="blurHandler"
+    @blur="focusHandler"
     @input="input_src($event)"
     >
 	<span class="caret"></span>
@@ -28,8 +54,9 @@ const input_src=(e:Event)=>{
 <style scoped lang="scss">
 /* From Uiverse.io by Harsha2lucky */
 @use '@/assets/styles';
+$boderColor :#393e46;
 .input {
-  color: black;
+  color:$boderColor;
   font: 1em/1.5 Hind, sans-serif;
 }
 
@@ -97,7 +124,7 @@ label {
 }
 
 .caret {
-  background: black;
+  background:$boderColor;
   border-radius: 0 0 0.125em 0.125em;
   margin-bottom: -0.6em;
   width: 0.25em;

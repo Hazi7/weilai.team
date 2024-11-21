@@ -35,8 +35,6 @@ const items = ref([
     }
 ]);
 
-//切换组件的样式控制
-const isActive=ref(false);
 </script>
 
 <template>

@@ -29,7 +29,7 @@ function toggleActive(index: number) {
 
 <template>
     <Menubar class="border-b toggle-show p-3">
-        <MenubarMenu class="toggle-item" style="padding: 5px 0px;">
+        <MenubarMenu class="toggle-item" >
                 <MenubarTrigger
                 v-for="item  in items"
                 :key="item.index"
@@ -48,7 +48,7 @@ function toggleActive(index: number) {
 @use '@/assets/styles';
 
 $undertone: #647499;
-
+//TODO: 设置外层内边距 外层设置的行内弹性盒子
 .toggle-show {
     // width: 400px;
     display: flex;
