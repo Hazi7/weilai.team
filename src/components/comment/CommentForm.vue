@@ -99,15 +99,6 @@ const submitComment = async () => {
       console.log('评论失败', error.value);
    }
 }
-//获取一级评论
-async function getFirstComment() {
-  await executeRequest({
-    url: `/comment/getCommentOne?postId=${postId.value}`,
-    method: 'get',
-  });
-  console.log(data.value);
-}
-getFirstComment()
 </script>
 
 <template>
@@ -162,7 +153,6 @@ getFirstComment()
        border-bottom: 1px solid var(--border);
        padding: 14px;
        font-size: 16px;
-       background-color: #fafafa;
        color: rgb(83, 82, 82);
     }
     .image-preview {

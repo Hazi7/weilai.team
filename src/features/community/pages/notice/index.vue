@@ -27,11 +27,12 @@
           </div>
         </div>
         <div class="show">展开<Icon icon="cuida:caret-down-outline" class="arrowsIcon"/></div>
-      </div>
+      </div >
+      <div class="commentCon"><CommentList/></div>
     </div>
     <Rightbar/>
   </div>
-  <CommentList/>
+  
 </template>
 
 <script setup lang="ts">
@@ -42,16 +43,22 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
 
 <style scoped lang="scss">
 .content {
-  padding: 0 100px;
+  display: flex;
+  justify-content: center;
   width: 100%;
   height: auto;
-  margin-top: 100px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  .commentCon{
+    width: 730px;
+  }
 }
 .noticeItem {
   width: 730px;
   background-color: white;
   border-radius: 10px;
   padding: 15px;
+  margin-bottom: 15px;
   .userInfo{
     display: flex;
     padding-bottom: 10px;
