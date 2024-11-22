@@ -4,21 +4,21 @@
         <div class="bagdImg"><img src="@/assets/img/test.jpg"></div>
         <div class="myInfo">
             <Avatar style="width: 100px; height: 100px; margin-top: -50px; margin-right:20px; background-color: white;">
-                <AvatarImage :src="userInfo.headPortrait!='(暂无)' ? userInfo.headPortrait : '/logo.png'" alt="@radix-vue" />
+                <AvatarImage :src="userInfo.headPortrait ? userInfo.headPortrait : '/logo.png'" alt="@radix-vue" />
                 <AvatarFallback>头像</AvatarFallback>
             </Avatar>
             <div class="infoBox">
                 <p class="nameAndSex">
                     {{ userInfo.name }}
-                    <Icon style="display: inline-block;" v-if="userInfo.sex == '男'" icon="mdi:gender-male" />
-                    <Icon style="display: inline-block;" v-if="userInfo.sex == '女'" icon="ph:gender-female" />
+                    <Icon style="display: inline-block;" v-if="userInfo.sex == '男'" icon="fluent-emoji-flat:male-sign" />
+                    <Icon style="display: inline-block;" v-if="userInfo.sex == '女'" icon="fluent-emoji-flat:female-sign" />
                 </p>
                 <p class="job">{{userInfo.direction}}</p>
             </div>
         </div>
         <div class="signature">
             <p>
-                <Icon style="display: inline-block;" icon="fluent:document-signature-16-regular" /> 个性签名个性签名个性签名
+                <Icon style="display: inline-block;" icon="fluent:document-signature-16-regular" /> {{ userInfo.userDestination }}
             </p>
         </div>
 
@@ -65,7 +65,7 @@
 
             <p>
                 <Icon style="display: inline-block;" icon="mdi:calendar-outline" />
-                上次登录时间：<span>2020-01-01</span>
+                上次登录时间：<span>{{ formatDateToYYYYMMDD(userInfo.lastLoginTime) }}</span>
             </p>
 
         </div>
@@ -73,22 +73,28 @@
     </div>
 </template>
 <script lang="ts" setup>
+// 引入组件
 import { Icon } from '@iconify/vue';
 import {reactive, ref } from 'vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+
+// 引入hooks并调用
 import { useRequest } from '@/composables/useRequest';
 const { data, error, loading, executeRequest } = useRequest()
 import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire()
+import { useDateFormatter } from '@/composables/useDateFormatter'
+const { formatDateToYYYYMMDD } = useDateFormatter()
 
-//控制更多信息的显示于隐藏
+//控制更多信息的显示与隐藏
 let isShow = ref(false)
 function changeIsShow() {
     isShow.value = !isShow.value
 }
-
+// 获取userId
 const userId = getLocalStorageWithExpire('userId')
 
+// 定义userInfo储存用户信息
 let userInfo =reactive<UserInfo>({
     clazz: '',
     direction: '',
@@ -106,6 +112,7 @@ let userInfo =reactive<UserInfo>({
     studyId: ''
 })
 
+// 定义UserInfo接口
 interface UserInfo{
     clazz: string,
     direction: string,
@@ -122,12 +129,17 @@ interface UserInfo{
     sex: string,
     studyId: string
 }
+
+// 获取用户信息函数
 async function getUserInfo() {
     await executeRequest({ url: `/user/getUserInfoByUserId/${userId}` })
     if (data.value && data.value.code == 200) {
+        console.log(data.value.data);
+        
         Object.assign(userInfo, data.value.data);
     }
 }
+// 打开页面立刻调用一次函数
 getUserInfo()
 
 </script>

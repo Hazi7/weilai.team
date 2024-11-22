@@ -20,12 +20,12 @@
         </div>
         <div class="postsListBox">
             <ul>
-                <li v-for="item  in userPost" :key="item.id">
-                    <img src="@/assets/img/test.jpg" alt="文章封面">
+                <li v-for="item in userPost" :key="item.id">
                     <div class="postInfo">
                         <h1 class="postTitle">{{ item.title }}</h1>
+                        <p class="postDesc">{{ item.postAbstract }}</p>
                         <p class="postFooter">
-                            <span class="postTime">{{ formatDateToYYYYMMDD(item.putTime)}}</span>
+                            <span class="postTime">{{ formatDateToYYYYMMDD(item.putTime) }} 发布</span>
                             ·
                             <span class="likesNum">{{ item.postLikeCount }} 点赞</span>
                             ·
@@ -76,6 +76,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+//引入组件
 import { Icon } from '@iconify/vue';
 import {
     DropdownMenu,
@@ -96,42 +97,56 @@ import {
     PaginationNext,
     PaginationPrev,
 } from '@/components/ui/pagination'
+
+//引入ref
 import { ref } from 'vue'
+
+// 引入hooks并使用
 import { useRequest } from '@/composables/useRequest'
 const { data, error, loading, executeRequest } = useRequest()
 import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire()
-import {useDateFormatter} from '@/composables/useDateFormatter'
-const {formatDateToYYYYMMDD} = useDateFormatter()
+import { useDateFormatter } from '@/composables/useDateFormatter'
+const { formatDateToYYYYMMDD } = useDateFormatter()
 
-
+// 获取userId
 const userId = getLocalStorageWithExpire('userId')
+
+//定义userPostAllInfo，储存当前用户的文章数据
 let userPostAllInfo = ref({
     allCollectCount: 0,
     allCommentCount: 0,
     allLikeCount: 0,
     allPostCount: 0,
 })
-//定义
+
+//定义页码信息
 let pages = 0;
 let currentPage = 1;
-let userPost= ref([]);
+
+//定义userPost，储存当前页的文章数据
+let userPost = ref([]);
+
+//页码切换
 function handlePageChange(newPage: number) {
     currentPage = newPage;
     getPosts()
 }
 
+//获取文章函数
 async function getPosts() {
     await executeRequest({ url: `/user/getUserPost?userId=${userId}&pageNumber=${currentPage}&pageSize=5` })
-    console.log(data.value);
     if (data.value && data.value.code == 200) {
         let postData = data.value.data
+        // 将数据赋值给userPostAllInfo及userPost、pages
         Object.assign(userPostAllInfo.value, postData.userPostAllInfo);
-        userPost.value=postData.userPost
+        userPost.value = postData.userPost
         pages = postData.pageInfo.pages
     }
 }
+//打开页面立刻调用一次获取文章
 getPosts()
+
 </script>
 <style lang="scss" scoped>
 .operationsBtn {
@@ -171,7 +186,7 @@ getPosts()
         ul {
             li {
                 margin-top: 20px;
-                height: 100px;
+                height: 130px;
                 display: flex;
                 border-radius: 10px;
                 background-color: white;
@@ -179,27 +194,31 @@ getPosts()
                 box-shadow: 5px 5px 5px #d9d9d9;
                 border: 1px solid #d9d9d9;
 
-                img {
-                    width: 80px;
-                }
-
                 .postInfo {
                     margin-left: 20px;
                     width: 100%;
                     color: #666;
 
                     .postTitle {
-                        height: 50px;
+                        color: black;
                         font-size: larger;
+                        height: 25%;
+                    }
+
+                    .postDesc {
+                        font-size: small;
+                        height: 55%;
                     }
 
                     .postFooter {
-                        height: 20px;
+                        font-size: small;
+                        height: 20%;
                     }
                 }
 
                 .ellipsis {
                     margin-right: 20px;
+                    margin-left: 20px;
                 }
 
                 &:hover {
