@@ -3,7 +3,9 @@
 </script>
 
 <template>
-  面试
+
+<input type="datetime-local"/>
+
 </template>
 
 <style  lang="scss" scoped>

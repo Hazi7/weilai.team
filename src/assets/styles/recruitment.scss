@@ -1,0 +1,48 @@
+@use "./index.scss";
+//公共样式抽离
+
+
+//color
+
+    $undertone: #647499;//浅灰 设置为非强调色
+
+
+// 复选框样式
+.checkbox {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  border: 1px solid black;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+.checkbox[data-state="checked"]  {
+  background: black;
+  color: white;
+}
+.checkbox[checked-not-all="true"]{
+  &::after{
+    content: "√";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
+
+//按钮样式
+.btn-style {
+  width: 100px;
+  height: 40px;
+  background-color: var(--primary);
+  cursor: pointer;
+  border: var(--border) 1px solid;
+
+  &:hover,
+  &:active {
+      color: var(--primary-foreground);
+      border: var(--primary-foreground) 1px solid;
+  }
+}
