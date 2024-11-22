@@ -1,6 +1,6 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "typed-router.d.ts", "src/**/*", "src/**/*.vue"],
+  "include": ["env.d.ts", "typed-router.d.ts", "src/**/*.vue", "src/**/*.ts"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
@@ -12,7 +12,8 @@
       "@community/*": ["./src/features/community/*"],
       "@login/*": ["./src/features/login/*"],
       "@admin/*": ["./src/features/admin/*"],
-      "@personalCenter/*": ["./src/features/personalCenter/*"]
+      "@personalCenter/*": ["./src/features/personalCenter/*"],
+      "@editor/*": ["./src/features/editor/*"]
     }
   }
 }
