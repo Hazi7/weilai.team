@@ -5,10 +5,12 @@ import { useRequest } from '@/composables/useRequest';
 export default function () {
     const { data, error, loading, executeRequest } = useRequest();
     const classListData = []
+
     async function getClass() {
         await executeRequest({ url: `/recruit/user/listAllClass`, method: 'get' })
         classListData.value = data.value.data
     }
+
 
     async function getCode(email) {
         console.log(email);

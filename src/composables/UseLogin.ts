@@ -13,11 +13,12 @@ export default function () {
         // if (account || password){
         //     alert()
         // }
-        await executeRequest({ url: `/index/login?account=${account}&password=${password}`, method: 'post', data: { account, password } })  // 在这里传入请求的 URL 和 method
+        await executeRequest({ url: `/index/login?account=${account}&password=${password}`, method: 'post', data: { account, password }, headers: { 'Content-Type': 'multipart/form-data' } })  // 在这里传入请求的 URL 和 method
         console.log(data.value);
         if (data.value.code == 1000) {
             // localStorage.setItem('token', data.value.data.token)
-            setLocalStorageWithExpire('token', data.value.data.token, 1000*60*30);
+            setLocalStorageWithExpire('token', data.value.data.token, 1000 * 60 * 30);
+            setLocalStorageWithExpire('userId', data.value.data.userId, 1000 * 60 * 30);
             router.push('/');
             // window.location.href = '/';
         }

@@ -1,23 +1,24 @@
 <template>
     <div class="header">
+        <div v-if="loading">加载中。。。</div>
         <div class="bagdImg"><img src="@/assets/img/test.jpg"></div>
         <div class="myInfo">
-            <Avatar style="width: 100px; height: 100px; margin-top: -50px; margin-right:20px ;">
-                <AvatarImage src="/src/assets/img/test.jpg" alt="@radix-vue" />
+            <Avatar style="width: 100px; height: 100px; margin-top: -50px; margin-right:20px; background-color: white;">
+                <AvatarImage :src="userInfo.headPortrait ? userInfo.headPortrait : '/logo.png'" alt="@radix-vue" />
                 <AvatarFallback>头像</AvatarFallback>
             </Avatar>
             <div class="infoBox">
-                <p class="nameAndSex">name
-                    <Icon style="display: inline-block;" v-if="gender == '男'" icon="mdi:gender-male" />
-                    <Icon style="display: inline-block;" v-if="gender == '女'" icon="ph:gender-female" />
+                <p class="nameAndSex">
+                    {{ userInfo.name }}
+                    <Icon style="display: inline-block;" v-if="userInfo.sex == '男'" icon="fluent-emoji-flat:male-sign" />
+                    <Icon style="display: inline-block;" v-if="userInfo.sex == '女'" icon="fluent-emoji-flat:female-sign" />
                 </p>
-                <p class="job">前端</p>
-
+                <p class="job">{{userInfo.direction}}</p>
             </div>
         </div>
         <div class="signature">
             <p>
-                <Icon style="display: inline-block;" icon="fluent:document-signature-16-regular" /> 个性签名个性签名个性签名
+                <Icon style="display: inline-block;" icon="fluent:document-signature-16-regular" /> {{ userInfo.userDestination }}
             </p>
         </div>
 
@@ -29,33 +30,33 @@
             <div class="moreInfo" v-show="isShow">
                 <p>
                     <Icon style="display: inline-block;font-size: 18px;" icon="tabler:number" /> 学号:
-                    <span>20201514101</span>
+                    <span>{{userInfo.studyId}}</span>
                 </p>
                 <p>
                     <Icon style="display: inline-block;font-size: 18px;" icon="ri:group-line" /> 组别:
-                    <span>六组</span>
+                    <span>{{ userInfo.group }}</span>
                 </p>
                 <p>
                     <Icon style="display: inline-block;font-size: 18px;" icon="ic:outline-email" /> 邮箱:
-                    <span>2020202020@qq.com</span>
+                    <span>{{ userInfo.email }}</span>
                 </p>
                 <p>
                     <Icon style="display: inline-block;font-size: 18px;" icon="icon-park-outline:classroom" />
                     班级:
-                    <span>计科231</span>
+                    <span>{{ userInfo.clazz}}</span>
                 </p>
                 <p>
                     <Icon style="display: inline-block;font-size: 18px;" icon="solar:phone-linear" /> 电话:
-                    <span>12345678910</span>
+                    <span>{{ userInfo.phone }}</span>
                 </p>
                 <p>
                     <Icon style="display: inline-block;font-size: 18px;" icon="ri:qq-line" /> QQ:
-                    <span>2020202020</span>
+                    <span>{{ userInfo.qq }}</span>
                 </p>
                 <p>
                     <Icon style="display: inline-block;font-size: 18px;" icon="teenyicons:direction-outline" />
                     毕业去向:
-                    <span>华为</span>
+                    <span>{{ userInfo.graduationDestination }}</span>
                 </p>
             </div>
         </div>
@@ -64,31 +65,91 @@
 
             <p>
                 <Icon style="display: inline-block;" icon="mdi:calendar-outline" />
-                上次登录时间：<span>2020-01-01</span>
+                上次登录时间：<span>{{ formatDateToYYYYMMDD(userInfo.lastLoginTime) }}</span>
             </p>
 
         </div>
 
     </div>
 </template>
-<script setup>
+<script lang="ts" setup>
+// 引入组件
 import { Icon } from '@iconify/vue';
-import { ref } from 'vue';
+import {reactive, ref } from 'vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+
+// 引入hooks并调用
+import { useRequest } from '@/composables/useRequest';
+const { data, error, loading, executeRequest } = useRequest()
+import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
+const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire()
+import { useDateFormatter } from '@/composables/useDateFormatter'
+const { formatDateToYYYYMMDD } = useDateFormatter()
+
+//控制更多信息的显示与隐藏
 let isShow = ref(false)
 function changeIsShow() {
     isShow.value = !isShow.value
 }
-const gender = '男'
+// 获取userId
+const userId = getLocalStorageWithExpire('userId')
+
+// 定义userInfo储存用户信息
+let userInfo =reactive<UserInfo>({
+    clazz: '',
+    direction: '',
+    email: '',
+    grade: '',
+    graduationDestination: '',
+    group: '',
+    headPortrait: '',
+    lastLoginTime: '',
+    lifePhoto: [],
+    name: '',
+    phone: '',
+    qq: '',
+    sex: '',
+    studyId: ''
+})
+
+// 定义UserInfo接口
+interface UserInfo{
+    clazz: string,
+    direction: string,
+    email: string,
+    grade: string,
+    graduationDestination: string,
+    group: string,
+    headPortrait: string,
+    lastLoginTime: string,
+    lifePhoto: [],
+    name: string,
+    phone: string,
+    qq: string,
+    sex: string,
+    studyId: string
+}
+
+// 获取用户信息函数
+async function getUserInfo() {
+    await executeRequest({ url: `/user/getUserInfoByUserId/${userId}` })
+    if (data.value && data.value.code == 200) {
+        console.log(data.value.data);
+        
+        Object.assign(userInfo, data.value.data);
+    }
+}
+// 打开页面立刻调用一次函数
+getUserInfo()
+
 </script>
 <style lang="scss" scoped>
 .header {
-    margin-top: 10px;
     width: 100%;
     background-color: white;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 5px 5px 5px #999;
+    box-shadow: 5px 5px 5px #ccc;
 
     .bagdImg {
         width: 100%;
