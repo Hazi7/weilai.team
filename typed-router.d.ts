@@ -43,6 +43,7 @@ declare module 'vue-router/auto-routes' {
     '/community/brainstorm/': RouteRecordInfo<'/community/brainstorm/', '/community/brainstorm', Record<never, never>, Record<never, never>>,
     '/community/comprehensive': RouteRecordInfo<'/community/comprehensive', '/community/comprehensive', Record<never, never>, Record<never, never>>,
     '/community/comprehensive/': RouteRecordInfo<'/community/comprehensive/', '/community/comprehensive', Record<never, never>, Record<never, never>>,
+    '/community/comprehensive/[title]': RouteRecordInfo<'/community/comprehensive/[title]', '/community/comprehensive/:title', { title: ParamValue<true> }, { title: ParamValue<false> }>,
     '/community/comprehensive/user': RouteRecordInfo<'/community/comprehensive/user', '/community/comprehensive/user', Record<never, never>, Record<never, never>>,
     '/community/discussion': RouteRecordInfo<'/community/discussion', '/community/discussion', Record<never, never>, Record<never, never>>,
     '/community/discussion/': RouteRecordInfo<'/community/discussion/', '/community/discussion', Record<never, never>, Record<never, never>>,
