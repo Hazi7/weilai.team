@@ -72,6 +72,7 @@
                     <PaginationLast />
                 </PaginationList>
             </Pagination>
+            <span class="postsNum">共 {{ postsNum }} 篇文章</span>
         </div>
     </div>
 </template>
@@ -123,6 +124,7 @@ let userPostAllInfo = ref({
 //定义页码信息
 let pages = 0;
 let currentPage = 1;
+let postsNum = 0;
 
 //定义userPost，储存当前页的文章数据
 let userPost = ref([]);
@@ -142,6 +144,7 @@ async function getPosts() {
         Object.assign(userPostAllInfo.value, postData.userPostAllInfo);
         userPost.value = postData.userPost
         pages = postData.pageInfo.pages
+        postsNum = postData.pageInfo.total
     }
 }
 //打开页面立刻调用一次获取文章
@@ -230,10 +233,13 @@ getPosts()
 
     .pageBox {
         margin: 20px auto;
-        width: 450px;
-
+        display: flex;
         button[data-selected] {
             background-color: #97d5ff;
+        }
+        .postsNum{
+            margin-left: 20px;
+            line-height: 40px;
         }
     }
 }

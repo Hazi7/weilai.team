@@ -1,84 +1,37 @@
 <template>
-    <div class="myPosts">
-        <div class="postsData">
-            <div class="postsNum">
-                <p>0</p>
-                <p>文章</p>
-            </div>
-            <div class="likeNum">
-                <p>0</p>
-                <p>点赞</p>
-            </div>
-            <div class="starNum">
-                <p>0</p>
-                <p>收藏</p>
-            </div>
-            <div class="commentNum">
-                <p>0</p>
-                <p>评论</p>
-            </div>
-        </div>
-        <div class="postsListBox">
-            <ul>
-                <li v-for="(item, index) in 5" :key="index">
-                    <img src="@/assets/img/test.jpg" alt="文章封面">
-                    <div class="postInfo">
-                        <p class="postTitle">文章标题</p>
-                        <p class="postFooter">
-                            <span class="postTime">2020-01-01</span>
-                            <span class="likes">23</span>
-                        </p>
-                    </div>
-                </li>
-            </ul>
-        </div>
+    <div class="mySchedule">
+
     </div>
 </template>
 <script setup>
+import { useRequest } from '@/composables/useRequest'
+const { data, error, loading, executeRequest } = useRequest()
+import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
+const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire()
+import { useDateFormatter } from '@/composables/useDateFormatter'
+const { formatDateToYYYYMMDD } = useDateFormatter()
 
+// 获取userId
+const userId = getLocalStorageWithExpire('userId')
+async function getSchedule() {
+    await executeRequest({ url: `/user/getUserCourse/${userId}` })
+    if (data.value && data.value.code == 200) {
+        
+    }
+    console.log('课表：',data.value);
+
+}
+//打开页面立刻调用一次获取文章
+getSchedule()
 </script>
 <style lang="scss" scoped>
-.myPosts {
+.mySchedule {
     margin-top: 20px;
     width: 100%;
     background-color: white;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 5px 5px 5px #999;
-
-    .postsData {
-        display: flex;
-        border-bottom: 1px solid #999;
-        padding-bottom: 10px;
-
-        div {
-            width: 25%;
-            text-align: center;
-        }
-    }
-
-    .postsListBox {
-        width: 100%;
-
-        ul {
-            li {
-                margin-top: 20px;
-                height: 100px;
-                display: flex;
-                border-radius: 10px;
-                background-color: white;
-                padding: 10px;
-                box-shadow: 5px 5px 5px #d9d9d9;
-
-                img {
-                    width: 80px;
-                }
-
-                .postInfo {
-                    margin-left: 20px;
-                }
-            }
-        }
-    }
+    box-shadow: 5px 5px 5px #ccc;
+    
 }
 </style>
