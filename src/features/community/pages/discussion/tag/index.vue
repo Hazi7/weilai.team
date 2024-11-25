@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import RightBar from './RightBar.vue';
 </script>
 
 <template>
-    <RightBar class="rightTag"></RightBar>
+    <p>标签</p>
 </template>
-
-<style scoped>
-.rightTag{
-    width: 300px;
-}
-</style>

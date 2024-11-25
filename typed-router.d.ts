@@ -51,7 +51,6 @@ declare module 'vue-router/auto-routes' {
     '/community/discussion/label': RouteRecordInfo<'/community/discussion/label', '/community/discussion/label', Record<never, never>, Record<never, never>>,
     '/community/discussion/latest': RouteRecordInfo<'/community/discussion/latest', '/community/discussion/latest', Record<never, never>, Record<never, never>>,
     '/community/discussion/tag/': RouteRecordInfo<'/community/discussion/tag/', '/community/discussion/tag', Record<never, never>, Record<never, never>>,
-    '/community/discussion/tag/RightBar': RouteRecordInfo<'/community/discussion/tag/RightBar', '/community/discussion/tag/RightBar', Record<never, never>, Record<never, never>>,
     '/community/discussion/user': RouteRecordInfo<'/community/discussion/user', '/community/discussion/user', Record<never, never>, Record<never, never>>,
     '/community/notice': RouteRecordInfo<'/community/notice', '/community/notice', Record<never, never>, Record<never, never>>,
     '/community/notice/': RouteRecordInfo<'/community/notice/', '/community/notice', Record<never, never>, Record<never, never>>,
