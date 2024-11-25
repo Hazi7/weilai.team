@@ -44,7 +44,7 @@ $font: #8c9296;
 .topNav {
   position: fixed;
   top: 0;
-  z-index: 100;
+  z-index: 30;
   margin-right: 5px;
   box-sizing: border-box;
   width: 100%;
@@ -122,7 +122,7 @@ $font: #8c9296;
     padding-top: 20px;
     display: flex;
     box-sizing: border-box;
-    background-color: transparent;
+    background-image: linear-gradient(#dfe9f3, #ffffff00 100%);
     height: 80px;
     .top-title {
       display: none;

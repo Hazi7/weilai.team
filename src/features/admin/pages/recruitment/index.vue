@@ -15,7 +15,6 @@ import { ToggleShow } from "@/components/recruitment";
 // 引入vue函数
 import { ref } from "vue";
 
-document.title = "招新管理";
 // 定义切换组件的基本信息 传给子组件
 const items = ref([
     {
@@ -35,8 +34,6 @@ const items = ref([
     }
 ]);
 
-//切换组件的样式控制
-const isActive=ref(false);
 </script>
 
 <template>
@@ -119,7 +116,7 @@ const isActive=ref(false);
     <div id="content">
       <div id="content-container">
         <div class="toggle-outer">
-          <ToggleShow :items="items"></ToggleShow>
+          <ToggleShow :items="items" ></ToggleShow>
         </div>
       </div>
     </div>
@@ -285,10 +282,12 @@ const isActive=ref(false);
   height: auto;
   .toggle-outer {
     width: 100%;
-    height: auto;
-    padding: 10px 0px;
+    height: 80px;
     padding-left: 10px;
+    display: flex;
     flex-direction: row;
+    justify-content:flex-start;
+    align-items: center;
     border: 1px dashed var(--border);
     border-radius: var(--radius);
   }

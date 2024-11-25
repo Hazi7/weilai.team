@@ -22,7 +22,7 @@
               <div class="time">发布于 <span>2022-05-05</span></div>
             </div>
           </div>
-          <a class="news-content">
+          <div class="news-content">
             <div class="news-title">{{ item.title }}</div>
             <div class="news-details">
               <p>
@@ -37,7 +37,7 @@
                 </li>
               </ul>
             </div>
-          </a>
+          </div>
         </div>
         <div class="news-item">
           <div class="news-writer">
@@ -69,6 +69,9 @@
           </div>
         </div>
       </div>
+      <div class="bg">
+        <div class="bg-top"></div>
+      </div>
     </div>
     <Rightbar />
   </div>
@@ -76,55 +79,36 @@
 
 <script setup lang="ts">
 // import { Icon } from "@iconify/vue";
+import Rightbar from "@/components/community/Rightbar.vue";
 import { useRequest } from "@/composables/useRequest";
-import Rightbar from "../../../../components/community/Rightbar.vue";
+import type { ArticleList, Data } from "@community/composables/types.ts";
+import { ref } from "vue";
+import { useRoute } from "vue-router";
 import Search from "../../components/Search.vue";
-import { articleList, getArticle } from "../../composables/search";
+const route = useRoute();
 const { executeRequest, error, loading, data } = useRequest();
-getArticle();
-// let articleList = ref<ArticleList[]>([]);
+let articleList = ref<ArticleList[]>([]);
+const title = ref("");
+if ("title" in route.params) {
+  title.value = route.params.title as string;
+} else {
+  title.value = "";
+}
 
-// interface ArticleList {
-//   id: number;
-//   collectCount?: number;
-//   commentCount?: number;
-//   isCollect?: false;
-//   isLike?: false;
-//   likeCount?: 1;
-//   postAbstract: string;
-//   postTags: string[];
-//   postTxt: string;
-//   title: string;
-//   userId?: 12;
-//   viewCount?: 24;
-// }
-// interface ArticleInfo {
-//   countId: number;
-//   current: number;
-//   maxLimit: number;
-//   optimizeCountSql: boolean;
-//   orders: [];
-//   pages: number;
-//   records: ArticleList[];
-//   searchCount: boolean;
-//   size: number;
-//   total: number;
-// }
-// interface Data {
-//   data: ArticleInfo;
-// }
+async function getArticle(title = "") {
+  console.log(title);
 
-// async function getArticle(title = "") {
-//   await executeRequest({
-//     url: `/post/selectAll?title=${title}`,
-//     method: "get",
-//   });
-//   const res = data.value as Data;
+  await executeRequest({
+    url: `/post/selectAll?title=${title}`,
+    method: "get",
+  });
+  const res = data.value as Data;
 
-//   articleList.value = res.data.records;
+  articleList.value = res.data.records;
 
-//   console.log(articleList);
-// }
+  console.log(articleList);
+}
+getArticle(title.value);
 </script>
 
 <style scoped lang="scss">
@@ -134,26 +118,26 @@ getArticle();
   height: auto;
 
   #search {
-    // margin-bottom: 10px;
-    // height: 45px;
-    // .search {
-    //   float: right;
-    //   position: relative;
-    // }
-    // input {
-    //   width: 200px;
-    //   height: 45px;
-    //   border: 1px solid #d0d9e4;
-    //   border-radius: 25px;
-    //   padding: 5px 10px;
-    //   padding-left: 30px;
-    // }
-    // .search-icon {
-    //   position: absolute;
-    //   top: 50%;
-    //   left: 2%;
-    //   transform: translateY(-50%);
-    // }
+    margin-bottom: 10px;
+    height: 45px;
+    .search {
+      float: right;
+      position: relative;
+    }
+    input {
+      width: 200px;
+      height: 45px;
+      border: 1px solid #d0d9e4;
+      border-radius: 25px;
+      padding: 5px 10px;
+      padding-left: 30px;
+    }
+    .search-icon {
+      position: absolute;
+      top: 50%;
+      left: 2%;
+      transform: translateY(-50%);
+    }
   }
 }
 #news {
@@ -185,11 +169,6 @@ getArticle();
     }
     .news-content {
       padding: 10px 55px;
-      display: block;
-      &:hover {
-        background-color: #f8f8fa;
-        cursor: pointer;
-      }
       .news-details {
         font-size: 14.5px;
         color: #a7a7a7;
@@ -234,23 +213,22 @@ getArticle();
 @media screen and (max-width: 768px) {
   .content {
     padding: 0 0;
-    padding-bottom: 60px;
     .bg {
       position: fixed;
       top: 0;
       z-index: 0;
       width: 100%;
-      height: 150px;
+      height: 20%;
       background-color: #fafafa;
       &-top {
         background-image: linear-gradient(#dfe9f3, #ffffff00 100%);
-        height: 150px;
+        height: 30%;
       }
     }
   }
 
   #news {
-    margin-top: 150px;
+    margin-top: 180px;
     .news-item {
       padding: 5px;
       margin-bottom: 8px;
@@ -314,6 +292,20 @@ getArticle();
             }
           }
         }
+      }
+    }
+  }
+  #search {
+    position: fixed;
+    z-index: 5;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    .search {
+      width: 100%;
+      input {
+        width: 100%;
       }
     }
   }
