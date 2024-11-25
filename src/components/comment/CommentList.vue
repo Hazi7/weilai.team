@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import { useRequest } from '@/composables/useRequest';
 import CommentItem from './CommentItem.vue';
 
@@ -7,29 +7,31 @@ const { data, error, executeRequest } = useRequest();
 const postId = ref<number>(1);
 const pageSize = ref<number>(5);
 const pageNumber = ref<number>(1);
-const comments = ref<any[]>([]);
+const comments = reactive<any[]>([]);
 
 // 获取一级评论
 const getFirstComment = async () => {
-  try {
     await executeRequest({
-      url: `/comment/getCommentOne?postId=${postId.value}&pageSize=${pageSize.value}&pageNumber=${pageNumber.value}`,
-      method: 'get',
+        url: `/comment/getCommentOne?postId=${postId.value}&pageSize=${pageSize.value}&pageNumber=${pageNumber.value}`,
+        method: 'get',
     });
-    if (data.value.code === 200) {
-      //评论数据
-      comments.value = data.value.data.postCommentOne;
-      console.log(data.value.data);
+
+    if (data.value?.code === 200) {
+        comments.length = 0;
+        comments.push(...data.value.data.postCommentOne);
     } else {
-      console.log(error);
+        console.log(error);
+        comments.length = 0; 
     }
-  } catch (error) {
-    console.error('Request failed', error);
-  }
 };
 
-onMounted(getFirstComment);
+// 在组件挂载后调用获取评论
+onMounted(() => {
+    getFirstComment();
+});
+
 </script>
+
 
 <template>
   <div class="comment-list">
@@ -37,6 +39,7 @@ onMounted(getFirstComment);
       v-for="comment in comments"
       :key="comment.commentId"
       :comment="comment"
+      :get-first-comment="getFirstComment"
     />
   </div>
 </template>

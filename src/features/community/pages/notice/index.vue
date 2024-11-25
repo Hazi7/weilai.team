@@ -28,7 +28,6 @@
         </div>
         <div class="show">展开<Icon icon="cuida:caret-down-outline" class="arrowsIcon"/></div>
       </div >
-      <div class="commentCon"><CommentList/></div>
     </div>
     <Rightbar/>
   </div>
@@ -36,7 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import CommentList from "@/components/comment/CommentList.vue";
 import { Icon } from "@iconify/vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
 </script>
