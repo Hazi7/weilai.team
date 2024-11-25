@@ -1,6 +1,9 @@
 export interface Data {
   data: ArticleInfo;
 }
+export interface adminData {
+  data: adminPostInfo;
+}
 export interface ArticleInfo {
   countId: number;
   current: number;
@@ -12,6 +15,24 @@ export interface ArticleInfo {
   searchCount: boolean;
   size: number;
   total: number;
+}
+export interface adminPostInfo {
+  countId: number;
+  current: number;
+  maxLimit: number;
+  optimizeCountSql: boolean;
+  orders: [];
+  pages: number;
+  records: adminPost[];
+  searchCount: boolean;
+  size: number;
+  total: number;
+}
+export interface adminPost {
+  name: string;
+  postTime: string;
+  title: string;
+  type: number;
 }
 
 export interface ArticleList {

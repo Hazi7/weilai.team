@@ -27,26 +27,33 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useRequest } from "@/composables/useRequest";
+import type { adminData, adminPost } from "@/types/Community";
 import { Icon } from "@iconify/vue";
 import { MoreHorizontal } from "lucide-vue-next";
-
-import { useRequest } from "@/composables/useRequest";
+import { ref } from "vue";
 const { executeRequest, error, loading, data } = useRequest();
-let title = "";
 
+const postList = ref<adminPost[]>([]);
+let title = "";
 let name = "";
 let page = "";
 let pageSize: number = 10;
 let startTime: string = "";
-let type = "";
+let type: number;
 
 async function getArticleList() {
   await executeRequest({
-    url: `/post/adminPostList?name=${name}&page="${page}"&pageSize="${pageSize}"&startTime="${startTime}"&title=${title}&type="${type}"`,
+    url: `/post/adminPostList`,
     method: "get",
   });
-  const res = data.value;
+  let res = data.value as adminData;
+  postList.value = res.data.records;
+  console.log(postList.value);
 }
+//
+
+getArticleList();
 </script>
 
 <template>
@@ -108,40 +115,38 @@ async function getArticleList() {
                     <TableHead class="hidden md:table-cell">
                       所属分类
                     </TableHead>
-                    <TableHead class="hidden md:table-cell"> 状态 </TableHead>
+                    <!-- <TableHead class="hidden md:table-cell"> 状态 </TableHead> -->
 
                     <TableHead class="hidden md:table-cell"> 操作 </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
+                  <TableRow v-for="(item, index) in postList" :key="index">
                     <TableCell class="hidden sm:table-cell"
                       ><input type="checkbox" name="" id=""
                     /></TableCell>
                     <TableCell class="font-medium table_title">
-                      如何解决跨域问题如何解决跨域问题如何解决跨域问题解决跨域问题
+                      {{ item.title }}
                     </TableCell>
                     <TableCell class="table_writer">
                       <TooltipProvider>
                         <Tooltip>
-                          <TooltipTrigger class="tooltip_trigger"
-                            >爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇</TooltipTrigger
-                          >
+                          <TooltipTrigger class="tooltip_trigger">{{
+                            item.name
+                          }}</TooltipTrigger>
                           <TooltipContent class="bg-white">
                             <p>
-                              爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇爆米奇
+                              {{ item.name }}
                             </p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     </TableCell>
                     <TableCell class="hidden md:table-cell">
-                      2023 10.15444</TableCell
+                      {{ item.postTime }}</TableCell
                     >
-                    <TableCell class="hidden md:table-cell">
-                      计科235
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell"> 删除 </TableCell>
+                    <TableCell class="hidden md:table-cell"> </TableCell>
+                    <!-- <TableCell class="hidden md:table-cell"> 删除 </TableCell> -->
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger as-child>
