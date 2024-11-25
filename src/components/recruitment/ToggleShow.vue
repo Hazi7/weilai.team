@@ -28,8 +28,8 @@ function toggleActive(index: number) {
 </script>
 
 <template>
-    <Menubar class="border-b toggle-show p-3">
-        <MenubarMenu class="toggle-item" >
+    <Menubar class="toggle-show border-b p-3 ">
+        <MenubarMenu>
                 <MenubarTrigger
                 v-for="item  in items"
                 :key="item.index"
@@ -44,13 +44,14 @@ function toggleActive(index: number) {
     </Menubar>
 </template>
 
-<style lang="scss" scoped>
-@use '@/assets/styles';
 
-$undertone: #647499;
+<style lang="scss"  scoped>
+@use '@/assets/styles';
 //TODO: 设置外层内边距 外层设置的行内弹性盒子
+$undertone: #647499;
+
 .toggle-show {
-    // width: 400px;
+    height: 80%;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;

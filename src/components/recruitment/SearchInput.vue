@@ -1,51 +1,54 @@
 <script setup lang="ts">
 //vue3
-import { defineEmits,ref,watch } from 'vue';
+import Label from '@/features/community/pages/discussion/label.vue';
+import { defineEmits,ref } from 'vue';
+
 
 const emit = defineEmits(['input_src']);
-const inputRef = ref<HTMLInputElement | null>(null);
-const placeholderText = ref<string>('');
-const originalPlaceholder = ref<string>('');
+
+const isComposing=ref(false)
+const onCompositionStart=()=>{
+    isComposing.value=true;
+}
+const onCompositionEnd=(e:Event)=>{
+    isComposing.value=false;
+    input_src(e);
+}
+
 const input_src=(e:Event)=>{
+    if(isComposing.value){
+            return;
+    }
+    if( (e.target as HTMLInputElement).value===""){
+       return;
+    }
     if(e){
         emit('input_src', (e.target as HTMLInputElement).value);
     }
     return;
 };
-// TODO: 这里有个bug
-const focusHandler = () => {
-    originalPlaceholder.value = placeholderText.value; // 保存原始的 placeholder
-    placeholderText.value = ''; // 清空 placeholder
-};
-
-const blurHandler = () => {
-    if (!inputRef.value?.value) {
-        placeholderText.value = originalPlaceholder.value; // 恢复原始的 placeholder
-    }
-};
-
 const props = defineProps({
-    message: {
-        type: String,
-        default: 'Search',
-    },
-});
+   labelText : String,
 
-watch(() => props.message, (newMessage) => {
-    placeholderText.value = newMessage;
-}, { immediate: true });
-
-
+})
+const isShowLabel = ref(false);
+const showLabel = () => {
+   isShowLabel.value=true;
+}
+const hideLabel = () => {
+    isShowLabel.value=false;
+}
 </script>
 <template>
     <div >
         <form>
-	<label for="search">Search</label>
+	<label for="search"  v-show="isShowLabel">{{labelText }}</label>
 	<input required="false" pattern=".*\S.*" type="search" class="input" id="search"
- :placeholder="placeholderText"
-    @focus="blurHandler"
-    @blur="focusHandler"
     @input="input_src($event)"
+    @compositionstart="onCompositionStart"
+    @compositionend="onCompositionEnd"
+    @focus="showLabel"
+    @blur="hideLabel"
     >
 	<span class="caret"></span>
 </form>
@@ -116,11 +119,15 @@ form {
 }
 
 label {
-  color: #e3e4e8;
-  overflow: hidden;
   position: absolute;
-  width: 0;
-  height: 0;
+  top: -50%;
+  left: 0;
+  transform: translate(0,50%);
+  transition: all 1s;
+  width: 100%;
+  height: auto;
+  font-size: 0.8em;
+
 }
 
 .caret {

@@ -2,20 +2,20 @@ import { defineStore } from "pinia";
 import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 
 const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire();
-export const useLoginStore = defineStore("login", {
+export const applicationStore = defineStore("application", {
     state: () => ({
         countdown: 60,
         isRequesting: false,
     }),
     actions: {
         isGetCode() {
-            const login = JSON.parse(localStorage.getItem('login'))
+            const application = JSON.parse(localStorage.getItem('application'))
             // this.countdown = login ? JSON.parse(login) : {} || 60
             // console.log(login.countdown, login.isRequesting);
-            if (!login) {
+            if (!application) {
                 return
-            } else if (login.isRequesting && login.countdown > 0) {
-                this.countdown = login.countdown
+            } else if (application.isRequesting && application.countdown > 0) {
+                this.countdown = application.countdown
                 const interval = setInterval(() => {
                     if (this.countdown > 0) {
                         this.countdown--
