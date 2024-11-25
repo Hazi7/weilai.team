@@ -201,29 +201,6 @@ import Search from "../../components/Search.vue";
   padding: 0 100px;
   width: 100%;
   height: auto;
-
-  #search {
-    height: 50px;
-    margin-bottom: 10px;
-    .search {
-      float: right;
-      position: relative;
-    }
-    input {
-      width: 200px;
-      height: 45px;
-      border: 1px solid #d0d9e4;
-      border-radius: 25px;
-      padding: 5px 10px;
-      padding-left: 30px;
-    }
-    .search-icon {
-      position: absolute;
-      top: 50%;
-      left: 2%;
-      transform: translateY(-50%);
-    }
-  }
 }
 #news {
   width: 100%;
@@ -313,7 +290,7 @@ import Search from "../../components/Search.vue";
   }
 
   #news {
-    margin-top: 180px;
+    margin-top: 150px;
     .news-item {
       padding: 5px;
       margin-bottom: 8px;
@@ -377,20 +354,6 @@ import Search from "../../components/Search.vue";
             }
           }
         }
-      }
-    }
-  }
-  #search {
-    position: fixed;
-    z-index: 5;
-    top: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    .search {
-      width: 100%;
-      input {
-        width: 100%;
       }
     }
   }

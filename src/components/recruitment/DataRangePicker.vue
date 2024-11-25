@@ -74,10 +74,23 @@ const resetCondition = () => {
     <PopoverContent class="w-auto p-0" style=" background-color: white; color: black">
       <RangeCalendar v-model="value" initial-focus :number-of-months="2"
         @update:start-value="(startDate) => value.start = startDate"
+
           locale="zh-CN">
       </RangeCalendar>
     </PopoverContent>
   </Popover>
 </template>
-<style scoped>
+<style lang="scss" >
+//为时间选择组件 设置选中特效
+@use '@/assets/styles';
+
+[data-radix-popper-content-wrapper]{
+  [data-selected="true"]{
+  background-color:var(--accent);
+}
+[data-selection-end="true"],[data-selection-start="true"]{
+  background-color:var(--accent-foreground);
+  color: white;
+}
+}
 </style>

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { Badge } from "@/components/ui/badge";
-import { Bot, SquareTerminal } from "lucide-vue-next";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,7 +10,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -31,50 +27,26 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Icon } from "@iconify/vue";
 import { MoreHorizontal } from "lucide-vue-next";
 
-import { Icon } from "@iconify/vue";
-const navMain = [
-  {
-    title: "2024未来软件工作室",
-    url: "#",
-    icon: SquareTerminal,
-    // isActive: true,
-    items: [
-      {
-        title: "一组",
-        url: "#",
-      },
-      {
-        title: "二组",
-        url: "#",
-      },
-      {
-        title: "三组",
-        url: "#",
-      },
-    ],
-  },
-  {
-    title: "2023 未来软件工作室",
-    url: "#",
-    icon: Bot,
-    items: [
-      {
-        title: "一组",
-        url: "#",
-      },
-      {
-        title: "二组",
-        url: "#",
-      },
-      {
-        title: "三组",
-        url: "#",
-      },
-    ],
-  },
-];
+import { useRequest } from "@/composables/useRequest";
+const { executeRequest, error, loading, data } = useRequest();
+let title = "";
+
+let name = "";
+let page = "";
+let pageSize: number = 10;
+let startTime: string = "";
+let type = "";
+
+async function getArticleList() {
+  await executeRequest({
+    url: `/post/adminPostList?name=${name}&page="${page}"&pageSize="${pageSize}"&startTime="${startTime}"&title=${title}&type="${type}"`,
+    method: "get",
+  });
+  const res = data.value;
+}
 </script>
 
 <template>
@@ -83,7 +55,7 @@ const navMain = [
       <Tabs default-value="all">
         <TabsContent value="all" class="tc">
           <Card class="border-none shadow-none">
-            <CardHeader>
+            <CardHeader class="card_header">
               <div class="header-link">
                 <button>
                   <RouterLink
@@ -103,6 +75,22 @@ const navMain = [
                     <span>批量管理</span>
                   </RouterLink>
                 </button>
+              </div>
+              <div class="header-search">
+                <div class="search_input_box">
+                  <span class="search-icon"
+                    ><Icon
+                      icon="bitcoin-icons:search-filled"
+                      color="#b9c2d0"
+                      font-size="26px"
+                    />
+                  </span>
+                  <input
+                    placeholder="请输入关键词"
+                    class="search_input"
+                    ref="inputRef"
+                  />
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -147,13 +135,13 @@ const navMain = [
                         </Tooltip>
                       </TooltipProvider>
                     </TableCell>
-                    <TableCell class="hidden md:table-cell"> 2023级 </TableCell>
+                    <TableCell class="hidden md:table-cell">
+                      2023 10.15444</TableCell
+                    >
                     <TableCell class="hidden md:table-cell">
                       计科235
                     </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      20231514530
-                    </TableCell>
+                    <TableCell class="hidden md:table-cell"> 删除 </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger as-child>
@@ -167,76 +155,6 @@ const navMain = [
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent class="bg-white">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell class="hidden sm:table-cell"
-                      ><input type="checkbox" name="" id=""
-                    /></TableCell>
-                    <TableCell class="font-medium"> 爆米奇 </TableCell>
-                    <TableCell>
-                      <Badge variant="outline"> 一组</Badge>
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell"> 2023级 </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      计科235
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      20231514530
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger as-child>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                          >
-                            <MoreHorizontal class="h-4 w-4" />
-                            <span class="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell class="hidden sm:table-cell"
-                      ><input type="checkbox" name="" id=""
-                    /></TableCell>
-                    <TableCell class="font-medium"> 爆米奇 </TableCell>
-                    <TableCell>
-                      <Badge variant="outline"> Draft </Badge>
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      $499.99
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell"> 25 </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      2023-07-12 10:42 AM
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger as-child>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                          >
-                            <MoreHorizontal class="h-4 w-4" />
-                            <span class="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent class="bg-white">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem>Edit</DropdownMenuItem>
                           <DropdownMenuItem>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
@@ -272,6 +190,12 @@ th {
 .group-leader {
   background-color: var(--secondary);
 }
+.card_header {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+}
 .content {
   height: 90vh;
   overflow: hidden;
@@ -303,30 +227,10 @@ th {
 .sidebar-menu {
   color: var(--secondary-foreground);
 }
-#search {
-  height: 50px;
-  margin-bottom: 10px;
-  .search {
-    position: relative;
-  }
-  input {
-    width: 100%;
-    height: 45px;
-    border: 1px solid #d0d9e4;
-    border-radius: 10px;
-    padding: 5px 10px;
-    padding-left: 30px;
-  }
-  .search-icon {
-    position: absolute;
-    top: 50%;
-    left: 2%;
-    transform: translateY(-50%);
-  }
-}
 
 .header-link {
   display: flex;
+  width: 40%;
   .head {
     display: flex;
     justify-content: center;
@@ -351,6 +255,54 @@ th {
   color: var(--primary-foreground);
   border: none;
   box-shadow: none;
+}
+
+.header-search {
+  .search_input_box {
+    float: right;
+    position: relative;
+    &_input_box {
+      position: relative;
+    }
+    input {
+      text-decoration: none;
+      list-style: none;
+      outline-style: none;
+      width: 250px;
+      height: 40px;
+      font-size: 14px;
+      border: 1px solid #d0d9e4;
+      border-radius: 25px;
+      padding: 5px 10px;
+      padding-left: 30px;
+    }
+    .search-icon {
+      position: absolute;
+      top: 50%;
+      left: 2%;
+      transform: translateY(-50%);
+    }
+    &_list {
+      border-radius: var(--radius);
+      background-color: white;
+      box-shadow:
+        0px 2px 5px rgba(0, 0, 0, 0.1),
+        inset 0px 0.2px 0.5px rgba(0, 0, 0, 0.24);
+    }
+
+    &_item {
+      padding: 5px 6px;
+      font-size: 15px;
+      color: var(--secondary-foreground);
+      a {
+        width: 100%;
+      }
+      &:hover {
+        background-color: #f8f8fa;
+      }
+    }
+  }
+  width: 40%;
 }
 .top-title {
   text-align: center;
