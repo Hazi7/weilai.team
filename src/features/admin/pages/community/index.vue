@@ -28,13 +28,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useRequest } from "@/composables/useRequest";
-import type { adminData, adminPost } from "@/types/Community";
+import type { ArticleList } from "@/types/Community";
+import { checkType, getArticle } from "@community/composables/search";
 import { Icon } from "@iconify/vue";
 import { MoreHorizontal } from "lucide-vue-next";
 import { ref } from "vue";
 const { executeRequest, error, loading, data } = useRequest();
 
-const postList = ref<adminPost[]>([]);
+const postList = ref<ArticleList[]>([]);
 let title = "";
 let name = "";
 let page = "";
@@ -42,18 +43,13 @@ let pageSize: number = 10;
 let startTime: string = "";
 let type: number;
 
-async function getArticleList() {
-  await executeRequest({
-    url: `/post/adminPostList`,
-    method: "get",
-  });
-  let res = data.value as adminData;
-  postList.value = res.data.records;
-  console.log(postList.value);
-}
-//
+getArticle().then((res) => {
+  postList.value = res;
+});
+getArticle();
+console.log(postList.value);
 
-getArticleList();
+//
 </script>
 
 <template>
@@ -121,7 +117,11 @@ getArticleList();
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow v-for="(item, index) in postList" :key="index">
+                  <TableRow
+                    v-for="(item, index) in postList"
+                    :key="index"
+                    class=""
+                  >
                     <TableCell class="hidden sm:table-cell"
                       ><input type="checkbox" name="" id=""
                     /></TableCell>
@@ -142,9 +142,14 @@ getArticleList();
                         </Tooltip>
                       </TooltipProvider>
                     </TableCell>
+
                     <TableCell class="hidden md:table-cell">
-                      {{ item.postTime }}</TableCell
-                    >
+                      {{ item.postTime }}
+                    </TableCell>
+
+                    <TableCell class="font-medium table_type">
+                      {{ checkType(item.type) }}
+                    </TableCell>
                     <TableCell class="hidden md:table-cell"> </TableCell>
                     <!-- <TableCell class="hidden md:table-cell"> 删除 </TableCell> -->
                     <TableCell>
@@ -183,6 +188,8 @@ tr {
   text-align: center;
   border-bottom: 1.5px solid var(--border);
   font-size: 14.5px;
+  height: 40px !important;
+  box-sizing: border-box;
 }
 #tb {
   border: 1.5px solid var(--border);
@@ -191,6 +198,9 @@ tr {
 th {
   text-align: center;
   color: var(--secondary-foreground);
+}
+td {
+  padding: 0.6em;
 }
 .group-leader {
   background-color: var(--secondary);
