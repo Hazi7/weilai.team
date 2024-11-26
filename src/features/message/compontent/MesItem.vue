@@ -1,48 +1,26 @@
 <script setup lang="ts">
-import Rightbar from '@/components/community/Rightbar.vue';
 import { Icon } from "@iconify/vue";
-import MesItem from '../../compontent/MesItem.vue';
 
 </script>
 
 <template>
-  <div class="" style="display: flex;">
-    <div class="allCon">
-      <div class="titleOptions">
-        <Icon icon="ant-design:clear-outlined" class="clearIcon"/>
-        <div class="clearAll">清空所有</div>
-      </div>
-      <div class="messageCon">
-        <MesItem/>
-      </div>
-    </div>
-    <Rightbar/>
-  </div>
+   <div class="mesItem">
+          <div class="avatar"><img src="../../../assets/img/test.jpg"/></div>
+          <div class="mesContent">
+            <div class="details">
+              <div class="name">万东乐<span class="type">评论了你的文章</span></div>
+              <div class="time">2024/11/25/15:00</div>
+            </div>
+            <div class="content">上了一整天的课</div>
+            <div class="imgCon"><img src="../../../assets/img/headImg.jpg"/></div>
+            <div class="postLink"># vue3实现sse消息实时推送</div>
+            <Icon icon="fluent:delete-24-regular" class="deleteIcon"/>
+          </div>
+        </div>
 </template>
 
 <style scoped lang="scss">
-   .allCon{
-      width: 100%;
-      .titleOptions{
-        width: 100%;
-        height: 50px;
-        display: flex;
-        cursor: pointer;
-        .clearAll{
-          width: 130px;
-          font-size: 15px;
-        }
-        .clearIcon{
-          margin:2px 4px 0 0px;
-          font-size: 19px;
-        } 
-      }
-      .messageCon{
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        .mesItem{
+ .mesItem{
           width: 690px;
           margin-bottom: 10px;
           padding-bottom: 15px;
@@ -125,6 +103,5 @@ import MesItem from '../../compontent/MesItem.vue';
             }
           }
         }
-      }
-   }
+  
 </style>
