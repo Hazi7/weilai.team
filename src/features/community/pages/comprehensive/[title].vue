@@ -3,11 +3,11 @@
     <div class="content">
       <!-- 放搜索框的位置 -->
       <div id="search">
-        <Search :getArticle="getArticle" />
+        <Search />
       </div>
 
       <!-- 放内容 -->
-      <div id="news">
+      <!-- <div id="news">
         <div
           class="news-item"
           v-for="item in articleList"
@@ -68,10 +68,8 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="bg">
-        <div class="bg-top"></div>
-      </div>
+      </div> -->
+      <NewsContent :condition="title" />
     </div>
     <Rightbar />
   </div>
@@ -81,9 +79,10 @@
 // import { Icon } from "@iconify/vue";
 import Rightbar from "@/components/community/Rightbar.vue";
 import { useRequest } from "@/composables/useRequest";
-import type { ArticleList, Data } from "@community/composables/types.ts";
+import type { ArticleList } from "@/types/Community";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
+import NewsContent from "../../components/NewsContent.vue";
 import Search from "../../components/Search.vue";
 const route = useRoute();
 const { executeRequest, error, loading, data } = useRequest();
@@ -95,20 +94,17 @@ if ("title" in route.params) {
   title.value = "";
 }
 
-async function getArticle(title = "") {
-  console.log(title);
+// async function getArticleBySearch(condition = "") {
+//   await executeRequest({
+//     url: `/post/selectPost/${condition}`,
+//     method: "get",
+//   });
+//   let res = data.value as searchData;
+//   console.log(res);
 
-  await executeRequest({
-    url: `/post/selectAll?title=${title}`,
-    method: "get",
-  });
-  const res = data.value as Data;
-
-  articleList.value = res.data.records;
-
-  console.log(articleList);
-}
-getArticle(title.value);
+//   articleList.value = res.data;
+// }
+// getArticleBySearch(title.value);
 </script>
 
 <style scoped lang="scss">

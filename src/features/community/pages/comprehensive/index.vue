@@ -3,11 +3,10 @@
     <div class="content">
       <!-- 放搜索框的位置 -->
       <div id="search">
-        <Search :getArticle="getArticle" />
+        <Search :typeId="0" />
       </div>
-
       <!-- 放内容 -->
-      <div id="news">
+      <!-- <div id="news">
         <div
           class="news-item"
           v-for="item in articleList"
@@ -36,6 +35,9 @@
                   #{{ tags }}
                 </li>
               </ul>
+            </div>
+            <div class="news-footer">
+              <div class="news-view"><Icon icon="iconamoon:eye-light" /></div>
             </div>
           </a>
         </div>
@@ -67,8 +69,28 @@
               </ul>
             </div>
           </div>
+          <div class="news-footer">
+            <div class="news-view">
+              <Icon icon="iconamoon:eye-light" class="news-footer-icon" /><span
+                class=""
+                >1.6万+</span
+              >
+            </div>
+            <div class="news-like">
+              <Icon icon="iconamoon:like-light" class="news-footer-icon" />11
+            </div>
+            <div class="news-comment">
+              <Icon
+                icon="fontisto:comment"
+                class="news-footer-icon"
+                style="font-size: 13px"
+              />
+              11
+            </div>
+          </div>
         </div>
-      </div>
+      </div> -->
+      <NewsContent />
     </div>
     <Rightbar />
   </div>
@@ -78,10 +100,10 @@
 // import { Icon } from "@iconify/vue";
 import { useRequest } from "@/composables/useRequest";
 import Rightbar from "../../../../components/community/Rightbar.vue";
+import NewsContent from "../../components/NewsContent.vue";
 import Search from "../../components/Search.vue";
-import { articleList, getArticle } from "../../composables/search";
 const { executeRequest, error, loading, data } = useRequest();
-getArticle();
+// getArticleByType();
 // let articleList = ref<ArticleList[]>([]);
 
 // interface ArticleList {
@@ -132,29 +154,6 @@ getArticle();
   padding: 0 100px;
   width: 100%;
   height: auto;
-
-  #search {
-    // margin-bottom: 10px;
-    // height: 45px;
-    // .search {
-    //   float: right;
-    //   position: relative;
-    // }
-    // input {
-    //   width: 200px;
-    //   height: 45px;
-    //   border: 1px solid #d0d9e4;
-    //   border-radius: 25px;
-    //   padding: 5px 10px;
-    //   padding-left: 30px;
-    // }
-    // .search-icon {
-    //   position: absolute;
-    //   top: 50%;
-    //   left: 2%;
-    //   transform: translateY(-50%);
-    // }
-  }
 }
 #news {
   width: 100%;
@@ -227,6 +226,23 @@ getArticle();
             margin: 0 5px;
           }
         }
+      }
+    }
+    .news-footer {
+      display: flex;
+      align-items: center;
+      padding: 5px 55px;
+      & > div {
+        color: var(--secondary-foreground);
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        margin-right: 10px;
+      }
+      &-icon {
+        color: var(--secondary-foreground);
+        font-size: 17px;
+        margin-right: 5px;
       }
     }
   }
