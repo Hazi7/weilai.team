@@ -12,7 +12,7 @@ import { Icon } from "@iconify/vue";
               <div class="time">2024/11/25/15:00</div>
             </div>
             <div class="content">上了一整天的课</div>
-            <div class="imgCon"><img src="../../../assets/img/headImg.jpg"/></div>
+            <!-- <div class="imgCon"><img src="../../../assets/img/headImg.jpg"/></div> -->
             <div class="postLink"># vue3实现sse消息实时推送</div>
             <Icon icon="fluent:delete-24-regular" class="deleteIcon"/>
           </div>
@@ -53,6 +53,7 @@ import { Icon } from "@iconify/vue";
               margin: 15px 0 4px 0;
               .name{
                 color: #636b71;
+                cursor: pointer;
                 font-size: 14px;
                 margin-right: 6px;
                 justify-content: flex-start;
@@ -60,8 +61,10 @@ import { Icon } from "@iconify/vue";
                   color: var(--secondary-foreground);
                   font-size: 13px;
                   margin-left: 7px;
-                  color: #868787;
                 }
+              }
+              .name:hover{
+                color: #2e9cbe;
               }
               
               .time{
@@ -82,6 +85,9 @@ import { Icon } from "@iconify/vue";
               cursor: pointer;
               max-width:calc(100% - 20px);
               font-size: 12px;
+              height: 25px;
+              margin-bottom: 6px;
+              border-bottom: 1px solid var(--border);
               color: var(--secondary-foreground);
             }
             .postLink:hover{
@@ -98,8 +104,9 @@ import { Icon } from "@iconify/vue";
               }
             }
             .deleteIcon{
-              font-size: 17px;
+              font-size: 16px;
               cursor: pointer;
+              color: var(--secondary-foreground);
             }
           }
         }

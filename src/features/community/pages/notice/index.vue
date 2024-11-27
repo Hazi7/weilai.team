@@ -29,7 +29,6 @@
         <NoticeItem/>
         <NoticeItem/>
       </div>
-      
     </div>
     <Rightbar/>
   </div>
@@ -39,6 +38,7 @@
 import { Icon } from "@iconify/vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
 import NoticeItem from "./NoticeItem.vue";
+import CommentList from "@/components/comment/CommentList.vue";
 import {
   DropdownMenu,
   DropdownMenuContent,

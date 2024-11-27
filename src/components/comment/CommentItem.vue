@@ -230,7 +230,7 @@ defineExpose({ userInfo });
   }
 
   .content-box {
-    
+    width: 550px;
     margin-top: 12px;
 
     .user-info {

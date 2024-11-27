@@ -25,8 +25,8 @@ const getLocalToken = (): string => {
 
 // 钩子函数
 export default function useSSE() {
-    const sseUrl = ref('/message/addClient');
-    const sse = ref<EventSource | null>(null); // 使用 ref 包裹 EventSource
+    const sseUrl = ref('http://49.232.183.67:8087/message/addClient');
+    const sse = ref<EventSource | null>(null); 
     const isConnected = ref(false); // 连接状态
     let reconnectTimer: number | null = null; // 重连定时器
     const reconnectInterval = 5000; // 重连间隔（毫秒）
@@ -37,7 +37,6 @@ export default function useSSE() {
         open: [] as Function[],
         error: [] as Function[]
     };
-
     // 连接到 SSE 服务器
     const connect = () => {
         if (sse.value) {
@@ -107,7 +106,6 @@ export default function useSSE() {
         scheduleReconnect();
         notify('error');
     };
-
     // 通知所有订阅者
     const notify = (eventType: SSEEventType, data?: SSEMessageData | Event) => {
         const eventObservers = observers[eventType];
@@ -121,7 +119,6 @@ export default function useSSE() {
             });
         }
     };
-
     // 定时重连
     const scheduleReconnect = () => {
         if (!reconnectTimer) {
@@ -131,7 +128,6 @@ export default function useSSE() {
             }, reconnectInterval);
         }
     };
-
     // 断开连接
     const disconnect = () => {
         if (sse.value) {
@@ -143,12 +139,10 @@ export default function useSSE() {
             }
         }
     };
-
     // 在组件卸载前清理
     onBeforeUnmount(() => {
         disconnect();
     });
-
     return {
         connect,
         subscribe,

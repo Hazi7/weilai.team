@@ -1,31 +1,27 @@
 <script setup lang="ts">
-import { ref,watch, computed, watchEffect, onMounted,onUnmounted } from 'vue';
+import { ref, watch, computed, watchEffect, onMounted, onUnmounted } from 'vue';
 import { useRequest } from '@/composables/useRequest';
 import { Icon } from '@iconify/vue';
 import { marked } from 'marked';
 import dompurify from 'dompurify';
 
-
-//定义一级评论的数据类型
+// 定义一级评论的数据类型
 interface CommentData {
     postId: number;
     commentText: string;
-    photoUrls: string[];
+    photoUrls: string[];  
     code?: number; 
 }
 
-// 使用useRequest获取请求相关数据和函数
-const { data, error,executeRequest } = useRequest<CommentData>();
-
+const { data, error, executeRequest } = useRequest<CommentData>();
 const commentText = ref<string>('');
 const postId = ref<number>(1);
 const maxLength = 1000;
 const remaining = computed(() => maxLength - commentText.value.length);
 const renderedContent = ref<string>('');
 const fileInput = ref<HTMLInputElement | null>(null);
-const imageTags = ref<string[]>([]);
-const photoUrls = ref<string[]>([]);
-
+const imageTags = ref<string[]>([]); 
+const photoUrls = ref<string[]>([]); 
 
 // 更新内容并限制最大长度
 watch(commentText, (newContent) => {
@@ -42,30 +38,37 @@ watchEffect(async () => {
 const uploadImg = () => {
   fileInput.value?.click();
 };
+// 处理文件选择
 const handleFileSelect = (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
-  if (files && photoUrls.value.length < 3) {
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const url = e.target?.result as string;
-        photoUrls.value.push(url); // 保存图片的data URL
-        const imgMarkdown = `![${file.name}](${url})`;
-        // 存储图片的Markdown格式
-        imageTags.value.push(imgMarkdown);
-      };
-      reader.readAsDataURL(file);
-    });
+  if (files && files.length > 0) {
+    const file = files[0];
+    if (photoUrls.value.length >= 1) {
+      console.log('只能上传一张图片');
+      return; 
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const url = e.target?.result as string;
+      photoUrls.value.push(url);  
+      const imgMarkdown = `![${file.name}](${url})`; 
+      imageTags.value = [imgMarkdown]; 
+    };
+    reader.readAsDataURL(file);
   }
 };
+
 // 删除图片
-const deleteImage = (index: number) => {
-  imageTags.value.splice(index, 1);
-  photoUrls.value.splice(index, 1);
+const deleteImage = () => {
+  photoUrls.value = []; 
+  imageTags.value = []; 
 };
+
+// 生命周期函数
 onMounted(() => {
   fileInput.value?.addEventListener('change', handleFileSelect);
 });
+
 onUnmounted(() => {
   if (fileInput.value) {
     fileInput.value.removeEventListener('change', handleFileSelect);
@@ -78,31 +81,36 @@ const submitComment = async () => {
     console.log('评论内容不能为空');
     return;
   }
-  const formData = new FormData();
-  formData.append('postId', postId);
-  formData.append('commentText', commentText.value);
-  if (photoUrls.value && photoUrls.value.length > 0) {
-    const imageUrl = photoUrls.value[0]; 
-    formData.append('photoUrl', imageUrl);
+  const requestData = {
+    postId: postId.value,
+    commentText: commentText.value,
+    photoUrls: photoUrls.value, 
+  };
+
+  console.log('提交的请求数据:', requestData);
+  
+  // 发送请求
+  await executeRequest({
+    url: `/comment/writePostComment`,
+    method: 'post',
+    requestData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  console.log(data.value, error);
+  if (data.value?.code==200) {
+    console.log('评论成功');
+    commentText.value = '';
+    photoUrls.value = []; 
+    imageTags.value = []; 
+  } else {
+    console.log('评论失败', error.value);
   }
-  console.log(formData);
-  const requestData = Object.fromEntries(formData.entries());
-    await executeRequest({
-      url: `/comment/writePostComment`,
-      method: 'post',
-      requestData,
-    });
-    console.log(data.value, error);
-    if (data.value) {
-      console.log('评论成功');
-      commentText.value = '';
-      photoUrls.value = [];
-      imageTags.value = [];
-    }else {
-      console.log('评论失败', error.value);
-   }
-}
+};
 </script>
+
 
 <template>
     <div class="comment-form">
@@ -115,7 +123,7 @@ const submitComment = async () => {
       <div class="image-preview">
         <div v-for="(imageTag, index) in imageTags" :key="index" class="image-tag">
             <img :src="imageTag.split('](')[1].slice(0, -1)" alt="uploaded-image" />
-            <div class="delete-btn" @click="deleteImage(index)"><Icon icon="iconoir:delete-circle" class="deleteIcon"/></div>
+            <div class="delete-btn" @click="deleteImage"><Icon icon="iconoir:delete-circle" class="deleteIcon"/></div>
         </div>
      </div>
       <!-- 尾部操作区域 -->
