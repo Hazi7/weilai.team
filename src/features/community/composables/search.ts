@@ -3,7 +3,7 @@ import type { ArticleList, Data } from "@/types/Community";
 import { ref } from "vue";
 const { executeRequest, error, loading, data } = useRequest();
 let articleList = ref<ArticleList[]>([]);
-
+let searchResult = ref<ArticleList[]>([]);
 export function debounce<T>(
   func: (this: T, ...args: any[]) => void,
   wait: number,
@@ -27,13 +27,36 @@ export function debounce<T>(
     }, wait);
   };
 }
-export async function getArticle(title = "") {
+export async function getArticle(type = 0, page = 1, condition = "") {
   await executeRequest({
-    url: `/post/selectAll?title=${title}`,
+    url: `/post/selectAll?condition=${condition}&page=${page}&type=${type}`,
+    method: "get",
+  });
+  const res = data.value as Data;
+  console.log(res);
+
+  articleList.value = res.data.records;
+  console.log(articleList.value);
+  return articleList.value;
+}
+export function checkType(type: any) {
+  if (type == 1) {
+    return "博客";
+  } else if (type == 3) {
+    return "交流";
+  } else if (type == 4) {
+    return "头脑风暴";
+  }
+  return "";
+}
+export async function SearchArticle(condition = "") {
+  await executeRequest({
+    url: `/post/selectPost?condition=${condition}`,
     method: "get",
   });
   const res = data.value as Data;
 
-  articleList.value = res.data.records;
+  searchResult.value = res.data.records;
+  console.log(searchResult.value);
 }
-export { articleList };
+export { articleList, searchResult };

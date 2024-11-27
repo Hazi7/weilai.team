@@ -4,7 +4,8 @@ import type { ArticleList, Data } from "@/types/Community";
 import { debounce } from "@community/composables/search";
 import { Icon } from "@iconify/vue";
 import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+
 const isVisible = ref(false);
 const router = useRouter();
 const searchValue = ref();
@@ -12,8 +13,11 @@ const { executeRequest, error, loading, data } = useRequest();
 const searchList = ref<ArticleList[]>([]);
 const filterList = ref<ArticleList[]>([]);
 let debounceTimer: number | null = null;
+const route = useRoute();
+const path = route.path;
 // 接受父组件传来的函数
-defineProps(["getArticle"]);
+const props = defineProps(["typeId"]);
+
 // 用于记录已经出现的标题
 const titleMap = new Map<string, boolean>();
 let body = document.body as HTMLElement;
@@ -28,13 +32,15 @@ watch(searchValue, (newValue) => {
   }
 });
 // 获取搜索列表
-async function searchTitle(title: string) {
+async function searchTitle(condition = "", type = 0) {
   await executeRequest({
-    url: `/post/selectAll?title=${title}`,
+    url: `/post/selectAll?condition=${condition}&type=${props.typeId || type}`,
     method: "get",
   });
-  console.log(data.value);
+
   let res = data.value as Data;
+  console.log(res);
+
   searchList.value = res.data.records;
   titleMap.clear();
   filterList.value = [];
@@ -45,9 +51,7 @@ async function searchTitle(title: string) {
     }
   });
 }
-// function SearchTitle(event: Event) {
-//   isVisible.value = true;
-// }
+
 // 防止input框失去焦点时搜索列表消失
 function handleClick(e: Event) {
   let target = e.target as HTMLElement;
@@ -59,6 +63,11 @@ function handleClick(e: Event) {
   } else {
     isVisible.value = false;
   }
+}
+function skip(e: Event) {
+  console.log(path);
+
+  router.push(`${path}/${searchValue.value}`);
 }
 </script>
 
@@ -82,7 +91,7 @@ function handleClick(e: Event) {
           ref="inputRef"
           @keydown.enter="
             () => {
-              getArticle(searchValue);
+              skip(searchValue);
             }
           "
           v-model="searchValue"
