@@ -116,7 +116,7 @@ const items = ref([
     <div id="content">
       <div id="content-container">
         <div class="toggle-outer">
-          <ToggleShow :items="items" ></ToggleShow>
+          <ToggleShow :toggleItems="items" ></ToggleShow>
         </div>
         <div class="message-shows">
           <MessageCard></MessageCard>
