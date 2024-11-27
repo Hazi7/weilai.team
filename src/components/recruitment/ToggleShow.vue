@@ -15,12 +15,12 @@ type Item= {
 }
 
 const props = defineProps<{
-    items: Item[];
+    toggleItems: Item[];
 }>()
 
 // 切换组件的样式控制
 function toggleActive(index: number) {
-    props.items.forEach((item) => {
+    props.toggleItems.forEach((item) => {
         item.isActive = item.index === index;
     });
 }
@@ -31,7 +31,7 @@ function toggleActive(index: number) {
     <Menubar class="toggle-show border-b p-3 ">
         <MenubarMenu>
                 <MenubarTrigger
-                v-for="item  in items"
+                v-for="item  in toggleItems"
                 :key="item.index"
                 >
                 <Button

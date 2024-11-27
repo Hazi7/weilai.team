@@ -17,14 +17,16 @@ const df = new DateFormatter('zh-CN', {
   dateStyle: 'short',
 })
 
+const props = defineProps<({
+    isReset:boolean,
+})>()
 
-
-const emit = defineEmits(['updateDateRange'])
+const emit = defineEmits(['updateDateRange', 'resetCondition'])
 
 
 const value = ref({
-  start: new CalendarDate(2023, 1, 20),
-  end: new CalendarDate(2023, 1, 20).add({ days: 7 }),
+  start: undefined,
+  end: undefined,
 }) as Ref<DateRange>
 
 watch(value, (newVal) => {
@@ -33,7 +35,13 @@ watch(value, (newVal) => {
   }
   emit('updateDateRange', newVal)
 })
+watch(props, (newVal) => {
+  if (newVal.isReset) {
+    resetCondition()
+  }
 
+  return;
+})
 const resetCondition = () => {
   value.value ={
     start: undefined,
@@ -44,7 +52,9 @@ const resetCondition = () => {
 
 <template>
 
+
   <Popover>
+
     <PopoverTrigger as-child>
       <Button
         variant="outline"
@@ -68,17 +78,19 @@ const resetCondition = () => {
           请选择时间段
         </template>
         <Icon icon="pepicons-pencil:triangle-down" style="position: absolute; right: 13%;"/>
-        <Icon icon="bitcoin-icons:cross-outline"   style="position: absolute; right: 6%;" @click="resetCondition"/>
       </Button>
+
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0" style=" background-color: white; color: black">
-      <RangeCalendar v-model="value" initial-focus :number-of-months="2"
+      <RangeCalendar v-model="value"
+        initial-focus :number-of-months="2"
         @update:start-value="(startDate) => value.start = startDate"
-
           locale="zh-CN">
       </RangeCalendar>
+
     </PopoverContent>
   </Popover>
+
 </template>
 <style lang="scss" >
 //为时间选择组件 设置选中特效

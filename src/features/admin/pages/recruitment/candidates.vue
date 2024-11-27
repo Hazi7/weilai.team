@@ -19,7 +19,6 @@ const handleInput = (value: string) => {
 //下拉过滤框
 const candidates_itemsObjArr = ref([
     {
-        id: 0,
         title: '年级',
         label: "选择要筛选的年级",
         ref: "init",
@@ -36,7 +35,6 @@ const candidates_itemsObjArr = ref([
         ]
     },
     {
-        id: 1,
         title: '性别',
         label: "选择要筛选的性别",
         ref: "init",
@@ -50,7 +48,6 @@ const candidates_itemsObjArr = ref([
         ]
     },
     {
-        id: 2,
         title: '班级',
         label: "选择要筛选的班级",
         ref: "init",
@@ -68,8 +65,7 @@ const candidates_itemsObjArr = ref([
     }
 ]);
 
-
-
+//获得子组件的过滤条件
 const handleFilterCondition = (value: string, title: string) => {
     console.log(value, title);
 };
@@ -94,6 +90,8 @@ const handleDateRange = () => {
     console.log(formattedRange);
 
 };
+
+const isReset = ref(false);
 //重置筛选条件
 const resetCondition = () => {
     // 在这里处理重置条件的逻辑，例如清空输入框或其他组件的数据
@@ -101,6 +99,10 @@ const resetCondition = () => {
         item.ref = 'init';
     });
     dateRange.value = null;
+    isReset.value = true;
+    setTimeout(() => {
+        isReset.value = false;
+    }, 500);
 }
 
 
@@ -217,84 +219,7 @@ const data = ref([
         QQ: '123456789',
         email: '123456789@qq.com',
         state: '待安排',
-    },
-    {
-        id: "9",
-        name: '郑十一',
-        session: '24级',
-        gender: '男',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "10",
-        name: '刘十二',
-        session: '24级',
-        gender: '女',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "11",
-        name: '陈十三',
-        session: '24级',
-        gender: '男',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "12",
-        name: '杨十四',
-        session: '24级',
-        gender: '女',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "13",
-        name: '吴十五',
-        session: '24级',
-        gender: '男',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "14",
-        name: '吴十六',
-        session: '24级',
-        gender: '女',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "15",
-        name: '吴十七',
-        session: '24级',
-        gender: '男',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
+    }
 ]);
 //分页
 const pageSize = ref(10);
@@ -372,14 +297,18 @@ const actionItems = ref([
         <div class="filter-items">
             <FilterCondition :items-obj-arr="candidates_itemsObjArr" @filter_condition="handleFilterCondition"></FilterCondition>
             <div class="date-picker">
-                <DataRangePicker @updateDateRange="handleDateRangeUpdate" :dateRange="dateRange" />
+                <DataRangePicker
+                @updateDateRange="handleDateRangeUpdate"
+                :dateRange="dateRange"
+                :isReset="isReset"
+                />
             </div>
 
             <div class="reset" @click="resetCondition">
                 重置
                 <Icon icon="bitcoin-icons:cross-outline" />
             </div>
-            <!-- <p>输入的内容: {{ searchValue }}</p> -->
+
             <div class="search-input">
                 <SearchInput @input_src="handleInput"
                 labelText="搜索候选人:"
@@ -388,7 +317,7 @@ const actionItems = ref([
             </div>
         </div>
         <div class="toggle-handle">
-            <ToggleShow :items="toggleItems"></ToggleShow>
+            <ToggleShow :toggleItems="toggleItems"></ToggleShow>
 
             <div class="handle-btns">
                 <Button type="primary" class="handle-btn arrangeResume">安排简历</Button>
@@ -413,82 +342,5 @@ const actionItems = ref([
 </template>
 
 <style lang="scss" scoped>
-@use '@/assets/styles';
-
-.content {
-    padding: 20px;
-    width: 100%;
-    background-color: var(--background);
-    position: relative;
-}
-
-.filter-items {
-    width: 100%;
-    display: inline-flex;
-    height: 80px;
-    justify-content: flex-start;
-    align-items: center;
-    position: relative;
-    gap: 20px;
-
-    .search-input {
-        position: absolute;
-        right: 0;
-    }
-}
-
-.reset {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.toggle-handle {
-    width: 100%;
-    height: 80px;
-    position: relative;
-    top: 40px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 20px;
-
-    .toggle-button {
-        width: 100px;
-        height: 40px;
-        background-color: var(--primary);
-    }
-
-    .handle-btns {
-        position: absolute;
-        right: 0;
-        display: flex;
-        gap: 20px;
-
-        .handle-btn {
-            width: 100px;
-            height: 40px;
-            background-color: var(--primary);
-            cursor: pointer;
-            border: var(--border) 1px solid;
-
-            &:hover,
-            &:active {
-                color: var(--primary-foreground);
-                border: var(--primary-foreground) 1px solid;
-            }
-        }
-    }
-}
-
-.data-table {
-    width: 100%;
-    height: auto;
-    background-color: var(--background);
-    position: relative;
-    top: 80px;
-}
+@use "@/assets/styles/recruitment.scss"
 </style>
