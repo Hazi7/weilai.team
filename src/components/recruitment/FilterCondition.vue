@@ -10,13 +10,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { ref , defineProps,defineEmits, computed} from 'vue';
+import { defineProps,defineEmits} from 'vue';
 
 import { Icon } from '@iconify/vue'
 
 
 type ItemObj= {
-    id: number;
     title: string;
     label:string;
     ref:string;
@@ -25,20 +24,12 @@ type ItemObj= {
     }>;
 }
 const emit = defineEmits(['filter_condition']);
-// const props = defineProps<{
-//     itemsObjArr : ItemObj[]
-// }>()
-
-const props = defineProps( {itemsObjArr : Array<ItemObj>})
+const props = defineProps<{
+    itemsObjArr : ItemObj[]
+}>()
 
 
 
-// const getFilterCondition = (e:Event) => {
-//     const title = (e.target as HTMLElement).getAttribute("title");
-//     const value = (e.target as HTMLElement).getAttribute("value");
-//     console.log(title,value);
-// }
-//     @click="getFilterCondition($event)"
 
 const filter_condition = (e:Event) => {
     if(e){
@@ -50,7 +41,7 @@ const filter_condition = (e:Event) => {
 </script>
 <template>
     <div class="filter-condition">
-        <DropdownMenu v-for="i in itemsObjArr " :key="i.id">
+        <DropdownMenu v-for="i in itemsObjArr " :key="i.title">
             <DropdownMenuTrigger>
                <div class="filter-title">
                 {{ i.title }} <Icon icon="pepicons-pencil:triangle-down" />

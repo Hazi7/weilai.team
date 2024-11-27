@@ -74,6 +74,13 @@ import { Button } from '@/components/ui/button'
     margin-bottom: 10px;
     gap: 20px;
     font-size: 0.8rem;
+    .message-show-name{
+        text-align: center;
+        width: 80px;
+        border: 1px solid skyblue;
+        padding: 5px 10px;
+        border-radius: 15px;
+    }
 }
 .message-show-bottom{
     display: flex;
@@ -97,5 +104,12 @@ import { Button } from '@/components/ui/button'
     gap: 10px;
     right: 30px;
     top: 30px;
+}
+.message-show-staus{
+    text-align: center;
+        width: 80px;
+        border: 1px solid #FFCDD2 ;
+        padding: 5px 10px;
+        border-radius: 15px;
 }
 </style>
