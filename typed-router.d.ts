@@ -38,7 +38,6 @@ declare module 'vue-router/auto-routes' {
     '/community': RouteRecordInfo<'/community', '/community', Record<never, never>, Record<never, never>>,
     '/community/blog': RouteRecordInfo<'/community/blog', '/community/blog', Record<never, never>, Record<never, never>>,
     '/community/blog/': RouteRecordInfo<'/community/blog/', '/community/blog', Record<never, never>, Record<never, never>>,
-    '/community/blog/RecruitmentFrom': RouteRecordInfo<'/community/blog/RecruitmentFrom', '/community/blog/RecruitmentFrom', Record<never, never>, Record<never, never>>,
     '/community/blog/user': RouteRecordInfo<'/community/blog/user', '/community/blog/user', Record<never, never>, Record<never, never>>,
     '/community/brainstorm': RouteRecordInfo<'/community/brainstorm', '/community/brainstorm', Record<never, never>, Record<never, never>>,
     '/community/brainstorm/': RouteRecordInfo<'/community/brainstorm/', '/community/brainstorm', Record<never, never>, Record<never, never>>,

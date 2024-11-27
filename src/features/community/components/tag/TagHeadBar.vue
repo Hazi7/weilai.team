@@ -14,10 +14,10 @@ getAllTagList()
     <div>
         <div class="tag-head-bar">
             <div class="tag-head-bar-item">
-                <router-link :to="`/community/discussion/label/推荐`">推荐</router-link>
+                <router-link active-class="active" :to="`/community/discussion/label/推荐`">推荐</router-link>
             </div>
-            <div v-for="(item, index) in allTagList.value" :key="index" class="tag-head-bar-item">
-                <router-link :to="`/community/discussion/label/${item}`">{{ item }}</router-link>
+            <div v-for="(item, index) in allTagList" :key="index" class="tag-head-bar-item">
+                <router-link active-class="active" :to="`/community/discussion/label/${item}`">{{ item }}</router-link>
             </div>
             <span class="tag-head-bar-more">
                 <Icon icon="bytesize:chevron-bottom"></Icon>
@@ -31,6 +31,10 @@ getAllTagList()
 </template>
 
 <style scoped lang="scss">
+.active {
+    color: var(--primary-foreground);
+}
+
 .tag-head-bar {
     position: absolute;
     top: 70px;
@@ -43,6 +47,7 @@ getAllTagList()
     margin-right: 20px;
     max-height: 65px;
     overflow: hidden;
+    z-index: 1;
 
     &:hover {
         transition: all .5s;

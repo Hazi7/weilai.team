@@ -13,10 +13,9 @@ import CommunityTag from "../../composables/CommunityTag";
 const { useTagList, getUseTagList } = CommunityTag()
 const firstUseTagList = ref<{ tag_name: string; tag_usage_count: number }[]>([]);
 getUseTagList()
-.then((res, req) => {
-    firstUseTagList.value = useTagList.value.slice(0, 10);
-    console.log(firstUseTagList.value[0].tag_name);
-})
+    .then(() => {
+        firstUseTagList.value = useTagList.value.slice(0, 10);
+    })
 
 </script>
 
@@ -36,11 +35,15 @@ getUseTagList()
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
-                            <a href="#"><span class="ranking">{{ index + 1 }}</span><span>{{ item.tag_name }}</span></a>
+                            <router-link :to="`/community/discussion/label/${item.tag_name}`">
+                                <span class="ranking">{{ index + 1 }}</span><span>{{ item.tag_name }}</span>
+                            </router-link>
+                            <a href="#"></a>
                         </TooltipTrigger>
                         <TooltipContent class="bg-white">
-                            <a href=""><span>{{ item.tag_name }}</span>
-                            </a>
+                            <router-link :to="`/community/discussion/label/${item.tag_name}`">
+                                <span>{{ item.tag_name }}</span>
+                            </router-link>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
@@ -58,7 +61,7 @@ getUseTagList()
     background-color: white;
     border-radius: var(--radius);
     border-radius: 4px;
-    box-shadow: 0 4px 30px 0 rgba(232, 232, 237, .5);
+    box-shadow: 0 4px 30px 0 rgba(232, 232, 237, .3);
 }
 
 .rank-top {
@@ -73,7 +76,7 @@ getUseTagList()
         align-items: center;
         color: var(--secondary-foreground);
         height: 100%;
-        font-size: 13px;
+        font-size: 16px;
         line-height: 4rem;
     }
 }
