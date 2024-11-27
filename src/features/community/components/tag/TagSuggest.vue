@@ -24,7 +24,10 @@ getRecommendTag()
                 <span>猜你喜欢</span>
             </div>
         </div>
-        <div class="hotTagList">
+        <div class="noMoreTag">
+            暂无相关推荐
+        </div>
+        <div class="hotTagList" v-if="likeTagList">
             <span class="tag" v-for="(tag, index) in likeTagList" :key="index">
                 <router-link :to="`/community/discussion/label/${tag}`">#{{ tag }}</router-link>
             </span>
@@ -99,6 +102,12 @@ getRecommendTag()
             color: #4f4e4e;
             font-size: 22px;
         }
+    }
+
+    .noMoreTag{
+        padding: 20px;
+        color: #5a5a5a;
+        text-align: center;
     }
 
     .hotTagList {

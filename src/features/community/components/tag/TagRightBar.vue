@@ -76,7 +76,7 @@ getUseTagList()
         align-items: center;
         color: var(--secondary-foreground);
         height: 100%;
-        font-size: 13px;
+        font-size: 16px;
         line-height: 4rem;
     }
 }
