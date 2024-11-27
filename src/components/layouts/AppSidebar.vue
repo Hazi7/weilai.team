@@ -1,10 +1,11 @@
 <script setup lang="ts">
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import Sidebar from "@/components/ui/sidebar/Sidebar.vue";
 import SidebarContent from "@/components/ui/sidebar/SidebarContent.vue";
 import SidebarGroup from "@/components/ui/sidebar/SidebarGroup.vue";
@@ -41,7 +42,33 @@ watch(
     deep: true,
   },
 );
-console.log(subNavItems);
+const subNavs=  [
+      {
+        "title": "综合",
+        "icon": "material-symbols-light:overview-key-outline",
+        "path": "/community/comprehensive"
+      },
+      {
+        "title": "博客",
+        "icon": "material-symbols:article-outline",
+        "path": "/community/blog"
+      },
+      {
+        "title": "公告",
+        "icon": "material-symbols:article-outline",
+        "path": "/community/notice"
+      },
+      {
+        "title": "交流",
+        "icon": "weui:time-outlined",
+        "path": "/community/discussion"
+      },
+      {
+        "title": "头脑风暴",
+        "icon": "weui:time-outlined",
+        "path": "/community/brainstorm"
+      }
+    ]
 
 const items = [
   {
@@ -248,10 +275,21 @@ interface SubItemInterface {
     
   </div>
   <div class="main-menu">
-    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
-    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
-    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
-    <Button>  <RouterLink to="">  <Icon icon="prime:pencil" width="16px" /></RouterLink></Button>
+  <RouterLink to="/"> <Button class="main-menu-button"><Icon icon="bitcoin-icons:home-outline"class="main-menu-icon" /></Button></RouterLink> 
+   
+
+  <DropdownMenu>
+    <DropdownMenuTrigger ><Button class="main-menu-button"><Icon icon="fluent:people-community-20-regular"class="main-menu-icon" /></Button></DropdownMenuTrigger>
+    <DropdownMenuContent class="w-6 bg-white">
+     <RouterLink :to=" item.path " class="main-menu-sub-link" v-for="(item, index) in subNavs"> {{ item.title }} </RouterLink>    
+     
+    </DropdownMenuContent>
+  </DropdownMenu> 
+  <RouterLink to="/personalCenter/userInfo/myPosts"><Button class="main-menu-button"><Icon icon="bi:person"class="main-menu-icon" /></Button></RouterLink> 
+  <RouterLink to=""><Button class="main-menu-button main-menu-publish"><Icon icon="prime:pencil" class="main-menu-icon icon-publish"  /></Button></RouterLink>
+   
+    
+
   
     
   </div>
@@ -364,19 +402,55 @@ color :var(--secondary-foreground);
     }
   }
 }
-.main-menu{
-  
-}
+
 
 @media screen and (max-width: 768px) {
   .main-menu{
+  padding: 5px 10px;
   display: flex;
   justify-content: space-between;
   position: fixed;
   width: 100%;
   bottom: 0;
-  height: 50px;
-  background-color: white
+  height: 60px;
+  box-sizing:border-box;
+  background-color: white;
+  &-button{
+    width: 45px;
+    height: 45px;
+    display: flex;
+    box-shadow: none;
+    padding: 0 10px;
+  }
+  &-icon{
+    font-size: 22px;
+    width: 90%;
+    height: 90%;
+  }
+  &-sub-link{
+    width: 100%;
+    display: inline-block;
+    padding: 5px 5px;
+    box-sizing: border-box;
+    color:var(--secondary-foreground);
+    text-align: center;
+    &:hover{
+      background-color: var(--secondary);
+    }
+  }
+  &-publish{
+    border-radius: 50%;
+    padding: 12px;
+    background: linear-gradient(#67a5e6,#c0d2e6,#eff1f4);
+  }
+  #main-menu_dropdown{
+    width: max-content;
+  }
+  .icon-publish{
+    color: white;
+  }
+
+
 }
   .frame{
     display: none;

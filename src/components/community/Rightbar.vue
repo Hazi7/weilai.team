@@ -23,4 +23,12 @@ import ArticleList from "@/components/community/ArticleList.vue";
     display: none;
   }
 }
+@media screen and (max-width: 1280px) {
+  .content {
+    padding: 0 50px;
+  }
+  .rightbar {
+    display: none;
+  }
+}
 </style>

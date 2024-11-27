@@ -4,20 +4,9 @@
       <!-- 放搜索框的位置 -->
       <div id="search">
         <Search />
-        <!-- <div class="search">
-          <span class="search-icon"
-            ><Icon
-              icon="bitcoin-icons:search-filled"
-              color="#b9c2d0"
-              font-size="26px"
-            />
-          </span>
-          <input type="text" placeholder="搜索" />
-        </div> -->
       </div>
-
       <!-- 放内容 -->
-      <div id="news">
+      <!-- <div id="news">
         <div class="news-item">
           <div class="news-writer">
             <div class="avatar">
@@ -31,6 +20,26 @@
           <div class="news-content">
             <div class="news-details">
               <p>周一结束了明天就是周二</p>
+            </div>
+          </div>
+          <div class="news-footer">
+            <div class="news-view">
+              <Icon
+                icon="iconamoon:eye-light"
+                class="news-footer-icon"
+                :class="isLike ? 'already' : ''"
+              /><span class="">1.6万+</span>
+            </div>
+            <div class="news-like">
+              <Icon icon="iconamoon:like-light" class="news-footer-icon" />11
+            </div>
+            <div class="news-comment">
+              <Icon
+                icon="fontisto:comment"
+                class="news-footer-icon"
+                style="font-size: 13px"
+              />
+              11
             </div>
           </div>
         </div>
@@ -66,10 +75,8 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="bg">
-        <div class="bg-top"></div>
-      </div>
+      </div> -->
+      <NewsContent :type="3" />
     </div>
     <Rightbar />
   </div>
@@ -78,37 +85,19 @@
 <script setup lang="ts">
 // import { Icon } from "@iconify/vue";
 import Search from "@/features/community/components/Search.vue";
+import { ref } from "vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
+import NewsContent from "../../components/NewsContent.vue";
+let isLike = ref(true);
 </script>
-
 <style scoped lang="scss">
 .content {
   padding: 0 100px;
   width: 100%;
   height: auto;
-
-  #search {
-    margin-bottom: 10px;
-    height: 45px;
-    .search {
-      float: right;
-      position: relative;
-    }
-    input {
-      width: 200px;
-      height: 45px;
-      border: 1px solid #d0d9e4;
-      border-radius: 25px;
-      padding: 5px 10px;
-      padding-left: 30px;
-    }
-    .search-icon {
-      position: absolute;
-      top: 50%;
-      left: 2%;
-      transform: translateY(-50%);
-    }
-  }
+}
+.already {
+  color: red !important;
 }
 #news {
   width: 100%;
@@ -131,7 +120,6 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
         }
         margin-right: 5px;
       }
-
       .time {
         font-size: 13px;
         color: #909ba6;
@@ -176,6 +164,23 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
             margin: 0 5px;
           }
         }
+      }
+    }
+    .news-footer {
+      display: flex;
+      align-items: center;
+      padding: 5px 55px;
+      & > div {
+        color: var(--secondary-foreground);
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        margin-right: 10px;
+      }
+      &-icon {
+        color: var(--secondary-foreground);
+        font-size: 17px;
+        margin-right: 5px;
       }
     }
   }
@@ -252,7 +257,6 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
 
           .labels {
             display: flex;
-
             color: #909ba6;
             font-size: 14px;
             .label-item {
@@ -260,20 +264,6 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
             }
           }
         }
-      }
-    }
-  }
-  #search {
-    position: fixed;
-    z-index: 5;
-    top: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    .search {
-      width: 100%;
-      input {
-        width: 100%;
       }
     }
   }

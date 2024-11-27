@@ -20,16 +20,20 @@ const email = ref('')
 const code = ref('')
 const password = ref('')
 const passwordAgin = ref('')
-const { useGetCode, useResetPassword } = UseLogin()
+const { data, useGetCode, useResetPassword } = UseLogin()
 const loginStore = useLoginStore()
 
+loginStore.isGetCode()
 const getCode = (email) => {
-    loginStore.startCountdown()
-    useGetCode(email)
+    useGetCode(email).then((res) => {
+        console.log(data);
+        if (!data.value) {
+            return
+        } else if (data.value.code == 1007) {
+            loginStore.startCountdown()
+        }
+    })
 }
-
-// const countdown = ref(loginStore.countdown)
-// const isRequesting = ref(loginStore.isRequesting)
 </script>
 
 <template>
@@ -88,7 +92,7 @@ const getCode = (email) => {
     </Dialog>
 </template>
 <style>
-#radix-vue-dialog-content-v-0{
+#radix-vue-dialog-content-v-0 {
     background-color: #fff;
 }
 </style>
