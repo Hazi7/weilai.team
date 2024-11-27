@@ -46,7 +46,6 @@ const props = defineProps<{
 
 // 用于存储选中的 id
 const selectedIds = ref<string[]>([]);
-
 // 用于处理选中的 id
 const handleSelect = (id: string) => {
   if (selectedIds.value.includes(id)) {
