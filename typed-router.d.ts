@@ -38,6 +38,7 @@ declare module 'vue-router/auto-routes' {
     '/community/blog': RouteRecordInfo<'/community/blog', '/community/blog', Record<never, never>, Record<never, never>>,
     '/community/blog/': RouteRecordInfo<'/community/blog/', '/community/blog', Record<never, never>, Record<never, never>>,
     '/community/blog/RecruitmentFrom': RouteRecordInfo<'/community/blog/RecruitmentFrom', '/community/blog/RecruitmentFrom', Record<never, never>, Record<never, never>>,
+    '/community/blog/user': RouteRecordInfo<'/community/blog/user', '/community/blog/user', Record<never, never>, Record<never, never>>,
     '/community/brainstorm': RouteRecordInfo<'/community/brainstorm', '/community/brainstorm', Record<never, never>, Record<never, never>>,
     '/community/brainstorm/': RouteRecordInfo<'/community/brainstorm/', '/community/brainstorm', Record<never, never>, Record<never, never>>,
     '/community/comprehensive': RouteRecordInfo<'/community/comprehensive', '/community/comprehensive', Record<never, never>, Record<never, never>>,
@@ -51,6 +52,9 @@ declare module 'vue-router/auto-routes' {
     '/community/notice': RouteRecordInfo<'/community/notice', '/community/notice', Record<never, never>, Record<never, never>>,
     '/community/notice/': RouteRecordInfo<'/community/notice/', '/community/notice', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
+    '/message': RouteRecordInfo<'/message', '/message', Record<never, never>, Record<never, never>>,
+    '/message/all': RouteRecordInfo<'/message/all', '/message/all', Record<never, never>, Record<never, never>>,
+    '/message/all/': RouteRecordInfo<'/message/all/', '/message/all', Record<never, never>, Record<never, never>>,
     '/personalCenter': RouteRecordInfo<'/personalCenter', '/personalCenter', Record<never, never>, Record<never, never>>,
     '/personalCenter/userInfo': RouteRecordInfo<'/personalCenter/userInfo', '/personalCenter/userInfo', Record<never, never>, Record<never, never>>,
   }
