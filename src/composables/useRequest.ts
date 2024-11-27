@@ -8,6 +8,7 @@ interface RequestOptions {
     url: string;
     method?: HttpMethod;
     requestData?: Record<string, unknown>;
+    headers?: Record<string, string>; // 新增 headers 参数
 }
 
 // 定义 useRequest 返回的类型
@@ -27,6 +28,7 @@ export function useRequest<T = unknown>(): UseRequestResult<T> {
         url,
         method = "get",
         requestData,
+        headers, // 接收 headers 参数
     }: RequestOptions): Promise<void> => {
         loading.value = true;
         error.value = null;
@@ -35,6 +37,7 @@ export function useRequest<T = unknown>(): UseRequestResult<T> {
             const response = await apiClient.request<T>({
                 url,
                 method,
+                headers, // 添加 headers 到请求配置
                 ...(method !== "get" ? { data: requestData } : {}),
             });
 

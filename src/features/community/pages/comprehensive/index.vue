@@ -3,22 +3,15 @@
     <div class="content">
       <!-- 放搜索框的位置 -->
       <div id="search">
-        <Search />
-        <!-- <div class="search">
-          <span class="search-icon"
-            ><Icon
-              icon="bitcoin-icons:search-filled"
-              color="#b9c2d0"
-              font-size="26px"
-            />
-          </span>
-          <input type="text" placeholder="搜索" />
-        </div> -->
+        <Search :typeId="0" />
       </div>
-
       <!-- 放内容 -->
-      <div id="news">
-        <div class="news-item">
+      <!-- <div id="news">
+        <div
+          class="news-item"
+          v-for="item in articleList"
+          :id="`${item.id}` + ''"
+        >
           <div class="news-writer">
             <div class="avatar">
               <img src="@/assets/img/headImg.jpg" alt="" />
@@ -28,24 +21,25 @@
               <div class="time">发布于 <span>2022-05-05</span></div>
             </div>
           </div>
-          <div class="news-content">
-            <div class="news-title">约定式路由</div>
+          <a class="news-content">
+            <div class="news-title">{{ item.title }}</div>
             <div class="news-details">
               <p>
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
+                {{ item.postTxt }}
               </p>
             </div>
             <div class="news-label">
               <div class="type">博客</div>
               <ul class="labels">
-                <li class="label-item">#js</li>
-                <li class="label-item">#vue</li>
-                <li class="label-item">#nue.js</li>
+                <li class="label-item" v-for="tags in item.postTags">
+                  #{{ tags }}
+                </li>
               </ul>
             </div>
-          </div>
+            <div class="news-footer">
+              <div class="news-view"><Icon icon="iconamoon:eye-light" /></div>
+            </div>
+          </a>
         </div>
         <div class="news-item">
           <div class="news-writer">
@@ -75,127 +69,28 @@
               </ul>
             </div>
           </div>
-        </div>
-        <div class="news-item">
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
+          <div class="news-footer">
+            <div class="news-view">
+              <Icon icon="iconamoon:eye-light" class="news-footer-icon" /><span
+                class=""
+                >1.6万+</span
+              >
             </div>
-            <div class="writer-info">
-              <div class="name">爆米奇</div>
-              <div class="time">发布于 <span>2022-05-05</span></div>
+            <div class="news-like">
+              <Icon icon="iconamoon:like-light" class="news-footer-icon" />11
             </div>
-          </div>
-          <div class="news-content">
-            <div class="news-title">约定式路由</div>
-            <div class="news-details">
-              <p>
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-              </p>
-            </div>
-            <div class="news-label">
-              <div class="type">博客</div>
-              <ul class="labels">
-                <li class="label-item">#js</li>
-                <li class="label-item">#vue</li>
-                <li class="label-item">#nue.js</li>
-              </ul>
+            <div class="news-comment">
+              <Icon
+                icon="fontisto:comment"
+                class="news-footer-icon"
+                style="font-size: 13px"
+              />
+              11
             </div>
           </div>
         </div>
-        <div class="news-item">
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
-            </div>
-            <div class="writer-info">
-              <div class="name">爆米奇</div>
-              <div class="time">发布于 <span>2022-05-05</span></div>
-            </div>
-          </div>
-          <div class="news-content">
-            <div class="news-title">约定式路由</div>
-            <div class="news-details">
-              <p>
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-              </p>
-            </div>
-            <div class="news-label">
-              <div class="type">博客</div>
-              <ul class="labels">
-                <li class="label-item">#js</li>
-                <li class="label-item">#vue</li>
-                <li class="label-item">#nue.js</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
-            </div>
-            <div class="writer-info">
-              <div class="name">爆米奇</div>
-              <div class="time">发布于 <span>2022-05-05</span></div>
-            </div>
-          </div>
-          <div class="news-content">
-            <div class="news-title">约定式路由</div>
-            <div class="news-details">
-              <p>
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-              </p>
-            </div>
-            <div class="news-label">
-              <div class="type">博客</div>
-              <ul class="labels">
-                <li class="label-item">#js</li>
-                <li class="label-item">#vue</li>
-                <li class="label-item">#nue.js</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
-            </div>
-            <div class="writer-info">
-              <div class="name">爆米奇</div>
-              <div class="time">发布于 <span>2022-05-05</span></div>
-            </div>
-          </div>
-          <div class="news-content">
-            <div class="news-title">约定式路由</div>
-            <div class="news-details">
-              <p>
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-              </p>
-            </div>
-            <div class="news-label">
-              <div class="type">博客</div>
-              <ul class="labels">
-                <li class="label-item">#js</li>
-                <li class="label-item">#vue</li>
-                <li class="label-item">#nue.js</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="bg">
-        <div class="bg-top"></div>
-      </div>
+      </div> -->
+      <NewsContent />
     </div>
     <Rightbar />
   </div>
@@ -203,8 +98,55 @@
 
 <script setup lang="ts">
 // import { Icon } from "@iconify/vue";
-import Search from "@/features/community/components/Search.vue";
+import { useRequest } from "@/composables/useRequest";
 import Rightbar from "../../../../components/community/Rightbar.vue";
+import NewsContent from "../../components/NewsContent.vue";
+import Search from "../../components/Search.vue";
+const { executeRequest, error, loading, data } = useRequest();
+// getArticleByType();
+// let articleList = ref<ArticleList[]>([]);
+
+// interface ArticleList {
+//   id: number;
+//   collectCount?: number;
+//   commentCount?: number;
+//   isCollect?: false;
+//   isLike?: false;
+//   likeCount?: 1;
+//   postAbstract: string;
+//   postTags: string[];
+//   postTxt: string;
+//   title: string;
+//   userId?: 12;
+//   viewCount?: 24;
+// }
+// interface ArticleInfo {
+//   countId: number;
+//   current: number;
+//   maxLimit: number;
+//   optimizeCountSql: boolean;
+//   orders: [];
+//   pages: number;
+//   records: ArticleList[];
+//   searchCount: boolean;
+//   size: number;
+//   total: number;
+// }
+// interface Data {
+//   data: ArticleInfo;
+// }
+
+// async function getArticle(title = "") {
+//   await executeRequest({
+//     url: `/post/selectAll?title=${title}`,
+//     method: "get",
+//   });
+//   const res = data.value as Data;
+
+//   articleList.value = res.data.records;
+
+//   console.log(articleList);
+// }
 </script>
 
 <style scoped lang="scss">
@@ -212,29 +154,6 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
   padding: 0 100px;
   width: 100%;
   height: auto;
-
-  #search {
-    margin-bottom: 10px;
-    height: 45px;
-    .search {
-      float: right;
-      position: relative;
-    }
-    input {
-      width: 200px;
-      height: 45px;
-      border: 1px solid #d0d9e4;
-      border-radius: 25px;
-      padding: 5px 10px;
-      padding-left: 30px;
-    }
-    .search-icon {
-      position: absolute;
-      top: 50%;
-      left: 2%;
-      transform: translateY(-50%);
-    }
-  }
 }
 #news {
   width: 100%;
@@ -265,6 +184,11 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
     }
     .news-content {
       padding: 10px 55px;
+      display: block;
+      &:hover {
+        background-color: #f8f8fa;
+        cursor: pointer;
+      }
       .news-details {
         font-size: 14.5px;
         color: #a7a7a7;
@@ -304,27 +228,45 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
         }
       }
     }
+    .news-footer {
+      display: flex;
+      align-items: center;
+      padding: 5px 55px;
+      & > div {
+        color: var(--secondary-foreground);
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        margin-right: 10px;
+      }
+      &-icon {
+        color: var(--secondary-foreground);
+        font-size: 17px;
+        margin-right: 5px;
+      }
+    }
   }
 }
 @media screen and (max-width: 768px) {
   .content {
     padding: 0 0;
+    padding-bottom: 60px;
     .bg {
       position: fixed;
       top: 0;
       z-index: 0;
       width: 100%;
-      height: 20%;
+      height: 150px;
       background-color: #fafafa;
       &-top {
         background-image: linear-gradient(#dfe9f3, #ffffff00 100%);
-        height: 30%;
+        height: 150px;
       }
     }
   }
 
   #news {
-    margin-top: 180px;
+    margin-top: 150px;
     .news-item {
       padding: 5px;
       margin-bottom: 8px;
@@ -388,20 +330,6 @@ import Rightbar from "../../../../components/community/Rightbar.vue";
             }
           }
         }
-      }
-    }
-  }
-  #search {
-    position: fixed;
-    z-index: 5;
-    top: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    .search {
-      width: 100%;
-      input {
-        width: 100%;
       }
     }
   }

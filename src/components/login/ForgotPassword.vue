@@ -14,12 +14,26 @@ import { Label } from '@/components/ui/label'
 import GetPin from './GetPin.vue'
 import UseLogin from '@/composables/UseLogin'
 import { ref } from 'vue'
+import { useLoginStore } from '@/store/useLoginStore'
 
 const email = ref('')
 const code = ref('')
 const password = ref('')
 const passwordAgin = ref('')
-const { useGetCode, useResetPassword } = UseLogin()
+const { data, useGetCode, useResetPassword } = UseLogin()
+const loginStore = useLoginStore()
+
+loginStore.isGetCode()
+const getCode = (email) => {
+    useGetCode(email).then((res) => {
+        console.log(data);
+        if (!data.value) {
+            return
+        } else if (data.value.code == 1007) {
+            loginStore.startCountdown()
+        }
+    })
+}
 </script>
 
 <template>
@@ -49,9 +63,10 @@ const { useGetCode, useResetPassword } = UseLogin()
                     </Label>
                     <div class="flex w-full max-w-sm items-center gap-1.5">
                         <Input id="code" placeholder="请输入验证码" style="width: 170px;" v-model="code" />
-                        <Button type="submit" @click="useGetCode(email)">
+                        <Button v-if="!loginStore.isRequesting" type="submit" @click="getCode(email)">
                             获取验证码
                         </Button>
+                        <Button v-if="loginStore.isRequesting" disabled>{{ loginStore.countdown }}s后重新发送</Button>
                     </div>
                 </div>
                 <div class="grid grid-cols-4 items-center gap-4">
@@ -77,7 +92,7 @@ const { useGetCode, useResetPassword } = UseLogin()
     </Dialog>
 </template>
 <style>
-#radix-vue-dialog-content-v-0{
+#radix-vue-dialog-content-v-0 {
     background-color: #fff;
 }
 </style>

@@ -1,25 +1,54 @@
 <script setup lang="ts">
 //vue3
-import { defineEmits } from 'vue';
+import Label from '@/features/community/pages/discussion/label.vue';
+import { defineEmits,ref } from 'vue';
+
 
 const emit = defineEmits(['input_src']);
+
+const isComposing=ref(false)
+const onCompositionStart=()=>{
+    isComposing.value=true;
+}
+const onCompositionEnd=(e:Event)=>{
+    isComposing.value=false;
+    input_src(e);
+}
+
 const input_src=(e:Event)=>{
+    if(isComposing.value){
+            return;
+    }
+    if( (e.target as HTMLInputElement).value===""){
+       return;
+    }
     if(e){
         emit('input_src', (e.target as HTMLInputElement).value);
     }
     return;
 };
+const props = defineProps({
+   labelText : String,
 
-
-
-
+})
+const isShowLabel = ref(false);
+const showLabel = () => {
+   isShowLabel.value=true;
+}
+const hideLabel = () => {
+    isShowLabel.value=false;
+}
 </script>
 <template>
     <div >
         <form>
-	<label for="search">Search</label>
+	<label for="search"  v-show="isShowLabel">{{labelText }}</label>
 	<input required="false" pattern=".*\S.*" type="search" class="input" id="search"
     @input="input_src($event)"
+    @compositionstart="onCompositionStart"
+    @compositionend="onCompositionEnd"
+    @focus="showLabel"
+    @blur="hideLabel"
     >
 	<span class="caret"></span>
 </form>
@@ -28,8 +57,9 @@ const input_src=(e:Event)=>{
 <style scoped lang="scss">
 /* From Uiverse.io by Harsha2lucky */
 @use '@/assets/styles';
+$boderColor :#393e46;
 .input {
-  color: black;
+  color:$boderColor;
   font: 1em/1.5 Hind, sans-serif;
 }
 
@@ -89,15 +119,19 @@ form {
 }
 
 label {
-  color: #e3e4e8;
-  overflow: hidden;
   position: absolute;
-  width: 0;
-  height: 0;
+  top: -50%;
+  left: 0;
+  transform: translate(0,50%);
+  transition: all 1s;
+  width: 100%;
+  height: auto;
+  font-size: 0.8em;
+
 }
 
 .caret {
-  background: black;
+  background:$boderColor;
   border-radius: 0 0 0.125em 0.125em;
   margin-bottom: -0.6em;
   width: 0.25em;

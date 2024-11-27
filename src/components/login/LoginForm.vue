@@ -4,15 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-vue-next'
+import Alert from './Alert.vue'
 import ForgotPassword from './ForgotPassword.vue'
 import UseLogin from '@/composables/UseLogin'
 import { reactive, ref } from 'vue'
 
 const account = ref('')
 const password = ref('')
-
 const { data, error, loading, getLogin } = UseLogin()
-
 </script>
 
 <template>

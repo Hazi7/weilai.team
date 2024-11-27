@@ -14,10 +14,30 @@
     </div>
     <hr />
     <ul>
-      <li><span class="ranking">1</span><span>零碎的岛会找到海。</span></li>
       <li>
-        <span class="ranking">2</span
-        >那些为了六便士努力的日子里，也常常有月光落在归路上
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <a href="/community/comprehensive"
+                ><span class="ranking">1</span
+                ><span
+                  >那些为了六便士努力的日子里，也常常有月光落在归路上。</span
+                ></a
+              ></TooltipTrigger
+            >
+            <TooltipContent class="bg-white">
+              <a href=""
+                ><span
+                  >那些为了六便士努力的日子里，也常常有月光落在归路上。</span
+                >
+              </a></TooltipContent
+            >
+          </Tooltip>
+        </TooltipProvider>
+      </li>
+      <li>
+        <span class="ranking">2</span>
+        <span title="零碎的岛会找到海。">零碎的岛会找到海。</span>
       </li>
       <li><span class="ranking">3</span>渐入佳境，生以悦己。</li>
       <li><span class="ranking">4</span>桂花酒，少年游，大风吹散小忧愁</li>
@@ -31,6 +51,12 @@
 </template>
 
 <script setup lang="ts">
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Icon } from "@iconify/vue";
 </script>
 
@@ -77,6 +103,16 @@ ul {
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 8px;
+    &:hover {
+      cursor: pointer;
+    }
+    a {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 320px;
+    }
   }
 }
 </style>

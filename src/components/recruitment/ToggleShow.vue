@@ -15,12 +15,12 @@ type Item= {
 }
 
 const props = defineProps<{
-    items: Item[];
+    toggleItems: Item[];
 }>()
 
 // 切换组件的样式控制
 function toggleActive(index: number) {
-    props.items.forEach((item) => {
+    props.toggleItems.forEach((item) => {
         item.isActive = item.index === index;
     });
 }
@@ -28,10 +28,10 @@ function toggleActive(index: number) {
 </script>
 
 <template>
-    <Menubar class="border-b toggle-show p-3">
-        <MenubarMenu class="toggle-item" style="padding: 5px 0px;">
+    <Menubar class="toggle-show border-b p-3 ">
+        <MenubarMenu>
                 <MenubarTrigger
-                v-for="item  in items"
+                v-for="item  in toggleItems"
                 :key="item.index"
                 >
                 <Button
@@ -44,13 +44,14 @@ function toggleActive(index: number) {
     </Menubar>
 </template>
 
-<style lang="scss" scoped>
-@use '@/assets/styles';
 
+<style lang="scss"  scoped>
+@use '@/assets/styles';
+//TODO: 设置外层内边距 外层设置的行内弹性盒子
 $undertone: #647499;
 
 .toggle-show {
-    // width: 400px;
+    height: 80%;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;

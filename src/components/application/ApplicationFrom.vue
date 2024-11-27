@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import ComboBox from './ComboBox.vue'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import UseApplication from '@/composables/UseApplication'
+import { applicationStore } from '@/store/applicationStore'
 import { reactive, ref } from 'vue'
 import {
     Select,
@@ -21,7 +22,7 @@ interface Framework {
     item: string
 }
 const frameworks: Framework[] = []
-const { getClass, classListData, getCode, sentStuInfo } = UseApplication()
+const { data, getClass, classListData, getCode, sentStuInfo } = UseApplication()
 getClass().then(res => {
     const classList = classListData.value
     classList.forEach((element, item) => {
@@ -39,6 +40,35 @@ const stuInform = reactive({
     code: '',
     file: File
 })
+
+function handleFileChange(event: any) {
+    const file = event.target.files[0]
+    if (file) {
+        convertToBinary(file)
+    }
+}
+
+function convertToBinary(file: File) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+        const binaryData = e.target?.result
+        stuInform.file = new Blob([binaryData])
+    }
+    reader.readAsArrayBuffer(file)
+}
+
+const appStore = applicationStore()
+
+const applicationGetCode = (email) => {
+    getCode(email).then((res) => {
+        console.log(data);
+        if (!data) {
+            return
+        } else if (data.value.code == 1007) {
+            appStore.startCountdown()
+        }
+    })
+}
 </script>
 
 <template>
@@ -63,7 +93,7 @@ const stuInform = reactive({
                             <Label for="last-name">班级</Label>
                             <Select v-model="stuInform.clazz">
                                 <SelectTrigger id=" category" aria-label="Select category">
-                                <SelectValue placeholder="请选择班级" />
+                                    <SelectValue placeholder="请选择班级" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem v-for="framework in frameworks" :key="framework.index"
@@ -103,16 +133,16 @@ const stuInform = reactive({
                         <Label for="email">验证码</Label>
                         <div class="flex w-full max-w-sm items-center gap-1.5">
                             <Input id="code" placeholder="请输入验证码" v-model="stuInform.code" />
-                            <Button type="submit" @click="getCode(stuInform.email)">
+                            <Button v-if="!appStore.isRequesting" type="submit" @click="applicationGetCode(stuInform.email)">
                                 获取验证码
                             </Button>
+                            <Button v-if="appStore.isRequesting" disabled>{{ loginStore.countdown }}s后重新发送</Button>
                         </div>
                     </div>
                     <div class="grid gap-2">
                         <div class="grid w-full max-w-sm items-center gap-1.5">
                             <Label for="tabular">报名表</Label>
-                            <Input id="picture" type="file" accept=".doc,.docx" multiple
-                                @change="stuInform.file = $event.target.files[0]" />
+                            <Input id="picture" type="file" accept=".doc,.docx" multiple @change="handleFileChange" />
                         </div>
                         <!-- <input type="file" accept=".doc,.docx" multiple></input> -->
                     </div>
