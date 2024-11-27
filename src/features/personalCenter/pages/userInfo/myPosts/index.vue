@@ -157,11 +157,13 @@ getPosts()
 }
 
 .deletePost {
-    background-color: var(--destructive);
+    background-color: rgb(255, 172, 172);
+    color: rgb(255, 0, 0);
 }
 
 .updatePost {
-    background-color: #97d5ff;
+    background-color: #acdeff;
+    color: rgb(0, 0, 255);
 }
 
 .myPosts {

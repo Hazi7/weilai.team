@@ -26,7 +26,7 @@
                             修改信息
                         </Button>
                     </DialogTrigger>
-                    <DialogContent class="sm:max-w-[425px] bg-white max-h-[500px] overflow-y-scroll">
+                    <DialogContent class="sm:max-w-[425px] bg-white max-h-[500px] overflow-y-auto">
                         <DialogHeader>
                             <DialogTitle>修改信息</DialogTitle>
                             <DialogDescription>
@@ -38,27 +38,25 @@
                                 <Label for="phone" class="text-right">
                                     电话
                                 </Label>
-                                <Input id="phone" class="col-span-3" :default-value="userInfo.phone" />
+                                <Input id="phone" class="col-span-3" v-model:="phone" />
                             </div>
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <Label for="qq" class="text-right">
                                     QQ
                                 </Label>
-                                <Input id="qq" class="col-span-3" :default-value="userInfo.qq" />
+                                <Input id="qq" class="col-span-3" v-model="qq" />
                             </div>
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <Label for="graduationDestination" class="text-right">
                                     毕业去向
                                 </Label>
-                                <Input id="graduationDestination" class="col-span-3"
-                                    :default-value="userInfo.graduationDestination" />
+                                <Input id="graduationDestination" class="col-span-3" v-model="graduationDestination" />
                             </div>
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <Label for="userDestination" class="text-right">
                                     个性签名
                                 </Label>
-                                <Textarea id="userDestination" class="col-span-3"
-                                    :default-value="userInfo.userDestination" />
+                                <Textarea id="userDestination" class="col-span-3" v-model="userDestination" />
                             </div>
                         </div>
                         <DialogFooter>
@@ -74,7 +72,8 @@
 
         <div class="signature">
             <p>
-                <Icon style="display: inline-block;height: 100%; " icon="fluent:document-signature-16-regular"/>个性签名： {{
+                <Icon style="display: inline-block;height: 100%; " icon="fluent:document-signature-16-regular" />个性签名：
+                {{
                     userInfo.userDestination }}
             </p>
         </div>
@@ -181,7 +180,8 @@ let userInfo = reactive<UserInfo>({
     phone: '',
     qq: '',
     sex: '',
-    studyId: ''
+    studyId: '',
+    userDestination: ''
 })
 
 // 定义UserInfo接口
@@ -199,14 +199,24 @@ interface UserInfo {
     phone: string,
     qq: string,
     sex: string,
-    studyId: string
+    studyId: string,
+    userDestination: string
 }
 
+let phone = ref('')
+let qq = ref('')
+let userDestination = ref('')
+let graduationDestination = ref('')
 // 获取用户信息函数
 async function getUserInfo() {
     await executeRequest({ url: `/user/getUserInfoByUserId/${userId}` })
     if (data.value && data.value.code == 200) {
         Object.assign(userInfo, data.value.data);
+
+        phone.value = userInfo.phone
+        qq.value = userInfo.qq
+        userDestination.value = userInfo.userDestination
+        graduationDestination.value = userInfo.graduationDestination
     }
 }
 // 打开页面立刻调用一次函数
@@ -216,27 +226,25 @@ const phoneNumberRegex = /^1[3-9]\d{9}$/;
 const qqNumberRegex = /^[1-9][0-9]{4,10}$/;
 
 async function submitForm() {
-    const phone = document.querySelector('#phone').value
-    const userDestination = document.querySelector('#userDestination').value
-    const graduationDestination = document.querySelector('#graduationDestination').value
-    const qq = document.querySelector('#qq').value
-    if (!phoneNumberRegex.test(phone) || !phone) {
+    if (!phoneNumberRegex.test(phone.value) || !phone) {
         console.log('手机号格式错误');
         return
-    } else if (!qqNumberRegex.test(qq) || !qq) {
+    } else if (!qqNumberRegex.test(qq.value) || !qq) {
         console.log('qq号格式错误');
         return
-    } else if (graduationDestination.length > 20) {
+    } else if (graduationDestination.value.length > 20) {
         console.log('毕业去向字数超过最大限制');
-    } else if (userDestination.length > 50) {
+    } else if (userDestination.value.length > 50) {
         console.log('毕业去向字数过少');
     }
     const dataToSend = {
-        phone,
-        userDestination,
-        graduationDestination,
-        qq
+        phone: phone.value,
+        userDestination: userDestination.value,
+        graduationDestination: graduationDestination.value,
+        qq: qq.value,
     }
+    console.log(dataToSend);
+
     await executeRequest({ url: '/user/updateUserInfo', method: 'put', requestData: dataToSend })
 
     console.log('修改成功：', data.value);
