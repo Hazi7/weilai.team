@@ -57,4 +57,13 @@ export default defineConfig({
       "@login": resolve(__dirname, "./src/features/login"),
     },
   },
+  // server: {
+  //   proxy: {
+  //     '/message': {
+  //       target: 'http://49.232.183.67:8087',
+  //       changeOrigin: true,
+  //       rewrite: (path) => path.replace(/^\/message/, ''),
+  //     },
+  //   },
+  // },
 });

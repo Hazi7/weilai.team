@@ -11,12 +11,21 @@ export type SSEMessageData = {
     // 根据实际需求扩展字段
 };
 const getLocalToken = (): string => {
-    return localStorage.getItem('token') || '';
+    const tokenString = localStorage.getItem('token');
+    if (tokenString) {
+        try {
+            const tokenObject = JSON.parse(tokenString);
+            return tokenObject.value;
+        } catch (error) {
+            console.error('解析token字符串失败', error);
+        }
+    }
+    return '';
 };
 
 // 钩子函数
 export default function useSSE() {
-    const sseUrl = ref('http://49.232.183.67:8087/message/addClient');
+    const sseUrl = ref('/message/addClient');
     const sse = ref<EventSource | null>(null); // 使用 ref 包裹 EventSource
     const isConnected = ref(false); // 连接状态
     let reconnectTimer: number | null = null; // 重连定时器
@@ -35,12 +44,12 @@ export default function useSSE() {
             sse.value.close(); // 在重新连接前关闭当前连接
         }
         try {
-            const token = getLocalToken();
+            const token = getLocalToken();            
             sse.value = new EventSourcePolyfill(sseUrl.value, {
                 heartbeatTimeout: 3 * 60 * 1000,
                 headers: {
                     Authorization: 'Bearer ' + token,
-                    Accept: 'text/event-stream'
+                    Accept: 'text/event-stream',
                 },
                 withCredentials: true,
             });

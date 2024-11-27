@@ -25,7 +25,11 @@
         </div>
         
       </div>
-      <NoticeItem/>
+      <div class="noticeItemCon">
+        <NoticeItem/>
+        <NoticeItem/>
+      </div>
+      
     </div>
     <Rightbar/>
   </div>
@@ -52,6 +56,12 @@ import {
   &:hover{
     background-color: var(--secondary);
   }
+}
+.noticeItemCon{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
      .noticeCon{
       width: 100%;

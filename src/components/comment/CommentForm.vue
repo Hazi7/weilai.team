@@ -4,7 +4,7 @@ import { useRequest } from '@/composables/useRequest';
 import { Icon } from '@iconify/vue';
 import { marked } from 'marked';
 import dompurify from 'dompurify';
-// import axios from 'axios';
+
 
 //定义一级评论的数据类型
 interface CommentData {
@@ -18,7 +18,7 @@ interface CommentData {
 const { data, error,executeRequest } = useRequest<CommentData>();
 
 const commentText = ref<string>('');
-const postId = ref<number>(12);
+const postId = ref<number>(1);
 const maxLength = 1000;
 const remaining = computed(() => maxLength - commentText.value.length);
 const renderedContent = ref<string>('');
@@ -78,19 +78,22 @@ const submitComment = async () => {
     console.log('评论内容不能为空');
     return;
   }
-  const dataToSend = {
-    postId: postId.value,
-    commentText: commentText.value,
-    photoUrls: photoUrls.value
-  };
-  console.log(dataToSend);
+  const formData = new FormData();
+  formData.append('postId', postId);
+  formData.append('commentText', commentText.value);
+  if (photoUrls.value && photoUrls.value.length > 0) {
+    const imageUrl = photoUrls.value[0]; 
+    formData.append('photoUrl', imageUrl);
+  }
+  console.log(formData);
+  const requestData = Object.fromEntries(formData.entries());
     await executeRequest({
       url: `/comment/writePostComment`,
       method: 'post',
-      requestData: dataToSend,
+      requestData,
     });
     console.log(data.value, error);
-    if (data.value && data.value.code == 200) {
+    if (data.value) {
       console.log('评论成功');
       commentText.value = '';
       photoUrls.value = [];
@@ -135,7 +138,6 @@ const submitComment = async () => {
 </template>
   
   <style scoped lang="scss">
-  $whiteColor: white;
   .comment-form {
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -180,7 +182,7 @@ const submitComment = async () => {
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: $whiteColor;
+        background-color: white;
         border-radius: 10px;
         display: none;
         cursor: pointer;
@@ -233,7 +235,7 @@ const submitComment = async () => {
            width: 70px;
            height: 30px;
            background-color: #5dbee8;
-           color: $whiteColor;
+           color: white;
            border: none;
            font-size: 14px;
            border-radius:15px;

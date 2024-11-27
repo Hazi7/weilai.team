@@ -2,6 +2,13 @@
 import Rightbar from '@/components/community/Rightbar.vue';
 import { Icon } from "@iconify/vue";
 import MesItem from '../../compontent/MesItem.vue';
+import useSSE from '../../composables/sse';
+import { onMounted } from 'vue';
+
+const { connect, disconnect, subscribe, unsubscribe, isConnected } = useSSE();
+onMounted(() => {
+      // connect();
+});
 
 </script>
 

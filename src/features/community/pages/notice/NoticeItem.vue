@@ -1,6 +1,5 @@
 <template>
     <div style="display: flex">
-      <div class="contents">
         <!-- 公告模板 -->
         <div class="noticeItem">
           <!-- 个人信息以及编辑操作 -->
@@ -28,7 +27,6 @@
           </div>
           <div class="show">展开<Icon icon="cuida:caret-down-outline" class="arrowsIcon"/></div>
         </div >
-      </div>
     </div>
     
   </template>
@@ -38,17 +36,6 @@
   </script>
   
   <style scoped lang="scss">
-  .contents {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    height: auto;
-    flex-wrap: wrap;
-    margin-top: 20px;
-    .commentCon{
-      width: 730px;
-    }
-  }
   .noticeItem {
     width: 730px;
     background-color: white;

@@ -24,7 +24,7 @@ import { Icon } from "@iconify/vue";
           width: 690px;
           margin-bottom: 10px;
           padding-bottom: 15px;
-          margin-right: 20px;
+          // margin-right: 20px;
           background-color: white;
           border-radius: 5px;
           display: flex;

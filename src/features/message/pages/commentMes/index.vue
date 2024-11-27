@@ -21,6 +21,9 @@ import MesItem from '../../compontent/MesItem.vue';
 </script>
 
 <style scoped lang="scss">
+.comments{
+  width: 690px;
+}
    .commentCon{
       width: 100%;
       .titleOptions{
