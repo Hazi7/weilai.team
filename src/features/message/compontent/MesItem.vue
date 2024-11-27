@@ -1,59 +1,30 @@
 <script setup lang="ts">
-import Rightbar from '@/components/community/Rightbar.vue';
 import { Icon } from "@iconify/vue";
-import MesItem from '../../compontent/MesItem.vue';
-import useSSE from '../../composables/sse';
-import { onMounted } from 'vue';
-
-const { connect, disconnect, subscribe, unsubscribe, isConnected } = useSSE();
-onMounted(() => {
-      // connect();
-});
 
 </script>
 
 <template>
-  <div class="" style="display: flex;">
-    <div class="allCon">
-      <div class="titleOptions">
-        <Icon icon="ant-design:clear-outlined" class="clearIcon"/>
-        <div class="clearAll">清空所有</div>
-      </div>
-      <div class="messageCon">
-        <MesItem/>
-      </div>
-    </div>
-    <Rightbar/>
-  </div>
+   <div class="mesItem">
+          <div class="avatar"><img src="../../../assets/img/test.jpg"/></div>
+          <div class="mesContent">
+            <div class="details">
+              <div class="name">万东乐<span class="type">评论了你的文章</span></div>
+              <div class="time">2024/11/25/15:00</div>
+            </div>
+            <div class="content">上了一整天的课</div>
+            <!-- <div class="imgCon"><img src="../../../assets/img/headImg.jpg"/></div> -->
+            <div class="postLink"># vue3实现sse消息实时推送</div>
+            <Icon icon="fluent:delete-24-regular" class="deleteIcon"/>
+          </div>
+        </div>
 </template>
 
 <style scoped lang="scss">
-   .allCon{
-      width: 100%;
-      .titleOptions{
-        width: 100%;
-        height: 50px;
-        display: flex;
-        cursor: pointer;
-        .clearAll{
-          width: 130px;
-          font-size: 15px;
-        }
-        .clearIcon{
-          margin:2px 4px 0 0px;
-          font-size: 19px;
-        } 
-      }
-      .messageCon{
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        .mesItem{
+ .mesItem{
           width: 690px;
           margin-bottom: 10px;
           padding-bottom: 15px;
-          margin-right: 20px;
+          // margin-right: 20px;
           background-color: white;
           border-radius: 5px;
           display: flex;
@@ -82,6 +53,7 @@ onMounted(() => {
               margin: 15px 0 4px 0;
               .name{
                 color: #636b71;
+                cursor: pointer;
                 font-size: 14px;
                 margin-right: 6px;
                 justify-content: flex-start;
@@ -89,8 +61,10 @@ onMounted(() => {
                   color: var(--secondary-foreground);
                   font-size: 13px;
                   margin-left: 7px;
-                  color: #868787;
                 }
+              }
+              .name:hover{
+                color: #2e9cbe;
               }
               
               .time{
@@ -111,6 +85,9 @@ onMounted(() => {
               cursor: pointer;
               max-width:calc(100% - 20px);
               font-size: 12px;
+              height: 25px;
+              margin-bottom: 6px;
+              border-bottom: 1px solid var(--border);
               color: var(--secondary-foreground);
             }
             .postLink:hover{
@@ -127,11 +104,11 @@ onMounted(() => {
               }
             }
             .deleteIcon{
-              font-size: 17px;
+              font-size: 16px;
               cursor: pointer;
+              color: var(--secondary-foreground);
             }
           }
         }
-      }
-   }
+  
 </style>
