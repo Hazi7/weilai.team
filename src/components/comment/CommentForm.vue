@@ -5,15 +5,8 @@ import { Icon } from '@iconify/vue';
 import { marked } from 'marked';
 import dompurify from 'dompurify';
 
-// 定义一级评论的数据类型
-interface CommentData {
-    postId: number;
-    commentText: string;
-    photoUrls: string[];  
-    code?: number; 
-}
 
-const { data, error, executeRequest } = useRequest<CommentData>();
+const { data, error, executeRequest } = useRequest();
 const commentText = ref<string>('');
 const postId = ref<number>(1);
 const maxLength = 1000;

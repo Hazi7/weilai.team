@@ -23,11 +23,12 @@
            </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        
+      
       </div>
       <div class="noticeItemCon">
         <NoticeItem/>
         <NoticeItem/>
+        <CommentList/>
       </div>
     </div>
     <Rightbar/>

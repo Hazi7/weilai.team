@@ -5,7 +5,7 @@ import CommentItem from './CommentItem.vue';
 
 const { data, error, executeRequest } = useRequest();
 const postId = ref<number>(1);
-const pageSize = ref<number>(5);
+const pageSize = ref<number>(10);
 const pageNumber = ref<number>(1);
 const comments = reactive<any[]>([]);
 
