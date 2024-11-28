@@ -16,29 +16,37 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 
+interface Data {
+    data: ApplicationFrom;
+}
 
+interface ApplicationFrom {
+    clazz: string;
+    code: string;
+    email: string;
+    name: string;
+    qqNumber: string;
+    sex: string;
+    studentId: string;
+    file: File;
+}
 interface Framework {
     value: string,
     item: string
 }
 const frameworks: Framework[] = []
-const { data, getClass, classListData, getCode, sentStuInfo } = UseApplication()
-getClass().then(res => {
-    const classList = classListData.value
-    classList.forEach((element, item) => {
-        frameworks.push({ index: item, value: element })
-    });
-})
+const { getClass, classListData, getCode, sentStuInfo } = UseApplication()
+getClass()
 
-const stuInform = reactive({
-    name: '',
+const stuInform = ref<ApplicationFrom>({
     clazz: '',
-    studentId: '',
-    sex: '',
-    qqNumber: '',
-    email: '',
     code: '',
-    file: File
+    email: '',
+    name: '',
+    qqNumber: '',
+    sex: '',
+    studentId: '',
+    file: null as unknown as File
 })
 
 function handleFileChange(event: any) {
@@ -52,21 +60,42 @@ function convertToBinary(file: File) {
     const reader = new FileReader()
     reader.onload = (e) => {
         const binaryData = e.target?.result
-        stuInform.file = new Blob([binaryData])
+        if (binaryData) {
+            // stuInform.value.file = e.target.result;
+            const newFile = new File([binaryData], file.name, { type: file.type });
+            stuInform.value.file = newFile;
+        } else {
+            console.error('Failed to read file as binary data')
+        }
     }
     reader.readAsArrayBuffer(file)
 }
 
 const appStore = applicationStore()
 
-const applicationGetCode = (email) => {
+const applicationGetCode = (email: string) => {
     getCode(email).then((res) => {
-        console.log(data);
-        if (!data) {
-            return
-        } else if (data.value.code == 1007) {
-            appStore.startCountdown()
-        }
+        console.log(res);
+        // if (!data) {
+        //     return
+        // } else if (data.value.code == 1007) {
+        //     appStore.startCountdown()
+        // }
+    })
+}
+
+function submitForm() {
+    console.log(stuInform);
+    const formData = new FormData();
+    formData.append('clazz', stuInform.value.clazz);
+    formData.append('code', stuInform.value.code);
+    formData.append('email', stuInform.value.email);
+    formData.append('name', stuInform.value.name);
+    formData.append('qqNumber', stuInform.value.qqNumber);
+    formData.append('sex', stuInform.value.sex);
+    formData.append('studentId', stuInform.value.studentId);
+    formData.append('file', stuInform.value.file);
+    sentStuInfo(formData).then((res) => {
     })
 }
 </script>
@@ -96,8 +125,8 @@ const applicationGetCode = (email) => {
                                     <SelectValue placeholder="请选择班级" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem v-for="framework in frameworks" :key="framework.index"
-                                        :value="framework.value">{{ framework.value }}</SelectItem>
+                                    <SelectItem v-for="item, index in classListData" :key="index" :value="item">{{ item
+                                        }}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <!-- <Input id="last-name" placeholder="班级" required /> -->
@@ -133,7 +162,8 @@ const applicationGetCode = (email) => {
                         <Label for="email">验证码</Label>
                         <div class="flex w-full max-w-sm items-center gap-1.5">
                             <Input id="code" placeholder="请输入验证码" v-model="stuInform.code" />
-                            <Button v-if="!appStore.isRequesting" type="submit" @click="applicationGetCode(stuInform.email)">
+                            <Button v-if="!appStore.isRequesting" type="submit"
+                                @click="applicationGetCode(stuInform.email)">
                                 获取验证码
                             </Button>
                             <Button v-if="appStore.isRequesting" disabled>{{ loginStore.countdown }}s后重新发送</Button>
@@ -146,7 +176,8 @@ const applicationGetCode = (email) => {
                         </div>
                         <!-- <input type="file" accept=".doc,.docx" multiple></input> -->
                     </div>
-                    <Button type="submit" class="w-full" @click="sentStuInfo(Object.assign({}, stuInform))">
+                    <!-- <Button type="submit" class="w-full" @click="sentStuInfo(Object.assign({}, stuInform))"> -->
+                    <Button type="submit" class="w-full" @click="submitForm">
                         提交
                     </Button>
                 </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 引入组件
-
+import{ MessageCard} from '@/components/recruitment'
 import {
   Card,
   CardContent,
@@ -116,9 +116,16 @@ const items = ref([
     <div id="content">
       <div id="content-container">
         <div class="toggle-outer">
-          <ToggleShow :items="items" ></ToggleShow>
+          <ToggleShow :toggleItems="items" ></ToggleShow>
+        </div>
+        <div class="message-shows">
+          <MessageCard></MessageCard>
+          <MessageCard></MessageCard>
+          <MessageCard></MessageCard>
+          <MessageCard></MessageCard>
         </div>
       </div>
+
     </div>
   </div>
 </template>
@@ -292,6 +299,20 @@ const items = ref([
     border-radius: var(--radius);
   }
 
+}
+.message-shows{
+  position: relative;
+  top: 20px;
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: auto;
+  padding: 10px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
 }
 
 //#endregion

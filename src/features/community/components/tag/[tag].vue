@@ -2,9 +2,6 @@
 import { reactive, ref } from 'vue'
 import { Icon } from "@iconify/vue";
 
-const tagList = reactive(['推荐', '前端', '后端', 'java', 'python', 'go', 'c', 'C++', 'php', 'html', 'css', 'scss', 'js', 'ts', '人工智能', 'AIGC', '大数据', '数据库'])
-const tag = ref('推荐')
-console.log(tag);
 </script>
 
 <template>

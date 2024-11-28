@@ -25,14 +25,17 @@ export default function () {
             console.log(data);
             console.log('111',error.value);
             if (data.value.code == 1000) {
-                setLocalStorageWithExpire('token', data.value.data.token, 1000 * 60 * 30);
-                setLocalStorageWithExpire('userId', data.value.data.userId, 1000 * 60 * 30);
+                setLocalStorageWithExpire('token', data.value.data.token, 1000 * 60 * 60);
+                setLocalStorageWithExpire('userId', data.value.data.userId, 1000 * 60 * 60);
                 router.push('/');
             } else if (data.value.code == 1002) {
                 showAlert('用户名不存在', 'error')
                 // loginError.value = '用户名不存在'
             } else if (data.value.code == 1001) {
                 showAlert('密码错误', 'error')
+                // loginError.value = '用户名不存在'
+            } else if (data.value.code == 1003) {
+                showAlert('账户已在别处登录，请重新登录', 'waring')
                 // loginError.value = '用户名不存在'
             }
         }

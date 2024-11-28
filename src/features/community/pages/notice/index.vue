@@ -1,126 +1,113 @@
 <template>
-  <div style="display: flex">
-    <div class="content">
-      <!-- 公告模板 -->
-      <div class="noticeItem">
-        <!-- 个人信息以及编辑操作 -->
-        <div class="userInfo">
-          <div class="action">
-          <div class="publish-avatar">
-             <img src="@/assets/img/headImg.jpg"/>
-           </div>
-           <div class="nickName">_H!an.</div>
-           <span class="edit" title="编辑"><Icon icon="mage:edit-pen" class="editIcon"/></span>
-           <span class="delete" title="删除"><Icon icon="fluent:delete-24-regular" class="deleteIcon"/></span>
-           </div>
-           <div class="publish-time">21:28</div>
+  <div class="outCon" style="display: flex;">
+    <div class="noticeCon">
+      <div class="actionCon">
+        <div class="allNotice">
+          全部({{111}})
+          <div class="dot"></div>
         </div>
-        <!-- 公告内容 -->
-        <div class="noticeDetalis">
-          <div class="notice-content">
-            国庆假期结束后按小组作息制度进行学习，国庆假期结束前不做要求，现在就想来小组学习也非常支持。
-            群里有入门学习计划，可以自发进行学习，有任何疑问都可以询问学长学姐。
-            国庆假期结束后按小组作息制度进行学习，国庆假期结束前不做要求，现在就想来小组学习也非常支持。
-            群里有入门学习计划，可以自发进行学习，有任何疑问都可以询问学长学姐。
-            国庆假期结束后按小组作息制度进行学习，国庆假期结束前不做要求，现在就想来小组学习也非常支持。
-            群里有入门学习计划，可以自发进行学习，有任何疑问都可以询问学长学姐。
-          </div>
+        <div class="noRead">
+          <!-- 未读({{ 444 }}) -->
         </div>
-        <div class="show">展开<Icon icon="cuida:caret-down-outline" class="arrowsIcon"/></div>
+        <div class="settings">
+          <DropdownMenu >
+           <DropdownMenuTrigger> <Icon icon="carbon:settings-adjust" class="settingIcon"/></DropdownMenuTrigger>
+           <DropdownMenuContent  class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
+              side="bottom"
+              :side-offset="3">
+           <!-- <DropdownMenuLabel>My Account</DropdownMenuLabel> -->
+           <DropdownMenuSeparator />
+           <DropdownMenuItem class="drop-menu-item">全部已读</DropdownMenuItem>
+           <DropdownMenuItem class="drop-menu-item">发布公告</DropdownMenuItem>
+           <DropdownMenuItem class="drop-menu-item">我的发布</DropdownMenuItem>
+           </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        
+      </div>
+      <div class="noticeItemCon">
+        <NoticeItem/>
+        <NoticeItem/>
       </div>
     </div>
     <Rightbar/>
   </div>
-  <CommentList/>
 </template>
 
 <script setup lang="ts">
-import CommentList from "@/components/comment/CommentList.vue";
 import { Icon } from "@iconify/vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
+import NoticeItem from "./NoticeItem.vue";
+import CommentList from "@/components/comment/CommentList.vue";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 </script>
 
 <style scoped lang="scss">
-.content {
-  padding: 0 100px;
+.drop-menu-item {
+  width: 105%;
+  background-color: white ;
+  &:hover{
+    background-color: var(--secondary);
+  }
+}
+.noticeItemCon{
   width: 100%;
-  height: auto;
-  margin-top: 100px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
-.noticeItem {
-  width: 730px;
-  background-color: white;
-  border-radius: 10px;
-  padding: 15px;
-  .userInfo{
-    display: flex;
-    padding-bottom: 10px;
-    justify-content: space-between; 
-    border-bottom: 1px solid var(--border);
-    .action{
-      display: flex;
+     .noticeCon{
+      width: 100%;
+      height: auto;
     }
-    .publish-avatar{
-      width: 50px;
-      height: 50px;
-      cursor: pointer;
-      border-radius: 50%;
-      img{
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
+    .actionCon{
+        height: 50px;
+        display: flex;
+        font-size: 15px;
+        .allNotice{
+          min-width: 60px;
+          height: 30px;
+          color: gray;
+          cursor: pointer;
+          position: relative;
+          margin-left: 20px;
+          padding-right: 13px;
+          .dot{
+            width: 8px;
+            height: 8px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            border-radius: 50%;
+            background-color: rgb(220, 4, 4);
+          }
+        }
+        .noRead{
+          min-width: 60px;
+          height: 30px;
+          color: gray;
+          cursor: pointer;
+          margin-left: 20px;
+          margin-right: 100px;
+        }
+        .settings{
+          width: 30px;
+          height: 30px;
+          margin-left: auto;
+          margin-right: 50px;
+          .settingIcon{
+            font-size: 22px;
+            margin-top: 5px;
+            color: gray;
+          }
+          
+        }
       }
-    }
-    .nickName{
-      margin: 15px ;
-    }
-    .editIcon{
-      font-size: 17px;
-      color: var(--secondary-foreground);
-      margin: 18px 6px 0 0;
-      cursor: pointer;
-    }
-    .deleteIcon{
-      font-size: 17px;
-      color: var(--secondary-foreground);
-      margin: 18px 10px 0 0;
-      cursor: pointer;
-    }
-    .publish-time{
-      margin-top: 17px;
-      justify-content: flex-end;
-      font-size: 13px;
-      margin-right: 10PX;
-      color: var(--secondary-foreground);
-    }
-  }
-  .noticeDetalis{
-    width: 100%;
-    padding: 10px 0;
-    .notice-content{
-      height: 85px;
-      color: #767575;
-      font-size: 14.5px;
-      line-height: 1.5;
-      overflow: hidden;
-      white-space: normal;
-      word-break: break-word;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-     -webkit-box-orient: vertical;
-     -webkit-line-clamp: 4;
-    }
-
-  }
-  .show{
-    cursor: pointer;
-    display: flex;
-    font-size: 15px;
-    justify-content: flex-end;
-    .arrowsIcon{
-      margin: 5px 0 0 3px;
-    }
-  }
-  
-}
 </style>
