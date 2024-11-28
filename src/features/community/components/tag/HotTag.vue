@@ -3,21 +3,8 @@ import 'iconify-icon';
 import CommunityTag from '@/features/community/composables/CommunityTag';
 import { reactive } from 'vue';
 
-interface TagLists {
-    value: string,
-    id: string
-}
-const tagLists: TagLists[] = reactive([])
 const { hotTagList, getHotTagList } = CommunityTag()
-getHotTagList().then(res => {
-    const tagList = hotTagList.value
-    tagList.forEach((value,item) => {
-        tagLists.push({value:value,id:item})
-    })
-    // tagList.value = hotTagList.value
-    // console.log(tagList.value);
-})
-// tagList = ['java', 'python', 'c++', 'c', 'javascript', 'php', 'ruby', '前端', 'go', 'html', 'css', 'TS']
+getHotTagList()
 </script>
 
 <template>
@@ -30,17 +17,17 @@ getHotTagList().then(res => {
             <iconify-icon icon="icon-park-outline:right" class="moreTag"></iconify-icon>
         </div>
         <div class="hotTagList">
-            <span class="tag" v-for="(tag, index) in tagLists" :key="index">#{{ tag.value }}</span>
+            <span class="tag" v-for="(tag, index) in hotTagList" :key="index">#{{ tag }}</span>
         </div>
     </div>
 </template>
 
 <style scoped lang="scss">
 .rightBarTag {
-    margin-top: 100px;
     border: 2px solid #ffffff;
     max-height: 168px;
     overflow: hidden;
+    box-shadow: 0 4px 30px 0 rgba(232, 232, 237, .3);
 
     .rightTagHead {
         width: 100%;

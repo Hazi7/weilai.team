@@ -1,10 +1,23 @@
 <template>
     <div class="header">
-        <div class="bagdImg"><img src="@/assets/img/test.jpg"></div>
+        <Carousel class="relative" :plugins="[plugin]" @mouseenter="plugin.stop"
+            @mouseleave="[plugin.reset(), plugin.play(), console.log('Running')];">
+            <CarouselContent>
+                <CarouselItem v-for="(item, index) in userInfo.lifePhoto" :key="index">
+                    <div class="p-1">
+                        <Card>
+                            <CardContent class="flex items-center justify-center">
+                                <img :src="item ? item : '/logo.png'" alt="生活照片">
+                            </CardContent>
+                        </Card>
+                    </div>
+                </CarouselItem>
+            </CarouselContent>
+        </Carousel>
         <div class="myInfo">
             <div class="container-left">
                 <Avatar
-                    style="width: 100px; height: 100px; margin-top: -50px; margin-right:20px; background-color: white;">
+                    style="width: 100px; height: 100px; margin-top: -50px; margin-right:20px;margin-left:40px; background-color: white; z-index: 50;">
                     <AvatarImage :src="userInfo.headPortrait ? userInfo.headPortrait : '/logo.png'" alt="@radix-vue" />
                     <AvatarFallback>头像</AvatarFallback>
                 </Avatar>
@@ -147,6 +160,10 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { Card, CardContent } from '@/components/ui/card'
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
+import Autoplay from 'embla-carousel-autoplay'
+
 
 // 引入hooks并调用
 import { useRequest } from '@/composables/useRequest';
@@ -155,6 +172,12 @@ import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire()
 import { useDateFormatter } from '@/composables/useDateFormatter'
 const { formatDateToYYYYMMDD } = useDateFormatter()
+
+const plugin = Autoplay({
+    delay: 2000,
+    stopOnMouseEnter: true,
+    stopOnInteraction: false,
+})
 
 //控制更多信息的显示与隐藏
 let isShow = ref(false)
@@ -212,6 +235,7 @@ async function getUserInfo() {
     await executeRequest({ url: `/user/getUserInfoByUserId/${userId}` })
     if (data.value && data.value.code == 200) {
         Object.assign(userInfo, data.value.data);
+        console.log('用户信息：', userInfo);
 
         phone.value = userInfo.phone
         qq.value = userInfo.qq

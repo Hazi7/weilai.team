@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
+import { Button } from '../ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-vue-next'
-import Alert from './Alert.vue'
 import ForgotPassword from './ForgotPassword.vue'
 import UseLogin from '@/composables/UseLogin'
 import { reactive, ref } from 'vue'

@@ -2,11 +2,11 @@
     <div class="navBox">
         <ul>
             <li>
-                <router-link to="/personalCenter/userInfo/mySchedule" active-class="active">我的课表
-                </router-link>
+                <router-link to="/personalCenter/userInfo/myPosts" active-class="active">我的帖子</router-link>
             </li>
             <li>
-                <router-link to="/personalCenter/userInfo/myPosts" active-class="active">我的帖子</router-link>
+                <router-link to="/personalCenter/userInfo/mySchedule" active-class="active">我的课表
+                </router-link>
             </li>
             <li>
                 <router-link to="/personalCenter/userInfo/myCollections" active-class="active">我的收藏</router-link>
@@ -35,10 +35,12 @@
 
         li {
             height: 35px;
-            a{
+
+            a {
                 display: block;
                 height: 100%;
             }
+
             .active {
                 border-bottom: 3px solid #4096ff;
             }
