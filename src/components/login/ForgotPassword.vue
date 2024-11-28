@@ -15,24 +15,17 @@ import GetPin from './GetPin.vue'
 import UseLogin from '@/composables/UseLogin'
 import { ref } from 'vue'
 import { useLoginStore } from '@/store/useLoginStore'
-
 const email = ref('')
 const code = ref('')
 const password = ref('')
 const passwordAgin = ref('')
-const { data, useGetCode, useResetPassword } = UseLogin()
+const { useGetCode, useResetPassword } = UseLogin()
 const loginStore = useLoginStore()
 
 loginStore.isGetCode()
-const getCode = (email) => {
-    useGetCode(email).then((res) => {
-        console.log(data);
-        if (!data.value) {
-            return
-        } else if (data.value.code == 1007) {
-            loginStore.startCountdown()
-        }
-    })
+
+const getCode = (email: string) => {
+    useGetCode(email)
 }
 </script>
 
