@@ -186,7 +186,8 @@ const resetCondition = () => {
             <div class="search-input">
                 <SearchInput @input_src="handleInput"
                 labelText="搜索候选人:"
-                style="width: 400px;height: 40px;">
+                style="width: 400px;height: 40px;"
+                >
                 </SearchInput>
             </div>
     </div>
@@ -201,5 +202,5 @@ const resetCondition = () => {
 </template>
 
 <style  lang="scss" scoped >
-@use "@/assets/styles/recruitment.scss"
+@use "@/assets/styles/recruitment.scss";
 </style>
