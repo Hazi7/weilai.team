@@ -1,23 +1,24 @@
 <template>
     <div class="header">
-        <Carousel class="relative" :plugins="[plugin]" @mouseenter="plugin.stop"
+        <Carousel class="relative " :plugins="[plugin]" @mouseenter="plugin.stop"
             @mouseleave="[plugin.reset(), plugin.play(), console.log('Running')];">
             <CarouselContent>
                 <CarouselItem v-for="(item, index) in userInfo.lifePhoto" :key="index">
                     <div class="p-1">
                         <Card>
-                            <CardContent class="flex items-center justify-center">
-                                <img :src="item ? item : '/logo.png'" alt="生活照片">
+                            <CardContent class="flex items-center justify-center ">
+                                <img :src="item" alt="生活照片" class="w-full h-64 object-cover">
                             </CardContent>
                         </Card>
                     </div>
                 </CarouselItem>
             </CarouselContent>
         </Carousel>
+        <Skeleton v-if="!userInfo.lifePhoto" class="w-full h-64 bg-gray-100"/>
         <div class="myInfo">
             <div class="container-left">
                 <Avatar
-                    style="width: 100px; height: 100px; margin-top: -50px; margin-right:20px;margin-left:40px; background-color: white; z-index: 50;">
+                    style="width: 100px; height: 100px; margin-top: -50px; margin-right:10%;margin-left:10%; background-color: white; z-index: 20;">
                     <AvatarImage :src="userInfo.headPortrait ? userInfo.headPortrait : '/logo.png'" alt="@radix-vue" />
                     <AvatarFallback>头像</AvatarFallback>
                 </Avatar>
@@ -162,6 +163,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
+import { Skeleton } from '@/components/ui/skeleton'
 import Autoplay from 'embla-carousel-autoplay'
 
 
@@ -308,7 +310,9 @@ async function submitForm() {
 
         .infoBox {
             height: 50px;
-
+            .nameAndSex{
+                width: 70px;
+            }
             .job {
                 font-size: 14px;
                 color: #999;
