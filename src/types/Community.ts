@@ -31,6 +31,7 @@ export interface AdminPostInfo {
   size: number;
   total: number;
 }
+
 export interface AdminPost {
   name: string;
   postTime: string;

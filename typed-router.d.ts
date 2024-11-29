@@ -46,6 +46,7 @@ declare module 'vue-router/auto-routes' {
     '/community/comprehensive/[title]': RouteRecordInfo<'/community/comprehensive/[title]', '/community/comprehensive/:title', { title: ParamValue<true> }, { title: ParamValue<false> }>,
     '/community/comprehensive/latest': RouteRecordInfo<'/community/comprehensive/latest', '/community/comprehensive/latest', Record<never, never>, Record<never, never>>,
     '/community/comprehensive/user': RouteRecordInfo<'/community/comprehensive/user', '/community/comprehensive/user', Record<never, never>, Record<never, never>>,
+    '/community/comprehensive/user/[user]': RouteRecordInfo<'/community/comprehensive/user/[user]', '/community/comprehensive/user/:user', { user: ParamValue<true> }, { user: ParamValue<false> }>,
     '/community/discussion': RouteRecordInfo<'/community/discussion', '/community/discussion', Record<never, never>, Record<never, never>>,
     '/community/discussion/': RouteRecordInfo<'/community/discussion/', '/community/discussion', Record<never, never>, Record<never, never>>,
     '/community/discussion/label': RouteRecordInfo<'/community/discussion/label', '/community/discussion/label', Record<never, never>, Record<never, never>>,
