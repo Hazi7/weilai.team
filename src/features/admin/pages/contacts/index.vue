@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,20 +11,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
+import { Command, CommandInput } from "@/components/ui/command";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -120,28 +110,19 @@ const items: Item[] = [
 <template>
   <div class="content" style="display: flex">
     <div id="sidebar-container">
-      <SidebarProvider class="relative" style="width: 38rem">
+      <SidebarProvider class="relative" id="sidebar-provider">
         <Sidebar
           collapsible="icon"
           class="absolute"
           id="sidebar"
-          style="padding: 15px; width: 20rem"
+          style="padding: 0.9vw; width: 20vw"
         >
           <div id="search">
-            <!-- <div class="search">
-              <span class="search-icon"
-                ><Icon
-                  icon="bitcoin-icons:search-filled"
-                  color="#b9c2d0"
-                  font-size="26px"
-                />
-              </span>
-              <input type="text" placeholder="搜索" />
-            </div> -->
-            <Command class="command_box">
+            <Command class="h-full">
               <CommandInput
                 placeholder="请输入关键词"
-                class="search_input"
+                id="search_input"
+                class="p-0 h-full border-none outline-none"
                 ref="inputRef"
                 @keydown.enter="
                   () => {
@@ -151,7 +132,7 @@ const items: Item[] = [
                 @focus="onInputFocus"
                 @blur="onInputBlur"
               />
-
+              <!-- 
               <CommandList
                 class="search_list"
                 v-show="items.length && isVisible"
@@ -167,7 +148,7 @@ const items: Item[] = [
                   </CommandItem>
                 </CommandGroup>
                 <CommandSeparator />
-              </CommandList>
+              </CommandList> -->
             </Command>
           </div>
           <div class="sidebar-link">
@@ -244,9 +225,12 @@ const items: Item[] = [
         </Sidebar>
       </SidebarProvider>
     </div>
-    <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+    <main class="flex-1 items-start gap-4 md:gap-8 main">
       <Tabs default-value="all">
-        <div class="flex items-center" style="margin: 5px 0px">
+        <div
+          class="flex items-center"
+          style="margin: 5px 0px; height: 5vh; width: 100%"
+        >
           <TabsList>
             <div class="top-title">
               <span>2024未来软件工作室</span>
@@ -284,8 +268,8 @@ const items: Item[] = [
         </div>
         <hr />
         <TabsContent value="all" class="tc">
-          <Card class="border-none shadow-none">
-            <CardHeader>
+          <Card class="border-none shadow-none card">
+            <CardHeader class="card-header">
               <div class="header-link">
                 <button>
                   <RouterLink
@@ -307,7 +291,7 @@ const items: Item[] = [
                 </button>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent class="p-0">
               <Table id="tb">
                 <TableHeader>
                   <TableRow>
@@ -345,82 +329,13 @@ const items: Item[] = [
                             aria-haspopup="true"
                             size="icon"
                             variant="ghost"
+                            class="h-[3vh]"
                           >
                             <MoreHorizontal class="h-4 w-4" />
                             <span class="sr-only">Toggle menu</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent class="bg-white">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell class="hidden sm:table-cell"
-                      ><input type="checkbox" name="" id=""
-                    /></TableCell>
-                    <TableCell class="font-medium"> 爆米奇 </TableCell>
-                    <TableCell>
-                      <Badge variant="outline"> 一组</Badge>
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell"> 2023级 </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      计科235
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      20231514530
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger as-child>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                          >
-                            <MoreHorizontal class="h-4 w-4" />
-                            <span class="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell class="hidden sm:table-cell"
-                      ><input type="checkbox" name="" id=""
-                    /></TableCell>
-                    <TableCell class="font-medium"> 爆米奇 </TableCell>
-                    <TableCell>
-                      <Badge variant="outline"> Draft </Badge>
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      $499.99
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell"> 25 </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      2023-07-12 10:42 AM
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger as-child>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                          >
-                            <MoreHorizontal class="h-4 w-4" />
-                            <span class="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem>Edit</DropdownMenuItem>
                           <DropdownMenuItem>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
@@ -440,47 +355,71 @@ const items: Item[] = [
 
 <style lang="scss" scoped>
 $font: #8c9296;
+
+th {
+  height: 5.5vh;
+}
 tr {
   text-align: center;
-  border-bottom: 1.5px solid var(--border);
-  font-size: 14.5px;
+  font-size: 0.9vw;
 }
 #tb {
-  border: 1.5px solid var(--border);
+  padding: 0;
+  border: 0.1vw solid var(--border);
   border-radius: var(--radius);
 }
 th {
   text-align: center;
   color: var(--secondary-foreground);
 }
+td {
+  height: 5vh;
+  font-size: 0.9vw;
+  padding: 0.7vh 0;
+}
+.main {
+  width: 55vw;
+}
 .group-leader {
   background-color: var(--secondary);
 }
+.table-actions {
+  height: 5vh;
+}
 .content {
+  width: 100%;
   height: 90vh;
   overflow: hidden;
   background-color: white;
   #sidebar {
     color: var(--secondary-foreground);
-    width: 20rem;
+    width: 20vw;
+    a {
+      display: block;
+    }
     .sidebar-link {
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       align-items: center;
+      padding: 0 0.1vw;
+      width: 100%;
+      height: 4vh;
       &-item {
         display: flex;
         align-items: center;
-        padding: 5px 20px;
-        font-size: 14px;
+        padding: 0.8vh 1vw;
+        width: 100%;
+        height: max-content;
+        font-size: 0.9vw;
         color: var(--secondary-foreground);
-        margin: 0 5px;
         border-radius: var(--radius);
-        border: 1.5px solid #e8ebec;
+        border: 0.1vw solid #e8ebec;
       }
     }
   }
   #sidebar-container {
-    width: 20rem;
+    width: 20vw;
+
     overflow: hidden;
   }
 }
@@ -489,22 +428,24 @@ th {
 }
 #search {
   border-radius: 10px;
-  height: 45px;
+  height: 5vh;
   margin-bottom: 10px;
   border: 1px solid #d0d9e4;
-
+  #search_input {
+    border-style: none !important;
+    height: 100% !important;
+    padding: 0 5px !important;
+  }
   .search {
     position: relative;
-    &_input {
-      border-style: none !important;
-    }
+
     &_list {
       box-shadow:
         0px 2px 5px rgba(0, 0, 0, 0.1),
         inset 0px 0.2px 0.5px rgba(0, 0, 0, 0.24);
       border: 1px solid var(--secondary-border);
       position: absolute;
-      top: 60px;
+      top: 5vh;
       padding: 5px 0;
       border-radius: 2px;
       width: 280px;
@@ -532,36 +473,54 @@ th {
     transform: translateY(-50%);
   }
 
-  .command_box {
-    background-color: white;
+  // .command_box {
+  //   background-color: white;
 
-    position: relative;
-    overflow: visible;
-    width: 250px;
-    float: right;
-    height: 45px;
-    border-radius: 25px;
+  //   position: relative;
+  //   overflow: visible;
+  //   width: 250px;
+  //   float: right;
+  //   height: 45px;
+  //   border-radius: 25px;
+  // }
+}
+#sideber {
+  &-provider {
+    width: 20vw;
+  }
+  .group {
+    width: 20vw;
   }
 }
+.card {
+  padding: 0 2vw;
+  .card-header {
+    padding: 1vh 0;
+    .header-link {
+      display: flex;
+      button {
+        margin-right: 10px;
+      }
+      .head {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        text-align: center;
+        color: var(--secondary-foreground);
+        width: 7vw;
+        height: 4vh;
 
-.header-link {
-  display: flex;
-  .head {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    text-align: center;
-    color: var(--secondary-foreground);
-    width: 110px;
-    margin: 0 5px;
-    padding: 5px;
-    font-size: 13px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    &:hover {
-      color: var(--primary-foreground);
-      background-color: var(--primary);
+        padding: 0.1vh 0.05vw;
+        font-size: 13px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        &:hover {
+          color: var(--primary-foreground);
+          background-color: var(--primary);
+        }
+      }
+      margin-bottom: 20px;
     }
   }
 }
@@ -573,9 +532,9 @@ th {
 }
 .top-title {
   text-align: center;
-  height: 30px;
-  border: 2px solid #e0f1f6;
-  border-radius: 15px;
+  height: 3vh;
+  border: 0.15vw solid #e0f1f6;
+  border-radius: 1vw;
   margin: 0 10px;
   text-align: center;
   color: var(--secondary-foreground);
@@ -590,5 +549,62 @@ th {
 
 .dropdown_menu_content {
   background-color: white;
+}
+
+@media screen and (max-width: 1400px) {
+  .content {
+    span {
+      font-size: 12px !important;
+    }
+    font-size: 12px !important;
+  }
+}
+@media screen and (max-width: 1260px) {
+  .content {
+    span {
+      font-size: 10px !important;
+    }
+  }
+  .content {
+    height: 520px;
+    ul {
+      button {
+        height: max-content;
+      }
+    }
+    #sidebar {
+      a {
+        display: block;
+      }
+      .sidebar-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 20px;
+        &-item {
+          padding: 0.8vh 1vw;
+          font-size: 12px;
+          border: 0.1vw solid #e8ebec;
+        }
+      }
+    }
+    #sidebar-container {
+      width: 20vw;
+
+      overflow: hidden;
+    }
+  }
+}
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .content {
+    span {
+      font-size: 8px !important;
+    }
+    svg {
+      font-size: 8px !important;
+      width: 0.8rem;
+    }
+  }
 }
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Pagination } from "@/components/recruitment";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,6 +13,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -28,80 +38,220 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useRequest } from "@/composables/useRequest";
+
 import type { ArticleList } from "@/types/Community";
 import { checkType, getArticle } from "@community/composables/search";
 import { Icon } from "@iconify/vue";
 import { MoreHorizontal } from "lucide-vue-next";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 const { executeRequest, error, loading, data } = useRequest();
-
 const postList = ref<ArticleList[]>([]);
-let title = "";
-let name = "";
-let page = "";
-let pageSize: number = 10;
+const articleData = ref();
+const isAllSelected = ref(false);
+const selectType = ref("");
+let pages = ref(1);
+let total = ref<number>();
+let page = ref(1);
+let pageSize = ref(10);
 let startTime: string = "";
-let type: number;
+let type = ref<number>(0);
+const condition = ref("");
+// 进行搜索
+const getArticleInAdmin = () => {
+  console.log(condition.value, 11111);
+  getArticle(undefined, condition.value).then((res) => {
+    postList.value = res.records;
+    total.value = res.total;
+    pageSize.value = res.size;
+  });
+};
+getArticleInAdmin();
+const changePage = (newPage: number) => {
+  page.value = newPage;
+  isAllSelected.value = false;
+};
 
-getArticle().then((res) => {
-  postList.value = res;
+watch(page, (newPage) => {
+  getArticle(newPage).then((res) => {
+    postList.value = res.records;
+  });
 });
-getArticle();
-console.log(postList.value);
+function deleteArticle(id: number) {
+  console.log(id);
+  executeRequest({ url: `/post/delete/${id}`, method: "put" }).then(() => {
+    getArticle(page.value).then((res) => {
+      postList.value = res.records;
+    });
+  });
+}
 
-//
+// 实现全选反选多选
+function handleSelectAll() {
+  if (postList.value.length === 0) return;
+
+  // 全选
+  postList.value.forEach((item: any) => {
+    item.selected = isAllSelected.value;
+  });
+}
+
+const handleItemSelect = (item: any) => {
+  isAllSelected.value = true;
+  postList.value.forEach((item: any) => {
+    if (!item.selected) {
+      isAllSelected.value = false;
+    }
+  });
+};
+
+import { Calendar } from "@/components/ui/calendar";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { getLocalTimeZone, type DateValue } from "@internationalized/date";
+import { Calendar as CalendarIcon } from "lucide-vue-next";
+
+// const df = new DateFormatter("en-US", {
+//   dateStyle: "long",
+// });
+function df(date: any, format = "yyyy - MM - dd HH:mm") {
+  // 获取日期的各个部分，包括分钟
+  let year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  let day = date.getDate();
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  // 根据format字符串进行格式化，包含分钟部分
+  let formattedDate = format
+    .replace("yyyy", year)
+    .replace("MM", month.toString().padStart(2, "0"))
+    .replace("dd", day.toString().padStart(2, "0"))
+    .replace("HH", hours.toString().padStart(2, "0"))
+    .replace("mm", minutes.toString().padStart(2, "0"));
+  return formattedDate;
+}
+const value = ref<DateValue>();
 </script>
 
 <template>
-  <div class="content" style="display: flex">
+  <div class="content" style="display: flex; flex-wrap: wrap">
     <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <Tabs default-value="all">
         <TabsContent value="all" class="tc">
           <Card class="border-none shadow-none">
             <CardHeader class="card_header">
               <div class="header-link">
-                <button>
-                  <RouterLink
-                    to="/admin/recruitment/detail"
-                    class="addMember head"
-                  >
-                    <Icon icon="icon-park-outline:people-plus-one" />
-                    &nbsp;
-                    <span>添加成员</span>
-                  </RouterLink>
-                </button>
-                <button>
-                  <RouterLink
-                    to="/admin/recruitment/detail"
-                    class="addMember head"
-                  >
-                    <span>批量管理</span>
-                  </RouterLink>
-                </button>
-              </div>
-              <div class="header-search">
-                <div class="search_input_box">
-                  <span class="search-icon"
-                    ><Icon
-                      icon="bitcoin-icons:search-filled"
-                      color="#b9c2d0"
-                      font-size="26px"
+                <div class="select-type">
+                  <span>类型:</span>
+                  <Select v-model="selectType">
+                    <SelectTrigger class="w-[180px]">
+                      <SelectValue placeholder="请选择" />
+                    </SelectTrigger>
+                    <SelectContent class="bg-white">
+                      <SelectGroup class="text-[0.9vw]">
+                        <SelectItem class="text-[0.9vw]" value="1">
+                          博客</SelectItem
+                        >
+                        <SelectItem class="text-[0.9vw]" value="3"
+                          >交流
+                        </SelectItem>
+                        <SelectItem class="text-[0.9vw]" value="4">
+                          头脑风暴
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div class="select-time">
+                  <span>发布时间:</span>
+                  <Popover class="select-time-container">
+                    <PopoverTrigger as-child>
+                      <Button
+                        variant="outline"
+                        :class="
+                          cn(
+                            'w-[280px] justify-start text-left font-normal',
+                            !value && 'text-muted-foreground',
+                          )
+                        "
+                        class="select-time-btn"
+                      >
+                        <CalendarIcon class="mr-2 h-4 w-4" />
+                        {{
+                          value
+                            ? df(value.toDate(getLocalTimeZone()), "yyyy-MM-dd")
+                            : "选择日期"
+                        }}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      class="w-full p-0 select-time-content bg-white"
+                    >
+                      <Calendar v-model="value" initial-focus locale="zh-CN" />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div class="header-search">
+                  <span>作者/标题:</span>
+                  <div class="search_input_box">
+                    <!-- <span class="search-icon"
+                      ><Icon
+                        icon="bitcoin-icons:search-filled"
+                        color="#b9c2d0"
+                        font-size="26px"
+                      />
+                    </span> -->
+                    <input
+                      placeholder="请输入关键词"
+                      class="search_input"
+                      ref="inputRef"
+                      v-model="condition"
+                      @keydown.enter="getArticleInAdmin"
                     />
-                  </span>
-                  <input
-                    placeholder="请输入关键词"
-                    class="search_input"
-                    ref="inputRef"
-                  />
+                  </div>
+                </div>
+                <button class="search-btn">搜索</button>
+                <div class="reset">
+                  <Icon icon="grommet-icons:power-reset" />
+                </div>
+                <br />
+              </div>
+              <div class="header-operation">
+                <div class="operation">
+                  <button>
+                    <RouterLink
+                      to="/admin/recruitment/detail"
+                      class="addMember operation-btn"
+                    >
+                      <Icon icon="icon-park-outline:people-plus-one" />
+                      &nbsp;
+                      <span>添加成员</span>
+                    </RouterLink>
+                  </button>
+                  <button>
+                    <button class="addMember operation-btn">
+                      <span>批量管理</span>
+                    </button>
+                  </button>
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent class="card_content">
               <Table id="tb">
                 <TableHeader>
                   <TableRow>
                     <TableHead class="hidden w-[100px] md:table-cell text-left">
-                      <input type="checkbox" name="" id="" />
+                      <input
+                        type="checkbox"
+                        name=""
+                        id=""
+                        v-model="isAllSelected"
+                        @change="handleSelectAll"
+                      />
                     </TableHead>
                     <TableHead class="hidden md:table-cell" id="th"
                       >文章标题</TableHead
@@ -123,7 +273,12 @@ console.log(postList.value);
                     class=""
                   >
                     <TableCell class="hidden sm:table-cell"
-                      ><input type="checkbox" name="" id=""
+                      ><input
+                        type="checkbox"
+                        name=""
+                        id=""
+                        v-model="(item as any).selected"
+                        @change="handleItemSelect"
                     /></TableCell>
                     <TableCell class="font-medium table_title">
                       {{ item.title }}
@@ -150,7 +305,7 @@ console.log(postList.value);
                     <TableCell class="font-medium table_type">
                       {{ checkType(item.type) }}
                     </TableCell>
-                    <TableCell class="hidden md:table-cell"> </TableCell>
+
                     <!-- <TableCell class="hidden md:table-cell"> 删除 </TableCell> -->
                     <TableCell>
                       <DropdownMenu>
@@ -166,7 +321,9 @@ console.log(postList.value);
                         </DropdownMenuTrigger>
                         <DropdownMenuContent class="bg-white">
                           <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                          <DropdownMenuItem @click="deleteArticle(item.id)"
+                            >Delete</DropdownMenuItem
+                          >
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -174,7 +331,16 @@ console.log(postList.value);
                 </TableBody>
               </Table>
             </CardContent>
-            <CardFooter> </CardFooter>
+            <CardFooter class="justify-center">
+              <div class="pagination-container">
+                <Pagination
+                  :totalItems="total"
+                  :pageSize="pageSize"
+                  @update:page="changePage"
+                >
+                </Pagination>
+              </div>
+            </CardFooter>
           </Card>
         </TabsContent>
       </Tabs>
@@ -186,10 +352,13 @@ console.log(postList.value);
 $font: #8c9296;
 tr {
   text-align: center;
-  border-bottom: 1.5px solid var(--border);
+  // border-bottom: 1.5px solid var(--border);
   font-size: 14.5px;
   height: 40px !important;
   box-sizing: border-box;
+  &:nth-child(even) {
+    background-color: #f8f8fa;
+  }
 }
 #tb {
   border: 1.5px solid var(--border);
@@ -200,20 +369,26 @@ th {
   color: var(--secondary-foreground);
 }
 td {
-  padding: 0.6em;
+  padding: 0.5em;
 }
 .group-leader {
   background-color: var(--secondary);
 }
-.card_header {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: row;
-  justify-content: space-between;
+
+.card {
+  &_header {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  &_content {
+    min-height: 600px;
+  }
 }
 .content {
-  height: 90vh;
-  overflow: hidden;
+  height: max-content;
+  margin-bottom: 50px;
   background-color: white;
   #sidebar {
     color: var(--secondary-foreground);
@@ -245,23 +420,74 @@ td {
 
 .header-link {
   display: flex;
-  width: 40%;
-  .head {
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+  width: 100%;
+  .select-type {
+    // button {
+    //   padding: 0.5vw 0.8vw;
+    //   height: 6vh;
+    //   width: 13vw;
+    // }
+    select {
+      font-size: 0.9vw;
+    }
+  }
+  .select {
+    &-type,
+    &-time {
+      margin-right: 5px;
+      // button {
+      //   padding: 0.5vw 0.8vw;
+      //   height: 6vh;
+      //   font-size: 0.9vw;
+      // }
+      span {
+        width: max-content;
+        padding: 0.2vw;
+        font-size: 0.9vw;
+        margin-right: 5px;
+      }
+      display: flex;
+      font-size: 14px;
+      color: var(--secondary-foreground);
+      align-items: center;
+    }
+    &-time {
+      &-btn {
+        width: 15vw;
+      }
+    }
+    &-type {
+      button {
+        outline: none;
+      }
+    }
+  }
+}
+.header-operation {
+  width: 100%;
+  .operation {
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 10px;
-    text-align: center;
-    color: var(--secondary-foreground);
-    width: 110px;
-    margin: 0 5px;
-    padding: 5px;
-    font-size: 13px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    &:hover {
-      color: var(--primary-foreground);
-      background-color: var(--primary);
+    .operation-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      text-align: center;
+      color: var(--secondary-foreground);
+      width: 110px;
+      margin: 0 5px;
+      padding: 5px;
+      font-size: 13px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      &:hover {
+        color: var(--primary-foreground);
+        background-color: var(--primary);
+      }
     }
   }
 }
@@ -273,9 +499,18 @@ td {
 }
 
 .header-search {
+  display: flex;
+  align-items: center;
+  span {
+    font-size: 0.9vw;
+    width: max-content;
+    color: var(--secondary-foreground);
+    margin-right: 5px;
+  }
   .search_input_box {
     float: right;
     position: relative;
+
     &_input_box {
       position: relative;
     }
@@ -283,13 +518,13 @@ td {
       text-decoration: none;
       list-style: none;
       outline-style: none;
-      width: 250px;
+      width: 180px;
       height: 40px;
-      font-size: 14px;
-      border: 1px solid #d0d9e4;
-      border-radius: 25px;
+      font-size: 0.9vw;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       padding: 5px 10px;
-      padding-left: 30px;
+      padding-left: 10px;
     }
     .search-icon {
       position: absolute;
@@ -317,7 +552,20 @@ td {
       }
     }
   }
-  width: 40%;
+}
+.search-btn {
+  margin: 0 10px;
+  width: max-content;
+  height: max-content;
+  padding: 1vh 1.5vw;
+  font-size: 0.9vw;
+  border-radius: 8px;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+.reset {
+  color: var(--secondary-foreground);
+  font-size: 0.9vw;
 }
 .top-title {
   text-align: center;

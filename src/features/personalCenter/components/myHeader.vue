@@ -1,4 +1,113 @@
 <template>
+  <div class="header">
+    <Carousel
+      class="relative"
+      :plugins="[plugin]"
+      @mouseenter="plugin.stop"
+      @mouseleave="[plugin.reset(), plugin.play(), console.log('Running')]"
+    >
+      <CarouselContent>
+        <CarouselItem v-for="(item, index) in userInfo.lifePhoto" :key="index">
+          <div class="p-1">
+            <Card>
+              <CardContent class="flex items-center justify-center">
+                <img :src="item ? item : '/logo.png'" alt="生活照片" />
+              </CardContent>
+            </Card>
+          </div>
+        </CarouselItem>
+      </CarouselContent>
+    </Carousel>
+    <div class="myInfo">
+      <div class="container-left">
+        <Avatar
+          style="
+            width: 100px;
+            height: 100px;
+            margin-top: -50px;
+            margin-right: 20px;
+            margin-left: 40px;
+            background-color: white;
+            z-index: 50;
+          "
+        >
+          <AvatarImage
+            :src="userInfo.headPortrait ? userInfo.headPortrait : '/logo.png'"
+            alt="@radix-vue"
+          />
+          <AvatarFallback>头像</AvatarFallback>
+        </Avatar>
+        <div class="infoBox">
+          <p class="nameAndSex">
+            {{ userInfo.name }}
+            <Icon
+              style="display: inline-block"
+              v-if="userInfo.sex == '男'"
+              icon="fluent-emoji-flat:male-sign"
+            />
+            <Icon
+              style="display: inline-block"
+              v-if="userInfo.sex == '女'"
+              icon="fluent-emoji-flat:female-sign"
+            />
+          </p>
+          <p class="job">{{ userInfo.direction }}</p>
+        </div>
+      </div>
+      <div class="container-right">
+        <Dialog>
+          <DialogTrigger as-child>
+            <Button variant="outline" class="bg-green-100 text-green-600">
+              修改信息
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            class="sm:max-w-[425px] bg-white max-h-[500px] overflow-y-auto"
+          >
+            <DialogHeader>
+              <DialogTitle>修改信息</DialogTitle>
+              <DialogDescription>
+                在这里修改您的信息，完成之后点击保存即可
+              </DialogDescription>
+            </DialogHeader>
+            <div class="grid gap-4 py-4">
+              <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="phone" class="text-right"> 电话 </Label>
+                <Input id="phone" class="col-span-3" v-model:="phone" />
+              </div>
+              <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="qq" class="text-right"> QQ </Label>
+                <Input id="qq" class="col-span-3" v-model="qq" />
+              </div>
+              <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="graduationDestination" class="text-right">
+                  毕业去向
+                </Label>
+                <Input
+                  id="graduationDestination"
+                  class="col-span-3"
+                  v-model="graduationDestination"
+                />
+              </div>
+              <div class="grid grid-cols-4 items-center gap-4">
+                <Label for="userDestination" class="text-right">
+                  个性签名
+                </Label>
+                <Textarea
+                  id="userDestination"
+                  class="col-span-3"
+                  v-model="userDestination"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" @click="submitForm"> 保存 </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
+    <!-- 编辑信息 -->
     <div class="header">
         <Carousel class="relative " :plugins="[plugin]" @mouseenter="plugin.stop"
             @mouseleave="[plugin.reset(), plugin.play(), console.log('Running')];">

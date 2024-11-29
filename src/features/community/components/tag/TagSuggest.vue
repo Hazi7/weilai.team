@@ -24,7 +24,7 @@ getRecommendTag()
                 <span>猜你喜欢</span>
             </div>
         </div>
-        <div class="noMoreTag">
+        <div v-if="!likeTagList" class="noMoreTag">
             暂无相关推荐
         </div>
         <div class="hotTagList" v-if="likeTagList">

@@ -8,7 +8,7 @@ export type SSEMessageData = {
     type: string;
     content: string;
     timestamp: number;
-    // 根据实际需求扩展字段
+    // 根据实际扩展字段
 };
 const getLocalToken = (): string => {
     const tokenString = localStorage.getItem('token');
@@ -23,7 +23,6 @@ const getLocalToken = (): string => {
     return '';
 };
 
-// 钩子函数
 export default function useSSE() {
     const sseUrl = ref('http://49.232.183.67:8087/message/addClient');
     const sse = ref<EventSource | null>(null); 
@@ -47,8 +46,8 @@ export default function useSSE() {
             sse.value = new EventSourcePolyfill(sseUrl.value, {
                 heartbeatTimeout: 3 * 60 * 1000,
                 headers: {
-                    Authorization: 'Bearer ' + token,
-                    Accept: 'text/event-stream',
+                    Authorization: token,
+                    'Content-Type': 'text/event-stream',
                 },
                 withCredentials: true,
             });
@@ -56,6 +55,7 @@ export default function useSSE() {
             sse.value.onopen = handleOpen;
             sse.value.onerror = handleError;
             isConnected.value = true;
+            
         } catch (error) {
             console.error('连接 SSE 失败', error);
             isConnected.value = false;
@@ -151,4 +151,3 @@ export default function useSSE() {
         isConnected
     };
 }
-

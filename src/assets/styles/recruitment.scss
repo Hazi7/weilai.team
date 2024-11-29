@@ -6,7 +6,11 @@
 
     $undertone: #647499;//浅灰 设置为非强调色
 
+*{
+  margin: 0;
+  padding: 0;
 
+}
 // 复选框样式
 .checkbox {
   position: relative;
@@ -36,10 +40,8 @@
 .btn-style {
   width: 100px;
   height: 40px;
-  background-color: var(--primary);
   cursor: pointer;
   border: var(--border) 1px solid;
-
   &:hover,
   &:active {
       color: var(--primary-foreground);
@@ -48,11 +50,18 @@
 }
 
 
+// 长虚线边框样式
+.long-dashed-border {
+  border-radius: var(--radius);
+    border: 1px solid transparent;
+    background: linear-gradient(white,white) padding-box,
+    repeating-linear-gradient(-45deg,var(--border) 0,var(--border) 0.5em,white 0,white 0.75em);
+}
+
 
 //后台样式
 .content {
     padding: 20px;
-    width: 100%;
     background-color: var(--background);
     position: relative;
 }
@@ -65,11 +74,19 @@
     align-items: center;
     position: relative;
     gap: 20px;
-
+    min-width: 920px;
     .search-input {
-        position: absolute;
-        right: 0;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        width: 300px;
+        height: 40px;
+        @media screen and (max-width: 1300px) {
+         display: none;
+        }
     }
+
 }
 
 .reset {
@@ -90,7 +107,6 @@
     justify-content: flex-start;
     align-items: center;
     gap: 20px;
-
     .toggle-button {
         width: 100px;
         height: 40px;
@@ -99,22 +115,13 @@
 
     .handle-btns {
         position: absolute;
-        right: 0;
+        right: 20px;
         display: flex;
         gap: 20px;
-
-        .handle-btn {
-            width: 100px;
-            height: 40px;
-            background-color: var(--primary);
-            cursor: pointer;
-            border: var(--border) 1px solid;
-
-            &:hover,
-            &:active {
-                color: var(--primary-foreground);
-                border: var(--primary-foreground) 1px solid;
-            }
+        @media screen and (max-width: 1300px) {
+          position: relative;
+          right: 0;
+          margin-left: 40px;
         }
     }
 }
@@ -129,6 +136,7 @@
 //卡片展示
 .main-content-show{
   display: flex;
+  padding: 20px;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
@@ -139,21 +147,23 @@
   position: relative;
   top: 20px;
   gap: 20px;
-
+  @extend .long-dashed-border;
  }
+
+
 //滚动条样式
 /* 定义滚动条的轨道样式 */
 ::-webkit-scrollbar {
-  width: 2px; /* 滚动条轨道的宽度 */
+  width: 1px; /* 滚动条轨道的宽度 */
 }
 
 /* 定义滚动条的滑块样式 */
 ::-webkit-scrollbar-thumb {
-  background-color:var(--accent); /* 滑块的颜色 */
+  background-color:skyblue; /* 滑块的颜色 */
   border-radius: 2px; /* 滑块的圆角 */
 }
 
 /* 定义滚动条的轨道样式（当滑块处于悬停状态时） */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; /* 轨道的颜色 */
+  background: var(--background); /* 轨道的颜色 */
 }

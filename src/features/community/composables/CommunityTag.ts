@@ -37,7 +37,7 @@ export default function () {
         useTagList.value = res.data
     }
 
-    async function getRecommendTag(){
+    async function getRecommendTag() {
         await executeRequest({ url: `/community_tag/recommend`, method: 'get' })
         const res = data.value as TagData;
         likeTagList.value = res.data
@@ -47,8 +47,12 @@ export default function () {
         await executeRequest({ url: `/community_tag/relativePost?tagName=${tag}`, method: 'get' })
         const res = data.value as Data;
         // postList.splice(0, postList.length)
-        tagPostList.value = res.data.records
-        console.log(tagPostList);
+        if (res.code == 50016) {
+            tagPostList.value = []
+        } else {
+            tagPostList.value = res.data.records
+        }
+
     }
 
     return {

@@ -131,39 +131,40 @@ const isReset = ref(false);
             </div>
         </div>
     </div>
-    <div class="main-content-show">
-        <MessageCard></MessageCard>
-    </div>
+         <div class="main-content-show">
+            <MessageCard></MessageCard>
+        </div>
+
 
 </template>
 
 <style  lang="scss" scoped>
 @use "@/assets/styles/recruitment";
-.filter-condition{
-    display: flex;
-    flex-direction: row;
-    height: 80px;
-    position: relative;
-   .filter-items{
-        display: flex;
-        flex-direction: row;
-        justify-content:flex-start;
-        align-items: center;
-        height: 100%;
-   }
-   .reset{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 150px;
-    height: 40px;
-    cursor: pointer;
-   }
-   .search-input {
-        position: absolute;
-        right: 100px;
-    }
-   }
+// .filter-condition{
+//     display: flex;
+//     flex-direction: row;
+//     height: 80px;
+//     position: relative;
+//    .filter-items{
+//         display: flex;
+//         flex-direction: row;
+//         justify-content:flex-start;
+//         align-items: center;
+//         height: 100%;
+//    }
+//    .reset{
+//     display: flex;
+//     flex-direction: row;
+//     justify-content: center;
+//     align-items: center;
+//     width: 150px;
+//     height: 40px;
+//     cursor: pointer;
+//    }
+//    .search-input {
+//         position: absolute;
+//         right: 100px;
+//     }
+//    }
 
 </style>

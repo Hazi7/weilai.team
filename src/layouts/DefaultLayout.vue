@@ -6,7 +6,7 @@ import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
 
 <template>
   <div class="default-layout">
-    <SidebarProvider class="w-auto">
+    <SidebarProvider class="w-auto h-screen">
       <TheSidebar style="background-color: white">
         <main>
           <SidebarTrigger></SidebarTrigger>
@@ -25,11 +25,20 @@ import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
   background-color: #fafafa;
 }
 .container {
-  padding-top: 70px;
+  padding-top: 8vh;
+  // padding-right: 2vw;
+  // padding-left: 2vw;
+  overflow: hidden;
 }
+
 @media screen and (max-width: 768px) {
   .container {
     padding: 0;
+  }
+}
+@media screen and (min-width: 1400px) {
+  .container {
+    max-width: 80vw;
   }
 }
 </style>

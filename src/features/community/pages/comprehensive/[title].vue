@@ -83,7 +83,7 @@ import type { ArticleList } from "@/types/Community";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import NewsContent from "../../components/NewsContent.vue";
-import Search from "../../components/Search.vue";
+import Search from "../../components/SearchArticle.vue";
 const route = useRoute();
 const { executeRequest, error, loading, data } = useRequest();
 let articleList = ref<ArticleList[]>([]);
@@ -109,7 +109,7 @@ if ("title" in route.params) {
 
 <style scoped lang="scss">
 .content {
-  padding: 0 100px;
+  padding: 0 45px;
   width: 100%;
   height: auto;
 
