@@ -34,6 +34,10 @@ export default defineConfig({
           src: "src/features/message/pages",
           path: "message/",
         },
+        {
+          src: "src/features/post/pages",
+          path: "post/",
+        },
       ],
     }),
     Vue(),
@@ -55,6 +59,7 @@ export default defineConfig({
       "@community": resolve(__dirname, "./src/features/community"),
       "@personalCenter": resolve(__dirname, "./src/features/personalCenter"),
       "@login": resolve(__dirname, "./src/features/login"),
+      "@post": resolve(__dirname, "./src/features/post"),
     },
   },
 });
