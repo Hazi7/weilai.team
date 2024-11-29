@@ -196,12 +196,12 @@
 <script setup lang="ts">
 import Rightbar from "../../../../components/community/Rightbar.vue";
 import NewsContent from "../../components/NewsContent.vue";
-import Search from "../../components/Search.vue";
+import Search from "../../components/SearchArticle.vue";
 </script>
 
 <style scoped lang="scss">
 .content {
-  padding: 0 100px;
+  padding: 0 45px;
   width: 100%;
   height: auto;
 }

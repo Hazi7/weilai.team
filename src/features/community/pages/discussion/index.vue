@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 // import { Icon } from "@iconify/vue";
-import Search from "@/features/community/components/Search.vue";
+import Search from "@/features/community/components/SearchArticle.vue";
 import { ref } from "vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
 import NewsContent from "../../components/NewsContent.vue";

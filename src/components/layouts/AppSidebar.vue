@@ -127,149 +127,149 @@ interface SubItemInterface {
   <div class="frame">
     <div class="sidebar">
       <SidebarProvider id="sidebar-provider">
-        <Sidebar id="sidebar" class="sidebar">
-    <SidebarHeader id="sidebar-header"
-      ><div class="sidebar-logo">
-        <img src="../../../public/logo.png" alt="" /></div
-    ></SidebarHeader>
-    <SidebarContent id="sidebar-content">
-      <!-- 一级导航 -->
-      <SidebarGroup>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            <SidebarMenuItem
-              v-for="item in items"
-              :key="item.url"
-              class="sidebar__item"
-            >
-              <SidebarMenuButton class="sidebar__button">
-                <RouterLink
-                  :to="`/${item.url}`"
-                  active-class="sidebar__link--active"
-                  class="sidebar__link"
-                  @click.prevent="() => {router.push(`/${item.redirect}`)}"
-                >
-                  <Icon :icon="`${item.icon}`" />&nbsp;
-                  <span>{{ item.title }}</span>
-                </RouterLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-  
-      <!-- 二级导航 -->
-      <SidebarGroup  id="sub-nav" v-show="subNavItems?.length" >
-        <SidebarGroupContent>
-          <SidebarMenu>
-            <SidebarMenuItem
-              v-for="(item, index) in subNavItems"
-              :key="index"
-              class="sidebar__item"
-            >
-              <SidebarMenuButton class="sidebar__button">
-                <RouterLink
-                  :to="item.path"
-                  active-class="sidebar__sub-link--active"
-                  class="sidebar__sub-link"
-                >
-                  <Icon :icon="`${item.icon}`" />&nbsp;
-                  <span>{{ item.title }}</span>
-                </RouterLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    
-      <SidebarGroup>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            <SidebarMenuItem
+        <Sidebar id="sidebar" class="sidebar bg-white bg-white w-[17vw]  ">
+          <SidebarHeader id="sidebar-header"
+            ><div class="sidebar-logo">
+              <img src="../../../public/logo.png" alt="" /></div
+          ></SidebarHeader>
+          <SidebarContent id="sidebar-content">
+            <!-- 一级导航 -->
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem
+                    v-for="item in items"
+                    :key="item.url"
+                    class="sidebar__item"
+                  >
+                    <SidebarMenuButton class="sidebar__button "  >
+                      <RouterLink
+                        :to="`/${item.url}`"
+                        active-class="sidebar__link--active"
+                        class="sidebar__link"
+                        @click.prevent="() => {router.push(`/${item.redirect}`)}"
+                      >
+                        <Icon :icon="`${item.icon}`" />&nbsp;
+                        <span >{{ item.title }}</span>
+                      </RouterLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+        
+            <!-- 二级导航 -->
+            <SidebarGroup  id="sub-nav" v-show="subNavItems?.length" >
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem
+                    v-for="(item, index) in subNavItems"
+                    :key="index"
+                    class="sidebar__item"
+                  >
+                    <SidebarMenuButton class="sidebar__button">
+                      <RouterLink
+                        :to="item.path"
+                        active-class="sidebar__sub-link--active"
+                        class="sidebar__sub-link"
+                      >
+                        <Icon :icon="`${item.icon}`" />&nbsp;
+                        <span>{{ item.title }}</span>
+                      </RouterLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
           
-              class="sidebar__item"
-            >
-              <SidebarMenuButton class="sidebar__button">
-                <RouterLink
-                  :to="`/personalCenter/userInfo/myPosts`"
-                  active-class="sidebar__link--active"
-                  class="sidebar__link mb-1 "
-                >
-                  <Icon icon="bi:person" />&nbsp;
-                  <span>个人资料</span>
-                </RouterLink>
-              </SidebarMenuButton>
-              <SidebarMenuButton class="sidebar__button">
-                <RouterLink
-                  :to="`/message/all`"
-                  active-class="sidebar__link--active"
-                  class="sidebar__link"
-                >
-                  <Icon icon="mage:box-3d-notification" />&nbsp;
-                  <span>消息</span>
-                </RouterLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    </SidebarContent>
-    <SidebarFooter>
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <DropdownMenu>
-            <SidebarMenuButton class="publish-btn">
-              <Icon icon="prime:pencil" width="16px" />
-              发布
-            </SidebarMenuButton>
-          </DropdownMenu>
-        </SidebarMenuItem>
-      </SidebarMenu>
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <DropdownMenu >
-            <DropdownMenuTrigger as-child>
-              <SidebarMenuButton
-                size="lg"
-                class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-              >
-                <img src="@/assets/img/headImg.jpg" alt="" class="avatar" />
-                <div class="grid flex-1 text-left text-sm leading-tight">
-                  <span class="truncate">爆米奇</span>
-                </div>
-                <ChevronsUpDown class="ml-auto size-4" />
-              </SidebarMenuButton>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
-              side="bottom"
-              :side-offset="4"
-            ><router-link to="/personalCenter/userInfo/myPosts">
-              <DropdownMenuItem class="drop-menu-item">
-                <BadgeCheck />
-               个人资料
-              </DropdownMenuItem class="drop-menu-item">
-            </router-link> 
-              <DropdownMenuItem class="drop-menu-item">
-                <CreditCard />
-                Billing
-              </DropdownMenuItem class="drop-menu-item">
-      
-              <DropdownMenuItem class="drop-menu-item">
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem
+                
+                    class="sidebar__item"
+                  >
+                    <SidebarMenuButton class="sidebar__button">
+                      <RouterLink
+                        :to="`/personalCenter/userInfo/myPosts`"
+                        active-class="sidebar__link--active"
+                        class="sidebar__link mb-1 "
+                      >
+                        <Icon icon="bi:person" />&nbsp;
+                        <span>个人资料</span>
+                      </RouterLink>
+                    </SidebarMenuButton>
+                    <SidebarMenuButton class="sidebar__button">
+                      <RouterLink
+                        :to="`/message/all`"
+                        active-class="sidebar__link--active"
+                        class="sidebar__link"
+                      >
+                        <Icon icon="mage:box-3d-notification" />&nbsp;
+                        <span>消息</span>
+                      </RouterLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter id="sidebar-footer">
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <DropdownMenu>
+                  <SidebarMenuButton class="publish-btn">
+                    <Icon icon="prime:pencil" width="16px" />
+                    发布
+                  </SidebarMenuButton>
+                </DropdownMenu>
+              </SidebarMenuItem>
+            </SidebarMenu>
+            <SidebarMenu class="footer-user">
+              <SidebarMenuItem>
+                <DropdownMenu >
+                  <DropdownMenuTrigger as-child>
+                    <SidebarMenuButton
+                      size="lg"
+                      class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                    >
+                      <img src="@/assets/img/headImg.jpg" alt="" class="avatar" />
+                      <div class="grid flex-1 text-left text-sm leading-tight">
+                        <span class="truncate">爆米奇</span>
+                      </div>
+                      <ChevronsUpDown class="ml-auto size-4" />
+                    </SidebarMenuButton>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
+                    side="bottom"
+                    :side-offset="4"
+                  ><router-link to="/personalCenter/userInfo/myPosts">
+                    <DropdownMenuItem class="drop-menu-item">
+                      <BadgeCheck />
+                    个人资料
+                    </DropdownMenuItem class="drop-menu-item">
+                  </router-link> 
+                    <DropdownMenuItem class="drop-menu-item">
+                      <CreditCard />
+                      Billing
+                    </DropdownMenuItem class="drop-menu-item">
+            
+                    <DropdownMenuItem class="drop-menu-item">
+                      <Bell />
+                      Notifications
+                    </DropdownMenuItem>
 
-              <DropdownMenuItem class="drop-menu-item">
-                <LogOut />
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </SidebarMenuItem>
-      </SidebarMenu>
-    </SidebarFooter>
-  </Sidebar>
+                    <DropdownMenuItem class="drop-menu-item">
+                      <LogOut />
+                      Log out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarFooter>
+        </Sidebar>
       </SidebarProvider>
     </div>
     
@@ -319,9 +319,7 @@ color :var(--secondary-foreground);
     background-color: white;
   }
 }
-.sidebar {
-  background-color: white;
-}
+
 
 .drop-menu-item {
   background-color: white ;
@@ -350,8 +348,6 @@ color :var(--secondary-foreground);
   }
 }
 .sidebar {
-  
-  background-color: white;
   &__button {
     padding: 0;
     height: 100%;
@@ -406,7 +402,7 @@ color :var(--secondary-foreground);
 
 @media screen and (max-width: 768px) {
   .main-menu{
-  padding: 5px 10px;
+  padding: 8px 15px;
   display: flex;
   justify-content: space-between;
   position: fixed;
@@ -475,5 +471,144 @@ color :var(--secondary-foreground);
     }
     
   }
+}
+@media screen and (min-width:1000px) and (max-width: 1300px) {
+  a{
+  height: 5vh !important;
+}
+
+.main-menu{
+  display: none;
+}
+
+.avatar {
+  width: calc(20% - 2px);
+  height: calc(100% - 2px);
+  border-radius: 50%;
+}
+.frame {
+ 
+color :var(--secondary-foreground);
+  #sub-nav{
+   border-top: 1px solid #e5e7eb; 
+   border-bottom: 1px solid #e5e7eb;
+  }
+  span{
+    font-size:0.9vw  !important ;
+  }
+ 
+
+  
+}
+
+
+.drop-menu-item {
+  background-color: white ;
+  width: 105%;
+  &:hover{
+    background-color: var(--secondary);
+  }
+}
+.publish-btn {
+  height: 5vh;
+  padding-left: 15px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.9vw;
+  background: linear-gradient(
+    to right,
+    #139bb8,
+    #739fcd,
+    #b2b3df,
+    #e7dcf3,
+    #fdfbfe00
+  );
+  svg {
+    font-weight: bold;
+    font-size: 16px;
+  }
+}
+.sidebar {
+  width: 17vw;
+
+
+  &__button {
+    padding: 0;
+    height: 100%;
+  }
+
+  &__link,
+  &__sub-link {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0.65rem 1rem;
+    border-radius: 2rem;
+  }
+  &-logo {
+    height: 8vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      height: 80%;
+      object-fit: cover;
+    }
+  }
+
+  &__link {
+    &:hover {
+      color: var(--primary-foreground);
+      background-color: var(--primary);
+    }
+
+    &--active {
+      color: var(--primary-foreground);
+      background-color: var(--primary);
+    }
+  }
+
+  &__sub-link {
+    &:hover {
+      color: var(--secondary-foreground);
+      background-color: var(--secondary);
+    }
+
+    &--active {
+      color: var(--secondary-foreground);
+      background-color: var(--secondary);
+    }
+  }
+}
+
+#sidebar{
+  width: 17vh;
+  &-provider{
+    height: 100vh;
+  }
+  &-content{
+    width: 17vw;
+  }
+  &-footer{
+    .footer-user{
+      height: 5.5vh;
+      box-sizing: border-box;
+      .truncate{
+        font-size: 0.9vw;
+      }
+      li{
+        box-sizing: border-box;
+        height: 100%;
+       button{
+        box-sizing: border-box;
+        height: 100%;
+        padding: 0 0.5vw;
+       }
+      }
+    }
+  }
+}
 }
 </style>
