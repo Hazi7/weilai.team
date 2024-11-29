@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ApplicationFrom from '../features/community/components/application/ApplicationFrom.vue';
+import ApplicationFrom from '../components/application/ApplicationFrom.vue';
 </script>
 
 <template>

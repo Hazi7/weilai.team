@@ -1,5 +1,6 @@
 export interface Data {
   data: ArticleInfo;
+  code: Number
 }
 export interface AdminData {
   data: AdminPostInfo;
