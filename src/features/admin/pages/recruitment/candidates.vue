@@ -320,9 +320,9 @@ const actionItems = ref([
             <ToggleShow :toggleItems="toggleItems"></ToggleShow>
 
             <div class="handle-btns">
-                <Button type="primary" class="handle-btn arrangeResume">安排简历</Button>
-                <Button type="primary" class="handle-btn">修改状态</Button>
-                <Button type="primary" class="handle-btn">结果导出</Button>
+                <Button type="primary" class="btn-style">安排简历</Button>
+                <Button type="primary" class="btn-style">修改状态</Button>
+                <Button type="primary" class="btn-style">结果导出</Button>
             </div>
         </div>
 
@@ -342,5 +342,5 @@ const actionItems = ref([
 </template>
 
 <style lang="scss" scoped>
-@use "@/assets/styles/recruitment.scss"
+@use "@/assets/styles/recruitment.scss";
 </style>
