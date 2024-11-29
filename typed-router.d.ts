@@ -73,5 +73,6 @@ declare module 'vue-router/auto-routes' {
     '/personalCenter/userInfo/myPosts/': RouteRecordInfo<'/personalCenter/userInfo/myPosts/', '/personalCenter/userInfo/myPosts', Record<never, never>, Record<never, never>>,
     '/personalCenter/userInfo/mySchedule': RouteRecordInfo<'/personalCenter/userInfo/mySchedule', '/personalCenter/userInfo/mySchedule', Record<never, never>, Record<never, never>>,
     '/personalCenter/userInfo/mySchedule/': RouteRecordInfo<'/personalCenter/userInfo/mySchedule/', '/personalCenter/userInfo/mySchedule', Record<never, never>, Record<never, never>>,
+    '/post': RouteRecordInfo<'/post', '/post', Record<never, never>, Record<never, never>>,
   }
 }
