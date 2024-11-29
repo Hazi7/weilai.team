@@ -1,16 +1,24 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { Icon } from "@iconify/vue";
-const tagList = reactive(['推荐', '前端', '后端', 'java', 'python', 'go', 'c', 'C++', 'php', 'html', 'css', 'scss', 'js', 'ts', '人工智能', 'AIGC', '大数据', '数据库'])
+import CommunityTag from '@/features/community/composables/CommunityTag';
+
+const { allTagList, getAllTagList } = CommunityTag()
+
+// const tagLists: TagLists[] = reactive([])
+getAllTagList()
+// const tagList = reactive(['推荐', '前端', '后端', 'java', 'python', 'go', 'c', 'C++', 'php', 'html', 'css', 'scss', 'js', 'ts', '人工智能', 'AIGC', '大数据', '数据库'])
 </script>
 
 <template>
     <div>
         <div class="tag-head-bar">
-            <div v-for="(item, index) in tagList" :key="index" class="tag-head-bar-item">
-                <router-link :to="`/community/discussion/label/tag/${item}`">{{ item }}</router-link>
+            <div class="tag-head-bar-item">
+                <router-link active-class="active" :to="`/community/discussion/label/推荐`">推荐</router-link>
             </div>
-
+            <div v-for="(item, index) in allTagList" :key="index" class="tag-head-bar-item">
+                <router-link active-class="active" :to="`/community/discussion/label/${item}`">{{ item }}</router-link>
+            </div>
             <span class="tag-head-bar-more">
                 <Icon icon="bytesize:chevron-bottom"></Icon>
             </span>
@@ -23,20 +31,31 @@ const tagList = reactive(['推荐', '前端', '后端', 'java', 'python', 'go', 
 </template>
 
 <style scoped lang="scss">
+.active {
+    color: var(--primary-foreground);
+}
+
 .tag-head-bar {
-    position: relative;
+    max-width: 1336px;
+    position: absolute;
+    top: 70px;
     display: flex;
     flex-wrap: wrap;
     background-color: #ffffff;
     box-shadow: 0 4px 30px 0 rgba(232, 232, 237, .5);
     border-radius: 4px;
     padding: 10px;
+    margin-right: 33px;
     max-height: 65px;
     overflow: hidden;
+    z-index: 1;
 
     &:hover {
         transition: all .5s;
         max-height: 220px;
+        -webkit-box-shadow: 0 4px 30px 0 rgba(223, 223, 229, 0.4);
+        box-shadow: 0 4px 30px 0 rgba(223, 223, 229, 0.4);
+        border-radius: 4px;
     }
 
     .tag-head-bar-item {
