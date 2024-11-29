@@ -35,7 +35,7 @@ watch(
             <NewsContent :tagPostList="tagPostList" />
         </div>
         <div class="right-bar">
-            <tag-suggest style="margin: 0 0 40px 0;"></tag-suggest>
+            <tag-suggest style="margin: 0 0 30px 0;"></tag-suggest>
             <!-- <HotTag style="width: 350px;"></HotTag> -->
             <tag-right-bar style=""></tag-right-bar>
         </div>
@@ -52,8 +52,14 @@ watch(
     }
 
     .right-bar {
-        width: 350px;
+        width: 330px;
         margin-left: 20px;
+    }
+
+    @media screen and (max-width: 1200px) {
+        // .right-bar {
+        //     display: none;
+        // }
     }
 }
 </style>

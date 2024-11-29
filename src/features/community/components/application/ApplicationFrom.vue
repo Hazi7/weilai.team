@@ -16,6 +16,10 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 
+const useApplicationStore = applicationStore()
+
+useApplicationStore.isGetCode()
+
 interface Data {
     data: ApplicationFrom;
 }
@@ -76,11 +80,6 @@ const appStore = applicationStore()
 const applicationGetCode = (email: string) => {
     getCode(email).then((res) => {
         console.log(res);
-        // if (!data) {
-        //     return
-        // } else if (data.value.code == 1007) {
-        //     appStore.startCountdown()
-        // }
     })
 }
 
@@ -166,13 +165,15 @@ function submitForm() {
                                 @click="applicationGetCode(stuInform.email)">
                                 获取验证码
                             </Button>
-                            <Button v-if="appStore.isRequesting" disabled>{{ loginStore.countdown }}s后重新发送</Button>
+                            <Button v-if="appStore.isRequesting" disabled>
+                                {{ useApplicationStore.countdown }}s后重新发送
+                            </Button>
                         </div>
                     </div>
                     <div class="grid gap-2">
                         <div class="grid w-full max-w-sm items-center gap-1.5">
                             <Label for="tabular">报名表</Label>
-                            <Input id="picture" type="file" accept=".doc,.docx" multiple @change="handleFileChange" />
+                            <Input id="picture" type="file" accept=".docx" multiple @change="handleFileChange" />
                         </div>
                         <!-- <input type="file" accept=".doc,.docx" multiple></input> -->
                     </div>

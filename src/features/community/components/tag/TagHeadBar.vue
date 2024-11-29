@@ -36,6 +36,7 @@ getAllTagList()
 }
 
 .tag-head-bar {
+    max-width: 1336px;
     position: absolute;
     top: 70px;
     display: flex;
@@ -44,7 +45,7 @@ getAllTagList()
     box-shadow: 0 4px 30px 0 rgba(232, 232, 237, .5);
     border-radius: 4px;
     padding: 10px;
-    margin-right: 20px;
+    margin-right: 33px;
     max-height: 65px;
     overflow: hidden;
     z-index: 1;

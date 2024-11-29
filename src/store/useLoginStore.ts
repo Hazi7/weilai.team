@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 
-const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire();
 export const useLoginStore = defineStore("login", {
     state: () => ({
         countdown: 60,
@@ -9,7 +8,8 @@ export const useLoginStore = defineStore("login", {
     }),
     actions: {
         isGetCode() {
-            const login = JSON.parse(localStorage.getItem('login'))
+            const loginStr = localStorage.getItem('login');
+            const login = loginStr ? JSON.parse(loginStr) : null;
             // this.countdown = login ? JSON.parse(login) : {} || 60
             // console.log(login.countdown, login.isRequesting);
             if (!login) {
@@ -40,12 +40,16 @@ export const useLoginStore = defineStore("login", {
                     this.isRequesting = false
                 }
             }, 1000)
-        }
+        },
+        resetCountdown() {
+            this.countdown = 60
+            this.isRequesting = false
+        },
     },
     // 手动重置倒计时
-    resetCountdown() {
-        this.countdown = 60
-        this.isRequesting = false
+
+    persist: {
+        key: 'login',
+        storage: localStorage,
     },
-    persist: true,
 });
