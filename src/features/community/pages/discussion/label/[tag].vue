@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import TagRightBar from '@/features/community/components/tag/TagRightBar.vue';
-import TagSuggest from '@/features/community/components/tag/TagSuggest.vue';
-import NewsContent from '@/features/community/components/NewsContent.vue';
-import CommunityTag from '@/features/community/composables/CommunityTag';
 import { ref, watch } from 'vue';
-import { useRoute } from "vue-router";
-const route = useRoute();
+import { useRoute } from 'vue-router';
+import TagContent from '@/features/community/components/tag/TagContent.vue';
 
-const { tagPostList, getPostList } = CommunityTag();
+const route = useRoute();
 const tag = ref('');
 function getTag() {
     if ("tag" in route.params) {
@@ -15,7 +11,6 @@ function getTag() {
     } else {
         tag.value = "";
     }
-    getPostList(tag.value);
 }
 getTag();
 
@@ -28,38 +23,7 @@ watch(
 </script>
 
 <template>
-    <div class="tag-container">
-        <!-- <div>标签</div> -->
-        <!-- <tag-word-cloud></tag-word-cloud> -->
-        <div class="all-article">
-            <NewsContent :tagPostList="tagPostList" />
-        </div>
-        <div class="right-bar">
-            <tag-suggest style="margin: 0 0 30px 0;"></tag-suggest>
-            <!-- <HotTag style="width: 350px;"></HotTag> -->
-            <tag-right-bar style=""></tag-right-bar>
-        </div>
-    </div>
+    <TagContent :tag="tag" />
 </template>
 
-<style scoped lang="scss">
-.tag-container {
-    margin-top: 100px;
-    display: flex;
-
-    .all-article {
-        width: calc(100% - 350px);
-    }
-
-    .right-bar {
-        width: 330px;
-        margin-left: 20px;
-    }
-
-    @media screen and (max-width: 1200px) {
-        // .right-bar {
-        //     display: none;
-        // }
-    }
-}
-</style>
+<style scoped></style>
