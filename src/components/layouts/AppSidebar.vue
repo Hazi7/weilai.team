@@ -1,11 +1,10 @@
 <script setup lang="ts">
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Sidebar from "@/components/ui/sidebar/Sidebar.vue";
 import SidebarContent from "@/components/ui/sidebar/SidebarContent.vue";
 import SidebarGroup from "@/components/ui/sidebar/SidebarGroup.vue";
@@ -28,9 +27,8 @@ import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 const route = useRoute();
-const router=useRouter()
+const router = useRouter();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
-console.log(route.meta);
 watch(
   route,
   (newVal) => {
@@ -42,79 +40,55 @@ watch(
     deep: true,
   },
 );
-const subNavs=  [
-      {
-        "title": "综合",
-        "icon": "material-symbols-light:overview-key-outline",
-        "path": "/community/comprehensive"
-      },
-      {
-        "title": "博客",
-        "icon": "material-symbols:article-outline",
-        "path": "/community/blog"
-      },
-      {
-        "title": "公告",
-        "icon": "material-symbols:article-outline",
-        "path": "/community/notice"
-      },
-      {
-        "title": "交流",
-        "icon": "weui:time-outlined",
-        "path": "/community/discussion"
-      },
-      {
-        "title": "头脑风暴",
-        "icon": "weui:time-outlined",
-        "path": "/community/brainstorm"
-      }
-    ]
+const subNavs = [
+  {
+    title: "综合",
+    icon: "material-symbols-light:overview-key-outline",
+    path: "/community/comprehensive",
+  },
+  {
+    title: "博客",
+    icon: "material-symbols:article-outline",
+    path: "/community/blog",
+  },
+  {
+    title: "公告",
+    icon: "material-symbols:article-outline",
+    path: "/community/notice",
+  },
+  {
+    title: "交流",
+    icon: "weui:time-outlined",
+    path: "/community/discussion",
+  },
+  {
+    title: "头脑风暴",
+    icon: "weui:time-outlined",
+    path: "/community/brainstorm",
+  },
+];
 
 const items = [
   {
     title: "首页",
     url: "",
     icon: "bitcoin-icons:home-outline",
-    redirect:""
+    redirect: "",
   },
   {
     title: "社区",
     url: "community/",
     icon: "fluent:people-community-20-regular",
-    redirect:"community/comprehensive"
+    redirect: "community/comprehensive",
   },
   {
     title: "控制台",
     url: "admin/",
     icon: "lsicon:control-outline",
-      redirect:"admin/profile"
+    redirect: "admin/profile",
   },
 ];
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-
-      plan: "Free",
-    },
-  ],
-};
 interface SubItemInterface {
   title: string;
   icon: string;
@@ -123,7 +97,6 @@ interface SubItemInterface {
 </script>
 
 <template>
-  
   <div class="frame">
     <div class="sidebar">
       <SidebarProvider id="sidebar-provider">
@@ -272,31 +245,47 @@ interface SubItemInterface {
         </Sidebar>
       </SidebarProvider>
     </div>
-    
   </div>
   <div class="main-menu">
-  <RouterLink to="/"> <Button class="main-menu-button"><Icon icon="bitcoin-icons:home-outline"class="main-menu-icon" /></Button></RouterLink> 
-   
+    <RouterLink to="/">
+      <Button class="main-menu-button"
+        ><Icon
+          icon="bitcoin-icons:home-outline"
+          class="main-menu-icon" /></Button
+    ></RouterLink>
 
-  <DropdownMenu>
-    <DropdownMenuTrigger ><Button class="main-menu-button"><Icon icon="fluent:people-community-20-regular"class="main-menu-icon" /></Button></DropdownMenuTrigger>
-    <DropdownMenuContent class="w-6 bg-white">
-     <RouterLink :to=" item.path " class="main-menu-sub-link" v-for="(item, index) in subNavs"> {{ item.title }} </RouterLink>    
-     
-    </DropdownMenuContent>
-  </DropdownMenu> 
-  <RouterLink to="/personalCenter/userInfo/myPosts"><Button class="main-menu-button"><Icon icon="bi:person"class="main-menu-icon" /></Button></RouterLink> 
-  <RouterLink to=""><Button class="main-menu-button main-menu-publish"><Icon icon="prime:pencil" class="main-menu-icon icon-publish"  /></Button></RouterLink>
-   
-    
-
-  
-    
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        ><Button class="main-menu-button"
+          ><Icon
+            icon="fluent:people-community-20-regular"
+            class="main-menu-icon" /></Button
+      ></DropdownMenuTrigger>
+      <DropdownMenuContent class="w-6 bg-white">
+        <RouterLink
+          :to="item.path"
+          class="main-menu-sub-link"
+          v-for="(item, index) in subNavs"
+        >
+          {{ item.title }}
+        </RouterLink>
+      </DropdownMenuContent>
+    </DropdownMenu>
+    <RouterLink to="/personalCenter/userInfo/myPosts"
+      ><Button class="main-menu-button"
+        ><Icon icon="bi:person" class="main-menu-icon" /></Button
+    ></RouterLink>
+    <RouterLink to=""
+      ><Button class="main-menu-button main-menu-publish"
+        ><Icon
+          icon="prime:pencil"
+          class="main-menu-icon icon-publish" /></Button
+    ></RouterLink>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.main-menu{
+.main-menu {
   display: none;
 }
 
@@ -306,11 +295,11 @@ interface SubItemInterface {
   border-radius: 50%;
 }
 .frame {
-color :var(--secondary-foreground);
-  #sub-nav{
+  color: var(--secondary-foreground);
+  #sub-nav {
     // padding: 0;
-   border-top: 1px solid #e5e7eb; 
-   border-bottom: 1px solid #e5e7eb;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
   }
   top: 0;
   background-color: #fafafa;
@@ -322,9 +311,9 @@ color :var(--secondary-foreground);
 
 
 .drop-menu-item {
-  background-color: white ;
+  background-color: white;
   width: 105%;
-  &:hover{
+  &:hover {
     background-color: var(--secondary);
   }
 }
@@ -399,7 +388,6 @@ color :var(--secondary-foreground);
   }
 }
 
-
 @media screen and (max-width: 768px) {
   .main-menu{
   padding: 8px 15px;
@@ -415,62 +403,71 @@ color :var(--secondary-foreground);
     width: 45px;
     height: 45px;
     display: flex;
-    box-shadow: none;
-    padding: 0 10px;
-  }
-  &-icon{
-    font-size: 22px;
-    width: 90%;
-    height: 90%;
-  }
-  &-sub-link{
+    justify-content: space-between;
+    position: fixed;
     width: 100%;
-    display: inline-block;
-    padding: 5px 5px;
+    bottom: 0;
+    height: 60px;
     box-sizing: border-box;
-    color:var(--secondary-foreground);
-    text-align: center;
-    &:hover{
-      background-color: var(--secondary);
+    background-color: white;
+    &-button {
+      width: 45px;
+      height: 45px;
+      display: flex;
+      box-shadow: none;
+      padding: 0 10px;
+    }
+    &-icon {
+      font-size: 22px;
+      width: 90%;
+      height: 90%;
+    }
+    &-sub-link {
+      width: 100%;
+      display: inline-block;
+      padding: 5px 5px;
+      box-sizing: border-box;
+      color: var(--secondary-foreground);
+      text-align: center;
+      &:hover {
+        background-color: var(--secondary);
+      }
+    }
+    &-publish {
+      border-radius: 50%;
+      padding: 12px;
+      background: linear-gradient(#67a5e6, #c0d2e6, #eff1f4);
+    }
+    #main-menu_dropdown {
+      width: max-content;
+    }
+    .icon-publish {
+      color: white;
     }
   }
-  &-publish{
-    border-radius: 50%;
-    padding: 12px;
-    background: linear-gradient(#67a5e6,#c0d2e6,#eff1f4);
-  }
-  #main-menu_dropdown{
-    width: max-content;
-  }
-  .icon-publish{
-    color: white;
-  }
-
-
-}
-  .frame{
+  .frame {
     display: none;
     position: fixed;
     bottom: 0;
     height: 100px;
     overflow: hidden;
-    #sidebar{
+    #sidebar {
       position: fixed;
       top: 90%;
       bottom: 0;
-     max-height:100px;
-      &-header{
+      max-height: 100px;
+      &-header {
         display: none;
       }
-      #sub-nav{
+      #sub-nav {
         display: none;
       }
-      &-content{
+      &-content {
         max-height: 100px;
       }
     }
-    
   }
+}
 }
 @media screen and (min-width:1000px) and (max-width: 1300px) {
   a{

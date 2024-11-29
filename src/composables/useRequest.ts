@@ -7,7 +7,7 @@ type HttpMethod = "get" | "post" | "put" | "delete";
 interface RequestOptions {
     url: string;
     method?: HttpMethod;
-    requestData?: Record<string, unknown>;
+    requestData?: Record<string, unknown> | FormData;
     headers?: Record<string, string>; // 新增 headers 参数
 }
 

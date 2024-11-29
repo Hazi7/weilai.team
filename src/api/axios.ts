@@ -16,7 +16,7 @@ apiClient.interceptors.request.use(
     const token = getLocalStorageWithExpire('token');
     // const token = localStorage.getItem('token');
     if (token && config.headers) {
-      setLocalStorageWithExpire('token',token,1000*60*30)
+      setLocalStorageWithExpire('token',token,1000*60*60)
       // localStorage.setItem('token',token)
       config.headers.token = token;
     }
@@ -33,11 +33,6 @@ apiClient.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    // 全局错误处理
-    if (error.response && error.response.status === 401) {
-      // 跳转登录页的逻辑，例如使用 router:
-      // router.push('/login');
-    }
     return Promise.reject(error);
   }
 );

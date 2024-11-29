@@ -105,7 +105,7 @@ const handleInput = (value: string) => {
     searchValue.value = value;
     console.log(searchValue);
 };
-
+const isReset = ref(false);
 
 </script>
 
@@ -115,7 +115,7 @@ const handleInput = (value: string) => {
         <div class="filter-items">
             <FilterCondition :items-obj-arr="recruitmentRecord_itemsObjArr" @filter_condition="handleFilterCondition"></FilterCondition>
             <div class="date-picker">
-                <DataRangePicker @updateDateRange="handleDateRangeUpdate" :dateRange="dateRange" />
+                <DataRangePicker @updateDateRange="handleDateRangeUpdate" :dateRange="dateRange" :isReset="isReset" />
             </div>
 
             <div class="reset" @click="resetCondition">
@@ -138,6 +138,7 @@ const handleInput = (value: string) => {
 </template>
 
 <style  lang="scss" scoped>
+@use "@/assets/styles/recruitment";
 .filter-condition{
     display: flex;
     flex-direction: row;
@@ -163,15 +164,6 @@ const handleInput = (value: string) => {
         position: absolute;
         right: 100px;
     }
-   }
-   .main-content-show{
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    height: auto;
-    width: 80%;
-    overflow: hidden
    }
 
 </style>

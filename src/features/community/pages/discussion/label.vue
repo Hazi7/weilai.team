@@ -1,20 +1,15 @@
 <script setup lang="ts">
-// import RightBar from './tag/RightBar.vue';
-import tagHeadBar from '@/features/community/components/tag/tagHeadBar.vue';
+import TagHeader from "@/components/community/tag/TagHeader.vue";
+
+// import RightBar from '../../components/tag/RightBar.vue';
 </script>
 
 <template>
-    <div>
-        <!-- <RightBar /> -->
-        <tagHeadBar />
-        <router-view />
-    </div>
+  <div>
+    <TagHeader></TagHeader>
+    <router-view />
+    <!-- <RightBar /> -->
+  </div>
 </template>
 
 <style scoped></style>
-<route lang="json">{
-    "meta": {
-        "title": "标签",
-        "path": "/community/discussion/label/tag/:title"
-    }
-}</route>
