@@ -1,5 +1,5 @@
 import axios from "axios";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import { useRequest } from "@/composables/useRequest";
 import type { ArticleList, Data } from "@/types/Community";
 
@@ -18,6 +18,15 @@ export default function () {
     let useTagList = ref<{ tag_name: string; tag_usage_count: number }[]>([]);
     let likeTagList = ref<string[]>([])
     const tagPostList = ref<ArticleList[]>([])
+    const tagCloudList = ref<string[]>([])
+
+    async function getTagCloudList() {
+        await executeRequest({
+            url: "/community_tag/getTagNames", method: "get"
+        });
+        const res = data.value as TagData;
+        tagCloudList.value = res.data;
+    }
 
     async function getHotTagList() {
         await executeRequest({ url: `/community_tag/hotTags`, method: 'get' })
@@ -52,15 +61,16 @@ export default function () {
         } else {
             tagPostList.value = res.data.records
         }
-
     }
 
     return {
+        tagCloudList,
         hotTagList,
         allTagList,
         useTagList,
         likeTagList,
         tagPostList,
+        getTagCloudList,
         getPostList,
         getRecommendTag,
         getAllTagList,

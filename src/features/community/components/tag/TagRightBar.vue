@@ -144,26 +144,50 @@ ul {
         font-size: 14px;
 
         .tagHeadIcon {
-            font-size: 18px;
+            font-size: 16px;
         }
 
         p {
             height: 100%;
-            font-size: 14px;
+            font-size: 12px;
             line-height: 4rem;
         }
     }
 
-        .ranking{
-            font-size: 14px;
-        }
+    .ranking {
+        font-size: 12px;
+    }
 
-    ul{
-        li{
-            font-size: 13px;
+    ul {
+        li {
+            font-size: 12px;
         }
     }
 }
 
-@media screen and (max-width: 1040px) {}
+@media screen and (max-width: 1040px) {
+    .rank-top {
+        font-size: 12px;
+
+        .tagHeadIcon {
+            font-size: 14px;
+        }
+
+        p {
+            height: 100%;
+            font-size: 12px;
+            line-height: 4rem;
+        }
+    }
+
+    .ranking {
+        font-size: 12px;
+    }
+
+    ul {
+        li {
+            font-size: 11px;
+        }
+    }
+}
 </style>
