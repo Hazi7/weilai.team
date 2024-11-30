@@ -174,7 +174,7 @@ interface SubItemInterface {
                     </SidebarMenuButton>
                     <SidebarMenuButton class="sidebar__button">
                       <RouterLink
-                        :to="`/message/all`"
+                        :to="`/message/likeMes`"
                         active-class="sidebar__link--active"
                         class="sidebar__link"
                       >

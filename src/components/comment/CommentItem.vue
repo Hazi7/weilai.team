@@ -130,7 +130,7 @@ defineExpose({ userInfo });
 <template>
   <div class="comment-item" :class="{'is-reply': isReply}">
     <div class="avatar">
-      <img v-if="userInfo.headPortrait" :src="userInfo.headPortrait" />
+      <img :src="userInfo.headPortrait ? userInfo.headPortrait : '../../../public/logo.png'" />
     </div>
     <div class="content-box">
       <div class="user-info">
