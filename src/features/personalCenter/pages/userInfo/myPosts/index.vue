@@ -72,7 +72,7 @@
                     <PaginationLast />
                 </PaginationList>
             </Pagination>
-            <span class="postsNum">共 {{ postsNum }} 篇文章</span>
+            <p class="postsNum">共 {{ postsNum }} 篇文章</p>
         </div>
     </div>
 </template>
@@ -191,7 +191,6 @@ getPosts()
         ul {
             li {
                 margin-top: 20px;
-                height: 130px;
                 display: flex;
                 border-radius: 10px;
                 background-color: white;
@@ -207,17 +206,17 @@ getPosts()
                     .postTitle {
                         color: black;
                         font-size: larger;
-                        height: 25%;
                     }
 
                     .postDesc {
                         font-size: small;
-                        height: 55%;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        width: 100%;
                     }
 
                     .postFooter {
-                        font-size: small;
-                        height: 20%;
+                        font-size: xx-small;
                     }
                 }
 
@@ -235,14 +234,21 @@ getPosts()
 
     .pageBox {
         margin: 20px auto;
-        display: flex;
+
         button[data-selected] {
             background-color: #97d5ff;
         }
-        .postsNum{
+
+        .postsNum {
             margin-left: 20px;
             line-height: 40px;
         }
+    }
+}
+
+@media (max-width: 768px) {
+    .myPosts .postsListBox ul li .postInfo .postFooter {
+        font-size: 10px;
     }
 }
 </style>

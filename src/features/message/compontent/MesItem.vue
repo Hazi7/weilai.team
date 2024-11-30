@@ -24,7 +24,6 @@ import { Icon } from "@iconify/vue";
           width: 690px;
           margin-bottom: 10px;
           padding-bottom: 15px;
-          // margin-right: 20px;
           background-color: white;
           border-radius: 5px;
           display: flex;
@@ -85,7 +84,6 @@ import { Icon } from "@iconify/vue";
               cursor: pointer;
               max-width:calc(100% - 20px);
               font-size: 12px;
-              height: 25px;
               margin-bottom: 6px;
               border-bottom: 1px solid var(--border);
               color: var(--secondary-foreground);
@@ -110,5 +108,23 @@ import { Icon } from "@iconify/vue";
             }
           }
         }
-  
+
+@media screen and (max-width: 768px) {
+      .mesItem{
+        width: 98%;
+        margin-right: 0;
+        .avatar{
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            margin: 15px 9px 9px 9px;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              border-radius: 50%;
+            }
+          }
+      }
+    }
 </style>
