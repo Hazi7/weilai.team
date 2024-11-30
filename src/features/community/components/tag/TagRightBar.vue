@@ -23,7 +23,7 @@ getUseTagList()
     <div class="article-rank">
         <div class="rank-top">
             <p>
-                <Icon icon="icon-park-outline:tag" font-size="20px" /> &nbsp;<span style="width: 5em">标签榜
+                <Icon icon="icon-park-outline:tag" class="tagHeadIcon" /> &nbsp;<span>标签榜
                 </span>
             </p>
             <Icon icon="material-symbols-light:navigate-next"
@@ -70,6 +70,10 @@ getUseTagList()
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .tagHeadIcon {
+        font-size: 20px;
+    }
 
     p {
         display: flex;
@@ -134,4 +138,32 @@ ul {
         }
     }
 }
+
+@media screen and (max-width: 1200px) {
+    .rank-top {
+        font-size: 14px;
+
+        .tagHeadIcon {
+            font-size: 18px;
+        }
+
+        p {
+            height: 100%;
+            font-size: 14px;
+            line-height: 4rem;
+        }
+    }
+
+        .ranking{
+            font-size: 14px;
+        }
+
+    ul{
+        li{
+            font-size: 13px;
+        }
+    }
+}
+
+@media screen and (max-width: 1040px) {}
 </style>

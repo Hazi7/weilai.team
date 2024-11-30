@@ -37,7 +37,7 @@ export default function () {
             // loginError.value = '密码不能为空'
         } else {
             // loginError.value = ''
-            await executeRequest({ url: `/index/login?account=${account}&password=${password}`, method: 'post', data: { account, password }, headers: { 'Content-Type': 'multipart/form-data' } })  // 在这里传入请求的 URL 和 method
+            await executeRequest({ url: `/index/login`, method: 'post', requestData: { account, password } })  // 在这里传入请求的 URL 和 method
             const res = data.value as Data;
             const resData = res.data;
             if (res.code == 1000) {
