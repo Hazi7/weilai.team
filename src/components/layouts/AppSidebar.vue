@@ -297,7 +297,7 @@ interface SubItemInterface {
 .frame {
   color: var(--secondary-foreground);
   #sub-nav {
-    // padding: 0;
+   
     border-top: 1px solid #e5e7eb;
     border-bottom: 1px solid #e5e7eb;
   }
@@ -469,7 +469,7 @@ interface SubItemInterface {
   }
 }
 }
-@media screen and (min-width:1000px) and (max-width: 1300px) {
+@media screen and (min-width:900px) and (max-width: 2000px) {
   a{
   height: 5vh !important;
 }

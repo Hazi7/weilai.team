@@ -49,13 +49,25 @@ const postList = ref<ArticleList[]>([]);
 const articleData = ref();
 const isAllSelected = ref(false);
 const selectType = ref("");
+const selectTime = ref<Date>();
+const value = ref<DateValue>();
+
 let pages = ref(1);
 let total = ref<number>();
 let page = ref(1);
 let pageSize = ref(10);
-let startTime: string = "";
+
 let type = ref<number>(0);
 const condition = ref("");
+watch(value, (newVal) => {
+  const selectTimeValue = newVal;
+  if (selectTimeValue) {
+    let { year, month, day } = selectTimeValue;
+    console.log(year, month, day);
+    selectTime.value = new Date(year, month - 1, day);
+    console.log(selectTime.value);
+  }
+});
 // 进行搜索
 const getArticleInAdmin = () => {
   console.log(condition.value, 11111);
@@ -66,6 +78,7 @@ const getArticleInAdmin = () => {
   });
 };
 getArticleInAdmin();
+// 改变页数
 const changePage = (newPage: number) => {
   page.value = newPage;
   isAllSelected.value = false;
@@ -76,6 +89,7 @@ watch(page, (newPage) => {
     postList.value = res.records;
   });
 });
+
 function deleteArticle(id: number) {
   console.log(id);
   executeRequest({ url: `/post/delete/${id}`, method: "put" }).then(() => {
@@ -115,9 +129,6 @@ import { cn } from "@/lib/utils";
 import { getLocalTimeZone, type DateValue } from "@internationalized/date";
 import { Calendar as CalendarIcon } from "lucide-vue-next";
 
-// const df = new DateFormatter("en-US", {
-//   dateStyle: "long",
-// });
 function df(date: any, format = "yyyy - MM - dd HH:mm") {
   // 获取日期的各个部分，包括分钟
   let year = date.getFullYear();
@@ -134,7 +145,6 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
     .replace("mm", minutes.toString().padStart(2, "0"));
   return formattedDate;
 }
-const value = ref<DateValue>();
 </script>
 
 <template>
@@ -172,6 +182,7 @@ const value = ref<DateValue>();
                     <PopoverTrigger as-child>
                       <Button
                         variant="outline"
+                        v-model="selectTime"
                         :class="
                           cn(
                             'w-[280px] justify-start text-left font-normal',
@@ -191,7 +202,12 @@ const value = ref<DateValue>();
                     <PopoverContent
                       class="w-full p-0 select-time-content bg-white"
                     >
-                      <Calendar v-model="value" initial-focus locale="zh-CN" />
+                      <Calendar
+                        v-model="value"
+                        ref="selectTime"
+                        initial-focus
+                        locale="zh-CN"
+                      />
                     </PopoverContent>
                   </Popover>
                 </div>

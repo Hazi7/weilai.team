@@ -106,6 +106,7 @@ $font: #8c9296;
     }
     &-link {
       // line-height: 50px;
+      position: relative;
       width: max-content;
       height: 100%;
       display: flex;
@@ -124,8 +125,14 @@ $font: #8c9296;
     }
   }
 }
-.active {
-  border-bottom: 2px solid var(--primary-foreground);
+.active::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  background-color: var(--primary-foreground);
+  position: absolute;
 }
 
 @media screen and (max-width: 768px) {
@@ -143,13 +150,13 @@ $font: #8c9296;
     }
   }
 }
-@media screen and (min-width: 1000px) and (max-width: 1260px) {
+@media screen and (min-width: 900px) and (max-width: 1400px) {
   .topNav {
     display: flex;
     box-sizing: border-box;
     height: 35px;
     .top-link {
-      font-size: 10px;
+      font-size: 11px;
       // line-height: 50px;
       width: max-content;
       height: 100%;

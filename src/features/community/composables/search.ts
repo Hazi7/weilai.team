@@ -28,7 +28,13 @@ export function debounce<T>(
     }, wait);
   };
 }
-export async function getArticle(type = 0, condition = "", page = 1, sort = 0) {
+export async function getArticle(
+  type = 0,
+  condition = "",
+  page = 1,
+  sort = 0,
+  startTime = "",
+) {
   await executeRequest({
     url: `/post/selectAll?condition=${condition}&page=${page}&sort=${sort}&type=${type}`,
     method: "get",
