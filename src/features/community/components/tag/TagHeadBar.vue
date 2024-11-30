@@ -38,7 +38,7 @@ getAllTagList()
 .tag-head-bar {
     max-width: 1336px;
     position: absolute;
-    top: 70px;
+    top: 60px;
     display: flex;
     flex-wrap: wrap;
     background-color: #ffffff;
@@ -94,6 +94,52 @@ getAllTagList()
 
     &:hover .tag-head-bar-few {
         opacity: 1;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .tag-head-bar {
+        max-height: 60px;
+        top: 50px;
+
+        .tag-head-bar-item {
+            font-size: 12px;
+        }
+
+        .tag-head-bar-more,
+        .tag-head-bar-few {
+            width: 25px;
+            height: 10px;
+            background-color: #f4f4f4;
+            border-radius: 3px 3px 0 0;
+            text-align: center;
+            padding: 0 6px;
+            font-size: 12px;
+            color: #8a8a8a;
+        }
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .tag-head-bar {
+        max-height: 55px;
+        top: 60px;
+
+        .tag-head-bar-item {
+            font-size: 10px;
+        }
+
+        .tag-head-bar-more,
+        .tag-head-bar-few {
+            width: 25px;
+            height: 10px;
+            background-color: #f4f4f4;
+            border-radius: 3px 3px 0 0;
+            text-align: center;
+            padding: 0 6px;
+            font-size: 12px;
+            color: #8a8a8a;
+        }
     }
 }
 </style>

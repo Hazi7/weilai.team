@@ -205,7 +205,7 @@
                                         <Label for="courseName" class="text-right">
                                             课程名称
                                         </Label>
-                                        <Input id="courseName" class="col-span-3"  :default-value="item.courseName"/>
+                                        <Input id="courseName" class="col-span-3" :default-value="item.courseName" />
                                     </div>
                                     <div class="grid grid-cols-4 items-center gap-4">
                                         <Label for="weeks" class="text-right">
@@ -217,7 +217,7 @@
                                         <Label for="weekTime" class="text-right">
                                             课程日期
                                         </Label>
-                                        <Select :default-value="item.weekTime">
+                                        <Select default-value="3" id="weekTime">
                                             <SelectTrigger class="col-span-3">
                                                 <SelectValue placeholder="选择日期" />
                                             </SelectTrigger>
@@ -252,7 +252,7 @@
                                         <Label for="courseTime" class="text-right">
                                             上课时间
                                         </Label>
-                                        <Select :default-value="item.courseTime">
+                                        <Select :default-value="item.courseTime" id="courseTime">
                                             <SelectTrigger class="col-span-3">
                                                 <SelectValue placeholder="选择时间" />
                                             </SelectTrigger>
@@ -285,7 +285,7 @@
                                     </div>
                                 </div>
                                 <DialogFooter>
-                                    <Button type="submit" @click="submitChangeForm">
+                                    <Button type="submit" @click="submitChangeForm(item.oneCourseId)">
                                         保存
                                     </Button>
                                 </DialogFooter>
@@ -509,9 +509,35 @@ async function submitAddForm() {
     getSchedule()
 }
 
-function submitChangeForm() {
-    console.log('修改表单提交',);
+let changeCourseName = ref('')
+let changeCourseTime = ref('')
+let changeWeeks = ref('')
+let changeCoursePlace = ref('')
+let changeWeekTime = ref('')
+async function submitChangeForm(oneCourseId) {
+    console.log('修改表单提交',)
+    changeCourseName.value = document.getElementById('courseName').value
+    changeCourseTime.value = document.getElementById('courseTime').value
+    changeWeeks.value = document.getElementById('weeks').value
+    changeCoursePlace.value = document.getElementById('coursePlace').value
+    changeWeekTime.value = document.getElementById('weekTime').value
+    const dataToSend = {
+        courseName: changeCourseName.value,
+        courseTime: changeCourseTime.value,
+        weeks: changeWeeks.value,
+        coursePlace: changeCoursePlace.value,
+        weekTime: Number(changeWeekTime.value),
+        oneCourseId: oneCourseId
+    }
+    console.log(dataToSend);
+    await executeRequest({ url: '/user/updateUserCourse', method: 'put', requestData: dataToSend })
+    // if (data.value.code === 200) {
+    //     console.log(data.value);
+    // }
+    // console.log(error.value);
+    console.log(data.value);
     
+    getSchedule()
 }
 </script>
 <style lang="scss" scoped>

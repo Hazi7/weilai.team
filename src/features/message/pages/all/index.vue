@@ -4,12 +4,30 @@ import { Icon } from "@iconify/vue";
 import MesItem from '../../compontent/MesItem.vue';
 import useSSE from '../../composables/sse';
 import { onMounted } from 'vue';
-
-
+import { useRequest } from '@/composables/useRequest';
+const { data, loading, error, executeRequest } = useRequest();
 const { connect, disconnect, subscribe, unsubscribe, isConnected } = useSSE();
+const messageType = 1
+const pageSize = 10
+const pageNumber=1
 onMounted(() => {
-      // connect();
+      connect()
+      messageList()
 });
+//渲染消息列表
+const messageList=async () => {
+  await executeRequest({url:`/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,method:'get'});
+  if(data.value?.code==200){
+      console.log(data.value);
+  }else if(data.value?.code==401){
+    console.log("请先登录"); 
+  }else{
+    console.log("获取失败");
+    console.log(data.value);
+  }
+}
+
+
 
 </script>
 
@@ -50,89 +68,30 @@ onMounted(() => {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        .mesItem{
-          width: 690px;
-          margin-bottom: 10px;
-          padding-bottom: 15px;
-          margin-right: 20px;
-          background-color: white;
-          border-radius: 5px;
-          display: flex;
-          .avatar{
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin: 18px 15px 15px 15px;
-            img{
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              border-radius: 50%;
-            }
-          }
-          .mesContent{
-            width: calc(100% - 73px);
-            height: 100%;
-            .details{
-              width: 100%;
-              height: 20px;
-              color: var(--secondary-foreground);
-              font-size: 13px;
-              display: flex;
-              justify-content: space-between;
-              margin: 15px 0 4px 0;
-              .name{
-                color: #636b71;
-                font-size: 14px;
-                margin-right: 6px;
-                justify-content: flex-start;
-                span{
-                  color: var(--secondary-foreground);
-                  font-size: 13px;
-                  margin-left: 7px;
-                  color: #868787;
-                }
-              }
-              
-              .time{
-                margin-right: 20px;
-                color: #868787;
-                font-size: 13px;
-                justify-content: flex-end;
-              }
-            }
-            .content{
-              width:calc(100% - 20px);
-              font-size: 14px;
-              margin-bottom:4px;
-              word-break: break-all;
-              color: var(--foreground);
-            }
-            .postLink{
-              cursor: pointer;
-              max-width:calc(100% - 20px);
-              font-size: 12px;
-              color: var(--secondary-foreground);
-            }
-            .postLink:hover{
-              color: #5db0da;
-            }
-            .imgCon{
-              width: 150px;
-              height: auto;
-              img{
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                margin-bottom: 5px;
-              }
-            }
-            .deleteIcon{
-              font-size: 17px;
-              cursor: pointer;
-            }
-          }
-        }
+        
       }
    }
+
+@media screen and (max-width: 768px) {
+  .allCon{
+    margin-top: 100px;
+    width: 100%;
+    .titleOptions{
+      width: 100%;
+      margin-top: 15px;
+      height: 30px;
+      .clearIcon{
+          margin:2px 4px 0 5px;
+          font-size: 19px;
+      } 
+    }
+    .messageCon{
+      width: 100%;
+      .mesItem{
+        width: 98%;
+        margin-right: 0;
+      }
+    }
+  }
+}
 </style>

@@ -15,10 +15,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useAlert } from '@/composables/alert'
 
 const useApplicationStore = applicationStore()
-
 useApplicationStore.isGetCode()
+const { showAlert } = useAlert()
 
 interface Data {
     data: ApplicationFrom;
@@ -43,12 +44,12 @@ const { getClass, classListData, getCode, sentStuInfo } = UseApplication()
 getClass()
 
 const stuInform = ref<ApplicationFrom>({
-    clazz: '',
+    clazz: '计科241',
     code: '',
     email: '',
     name: '',
     qqNumber: '',
-    sex: '',
+    sex: '男',
     studentId: '',
     file: null as unknown as File
 })
@@ -85,6 +86,39 @@ const applicationGetCode = (email: string) => {
 
 function submitForm() {
     console.log(stuInform);
+    // const infoInput = document.getElementsByTagName("input");
+    // for (let i = 0; i < infoInput.length; i++) {
+    //     if (infoInput[i].value === "") {
+    //         infoInput[i].className += ' noWrite'
+    //     }
+    // }
+    // stuInform.forEach((input) => {
+    // });
+
+    let isValid = true;
+    // 判断输入框是否为空，并添加 'noWrite' 类
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach((input) => {
+        const element = input as HTMLInputElement;
+        if (!element.value && element.type !== 'file') {
+            element.classList.add('noWrite');
+            isValid = false;
+            element.addEventListener('focusin', function (event) {
+                element.classList.remove('noWrite');
+            })
+        } else {
+            element.classList.remove('noWrite');
+        }
+    });
+
+    if (!isValid) {
+        showAlert('请填写所有必填项', 'waring');
+        return;
+    }
+    if (stuInform.value.file == null) {
+        showAlert('请上传您的简介', 'waring');
+        return;
+    }
     const formData = new FormData();
     formData.append('clazz', stuInform.value.clazz);
     formData.append('code', stuInform.value.code);
@@ -94,8 +128,7 @@ function submitForm() {
     formData.append('sex', stuInform.value.sex);
     formData.append('studentId', stuInform.value.studentId);
     formData.append('file', stuInform.value.file);
-    sentStuInfo(formData).then((res) => {
-    })
+    sentStuInfo(formData)
 }
 </script>
 
@@ -186,8 +219,36 @@ function submitForm() {
         </Card>
     </div>
 </template>
-<style scoped>
+<style scoped lang="scss">
 .recruitment-form {
     margin-top: 50px;
+
+    .noWrite {
+        animation: slideIn 0.4s ease-in-out 1;
+        border-color: rgb(255, 96, 96);
+        background-color: #fbeceb;
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    50% {
+        transform: translateX(10px);
+    }
+
+    75% {
+        transform: translateX(-10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }
 </style>

@@ -37,11 +37,9 @@ export default function () {
             // loginError.value = '密码不能为空'
         } else {
             // loginError.value = ''
-            await executeRequest({ url: `/index/login?account=${account}&password=${password}`, method: 'post', data: { account, password }, headers: { 'Content-Type': 'multipart/form-data' } })  // 在这里传入请求的 URL 和 method
-            console.log(data);
+            await executeRequest({ url: `/index/login`, method: 'post', requestData: { account, password } })  // 在这里传入请求的 URL 和 method
             const res = data.value as Data;
             const resData = res.data;
-            console.log(res);
             if (res.code == 1000) {
                 if (resData) {
                     setLocalStorageWithExpire('token', resData.token, 1000 * 60 * 60);
