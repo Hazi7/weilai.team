@@ -1,0 +1,195 @@
+<template>
+  <a class="news-item">
+    <div class="news-writer">
+      <div class="avatar">
+        <img src="@/assets/img/headImg.jpg" alt="" />
+      </div>
+      <div class="writer-info">
+        <h3 class="name">爆米奇</h3>
+        <div class="work-info">
+          <span class="origin">原创 400</span>
+          <span class="read">阅读 123</span>
+          <span class="like">点赞</span>
+        </div>
+        <div class="brief">致力于干饭</div>
+      </div>
+    </div>
+  </a>
+</template>
+
+<script setup lang="ts">
+import { useRequest } from "@/composables/useRequest";
+import { ref } from "vue";
+const { executeRequest, error, loading, data } = useRequest();
+const userList = ref();
+// async function getArticleList(page = 1, type = 0, condition = "") {
+//   await executeRequest({
+//     url: `/post/selectAll?condition=${condition}&page=${page}&type=${type}`,
+//     method: "get",
+//   });
+//   const res = data.value as Data;
+//   console.log(res);
+
+//   articleList.value = res.data.records;
+//   console.log(articleList.value);
+//   return res.data;
+// }
+</script>
+
+<style scoped lang="scss">
+.news-item {
+  display: block;
+  padding: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  min-height: 100px;
+  background-color: var(--background);
+  margin-bottom: 25px;
+  .news-writer {
+    display: flex;
+    align-items: center;
+    .avatar {
+      width: 50px;
+      height: 50px;
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+      margin-right: 10px;
+    }
+    .name {
+      font-weight: 500;
+    }
+
+    .work-info,
+    .brief {
+      font-size: 13px;
+      font-weight: 400;
+      color: #686570;
+      span {
+        margin-right: 12px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+  .news-content {
+    padding: 10px 55px;
+    display: block;
+    &:hover {
+      background-color: #f8f8fa;
+      cursor: pointer;
+    }
+    .news-details {
+      font-size: 14.5px;
+      color: #a7a7a7;
+      p {
+        max-height: 40px;
+        line-height: 20px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; //行数
+        text-overflow: ellipsis; //省略号
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        white-space: normal;
+        word-break: break-all;
+      }
+    }
+    .news-label {
+      margin-top: 10px;
+      display: flex;
+      .type {
+        width: 50px;
+        font-size: 14px;
+        color: #909ba6;
+        text-align: center;
+        border-radius: 15px;
+        border: 2px solid #e1edf8;
+        margin-right: 8px;
+      }
+
+      .labels {
+        display: flex;
+        color: #909ba6;
+        font-size: 14px;
+        .label-item {
+          margin: 0 5px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .news-item {
+    padding: 5px;
+    margin-bottom: 8px;
+    .news-writer {
+      padding-left: 10px;
+      .avatar {
+        width: 40px;
+        height: 40px;
+      }
+
+      .work-info,
+      .brief {
+        font-size: 13px;
+        font-weight: 400;
+        color: #686570;
+        span {
+          margin-right: 12px;
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+    .news-content {
+      padding: 10px 55px;
+      .news-title {
+        font-weight: 540;
+      }
+      .news-details {
+        font-size: 14.5px;
+        color: #a7a7a7;
+        p {
+          max-height: 40px;
+          line-height: 20px;
+          display: -webkit-box;
+          -webkit-line-clamp: 1; //行数
+          text-overflow: ellipsis; //省略号
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          white-space: normal;
+          word-break: break-all;
+        }
+      }
+      .news-label {
+        margin-top: 10px;
+        display: flex;
+        .type {
+          width: 50px;
+          font-size: 14px;
+          color: #909ba6;
+          text-align: center;
+          border-radius: 15px;
+          border: 2px solid #e1edf8;
+          margin-right: 8px;
+        }
+
+        .labels {
+          display: flex;
+
+          color: #909ba6;
+          font-size: 14px;
+          .label-item {
+            margin: 0 5px;
+          }
+        }
+      }
+    }
+  }
+}
+</style>

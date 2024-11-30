@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 
-const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire();
 export const applicationStore = defineStore("application", {
     state: () => ({
         countdown: 60,
@@ -9,12 +8,12 @@ export const applicationStore = defineStore("application", {
     }),
     actions: {
         isGetCode() {
-            const application = JSON.parse(localStorage.getItem('application'))
-            // this.countdown = login ? JSON.parse(login) : {} || 60
-            // console.log(login.countdown, login.isRequesting);
+            const applicationStr = localStorage.getItem('application');
+            const application = applicationStr ? JSON.parse(applicationStr) : null;
             if (!application) {
                 return
             } else if (application.isRequesting && application.countdown > 0) {
+                console.log(111);
                 this.countdown = application.countdown
                 const interval = setInterval(() => {
                     if (this.countdown > 0) {
@@ -25,8 +24,6 @@ export const applicationStore = defineStore("application", {
                     }
                 }, 1000)
             }
-            // this.isRequesting = login ? true : false
-            // console.log(isRequesting, this.countdown);
         },
         startCountdown() {
             if (this.isRequesting) return  // 防止重复请求
@@ -40,12 +37,16 @@ export const applicationStore = defineStore("application", {
                     this.isRequesting = false
                 }
             }, 1000)
-        }
+        },
+        // 手动重置倒计时
+        resetCountdown() {
+            this.countdown = 60
+            this.isRequesting = false
+        },
     },
-    // 手动重置倒计时
-    resetCountdown() {
-        this.countdown = 60
-        this.isRequesting = false
+
+    persist: {
+        key: 'application',
+        storage: localStorage,
     },
-    persist: true,
 });

@@ -101,7 +101,7 @@
 import { useRequest } from "@/composables/useRequest";
 import Rightbar from "../../../../components/community/Rightbar.vue";
 import NewsContent from "../../components/NewsContent.vue";
-import Search from "../../components/Search.vue";
+import Search from "../../components/SearchArticle.vue";
 const { executeRequest, error, loading, data } = useRequest();
 // getArticleByType();
 // let articleList = ref<ArticleList[]>([]);
@@ -151,7 +151,7 @@ const { executeRequest, error, loading, data } = useRequest();
 
 <style scoped lang="scss">
 .content {
-  padding: 0 100px;
+  padding: 0 45px;
   width: 100%;
   height: auto;
 }
