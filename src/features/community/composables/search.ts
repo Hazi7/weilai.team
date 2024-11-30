@@ -4,6 +4,7 @@ import { ref } from "vue";
 const { executeRequest, error, loading, data } = useRequest();
 let articleList = ref<ArticleList[]>([]);
 let searchResult = ref<ArticleList[]>([]);
+let userInfo = ref<Data>({} as Data);
 export function debounce<T>(
   func: (this: T, ...args: any[]) => void,
   wait: number,
@@ -27,17 +28,16 @@ export function debounce<T>(
     }, wait);
   };
 }
-export async function getArticle(type = 0, page = 1, condition = "") {
+export async function getArticle(type = 0, condition = "", page = 1, sort = 0) {
   await executeRequest({
-    url: `/post/selectAll?condition=${condition}&page=${page}&type=${type}`,
+    url: `/post/selectAll?condition=${condition}&page=${page}&sort=${sort}&type=${type}`,
     method: "get",
   });
   const res = data.value as Data;
   console.log(res);
-
   articleList.value = res.data.records;
   console.log(articleList.value);
-  return articleList.value;
+  return res.data;
 }
 export function checkType(type: any) {
   if (type == 1) {
@@ -59,4 +59,10 @@ export async function SearchArticle(condition = "") {
   searchResult.value = res.data.records;
   console.log(searchResult.value);
 }
+export async function getUserList(content = "", pageNumber = 1, pageSize = 10) {
+  executeRequest({ url: "/user/searchUser", method: "get" }).then((res) => {
+    console.log(res);
+  });
+}
+
 export { articleList, searchResult };

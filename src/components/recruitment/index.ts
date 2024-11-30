@@ -6,3 +6,4 @@ export { default as DataTable } from "./DataTable.vue";
 export { default as Pagination } from "./Pagination.vue";
 export { default as MessageCard } from "./MessageCard.vue";
 export { default as FilterConditionMoreSelect } from "./FilterConditionMoreSelect.vue";
+export {default as QuickShowCard} from "./QuickShowCard.vue";

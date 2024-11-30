@@ -101,7 +101,6 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-
   page: {
     type: Number,
     default: 1,
@@ -111,12 +110,10 @@ const props = defineProps({
     default: "",
   },
 });
-// let postArr = ref<ArticleList[]>([]);
-getArticle(props.type, props.page, props.condition);
-checkType(props.type);
+console.log(props.type);
 
-// console.log(articleList.value);
-// postArr.value = articleList.value;
+getArticle(props.type, props.condition, props.page);
+checkType(props.type);
 </script>
 
 <style scoped lang="scss">
@@ -173,7 +170,9 @@ checkType(props.type);
         margin-top: 10px;
         display: flex;
         .type {
-          width: 50px;
+          min-width: 50px;
+          width: max-content;
+          padding: 0 8px;
           font-size: 14px;
           color: #909ba6;
           text-align: center;
@@ -261,6 +260,7 @@ checkType(props.type);
           display: flex;
           .type {
             width: 50px;
+            padding: 0;
             font-size: 14px;
             color: #909ba6;
             text-align: center;
@@ -271,7 +271,6 @@ checkType(props.type);
 
           .labels {
             display: flex;
-
             color: #909ba6;
             font-size: 14px;
             .label-item {

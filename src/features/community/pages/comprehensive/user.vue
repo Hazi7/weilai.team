@@ -8,36 +8,7 @@
 
       <!-- 放内容 -->
       <div id="news">
-        <div
-          class="news-item"
-          v-for="item in articleList"
-          :id="`${item.id}` + ''"
-        >
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
-            </div>
-            <div class="writer-info">
-              <div class="name">爆米奇</div>
-            </div>
-          </div>
-          <a class="news-content">
-            <div class="news-title">{{ item.title }}</div>
-            <div class="news-details">
-              <p>
-                {{ item.postTxt }}
-              </p>
-            </div>
-            <div class="news-label">
-              <div class="type">博客</div>
-              <ul class="labels">
-                <li class="label-item" v-for="tags in item.postTags">
-                  #{{ tags }}
-                </li>
-              </ul>
-            </div>
-          </a>
-        </div>
+        <UserContent />
         <a class="news-item">
           <div class="news-writer">
             <div class="avatar">
@@ -63,54 +34,15 @@
 <script setup lang="ts">
 // import { Icon } from "@iconify/vue";
 import { useRequest } from "@/composables/useRequest";
+import UserContent from "@community/components/UserContent.vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
-import Search from "../../components/Search.vue";
-import { articleList, getArticle } from "../../composables/search";
+import Search from "../../components/SearchArticle.vue";
 const { executeRequest, error, loading, data } = useRequest();
-getArticle();
-// let articleList = ref<ArticleList[]>([]);
-
-// interface ArticleList {
-//   id: number;
-//   collectCount?: number;
-//   commentCount?: number;
-//   isCollect?: false;
-//   isLike?: false;
-//   likeCount?: 1;
-//   postAbstract: string;
-//   postTags: string[];
-//   postTxt: string;
-//   title: string;
-//   userId?: 12;
-//   viewCount?: 24;
-// }
-// interface ArticleInfo {
-//   countId: number;
-//   current: number;
-//   maxLimit: number;
-//   optimizeCountSql: boolean;
-//   orders: [];
-//   pages: number;
-//   records: ArticleList[];
-//   searchCount: boolean;
-//   size: number;
-//   total: number;
-// }
-// interface Data {
-//   data: ArticleInfo;
-// }
-
-// async function getArticle(title = "") {
-//   await executeRequest({
-//     url: `/post/selectAll?title=${title}`,
-//     method: "get",
-//   });
-//   const res = data.value as Data;
-
-//   articleList.value = res.data.records;
-
-//   console.log(articleList);
-// }
+function getUserList() {
+  executeRequest({ url: "/user/searchUser", method: "get" }).then((res) => {
+    console.log(res);
+  });
+}
 </script>
 
 <style scoped lang="scss">
