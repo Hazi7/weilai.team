@@ -51,7 +51,7 @@ watch(
 
 <style scoped lang="scss">
 .tag-container {
-    margin-top: 100px;
+    margin-top: 110px;
     display: flex;
 
     .all-article {
@@ -66,7 +66,7 @@ watch(
 
 @media screen and (max-width: 1200px) {
     .tag-container {
-        margin-top: 80px;
+        margin-top: 100px;
 
         .all-article {
             width: calc(100% - 300px);
@@ -81,7 +81,7 @@ watch(
 
 @media screen and (max-width: 1040px) {
     .tag-container {
-        margin-top: 90px;
+        margin-top: 110px;
 
         .all-article {
             width: calc(100% - 250px);
@@ -90,6 +90,34 @@ watch(
         .right-bar {
             width: 250px;
             margin-left: 20px;
+        }
+    }
+}
+
+@media screen and (max-width: 1040px) {
+    .tag-container {
+        margin-top: 100px;
+
+        .all-article {
+            width: 100%;
+        }
+
+        .right-bar {
+            display: none;
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .tag-container {
+        margin-top: 130px;
+
+        .all-article {
+            width: 100%;
+        }
+
+        .right-bar {
+            display: none;
         }
     }
 }

@@ -111,8 +111,9 @@ const isReset = ref(false);
 
 <template>
 
-    <div class="filter-condition">
-        <div class="filter-items">
+  <div class="content">
+
+    <div class="filter-items">
             <FilterCondition :items-obj-arr="recruitmentRecord_itemsObjArr" @filter_condition="handleFilterCondition"></FilterCondition>
             <div class="date-picker">
                 <DataRangePicker @updateDateRange="handleDateRangeUpdate" :dateRange="dateRange" :isReset="isReset" />
@@ -130,10 +131,10 @@ const isReset = ref(false);
                 </SearchInput>
             </div>
         </div>
-    </div>
-         <div class="main-content-show">
+            <div class="main-content-show">
             <MessageCard></MessageCard>
         </div>
+    </div>
 
 
 </template>

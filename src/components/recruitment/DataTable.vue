@@ -72,11 +72,11 @@ const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.
 </script>
 
 <template>
-  <Table>
+  <Table class="adaptive">
     <TableCaption></TableCaption>
     <TableHeader >
       <TableRow>
-        <TableCell class="font-medium text-center">
+        <TableCell class="font-medium text-center min-w-120">
           <Checkbox @click="handleSelectAll"
           class="checkbox"
           :checked="isAllSelected"
@@ -84,7 +84,7 @@ const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.
           />
         </TableCell>
         <TableCell
-        class="font-medium  text-center"
+        class="font-medium  text-center  min-w-120"
         v-for="header in headers"
         :key="header.key"
 
@@ -95,9 +95,12 @@ const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.
       </TableRow>
     </TableHeader>
     <TableBody>
-      <TableRow v-for="item in items" :key="item.id" >
+      <TableRow v-for="item in items" :key="item.id" class="hover-tr" >
 
-        <TableCell class="font-medium text-center" v-for="(obj,theKey) in item" :key="theKey"
+        <TableCell
+        class="font-medium text-center"
+        v-for="(obj,theKey) in item"
+        :key="theKey"
         >
         <template v-if="theKey === 'id'">
           <Checkbox
@@ -126,7 +129,6 @@ const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.
                   style="display: inline-block;font-size: 18px; cursor: pointer;"/>
                   <span class="pop-content-item-text">{{ item.title }}</span>
                 </div>
-
               </div>
 
             </PopoverContent>
@@ -141,7 +143,25 @@ const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.
 </template>
 <style lang="scss">
 @use "@/assets/styles/recruitment.scss" ;
-
+.adaptive table{
+  width: 100%;
+  height: auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 0 10px #ccc;
+  overflow: scroll;
+}
+.hover-tr{
+  &:hover{
+    background-color: var(--accent);
+    cursor: pointer;
+  }
+}
+.min-w-120{
+  min-width: 120px;
+}
 .popover-content{
   width: 200px;
   height: auto;
