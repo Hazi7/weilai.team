@@ -28,7 +28,7 @@
       <div class="noticeItemCon">
         <NoticeItem/>
         <NoticeItem/>
-        <CommentList/>
+        <!-- <CommentList/> -->
       </div>
     </div>
     <Rightbar/>
@@ -110,5 +110,14 @@ import {
           }
           
         }
-      }
+    }
+
+@media screen and (max-width: 768px) {
+  .outCon{
+    margin-top: 100px;
+    width: 100%;
+  }
+}
+
+
 </style>
