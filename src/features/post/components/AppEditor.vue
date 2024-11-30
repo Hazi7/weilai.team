@@ -6,16 +6,42 @@ import Text from "@tiptap/extension-text";
 import Paragraph from "@tiptap/extension-paragraph";
 import CodeBlock from "@tiptap/extension-code-block";
 import Heading from "@tiptap/extension-heading";
-import { onBeforeUnmount } from "vue";
+import { onBeforeUnmount, onMounted } from "vue";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import Bold from "@tiptap/extension-bold";
 import AppTableExtension from "../extensions/app-table";
 import EditorMenuBar from "@post/components/editor-menu-bar/index.vue";
+import Image from "@tiptap/extension-image";
+
+const jsonData = {
+  type: "doc",
+  content: [
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "哈哈哈",
+        },
+      ],
+    },
+    {
+      type: "appTable",
+      attrs: {
+        tableData: [
+          [null, null, null, null, null],
+          [null, null, null, "32", "32"],
+          [null, null, "", null, "32"],
+          [null, null, "32", "32", "32"],
+          [null, null, null, "32", "32"],
+        ],
+      },
+    },
+  ],
+};
 
 const editor = useEditor({
-  content: `
-      测试
-      `,
+  content: jsonData,
   extensions: [
     Document,
     Paragraph,
@@ -23,13 +49,22 @@ const editor = useEditor({
     Blockquote,
     CodeBlock,
     Heading.configure({
-      levels: [1, 2, 3],
+      levels: [1, 2, 3, 4, 5],
     }),
     HorizontalRule,
     Bold,
+    Image.configure({
+      allowBase64: true,
+    }),
     AppTableExtension,
   ],
 });
+
+const handleClick = () => {
+  console.log("tiptap 数据:", editor?.value?.getJSON());
+};
+
+onMounted(() => {});
 
 onBeforeUnmount(() => {
   editor.value?.destroy();
@@ -37,75 +72,35 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div v-if="editor" class="container">
+  <div v-if="editor" class="app-editor">
     <EditorMenuBar :editor="editor"></EditorMenuBar>
-    <div class="control-group">
-      <div class="button-group">
-        <button
-          :class="{ 'is-active': editor.isActive('codeBlock') }"
-          @click="
-            editor
-              .chain()
-              .focus()
-              .insertContent('<app-table></app-table>')
-              .run()
-          "
-        >
-          Toggle code block
-        </button>
-        <button :disabled="editor.isActive('codeBlock')">Set code block</button>
-      </div>
-    </div>
-    <editor-content :editor="editor" />
+    <editor-content :editor="editor" class="app-editor__content" />
+    <button class="test" @click="handleClick">查看json</button>
   </div>
 </template>
 
 <style lang="scss">
-blockquote {
-  border-left: 3px solid red;
-  margin: 1.5rem 0;
-  padding-left: 1rem;
+@use "../styles/markdown.scss";
+
+.app-editor {
+  height: 100vh;
+  background-color: #eee;
+
+  &__content {
+    width: 80%;
+    margin: 0 auto;
+
+    box-sizing: border-box;
+    border: 1px solid #999;
+    border-radius: var(--border);
+
+    p {
+      height: 100%;
+    }
+  }
 }
 
-code {
-  background: none;
-  color: inherit;
-  font-size: 0.8rem;
-  padding: 0;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  line-height: 1.1;
-  margin-top: 2.5rem;
-  text-wrap: pretty;
-}
-
-h1,
-h2 {
-  margin-top: 3.5rem;
-  margin-bottom: 1.5rem;
-}
-
-h1 {
-  font-size: 1.4rem;
-}
-
-h2 {
-  font-size: 1.2rem;
-}
-
-h3 {
-  font-size: 1.1rem;
-}
-
-h4,
-h5,
-h6 {
-  font-size: 1rem;
+.test {
+  position: absolute;
 }
 </style>
