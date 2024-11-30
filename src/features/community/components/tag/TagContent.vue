@@ -62,11 +62,35 @@ watch(
         width: 330px;
         margin-left: 20px;
     }
+}
 
-    @media screen and (max-width: 1200px) {
-        // .right-bar {
-        //     display: none;
-        // }
+@media screen and (max-width: 1200px) {
+    .tag-container {
+        margin-top: 80px;
+
+        .all-article {
+            width: calc(100% - 300px);
+        }
+
+        .right-bar {
+            width: 300px;
+            margin-left: 20px;
+        }
+    }
+}
+
+@media screen and (max-width: 1040px) {
+    .tag-container {
+        margin-top: 90px;
+
+        .all-article {
+            width: calc(100% - 250px);
+        }
+
+        .right-bar {
+            width: 250px;
+            margin-left: 20px;
+        }
     }
 }
 </style>
