@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import HotTable from "@handsontable/vue3";
+import { HotTable } from "@handsontable/vue3";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/vue-3";
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import type Handsontable from "handsontable";
 import "handsontable/dist/handsontable.full.css";
 import { HyperFormula } from "hyperformula";
 import { registerAllModules } from "handsontable/registry";
+import type Handsontable from "handsontable";
 
-defineProps<NodeViewProps>();
+const props = defineProps<NodeViewProps>();
 registerAllModules();
 
-const tableRef = ref<Handsontable | null>(null);
-const data = null;
+const tableRef = ref<unknown | null>(null);
+
 const hotSettings = {
   startRows: 5,
   startCols: 5,
@@ -27,8 +27,14 @@ const hotSettings = {
   licenseKey: "non-commercial-and-evaluation",
 };
 
+console.log(hotSettings);
+
 onMounted(() => {
-  if (!tableRef.value) return;
+  let tableInstance = tableRef.value?.hotInstance as Handsontable.Core;
+
+  tableInstance.addHook("afterChange", () => {
+    console.log(tableInstance.getSourceData());
+  });
 });
 
 onBeforeUnmount(() => {
@@ -41,7 +47,11 @@ onBeforeUnmount(() => {
 
 <template>
   <NodeViewWrapper class="app-table">
-    <HotTable ref="tableRef" :data="data" :settings="hotSettings"></HotTable>
+    <HotTable
+      ref="tableRef"
+      :data="props.node.attrs.tableData"
+      :settings="hotSettings"
+    ></HotTable>
   </NodeViewWrapper>
 </template>
 

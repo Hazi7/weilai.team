@@ -4,6 +4,13 @@ import AppEditor from "@post/components/AppEditor.vue";
 
 <template>
   <AppEditor></AppEditor>
+  <button class="post">发布</button>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.post {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+}
+</style>
