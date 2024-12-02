@@ -1,4 +1,4 @@
-import { type DefineComponent, FunctionalComponent } from "vue";
+import type { DefineComponent, FunctionalComponent } from "vue";
 import inputInsert from "@/components/layouts/table/menu/inputInsert.vue";
 import colorSelect from "@/components/layouts/table/menu/colorSelect.vue";
 import {

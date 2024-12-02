@@ -28,7 +28,7 @@
 import OptionIndex from "@/components/layouts/table/menu/indexmenu.vue";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { DefineComponent, FunctionalComponent } from "vue";
+import type { DefineComponent, FunctionalComponent } from "vue";
 interface IExtraOption {
     label: string;
     icon: DefineComponent | FunctionalComponent;

@@ -36,7 +36,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { type DefineComponent, FunctionalComponent, ref } from "vue";
+import { type DefineComponent, type FunctionalComponent, ref } from "vue";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-vue-next";
 interface IOption {
