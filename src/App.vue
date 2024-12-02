@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import DefaultLayout from "./layouts/DefaultLayout.vue";
+import Alert from '@/components/login/Alert.vue'
+import { inject } from 'vue';
+import { useAlert } from './composables/alert';
+
+const { alertState } = useAlert();
 </script>
 
 <template>
-    <DefaultLayout></DefaultLayout>
-
-    <!-- <RouterView></RouterView> -->
+    <!-- 全局提示框 -->
+    <Alert v-if="alertState" :alertState="alertState" :message="alertState.message" :type="alertState.type" />
+    <RouterView></RouterView>
 </template>
-
-<style lang="scss" scoped></style>
