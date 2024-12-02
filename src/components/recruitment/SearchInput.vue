@@ -1,6 +1,5 @@
 <script setup lang="ts">
 //vue3
-import Label from '@/features/community/pages/discussion/label.vue';
 import { defineEmits,ref } from 'vue';
 
 
@@ -31,24 +30,15 @@ const props = defineProps({
    labelText : String,
 
 })
-const isShowLabel = ref(false);
-const showLabel = () => {
-   isShowLabel.value=true;
-}
-const hideLabel = () => {
-    isShowLabel.value=false;
-}
+
 </script>
 <template>
     <div >
         <form>
-	<label for="search"  v-show="isShowLabel">{{labelText }}</label>
 	<input required="false" pattern=".*\S.*" type="search" class="input" id="search"
     @input="input_src($event)"
     @compositionstart="onCompositionStart"
     @compositionend="onCompositionEnd"
-    @focus="showLabel"
-    @blur="hideLabel"
     >
 	<span class="caret"></span>
 </form>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {FilterConditionMoreSelect, FilterCondition,DataRangePicker,SearchInput,ToggleShow,MessageCard} from '@/components/recruitment';
+import { FilterConditionMoreSelect, FilterCondition, DataRangePicker, ToggleShow, MessageCard, AutoLongerInput } from '@/components/recruitment';
 
-import {Icon} from '@iconify/vue'
+import { Icon } from '@iconify/vue'
 
 import { ref } from 'vue';
 
@@ -63,7 +63,7 @@ const handleInput = (value: string) => {
     console.log(searchValue);
 };
 
-const filterOneSeletedItems= ref([
+const filterOneSeletedItems = ref([
 
     {
         title: '年级',
@@ -102,7 +102,7 @@ const handleFilterCondition = (value: string, title: string) => {
     console.log(value, title);
 };
 
-const filterMoreSeletedItem= ref([
+const filterMoreSeletedItem = ref([
     {
         title: '面试官',
         label: "选择面试官",
@@ -164,43 +164,32 @@ const resetCondition = () => {
 
 <template>
     <div class="content">
-    <div class="filter-items">
-        <FilterCondition
-        :itemsObjArr="filterOneSeletedItems"
-        @filter_condition="handleFilterCondition"
-        />
-         <FilterConditionMoreSelect class="mr-4" :filterMoreSeletedItem="filterMoreSeletedItem[0]" />
+        <div class="filter-items">
+            <FilterCondition :itemsObjArr="filterOneSeletedItems" @filter_condition="handleFilterCondition" />
+            <FilterConditionMoreSelect class="mr-4" :filterMoreSeletedItem="filterMoreSeletedItem[0]" />
 
-         <div class="date-picker">
-                <DataRangePicker
-                @updateDateRange="handleDateRangeUpdate"
-                :dateRange="dateRange"
-                :isReset="isReset"
-                />
+            <div class="date-picker">
+                <DataRangePicker @updateDateRange="handleDateRangeUpdate" :dateRange="dateRange" :isReset="isReset" />
             </div>
-         <div class="reset" @click="resetCondition">
+            <div class="reset" @click="resetCondition">
                 重置
                 <Icon icon="bitcoin-icons:cross-outline" />
             </div>
 
             <div class="search-input">
-                <SearchInput @input_src="handleInput"
-                labelText="搜索候选人:"
-                style="width: 400px;height: 40px;"
-                >
-                </SearchInput>
+                <AutoLongerInput @input_src="handleInput" placeholderText="搜索候选人：" />
             </div>
-    </div>
-    <div class="toggle-handle">
-        <ToggleShow :toggleItems="toggleItems"></ToggleShow>
-    </div>
-    <div class="main-content-show">
-        <MessageCard v-for="i in 3"></MessageCard>
-    </div>
+        </div>
+        <div class="toggle-handle">
+            <ToggleShow :toggleItems="toggleItems"></ToggleShow>
+        </div>
+        <div class="main-content-show">
+            <MessageCard v-for="i in 3"></MessageCard>
+        </div>
 
- </div>
+    </div>
 </template>
 
-<style  lang="scss" scoped >
+<style lang="scss" scoped>
 @use "@/assets/styles/recruitment.scss";
 </style>

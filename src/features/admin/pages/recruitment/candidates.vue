@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import { SearchInput } from '@/components/recruitment';
-import { FilterCondition } from '@/components/recruitment';
-import { DataRangePicker } from '@/components/recruitment';
+import { FilterCondition,DataRangePicker,ToggleShow ,DataTable,Pagination ,SearchInput,AutoLongerInput } from '@/components/recruitment';
 import { Icon } from '@iconify/vue';
-import { ToggleShow } from '@/components/recruitment';
 import { Button } from '@/components/ui/button';
 import { ref, watch, type ObjectDirective, } from 'vue';
-import { DataTable } from '@/components/recruitment';
-import { Pagination } from '@/components/recruitment';
 
 const searchValue = ref('');
 
@@ -310,10 +305,10 @@ const actionItems = ref([
             </div>
 
             <div class="search-input">
-                <SearchInput @input_src="handleInput"
-                labelText="搜索候选人:"
-                style="width: 400px;height: 40px;">
-                </SearchInput>
+                <AutoLongerInput
+                @input_src="handleInput"
+                placeholderText ="搜索候选人："
+                />
             </div>
         </div>
         <div class="toggle-handle">
