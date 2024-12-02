@@ -38,7 +38,7 @@
       />
     </div>
 
-    <div class="news-item">
+    <!-- <div class="news-item">
       <div class="news-writer">
         <div class="avatar">
           <img src="@/assets/img/headImg.jpg" alt="" />
@@ -83,25 +83,26 @@
           <span>11</span>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
+
+  <div v-if="loading">加载中</div>
 </template>
 
 <script setup lang="ts">
-import { useRequest } from "@/composables/useRequest";
-// import type { ArticleList } from "@/types/Community";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   articleList,
   checkType,
   getArticle,
+  loading,
 } from "@community/composables/search";
-import { Icon } from "@iconify/vue";
 import { watch } from "vue";
 import { useRoute } from "vue-router";
 import NewsFooter from "./NewsFooter.vue";
 
-const { executeRequest, error, loading, data } = useRequest();
+console.log(loading.value);
+
 const props = defineProps({
   type: {
     type: Number,

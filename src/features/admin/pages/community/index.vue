@@ -60,7 +60,7 @@ const postList = ref<ArticleList[]>([]);
 const isAllSelected = ref(false);
 const selectType = ref("");
 // const selectTime = ref<Date | string>("");
-const selectTime = ref<Date>();
+const selectTime = ref<string>("");
 const value = ref<DateValue>();
 const condition = ref("");
 
@@ -72,9 +72,8 @@ watch(value, (newVal) => {
   const selectTimeValue = newVal;
   if (selectTimeValue) {
     let { year, month, day } = selectTimeValue;
-    console.log(year, month, day);
-    selectTime.value = new Date(year, month - 1, day);
-    console.log(selectTime.value);
+
+    selectTime.value = `${year}-${month}-${day} 00:00:00`;
   }
 });
 // 进行搜索
@@ -101,10 +100,10 @@ async function searchArticle() {
   let selectTimeValue = value.value;
   if (selectTimeValue) {
     let { year, month, day } = selectTimeValue;
-    selectTime.value = new Date(year, month - 1, day);
+    selectTime.value = `${year}-${month}-${day} 00:00:00`;
     console.log(selectTimeValue);
   } else {
-    selectTime.value = undefined;
+    selectTime.value = "";
   }
 
   console.log(selectTime.value);
@@ -113,7 +112,7 @@ async function searchArticle() {
     selectType.value,
     condition.value || undefined,
     page.value || 1,
-    selectTime.value || undefined,
+    selectTime.value || "",
   );
   console.log(res);
   postList.value = res.records;
