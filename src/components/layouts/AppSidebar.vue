@@ -192,8 +192,10 @@ interface SubItemInterface {
               <SidebarMenuItem>
                 <DropdownMenu>
                   <SidebarMenuButton class="publish-btn">
-                    <Icon icon="prime:pencil" width="16px" />
-                    发布
+                    <RouterLink to="/post" class="flex items-center w-full h-full">
+                      <Icon icon="prime:pencil" width="16px" />
+                      <span class="ml-2">发布</span>
+                    </RouterLink>
                   </SidebarMenuButton>
                 </DropdownMenu>
               </SidebarMenuItem>

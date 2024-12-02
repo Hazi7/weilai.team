@@ -10,7 +10,11 @@ import type Handsontable from "handsontable";
 const props = defineProps<NodeViewProps>();
 registerAllModules();
 
-const tableRef = ref<unknown | null>(null);
+interface TableInterface {
+  hotInstance: Handsontable.Core | null;
+}
+
+const tableRef = ref<TableInterface | null>(null);
 
 const hotSettings = {
   startRows: 5,
@@ -32,14 +36,18 @@ console.log(hotSettings);
 onMounted(() => {
   let tableInstance = tableRef.value?.hotInstance as Handsontable.Core;
 
-  tableInstance.addHook("afterChange", () => {
-    console.log(tableInstance.getSourceData());
-  });
+  if (tableInstance) {
+    tableInstance.addHook("afterChange", () => {
+      console.log(tableInstance.getCellMeta(1, 1));
+      console.log(props.editor?.getJSON());
+    });
+  }
 });
 
 onBeforeUnmount(() => {
-  if (tableRef.value) {
-    tableRef.value.destroy();
+  let tableInstance = tableRef.value?.hotInstance as Handsontable.Core;
+  if (tableInstance) {
+    tableInstance.destroy();
     tableRef.value = null;
   }
 });
@@ -56,3 +64,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss" scoped></style>
+/**
+ * Initializes the Handsontable instance with the specified settings and adds a hook to log cell metadata changes.
+ * The Handsontable instance is destroyed and the reference is set to null when the component is unmounted.
+ */
