@@ -12,7 +12,6 @@ function assignRandomNumbers(strArray: string[]): [string, number][] {
 }
 
 getTagCloudList().then(res => {
-    console.log(tagCloudList);
     words.value = assignRandomNumbers(tagCloudList.value);
     console.log(words);
 });
