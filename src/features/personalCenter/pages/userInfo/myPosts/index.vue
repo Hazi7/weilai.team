@@ -53,26 +53,10 @@
                 </li>
             </ul>
         </div>
-        <div class="pageBox">
-            <Pagination v-slot="{ page }" :total="pages * 10" :sibling-count="1" show-edges :default-page="1"
-                @update:page="handlePageChange">
-                <PaginationList v-slot="{ items }" class="flex items-center gap-1">
-                    <PaginationFirst />
-                    <PaginationPrev />
-                    <template v-for="(item, index) in items">
-                        <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-                            <Button class="w-10 h-10 p-0" :variant="item.value === page ? 'default' : 'outline'">
-                                {{ item.value }}
-                            </Button>
-                        </PaginationListItem>
-                        <PaginationEllipsis v-else :key="item.type" :index="index" />
-                    </template>
-
-                    <PaginationNext />
-                    <PaginationLast />
-                </PaginationList>
+        <div class="pageBox pagination-container">
+            <Pagination :totalItems="total" :pageSize="pageSize" @update:page="handlePageChange">
             </Pagination>
-            <p class="postsNum">共 {{ postsNum }} 篇文章</p>
+            <span class="postsNum">共 {{ total }} 篇文章</span>
         </div>
     </div>
 </template>
@@ -88,16 +72,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import Button from '@/components/ui/button/Button.vue';
-import {
-    Pagination,
-    PaginationEllipsis,
-    PaginationFirst,
-    PaginationLast,
-    PaginationList,
-    PaginationListItem,
-    PaginationNext,
-    PaginationPrev,
-} from '@/components/ui/pagination'
+import Pagination from '@/components/recruitment/Pagination.vue'
 
 //引入ref
 import { ref } from 'vue'
@@ -124,7 +99,8 @@ let userPostAllInfo = ref({
 //定义页码信息
 let pages = 0;
 let currentPage = 1;
-let postsNum = 0;
+let total = ref<number>();
+let pageSize = ref(10);
 
 //定义userPost，储存当前页的文章数据
 let userPost = ref([]);
@@ -137,14 +113,14 @@ function handlePageChange(newPage: number) {
 
 //获取文章函数
 async function getPosts() {
-    await executeRequest({ url: `/user/getUserPost?userId=${userId}&pageNumber=${currentPage}&pageSize=5` })
+    await executeRequest({ url: `/user/getUserPost?userId=${userId}&pageNumber=${currentPage}&pageSize=${pageSize.value}` })
     if (data.value && data.value.code == 200) {
         let postData = data.value.data
         // 将数据赋值给userPostAllInfo及userPost、pages
         Object.assign(userPostAllInfo.value, postData.userPostAllInfo);
         userPost.value = postData.userPost
         pages = postData.pageInfo.pages
-        postsNum = postData.pageInfo.total
+        total = postData.pageInfo.total
     }
 }
 //打开页面立刻调用一次获取文章
@@ -233,14 +209,12 @@ getPosts()
     }
 
     .pageBox {
-        margin: 20px auto;
-
-        button[data-selected] {
-            background-color: #97d5ff;
-        }
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
 
         .postsNum {
-            margin-left: 20px;
+            margin-right: 20px;
             line-height: 40px;
         }
     }

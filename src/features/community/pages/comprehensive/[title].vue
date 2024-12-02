@@ -5,70 +5,7 @@
       <div id="search">
         <Search />
       </div>
-
       <!-- 放内容 -->
-      <!-- <div id="news">
-        <div
-          class="news-item"
-          v-for="item in articleList"
-          :id="`${item.id}` + ''"
-        >
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
-            </div>
-            <div class="writer-info">
-              <div class="name">爆米奇</div>
-              <div class="time">发布于 <span>2022-05-05</span></div>
-            </div>
-          </div>
-          <div class="news-content">
-            <div class="news-title">{{ item.title }}</div>
-            <div class="news-details">
-              <p>
-                {{ item.postTxt }}
-              </p>
-            </div>
-            <div class="news-label">
-              <div class="type">博客</div>
-              <ul class="labels">
-                <li class="label-item" v-for="tags in item.postTags">
-                  #{{ tags }}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
-            </div>
-            <div class="writer-info">
-              <div class="name">爆米奇</div>
-              <div class="time">发布于 <span>2022-05-05</span></div>
-            </div>
-          </div>
-          <div class="news-content">
-            <div class="news-title">约定式路由</div>
-            <div class="news-details">
-              <p>
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-                约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-              </p>
-            </div>
-            <div class="news-label">
-              <div class="type">博客</div>
-              <ul class="labels">
-                <li class="label-item">#js</li>
-                <li class="label-item">#vue</li>
-                <li class="label-item">#nue.js</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div> -->
       <NewsContent :condition="title" />
     </div>
     <Rightbar />
@@ -78,33 +15,17 @@
 <script setup lang="ts">
 // import { Icon } from "@iconify/vue";
 import Rightbar from "@/components/community/Rightbar.vue";
-import { useRequest } from "@/composables/useRequest";
-import type { ArticleList } from "@/types/Community";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import NewsContent from "../../components/NewsContent.vue";
-import Search from "../../components/SearchArticle.vue";
+import Search from "../../components/Search.vue";
 const route = useRoute();
-const { executeRequest, error, loading, data } = useRequest();
-let articleList = ref<ArticleList[]>([]);
 const title = ref("");
 if ("title" in route.params) {
   title.value = route.params.title as string;
 } else {
   title.value = "";
 }
-
-// async function getArticleBySearch(condition = "") {
-//   await executeRequest({
-//     url: `/post/selectPost/${condition}`,
-//     method: "get",
-//   });
-//   let res = data.value as searchData;
-//   console.log(res);
-
-//   articleList.value = res.data;
-// }
-// getArticleBySearch(title.value);
 </script>
 
 <style scoped lang="scss">

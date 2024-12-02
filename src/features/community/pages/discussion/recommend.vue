@@ -6,76 +6,7 @@
         <Search />
       </div>
       <!-- 放内容 -->
-      <!-- <div id="news">
-        <div class="news-item">
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
-            </div>
-            <div class="writer-info">
-              <div class="name">爆米奇</div>
-              <div class="time">发布于 <span>2022-05-05</span></div>
-            </div>
-          </div>
-          <div class="news-content">
-            <div class="news-details">
-              <p>周一结束了明天就是周二</p>
-            </div>
-          </div>
-          <div class="news-footer">
-            <div class="news-view">
-              <Icon
-                icon="iconamoon:eye-light"
-                class="news-footer-icon"
-                :class="isLike ? 'already' : ''"
-              /><span class="">1.6万+</span>
-            </div>
-            <div class="news-like">
-              <Icon icon="iconamoon:like-light" class="news-footer-icon" />11
-            </div>
-            <div class="news-comment">
-              <Icon
-                icon="fontisto:comment"
-                class="news-footer-icon"
-                style="font-size: 13px"
-              />
-              11
-            </div>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
-            </div>
-            <div class="writer-info">
-              <div class="name">爆米奇</div>
-              <div class="time">发布于 <span>2022-05-05</span></div>
-            </div>
-          </div>
-          <div class="news-content">
-            <div class="news-details">
-              <p>周一结束了明天就是周二</p>
-            </div>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
-            </div>
-            <div class="writer-info">
-              <div class="name">爆米奇</div>
-              <div class="time">发布于 <span>2022-05-05</span></div>
-            </div>
-          </div>
-          <div class="news-content">
-            <div class="news-details">
-              <p>周一结束了明天就是周二</p>
-            </div>
-          </div>
-        </div>
-      </div> -->
+
       <NewsContent :type="3" />
     </div>
     <Rightbar />
@@ -84,7 +15,7 @@
 
 <script setup lang="ts">
 // import { Icon } from "@iconify/vue";
-import Search from "@/features/community/components/SearchArticle.vue";
+import Search from "@/features/community/components/Search.vue";
 import { ref } from "vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
 import NewsContent from "../../components/NewsContent.vue";

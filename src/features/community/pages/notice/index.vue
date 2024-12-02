@@ -26,9 +26,9 @@
       
       </div>
       <div class="noticeItemCon">
-        <NoticeItem/>
-        <NoticeItem/>
-        <!-- <CommentList/> -->
+        <div v-for="notice in notices" :key="notice.noticeId">
+          <NoticeItem :notice="notice" />
+        </div>
       </div>
     </div>
     <Rightbar/>
@@ -39,7 +39,16 @@
 import { Icon } from "@iconify/vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
 import NoticeItem from "./NoticeItem.vue";
-import CommentList from "@/components/comment/CommentList.vue";
+// import CommentList from "@/components/comment/CommentList.vue";
+import { onMounted,ref} from 'vue';
+import { useRequest } from '@/composables/useRequest';
+import useSSE from '../../../message/composables/sse';
+const { data, loading, error, executeRequest } = useRequest();
+const { connect, disconnect, subscribe, unsubscribe, isConnected } = useSSE();
+import type { SSENoticeData } from '../../../message/composables/types';
+const notices = ref<SSENoticeData[]>([]); 
+const pageNumber=ref(1);
+const pageSize=ref(10);
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,6 +56,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+
+
+onMounted(() => {
+      connect()
+      subscribe('message', (notice: SSENoticeData) => {
+        notices.value.push(notice);
+        console.log(notice);
+    });
+    noticeList()
+});
+//获取公告列表
+const noticeList = async() => {
+  await executeRequest({
+    url: `/notice/getNoticeInfo?pageSize=${pageSize.value}&pageNumber=${pageNumber.value}`,
+    method: 'get',
+  })
+  if(data.value?.code==200){
+    const allNotices = data.value?.data.AllMessages || [];
+    notices.value = allNotices; 
+    console.log("获取的全部公告数据：", allNotices);
+  }else if(data.value?.code==401){
+    console.log("请先登录"); 
+  }else{
+    console.log("获取失败");
+    console.log(data.value);
+  }
+}
 
 </script>
 

@@ -61,6 +61,13 @@ const addImage = () => {
       >
         <Icon icon="ph:picture-in-picture-duotone"></Icon>
       </li>
+      <li
+        class="menu-bar__item"
+        :class="{ 'is-active': props.editor?.isActive('bold') }"
+        @click="editor?.chain().focus().setColor('#958DF1').run()"
+      >
+        <Icon icon="ic:outline-color-lens"></Icon>
+      </li>
     </ul>
   </div>
 </template>
@@ -70,6 +77,11 @@ const addImage = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 
   &__list {
     height: 100%;
