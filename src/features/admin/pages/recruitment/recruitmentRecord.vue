@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import{ FilterCondition} from '@/components/recruitment'
-import{ DataRangePicker }from '@/components/recruitment'
-import{ SearchInput }from '@/components/recruitment'
-import{ MessageCard} from '@/components/recruitment'
+import{ FilterCondition,DataRangePicker,MessageCard,AutoLongerInput} from '@/components/recruitment'
+
 import { Icon } from '@iconify/vue'
 
 import { ref} from 'vue'
@@ -124,11 +122,10 @@ const isReset = ref(false);
                 <Icon icon="bitcoin-icons:cross-outline" />
             </div>
             <div class="search-input">
-                <SearchInput
+                <AutoLongerInput
                 @input_src="handleInput"
-                labelText="搜索人员记录："
-                style="width: 400px;height: 40px;">
-                </SearchInput>
+                placeholderText ="搜索人员记录："
+                />
             </div>
         </div>
             <div class="main-content-show">

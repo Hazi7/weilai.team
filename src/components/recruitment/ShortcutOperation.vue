@@ -6,7 +6,7 @@ import { Icon } from '@iconify/vue';
 <template>
     <Card class="shortcut-operation">
         <div class="shortcut-operation-icon-front">
-                <Icon icon="mdi-light:vector-arrange-below"/>
+                <Icon icon="mdi-light:vector-arrange-below" style="font-size: 18px;" />
         </div>
 
         <div class="shortcut-operation-text">
@@ -42,7 +42,7 @@ import { Icon } from '@iconify/vue';
     align-items: center;
     width: 100%;
     height: 100%;
-    background-color: #e6e6e6;
+    background-color:#CDD9FC;
     color: white;
     border-radius: 5px;
 }
