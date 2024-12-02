@@ -39,6 +39,10 @@ const isOpen = ref(true);
   border-radius: 0 0 0 1rem;
   padding: 1rem;
 
+  @media (max-width: 768px) {
+    display: none;
+  }
+
   &__group {
     margin-bottom: 1rem;
   }
