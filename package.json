@@ -12,9 +12,12 @@
         "prepare": "husky"
     },
     "dependencies": {
+        "@handsontable/vue3": "^14.6.1",
+        "@vueuse/core": "^11.2.0",
         "axios": "^1.7.7",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
+        "handsontable": "^14.6.1",
         "lucide-vue-next": "^0.456.0",
         "pinia": "^2.2.4",
         "radix-vue": "^1.9.7",
