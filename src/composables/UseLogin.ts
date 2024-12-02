@@ -107,8 +107,11 @@ export default function () {
             showAlert('两次密码不一致', 'waring')
             // alert("两次密码不一致")
         }
-
     }
 
-    return { data, error, loading, getLogin, useGetCode, useResetPassword }
+    async function logout() {
+        await executeRequest({ url: `/index/logout`, method: 'delete' })
+    }
+
+    return { data, error, loading, getLogin, useGetCode, useResetPassword, logout }
 }
