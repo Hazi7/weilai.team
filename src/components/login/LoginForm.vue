@@ -14,7 +14,7 @@ const { loading, getLogin } = UseLogin()
 </script>
 
 <template>
-    <div class="loginContent">
+    <div>
         <Card class="mx-auto max-w-sm">
             <CardHeader>
                 <CardTitle class="text-2xl">
@@ -40,7 +40,7 @@ const { loading, getLogin } = UseLogin()
                         </div>
                         <Input id="password" type="password" required v-model="password" />
                     </div>
-                    <Button type="submit" class="w-full" @click="getLogin(account.value, password)" v-if="!loading">
+                    <Button type="submit" class="w-full" @click="getLogin(account, password)" v-if="!loading">
                         登录
                     </Button>
                     <Button disabled v-if="loading">
@@ -54,16 +54,29 @@ const { loading, getLogin } = UseLogin()
 </template>
 
 <style scoped lang="scss">
-.loginContent{
+.loginOut {
+    height: 100vh;
+}
 
+.loginContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    // transform: translateX(50%);
+    // transform: translateY(-50%);
+    // animation: fadeIn 2s linear;
+    // animation-delay: 1s;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 </style>
