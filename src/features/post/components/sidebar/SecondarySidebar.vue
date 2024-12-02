@@ -136,6 +136,10 @@ const isTocOpen = ref(true);
   padding: 1rem;
   overflow-y: auto;
 
+  @media (max-width: 768px) {
+    display: none;
+  }
+
   &__group {
     margin-bottom: 1rem;
   }
