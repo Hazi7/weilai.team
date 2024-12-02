@@ -1,32 +1,64 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
+import { computed, defineProps,defineEmits } from 'vue';
+import { useRequest } from '@/composables/useRequest';
+const { data, loading, error, executeRequest } = useRequest();
+import type { SSEMessageData } from '../composables/types';
 
+const props = defineProps<{
+  message: SSEMessageData;
+}>();
+const emit = defineEmits(['delete-success']);
+const formattedTime = computed(() => {
+  const commentTime = new Date(props.message.createdAt);
+  const year = commentTime.getFullYear();
+  const month = (commentTime.getMonth() + 1).toString().padStart(2, '0');
+  const day = commentTime.getDate().toString().padStart(2, '0');
+  const hours = commentTime.getHours().toString().padStart(2, '0');
+  const minutes = commentTime.getMinutes().toString().padStart(2, '0');
+  return `${year}.${month}.${day} ${hours}:${minutes}`;
+});
+//删除单个信息
+const deleteMessage = async (messageId: number) =>  {
+  await executeRequest({
+      url: `/message/deleteOneMessage/${messageId}`,
+      method: 'delete',
+    });
+    if(data.value?.code === 200){
+      alert('删除成功');
+      emit('delete-success');
+    } else {
+      alert('删除失败');
+    }
+
+};
 </script>
 
 <template>
    <div class="mesItem">
-          <div class="avatar"><img src="../../../assets/img/test.jpg"/></div>
+          <div class="avatar"><img :src="props.message.headPortrait ? props.message.headPortrait : '../../../../public/logo.png'"/></div>
           <div class="mesContent">
             <div class="details">
-              <div class="name">万东乐<span class="type">评论了你的文章</span></div>
-              <div class="time">2024/11/25/15:00</div>
+              <div class="name">{{ props.message.username }}<span class="type">点赞了你的文章</span></div>
+              <div class="time">{{ formattedTime }}</div>
             </div>
-            <div class="content">上了一整天的课</div>
+            <div v-if="props.message.content!=null" class="content" >{{props.message.content}}</div>
             <!-- <div class="imgCon"><img src="../../../assets/img/headImg.jpg"/></div> -->
-            <div class="postLink"># vue3实现sse消息实时推送</div>
-            <Icon icon="fluent:delete-24-regular" class="deleteIcon"/>
+            <div class="postLink"># {{ props.message.postTitle }}</div>
+            <Icon icon="fluent:delete-24-regular" class="deleteIcon" @click="deleteMessage(props.message.messageId)"/>
           </div>
         </div>
 </template>
 
 <style scoped lang="scss">
  .mesItem{
-          width: 690px;
+          width: 670px;
           margin-bottom: 10px;
           padding-bottom: 15px;
           background-color: white;
           border-radius: 5px;
           display: flex;
+          
           .avatar{
             width: 50px;
             height: 50px;
@@ -85,6 +117,7 @@ import { Icon } from "@iconify/vue";
               max-width:calc(100% - 20px);
               font-size: 12px;
               margin-bottom: 6px;
+              min-height: 23px;
               border-bottom: 1px solid var(--border);
               color: var(--secondary-foreground);
             }
