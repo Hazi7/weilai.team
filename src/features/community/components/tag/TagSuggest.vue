@@ -104,7 +104,7 @@ getRecommendTag()
         }
     }
 
-    .noMoreTag{
+    .noMoreTag {
         padding: 20px;
         color: #5a5a5a;
         text-align: center;
@@ -152,4 +152,26 @@ getRecommendTag()
         }
     }
 }
+
+@media screen and (max-width: 1200px) {
+    .rightBarTag {
+        .rightTagHead {
+            font-size: 12px;
+
+            .tagHeadTitle {
+                .tagIcon {
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .hotTagList {
+            .tag {
+                font-size: 11px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1040px) {}
 </style>

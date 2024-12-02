@@ -24,6 +24,11 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
         "title": "用户",
         "path": "/community/comprehensive/user",
         "icon": "i-mdi-file-document-multiple-outline"
+      },
+      {
+        "title": "标签",
+        "path": "/community/comprehensive/label",
+        "icon": "i-mdi-file-document-multiple-outline"
       }
     ]
   }

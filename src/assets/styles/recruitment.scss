@@ -4,7 +4,7 @@
 
 //color
 
-    $undertone: #647499;//浅灰 设置为非强调色
+    $undertone: #647499;//浅灰 设置为非强调色 常设置为字体颜色
 
 *{
   margin: 0;
@@ -28,7 +28,7 @@
 }
 .checkbox[checked-not-all="true"]{
   &::after{
-    content: "√";
+    content: "\2588";
     position: absolute;
     top: 0;
     left: 0;
@@ -59,44 +59,75 @@
 }
 
 
-//后台样式
+//招新管理  主体样式抽离
 .content {
+    width: 100%;
     padding: 20px;
     background-color: var(--background);
     position: relative;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    top: 1em;
 }
 
+//顶部筛选器样式
 .filter-items {
     width: 100%;
-    display: inline-flex;
+    display:flex;
     height: 80px;
     justify-content: flex-start;
     align-items: center;
     position: relative;
     gap: 20px;
-    min-width: 920px;
-    .search-input {
+    margin-left: 20px;
+    @media screen and (max-width: 1300px) {
+      flex-direction: row;
+      flex-wrap: wrap;
+      max-width: 600px;
+      height: auto;
+      margin-left: 40px;
+      gap: 30px;
+    }
+    .filter-contion {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+        position: absolute;
+        right: 20px;
+        @media screen and (max-width: 1300px) {
+          position: relative;
+          right: 0;
+          margin-left: 40px;
+        }
+      }
+      .data-picker {
+        width: auto;
+      }
+      .reset {
         position: relative;
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        width: 300px;
-        height: 40px;
-        @media screen and (max-width: 1300px) {
-         display: none;
-        }
+        gap: 5px;
+        font-size: 14px;
+        cursor: pointer;
     }
-
+    .search-input {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: 200px;
+      height: 40px;
+      position: absolute;
+      right: 40px;
+      @media screen and (max-width: 1300px) {
+       display: none;
+      }
+  }
 }
 
-.reset {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 14px;
-    cursor: pointer;
-}
+
 
 .toggle-handle {
     width: 100%;
@@ -121,7 +152,10 @@
         @media screen and (max-width: 1300px) {
           position: relative;
           right: 0;
-          margin-left: 40px;
+          margin-left: 20px;
+        }
+        @media screen and (max-width: 1000px) {
+          display: none;
         }
     }
 }
@@ -132,6 +166,10 @@
     background-color: var(--background);
     position: relative;
     top: 40px;
+    .pagination-container{
+     padding-bottom:20px;
+    }
+
 }
 //卡片展示
 .main-content-show{
@@ -141,7 +179,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   height: auto;
-  width: 90%;
+  width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
   position: relative;
@@ -154,7 +192,8 @@
 //滚动条样式
 /* 定义滚动条的轨道样式 */
 ::-webkit-scrollbar {
-  width: 1px; /* 滚动条轨道的宽度 */
+  width: 1px;
+  height: 2px;/* 滚动条轨道的宽度 */
 }
 
 /* 定义滚动条的滑块样式 */

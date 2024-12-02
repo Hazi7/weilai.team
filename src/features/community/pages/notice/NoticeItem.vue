@@ -6,23 +6,24 @@
           <div class="userInfo">
             <div class="action">
             <div class="publish-avatar">
-               <img src="@/assets/img/headImg.jpg"/>
+               <img :src="props.notice.headPortrait ? props.notice.headPortrait : '../../../../../public/logo.png'"/>
              </div>
-             <div class="nickName">_H!an.</div>
+             <div class="nickName">{{ props.notice.username }}</div>
              <span class="edit" title="编辑"><Icon icon="mage:edit-pen" class="editIcon"/></span>
              <span class="delete" title="删除"><Icon icon="fluent:delete-24-regular" class="deleteIcon"/></span>
              </div>
-             <div class="publish-time">21:28</div>
+             <div class="publish-time">{{ formattedTime }}</div>
           </div>
           <!-- 公告内容 -->
           <div class="noticeDetalis">
+            <div class="notice-title">{{ props.notice.title }}</div>
             <div class="notice-content">
-              国庆假期结束后按小组作息制度进行学习，国庆假期结束前不做要求，现在就想来小组学习也非常支持。
-              群里有入门学习计划，可以自发进行学习，有任何疑问都可以询问学长学姐。
-              国庆假期结束后按小组作息制度进行学习，国庆假期结束前不做要求，现在就想来小组学习也非常支持。
-              群里有入门学习计划，可以自发进行学习，有任何疑问都可以询问学长学姐。
-              国庆假期结束后按小组作息制度进行学习，国庆假期结束前不做要求，现在就想来小组学习也非常支持。
-              群里有入门学习计划，可以自发进行学习，有任何疑问都可以询问学长学姐。
+              {{ props.notice.content }}
+            </div>
+            <div class="notice-urls">
+              <div v-for="url in props.notice.noticeUrls" :key="url">
+                <img :src="url">
+              </div>
             </div>
           </div>
           <div class="show">展开<Icon icon="cuida:caret-down-outline" class="arrowsIcon"/></div>
@@ -33,6 +34,23 @@
   
   <script setup lang="ts">
   import { Icon } from "@iconify/vue";
+  import { defineProps,computed } from "vue";
+  import type { SSENoticeData } from '../../../message/composables/types';
+
+  const props = defineProps<{
+  notice: SSENoticeData;
+}>();
+   
+const formattedTime = computed(() => {
+  const commentTime = new Date(props.notice.createAt);
+  const year = commentTime.getFullYear();
+  const month = (commentTime.getMonth() + 1).toString().padStart(2, '0');
+  const day = commentTime.getDate().toString().padStart(2, '0');
+  const hours = commentTime.getHours().toString().padStart(2, '0');
+  const minutes = commentTime.getMinutes().toString().padStart(2, '0');
+  return `${year}.${month}.${day} ${hours}:${minutes}`;
+});
+ 
   </script>
   
   <style scoped lang="scss">
@@ -87,10 +105,26 @@
     .noticeDetalis{
       width: 100%;
       padding: 10px 0;
+      .notice-urls{
+        width: 100%;
+        display: flex;
+        img{
+          width: auto;
+          height: 150px;
+          object-fit: cover;
+          margin-right: 5px;
+        }
+      }
+      .notice-title{
+        width: 100%;
+        font-weight: bold;
+        font-size: 15px;
+        margin: 0 0 5px 0;
+        color: rgb(66, 65, 65);
+      }
       .notice-content{
-        height: 85px;
         color: #767575;
-        font-size: 14.5px;
+        font-size: 14px;
         line-height: 1.5;
         overflow: hidden;
         white-space: normal;

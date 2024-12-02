@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 引入组件
-import{ MessageCard,ToggleShow,QuickShowCard } from '@/components/recruitment'
+import{ MessageCard,ToggleShow,QuickShowCard,ShortcutOperation } from '@/components/recruitment'
 
 // 引入vue函数
 import { ref } from "vue";
@@ -47,7 +47,11 @@ const quickShowItems = ref([
       </div>
 
       <div class="quick-control">
-
+        <p class="quick-control-title">快捷操作</p>
+        <div class="quick-control-content">
+          <ShortcutOperation class="quick-control-item" />
+          <ShortcutOperation class="quick-control-item" />
+        </div>
       </div>
     </div>
 
@@ -76,23 +80,63 @@ const quickShowItems = ref([
   height: auto;
   background-color: #fff;
   position: relative;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns:150px calc(100% - 170px);
+  gap: 30px;
   top: 20px;
   box-sizing: content-box;
+  @media screen and (min-width: 1300px) {
+    grid-template-columns:200px calc(100% - 220px);
+  }
+  @media screen and (max-width: 1100px) {
+    grid-template-columns:1fr;
+  }
 }
 
 //.region 左侧边栏
 .left-side {
-  width: 20%;
+  width: 100%;
   height: auto;
   background-color: #fff;
   position: relative;
   margin-left: 2em;
   display: inline-block;
-  margin-top: 10px;
+  margin-top: 20px;
   border: none;
+  @media screen and (max-width: 1100px) {
+    display: none;
+  }
+  .quick-control{
+    width: 100%;
+    height: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    top: 30px;
+    .quick-control-title{
+     font-size: 16px;
+     font-weight: 500;
+     margin-bottom: 10px;
+     margin-left: 10px;
+    }
+  .quick-control-content{
+    position: relative;
+    top: 20px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .quick-control-item{
+      width: 100%;
+      min-height: 60px;
+      margin-bottom: 10px;
+    }
+    }
+
+  }
+
 }
 
 
@@ -101,7 +145,7 @@ const quickShowItems = ref([
 
 //.region 中间内容区
 .content {
-  width: 70%;
+  width: 100%;
   background-color:var(--background);
   position: relative;
   display: inline-block;

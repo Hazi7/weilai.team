@@ -48,7 +48,7 @@ const filter_condition = (e:Event) => {
                </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent  class="filter-content bg-white">
-                <DropdownMenuLabel>{{ i.label }}</DropdownMenuLabel>
+                <DropdownMenuLabel class="filter-label">{{ i.label }}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem class="drap-menu-content" v-for="j in i.arr">
                     <DropdownMenuRadioGroup
@@ -95,5 +95,10 @@ $undertone: #647499;
 }
 .drap-menu-content{
    background-color: var(--card);
+
 }
+.filter-label{
+    font-weight: 500;
+
+   }
 </style>

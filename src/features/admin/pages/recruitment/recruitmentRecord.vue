@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import{ FilterCondition} from '@/components/recruitment'
-import{ DataRangePicker }from '@/components/recruitment'
-import{ SearchInput }from '@/components/recruitment'
-import{ MessageCard} from '@/components/recruitment'
+import{ FilterCondition,DataRangePicker,MessageCard,AutoLongerInput} from '@/components/recruitment'
+
 import { Icon } from '@iconify/vue'
 
 import { ref} from 'vue'
@@ -111,8 +109,9 @@ const isReset = ref(false);
 
 <template>
 
-    <div class="filter-condition">
-        <div class="filter-items">
+  <div class="content">
+
+    <div class="filter-items">
             <FilterCondition :items-obj-arr="recruitmentRecord_itemsObjArr" @filter_condition="handleFilterCondition"></FilterCondition>
             <div class="date-picker">
                 <DataRangePicker @updateDateRange="handleDateRangeUpdate" :dateRange="dateRange" :isReset="isReset" />
@@ -123,17 +122,16 @@ const isReset = ref(false);
                 <Icon icon="bitcoin-icons:cross-outline" />
             </div>
             <div class="search-input">
-                <SearchInput
+                <AutoLongerInput
                 @input_src="handleInput"
-                labelText="搜索人员记录："
-                style="width: 400px;height: 40px;">
-                </SearchInput>
+                placeholderText ="搜索人员记录："
+                />
             </div>
         </div>
-    </div>
-         <div class="main-content-show">
+            <div class="main-content-show">
             <MessageCard></MessageCard>
         </div>
+    </div>
 
 
 </template>

@@ -11,10 +11,11 @@ import { Button } from '@/components/ui/button'
     <CardContent>
        <div class="message-show-top">
             <div class="message-show-time">
-                <span class="min-width">
+                <span class="min-width inline-block">
                     2024-11-22
                 </span>
-                <span class="min-width">
+                &nbsp;
+                <span class="min-width inline-block">
                     12:00-13:00
                 </span>
             </div>
@@ -90,7 +91,7 @@ import { Button } from '@/components/ui/button'
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    min-width: 370px;
+    min-width: 360px;
     height: 80px;
     margin-bottom: 10px;
     gap: 20px;

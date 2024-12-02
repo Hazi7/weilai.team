@@ -13,8 +13,9 @@ getAllTagList()
 <template>
     <div>
         <div class="tag-head-bar">
+            <div class="tagHeadNone"></div>
             <div class="tag-head-bar-item">
-                <router-link active-class="active" :to="`/community/discussion/label/推荐`">推荐</router-link>
+                <router-link active-class="active" :to="`/community/discussion/label`">推荐</router-link>
             </div>
             <div v-for="(item, index) in allTagList" :key="index" class="tag-head-bar-item">
                 <router-link active-class="active" :to="`/community/discussion/label/${item}`">{{ item }}</router-link>
@@ -95,6 +96,14 @@ getAllTagList()
     &:hover .tag-head-bar-few {
         opacity: 1;
     }
+
+    // &:active .tag-head-bar-more {
+    //     opacity: 0;
+    // }
+
+    // &:active .tag-head-bar-few {
+    //     opacity: 1;
+    // }
 }
 
 @media screen and (max-width: 1200px) {
@@ -141,5 +150,66 @@ getAllTagList()
             color: #8a8a8a;
         }
     }
+}
+
+@media screen and (max-width: 765px) {
+    .tag-head-bar {
+        max-height: 67px;
+        top: 60px;
+        display: flex;
+        /* 使用 Flex 布局 */
+        align-items: center;
+        /* 垂直居中 */
+        white-space: nowrap;
+        flex-wrap: nowrap;
+        /* 禁止换行 */
+        width: 100%;
+        /* 容器宽度为 100%，也可以设置为固定宽度 */
+        overflow-x: auto;
+        /* 启用水平滚动 */
+
+        /* 设置滚动条的宽度 */
+        &::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* 设置滚动条轨道的样式 */
+        &::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        /* 设置滚动条滑块的样式 */
+        &::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 10px;
+            border: 3px solid #f1f1f1;
+        }
+
+        /* 滑块悬停时的样式 */
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: #555;
+        }
+
+        /* 设置滚动条的角部分 */
+        &::-webkit-scrollbar-corner {
+            background-color: #f1f1f1;
+        }
+
+        .tag-head-bar-item {
+            display: inline-block;
+            /* 横向排列每个标签项 */
+            margin-right: 15px;
+            /* 标签项之间的间距 */
+        }
+
+        .tag-head-bar-more,
+        .tag-head-bar-few {
+            display: none;
+        }
+    }
+
+
 }
 </style>
