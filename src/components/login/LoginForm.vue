@@ -14,15 +14,12 @@ const { loading, getLogin } = UseLogin()
 </script>
 
 <template>
-    <div>
-        <Card class="mx-auto max-w-sm">
+    <div class="loginOut">
+        <Card class="loginContent mx-auto max-w-sm">
             <CardHeader>
                 <CardTitle class="text-2xl">
-                    登录
+                    Login
                 </CardTitle>
-                <CardDescription>
-                    在下方输入学号或邮箱以登录账户
-                </CardDescription>
             </CardHeader>
             <CardContent>
                 <div class="grid gap-4">
@@ -55,26 +52,29 @@ const { loading, getLogin } = UseLogin()
 
 <style scoped lang="scss">
 .loginOut {
-    height: 100vh;
+    position: relative;
+    top: 150px;
 }
 
 .loginContent {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    // position: absolute;
+    // top: 50%;
+    // left: 50%;
     // transform: translateX(50%);
     // transform: translateY(-50%);
-    // animation: fadeIn 2s linear;
-    // animation-delay: 1s;
+    opacity: 0;
+    transform: scale(0);
+    animation: fadeIn 1.5s linear forwards;
+    animation-delay: 1s;
 }
 
 @keyframes fadeIn {
-    from {
+    0% {
         opacity: 0;
         transform: scale(0);
     }
 
-    to {
+    100% {
         opacity: 1;
         transform: scale(1);
     }
