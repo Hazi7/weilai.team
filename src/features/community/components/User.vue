@@ -1,6 +1,5 @@
 <template>
-  <User />
-  <!-- <div style="display: flex">
+  <div style="display: flex">
     <div class="content">
       <div id="search">
         <Search :isUser="true" />
@@ -10,30 +9,31 @@
       </div>
     </div>
     <Rightbar />
-  </div> -->
+  </div>
 </template>
 
 <script setup lang="ts">
-import User from "@community/components/User.vue";
-// import { useRequest } from "@/composables/useRequest";
-// import UserContent from "@community/components/UserContent.vue";
-// import { ref } from "vue";
-// import { useRoute } from "vue-router";
-// import Rightbar from "../../../../components/community/Rightbar.vue";
-// import Search from "../../components/Search.vue";
-// const { executeRequest, error, loading, data } = useRequest();
-// const route = useRoute();
-// const user = ref("");
-// if ("user" in route.params) {
-//   user.value = route.params.user as string;
-// } else {
-//   user.value = "";
-// }
+import Rightbar from "@/components/community/Rightbar.vue";
+import { useRequest } from "@/composables/useRequest";
+import Search from "@community/components/Search.vue";
+import UserContent from "@community/components/UserContent.vue";
+import { ref } from "vue";
+import { useRoute } from "vue-router";
+const { executeRequest, error, loading, data } = useRequest();
+const route = useRoute();
+const user = ref("");
+console.log(route.params);
+
+if ("user" in route.params) {
+  user.value = String(route.params.user);
+} else {
+  user.value = "";
+}
 </script>
 
 <style scoped lang="scss">
 .content {
-  padding: 0 100px;
+  padding: 0 50px;
   width: 100%;
   height: auto;
 }

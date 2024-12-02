@@ -129,8 +129,6 @@ const items: Item[] = [
                     console.log('enter');
                   }
                 "
-                @focus="onInputFocus"
-                @blur="onInputBlur"
               />
               <!-- 
               <CommandList

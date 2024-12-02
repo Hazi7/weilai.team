@@ -28,8 +28,7 @@ import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
 }
 .container {
   padding-top: 8vh;
-  padding-right: 0;
-  padding-left: 0;
+
   overflow: hidden;
 }
 

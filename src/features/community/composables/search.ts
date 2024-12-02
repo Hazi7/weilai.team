@@ -29,20 +29,22 @@ export function debounce<T>(
   };
 }
 export async function getArticle(
-  type = 0,
+  type: number | string = 0,
   condition = "",
   page = 1,
+  startTime: Date | string = "",
   sort = 0,
-  startTime = "",
 ) {
   await executeRequest({
-    url: `/post/selectAll?condition=${condition}&page=${page}&sort=${sort}&type=${type}`,
+    url: `/post/selectAll?condition=${condition}&page=${page}&sort=${sort}&startTime=${startTime}&type=${type}`,
     method: "get",
   });
+  console.log("渲染文章");
+
   const res = data.value as Data;
-  console.log(res);
+
   articleList.value = res.data.records;
-  console.log(articleList.value);
+
   return res.data;
 }
 export function checkType(type: any) {
@@ -55,16 +57,16 @@ export function checkType(type: any) {
   }
   return "";
 }
-export async function SearchArticle(condition = "") {
-  await executeRequest({
-    url: `/post/selectPost?condition=${condition}`,
-    method: "get",
-  });
-  const res = data.value as Data;
+// export async function SearchArticle(condition = "") {
+//   await executeRequest({
+//     url: `/post/selectPost?condition=${condition}`,
+//     method: "get",
+//   });
+//   const res = data.value as Data;
 
-  searchResult.value = res.data.records;
-  console.log(searchResult.value);
-}
+//   searchResult.value = res.data.records;
+//   console.log(searchResult.value);
+// }
 export async function getUserList(content = "", pageNumber = 1, pageSize = 10) {
   executeRequest({ url: "/user/searchUser", method: "get" }).then((res) => {
     console.log(res);

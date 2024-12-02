@@ -390,7 +390,7 @@ interface SubItemInterface {
 
 @media screen and (max-width: 768px) {
   .main-menu{
-  padding: 8px 15px;
+  padding: 8px 25px;
   display: flex;
   justify-content: space-between;
   position: fixed;
@@ -403,14 +403,18 @@ interface SubItemInterface {
     width: 45px;
     height: 45px;
     display: flex;
-    justify-content: space-between;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-    height: 60px;
-    box-sizing: border-box;
-    background-color: white;
-    &-button {
+  
+ 
+   
+  
+    #main-menu_dropdown {
+      width: max-content;
+    }
+    .icon-publish {
+      color: white;
+    }
+  }
+  &-button {
       width: 45px;
       height: 45px;
       display: flex;
@@ -433,18 +437,12 @@ interface SubItemInterface {
         background-color: var(--secondary);
       }
     }
-    &-publish {
+ 
+  &-publish {
       border-radius: 50%;
       padding: 12px;
       background: linear-gradient(#67a5e6, #c0d2e6, #eff1f4);
     }
-    #main-menu_dropdown {
-      width: max-content;
-    }
-    .icon-publish {
-      color: white;
-    }
-  }
   .frame {
     display: none;
     position: fixed;

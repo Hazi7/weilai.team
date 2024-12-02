@@ -7,9 +7,6 @@ import {
 import { useRoute } from "vue-router";
 const route = useRoute();
 const thirdNavItems = route.meta.thirdNavItems as ThirdItemInterface[];
-console.log(route);
-
-console.log(thirdNavItems);
 
 interface ThirdItemInterface {
   title: string;

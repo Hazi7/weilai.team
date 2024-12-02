@@ -17,7 +17,7 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
     "thirdNavItems": [
       {
         "title": "热门",
-        "path": "/community/comprehensive",
+        "path": "/community/comprehensive/hot",
         "icon": "i-mdi-file-document-multiple-outline"
       },
       {

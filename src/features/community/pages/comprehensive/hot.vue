@@ -98,10 +98,10 @@
 
 <script setup lang="ts">
 // import { Icon } from "@iconify/vue";
-import { useRequest } from "@/composables/useRequest";
 import Rightbar from "../../../../components/community/Rightbar.vue";
+import { useRequest } from "../../../../composables/useRequest";
 import NewsContent from "../../components/NewsContent.vue";
-import Search from "../../components/SearchArticle.vue";
+import Search from "../../components/Search.vue";
 const { executeRequest, error, loading, data } = useRequest();
 // getArticleByType();
 // let articleList = ref<ArticleList[]>([]);

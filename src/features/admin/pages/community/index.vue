@@ -39,26 +39,35 @@ import {
 } from "@/components/ui/tooltip";
 import { useRequest } from "@/composables/useRequest";
 
+import { Calendar } from "@/components/ui/calendar";
 import type { ArticleList } from "@/types/Community";
 import { checkType, getArticle } from "@community/composables/search";
 import { Icon } from "@iconify/vue";
 import { MoreHorizontal } from "lucide-vue-next";
 import { ref, watch } from "vue";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { getLocalTimeZone, type DateValue } from "@internationalized/date";
+import { Calendar as CalendarIcon } from "lucide-vue-next";
 const { executeRequest, error, loading, data } = useRequest();
 const postList = ref<ArticleList[]>([]);
-const articleData = ref();
+// 初始化数据
 const isAllSelected = ref(false);
 const selectType = ref("");
+// const selectTime = ref<Date | string>("");
 const selectTime = ref<Date>();
 const value = ref<DateValue>();
+const condition = ref("");
 
-let pages = ref(1);
 let total = ref<number>();
 let page = ref(1);
 let pageSize = ref(10);
-
 let type = ref<number>(0);
-const condition = ref("");
 watch(value, (newVal) => {
   const selectTimeValue = newVal;
   if (selectTimeValue) {
@@ -70,7 +79,6 @@ watch(value, (newVal) => {
 });
 // 进行搜索
 const getArticleInAdmin = () => {
-  console.log(condition.value, 11111);
   getArticle(undefined, condition.value).then((res) => {
     postList.value = res.records;
     total.value = res.total;
@@ -85,11 +93,33 @@ const changePage = (newPage: number) => {
 };
 
 watch(page, (newPage) => {
-  getArticle(newPage).then((res) => {
+  getArticle(undefined, undefined, newPage).then((res) => {
     postList.value = res.records;
   });
 });
+async function searchArticle() {
+  let selectTimeValue = value.value;
+  if (selectTimeValue) {
+    let { year, month, day } = selectTimeValue;
+    selectTime.value = new Date(year, month - 1, day);
+    console.log(selectTimeValue);
+  } else {
+    selectTime.value = undefined;
+  }
 
+  console.log(selectTime.value);
+
+  let res = await getArticle(
+    selectType.value,
+    condition.value || undefined,
+    page.value || 1,
+    selectTime.value || undefined,
+  );
+  console.log(res);
+  postList.value = res.records;
+  total.value = res.total;
+  pageSize.value = res.size;
+}
 function deleteArticle(id: number) {
   console.log(id);
   executeRequest({ url: `/post/delete/${id}`, method: "put" }).then(() => {
@@ -117,17 +147,6 @@ const handleItemSelect = (item: any) => {
     }
   });
 };
-
-import { Calendar } from "@/components/ui/calendar";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { getLocalTimeZone, type DateValue } from "@internationalized/date";
-import { Calendar as CalendarIcon } from "lucide-vue-next";
 
 function df(date: any, format = "yyyy - MM - dd HH:mm") {
   // 获取日期的各个部分，包括分钟
@@ -224,13 +243,14 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
                     <input
                       placeholder="请输入关键词"
                       class="search_input"
-                      ref="inputRef"
                       v-model="condition"
                       @keydown.enter="getArticleInAdmin"
                     />
                   </div>
                 </div>
-                <button class="search-btn">搜索</button>
+                <button class="search-btn" @click="searchArticle()">
+                  搜索
+                </button>
                 <div class="reset">
                   <Icon icon="grommet-icons:power-reset" />
                 </div>

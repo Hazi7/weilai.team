@@ -3,7 +3,10 @@
     <div class="news-item" v-for="item in articleList" :id="`${item.id}` + ''">
       <div class="news-writer">
         <div class="avatar">
-          <img src="@/assets/img/headImg.jpg" alt="" />
+          <img v-if="item.headPortrait" :src="`${item.headPortrait}`" alt="" />
+          <div v-else class="flex items-center space-x-4">
+            <Skeleton class="bg-[--muted] h-12 w-12 rounded-full" />
+          </div>
         </div>
         <div class="writer-info">
           <div class="name">{{ item.name }}</div>
@@ -87,14 +90,17 @@
 <script setup lang="ts">
 import { useRequest } from "@/composables/useRequest";
 // import type { ArticleList } from "@/types/Community";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   articleList,
   checkType,
   getArticle,
 } from "@community/composables/search";
 import { Icon } from "@iconify/vue";
+import { watch } from "vue";
+import { useRoute } from "vue-router";
 import NewsFooter from "./NewsFooter.vue";
-// import { ref } from "vue";
+
 const { executeRequest, error, loading, data } = useRequest();
 const props = defineProps({
   type: {
@@ -110,8 +116,17 @@ const props = defineProps({
     default: "",
   },
 });
-console.log(props.type);
+const route = useRoute();
 
+watch(
+  () => route.params,
+  (newVal) => {
+    console.log((newVal as any).title);
+    let title = (newVal as any).title;
+
+    getArticle(props.type, title, props.page);
+  },
+);
 getArticle(props.type, props.condition, props.page);
 checkType(props.type);
 </script>

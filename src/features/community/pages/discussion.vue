@@ -16,7 +16,7 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
     "thirdNavItems": [
       {
         "title": "推荐",
-        "path": "/community/discussion",
+        "path": "/community/discussion/recommend",
         "icon": "i-mdi-file-document-multiple-outline"
       },
       {
