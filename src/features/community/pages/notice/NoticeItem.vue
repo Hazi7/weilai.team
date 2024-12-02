@@ -10,7 +10,7 @@
              </div>
              <div class="nickName">{{ props.notice.username }}</div>
              <span class="edit" title="编辑"><Icon icon="mage:edit-pen" class="editIcon"/></span>
-             <span class="delete" title="删除"><Icon icon="fluent:delete-24-regular" class="deleteIcon"/></span>
+             <span class="delete" title="删除" @click="deleteNotice(props.notice.noticeId)"><Icon icon="fluent:delete-24-regular" class="deleteIcon"/></span>
              </div>
              <div class="publish-time">{{ formattedTime }}</div>
           </div>
@@ -35,6 +35,8 @@
   <script setup lang="ts">
   import { Icon } from "@iconify/vue";
   import { defineProps,computed } from "vue";
+  import { useRequest } from '@/composables/useRequest';
+  const { data, loading, error, executeRequest } = useRequest();
   import type { SSENoticeData } from '../../../message/composables/types';
 
   const props = defineProps<{
@@ -50,6 +52,19 @@ const formattedTime = computed(() => {
   const minutes = commentTime.getMinutes().toString().padStart(2, '0');
   return `${year}.${month}.${day} ${hours}:${minutes}`;
 });
+
+//删除单个公告
+const deleteNotice = async(noticeId: string) => {
+  await executeRequest({
+      url: `/notice/deleteNotice/${noticeId}`,
+      method: 'put',
+    });
+    if(data.value?.code === 200){
+      alert('删除成功');
+    } else {
+      alert('删除失败');
+    }
+};
  
   </script>
   
@@ -76,6 +91,7 @@ const formattedTime = computed(() => {
         img{
           width: 100%;
           height: 100%;
+          object-fit: cover;
           border-radius: 50%;
         }
       }

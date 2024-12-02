@@ -14,9 +14,10 @@
            <DropdownMenuTrigger> <Icon icon="carbon:settings-adjust" class="settingIcon"/></DropdownMenuTrigger>
            <DropdownMenuContent  class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
               side="bottom"
-              :side-offset="3">
+              :side-offset="3"
+              >
            <!-- <DropdownMenuLabel>My Account</DropdownMenuLabel> -->
-           <DropdownMenuSeparator />
+           <DropdownMenuSeparator :style="{minWidth: '100px'}" />
            <DropdownMenuItem class="drop-menu-item">全部已读</DropdownMenuItem>
            <DropdownMenuItem class="drop-menu-item">发布公告</DropdownMenuItem>
            <DropdownMenuItem class="drop-menu-item">我的发布</DropdownMenuItem>

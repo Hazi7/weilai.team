@@ -10,7 +10,7 @@ export interface SSEMessageData {
 };
 
 export interface SSENoticeData  {
-    noticeId: number;
+    noticeId: string;
     title: string;
     content: string;
     createAt: string;
