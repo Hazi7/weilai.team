@@ -1,81 +1,31 @@
 <script setup lang="ts">
-import { useEditor, EditorContent } from "@tiptap/vue-3";
-import Blockquote from "@tiptap/extension-blockquote";
-import Document from "@tiptap/extension-document";
-import Text from "@tiptap/extension-text";
-import Paragraph from "@tiptap/extension-paragraph";
-import CodeBlock from "@tiptap/extension-code-block";
-import Heading from "@tiptap/extension-heading";
-import { onBeforeUnmount, onMounted } from "vue";
-import HorizontalRule from "@tiptap/extension-horizontal-rule";
-import Bold from "@tiptap/extension-bold";
-import AppTableExtension from "../extensions/app-table";
 import EditorMenuBar from "@post/components/editor-menu-bar/index.vue";
-import Image from "@tiptap/extension-image";
+import { EditorContent } from "@tiptap/vue-3";
+import type { Editor, JSONContent } from "@tiptap/vue-3";
+import { watch } from "vue";
 
-const jsonData = {
-  type: "doc",
-  content: [
-    {
-      type: "paragraph",
-      content: [
-        {
-          type: "text",
-          text: "哈哈哈",
-        },
-      ],
-    },
-    {
-      type: "appTable",
-      attrs: {
-        tableData: [
-          [null, null, null, null, null],
-          [null, null, null, "32", "32"],
-          [null, null, "", null, "32"],
-          [null, null, "32", "32", "32"],
-          [null, null, null, "32", "32"],
-        ],
-      },
-    },
-  ],
-};
+const props = defineProps<{
+  editor: Editor | undefined;
+  postContent: JSONContent | undefined;
+}>();
 
-const editor = useEditor({
-  content: jsonData,
-  extensions: [
-    Document,
-    Paragraph,
-    Text,
-    Blockquote,
-    CodeBlock,
-    Heading.configure({
-      levels: [1, 2, 3, 4, 5],
-    }),
-    HorizontalRule,
-    Bold,
-    Image.configure({
-      allowBase64: true,
-    }),
-    AppTableExtension,
-  ],
-});
-
-const handleClick = () => {
-  console.log("tiptap 数据:", editor?.value?.getJSON());
-};
-
-onMounted(() => {});
-
-onBeforeUnmount(() => {
-  editor.value?.destroy();
-});
+watch(
+  () => props.editor?.getJSON(),
+  () => {
+    emits("update:postContent", props.editor?.getJSON());
+  },
+);
+const emits = defineEmits<{
+  (e: "update:postContent", value: JSONContent | undefined): void;
+}>();
 </script>
 
 <template>
   <div v-if="editor" class="app-editor">
     <EditorMenuBar :editor="editor"></EditorMenuBar>
-    <editor-content :editor="editor" class="app-editor__content" />
-    <button class="test" @click="handleClick">查看json</button>
+    <div class="app-editor__scroll">
+      <EditorContent :editor="editor" class="app-editor__content" />
+    </div>
   </div>
 </template>
 
@@ -83,24 +33,32 @@ onBeforeUnmount(() => {
 @use "../styles/markdown.scss";
 
 .app-editor {
-  height: 100vh;
-  background-color: #eee;
+  flex: 1 1 70%;
+  height: 100%;
+  overflow: hidden;
+
+  &__scroll {
+    height: 100%;
+    box-sizing: border-box;
+    border: 1px solid #e6e5e5;
+    background-color: #f8f9fa;
+    overflow-y: scroll;
+  }
 
   &__content {
-    width: 80%;
     margin: 0 auto;
-
+    min-height: 100%;
+    display: flex;
     box-sizing: border-box;
-    border: 1px solid #999;
-    border-radius: var(--border);
+  }
 
-    p {
-      height: 100%;
+  .tiptap {
+    margin: 1rem 4rem;
+    flex: 1;
+
+    &:focus {
+      outline: none;
     }
   }
-}
-
-.test {
-  position: absolute;
 }
 </style>
