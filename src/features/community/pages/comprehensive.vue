@@ -27,7 +27,7 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
       },
       {
         "title": "标签",
-        "path": "/community/comprehensive/label",
+        "path": "/community/comprehensive/label/suggest",
         "icon": "i-mdi-file-document-multiple-outline"
       }
     ]

@@ -5,9 +5,8 @@ import TagContent from '@/features/community/components/tag/TagContent.vue';
 
 const route = useRoute();
 const tag = ref('');
-const type = ref(1)
+const type = ref(4)
 const tagType = ref('discussion')
-
 function getTag() {
     if ("tag" in route.params) {
         tag.value = route.params.tag as string;

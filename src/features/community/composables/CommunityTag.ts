@@ -8,14 +8,20 @@ interface TagData {
 }
 
 interface UsageTagData {
-    data: { tag_name: string; tag_usage_count: number }[];
+    data: { [key: string]: number }[];
 }
+
+interface UseTagList {
+    [key: string]: number
+}
+
+
 
 export default function () {
     const { data, error, loading, executeRequest } = useRequest();
     let hotTagList = ref<string[]>([])
     let allTagList = ref<string[]>([])
-    let useTagList = ref<{ tag_name: string; tag_usage_count: number }[]>([]);
+    let useTagList = ref<UseTagList[]>([]);
     let likeTagList = ref<string[]>([])
     const tagPostList = ref<ArticleList[]>([])
     const tagCloudList = ref<string[]>([])
@@ -28,8 +34,8 @@ export default function () {
         tagCloudList.value = res.data;
     }
 
-    async function getHotTagList() {
-        await executeRequest({ url: `/community_tag/hotTags`, method: 'get' })
+    async function getHotTagList(type: number) {
+        await executeRequest({ url: `/community_tag/findHotTagsByTagUses?type=${type}`, method: 'get' })
         const res = data.value as TagData;
         hotTagList.value = res.data
     }
@@ -40,26 +46,27 @@ export default function () {
         allTagList.value = res.data
     }
 
-    async function getUseTagList() {
-        await executeRequest({ url: `/community_tag/UsageStatistics`, method: 'get' })
+    async function getUseTagList(type: number) {
+        await executeRequest({ url: `/community_tag/UsageStatistics?type=${type}`, method: 'get' })
         const res = data.value as UsageTagData;
         useTagList.value = res.data
     }
 
-    async function getRecommendTag() {
-        await executeRequest({ url: `/community_tag/recommend`, method: 'get' })
+    async function getRecommendTag(type: number) {
+        await executeRequest({ url: `/community_tag/recommend?type=${type}`, method: 'get' })
         const res = data.value as TagData;
         likeTagList.value = res.data
     }
 
-    async function getPostList(tag: string) {
-        await executeRequest({ url: `/community_tag/relativePost?tagName=${tag}`, method: 'get' })
+    async function getPostList(tag: string, type: number) {
+        await executeRequest({ url: `/community_tag/relativePost?tagName=${tag}&type=${type}`, method: 'get' })
         const res = data.value as Data;
         // postList.splice(0, postList.length)
+        console.log(res);
         if (res.code == 50016) {
-            tagPostList.value = []
-        } else {
             tagPostList.value = res.data.records
+        } else if (res.code == 50016) {
+            tagPostList.value = []
         }
     }
 

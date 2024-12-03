@@ -27,8 +27,8 @@
 
 <style scoped lang="scss">
 .box {
-    position: absolute;
-    background-color: #fff;
+    // position: absolute;
+    // background-color: #fff;
     /* 100%窗口宽度和高度 */
     width: 100vw;
     height: 100vh;
