@@ -14,7 +14,7 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
     "thirdNavItems": [
       {
         "title": "成员管理",
-        "path": "/admin/contacts",
+        "path": "/admin/contacts/member",
         "icon": "i-mdi-file-document-multiple-outline"
       }
     ]

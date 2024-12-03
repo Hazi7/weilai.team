@@ -15,12 +15,14 @@ import DefaultLayout from "@/layouts/DefaultLayout.vue";
       {
         "title": "综合",
         "icon": "material-symbols-light:overview-key-outline",
-        "path": "/community/comprehensive"
+        "path": "/community/comprehensive",
+        "redirect": "/community/comprehensive/hot"
       },
       {
         "title": "博客",
         "icon": "material-symbols:article-outline",
-        "path": "/community/blog"
+        "path": "/community/blog",
+        "redirect": "/community/blog/hot"
       },
       {
         "title": "公告",
@@ -30,7 +32,8 @@ import DefaultLayout from "@/layouts/DefaultLayout.vue";
       {
         "title": "交流",
         "icon": "weui:time-outlined",
-        "path": "/community/discussion"
+        "path": "/community/discussion",
+        "redirect": "/community/discussion/recommend"
       },
       {
         "title": "头脑风暴",

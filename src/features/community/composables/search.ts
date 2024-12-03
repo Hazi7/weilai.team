@@ -1,6 +1,9 @@
+import { useAlert } from "@/composables/alert";
 import { useRequest } from "@/composables/useRequest";
 import type { ArticleList, Data } from "@/types/Community";
 import { ref } from "vue";
+const { showAlert } = useAlert();
+
 const { executeRequest, error, loading, data } = useRequest();
 let articleList = ref<ArticleList[]>([]);
 let searchResult = ref<ArticleList[]>([]);
@@ -43,7 +46,10 @@ export async function getArticle(
   console.log("渲染文章");
 
   const res = data.value as Data;
-
+  console.log(res);
+  if (res.code === 401) {
+    showAlert("登录过期，请重新登录", "waring");
+  }
   articleList.value = res.data.records;
 
   return res.data;
@@ -65,4 +71,4 @@ export async function getUserList(content = "", pageNumber = 1, pageSize = 10) {
   });
 }
 
-export { articleList, loading, searchResult };
+export { articleList, error, loading, searchResult };

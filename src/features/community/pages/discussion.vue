@@ -13,6 +13,7 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
 {
   "meta": {
     "title": "交流",
+    "redirect": "/community/discussion/recommend",
     "thirdNavItems": [
       {
         "title": "推荐",

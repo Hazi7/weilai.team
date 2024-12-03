@@ -13,6 +13,7 @@ import SidebarMenu from "@/components/ui/sidebar/SidebarMenu.vue";
 import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
+import UserLogin from "@/composables/UseLogin";
 import { Icon } from "@iconify/vue";
 import {
   BadgeCheck,
@@ -26,6 +27,7 @@ import { RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
+const {  logout } = UserLogin()
 const route = useRoute();
 const router = useRouter();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
@@ -79,7 +81,7 @@ const items = [
     title: "社区",
     url: "community/",
     icon: "fluent:people-community-20-regular",
-    redirect: "community/comprehensive",
+    redirect: "community/comprehensive/hot",
   },
   {
     title: "控制台",
@@ -93,6 +95,7 @@ interface SubItemInterface {
   title: string;
   icon: string;
   path: string;
+  redirect?:string;
 }
 </script>
 
@@ -120,7 +123,7 @@ interface SubItemInterface {
                         :to="`/${item.url}`"
                         active-class="sidebar__link--active"
                         class="sidebar__link"
-                        @click.prevent="() => {router.push(`/${item.redirect}`)}"
+                        @click="router.push(`/${item.redirect}`)"
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span >{{ item.title }}</span>
@@ -145,6 +148,8 @@ interface SubItemInterface {
                         :to="item.path"
                         active-class="sidebar__sub-link--active"
                         class="sidebar__sub-link"
+                        @click="router.push(item.redirect? item.redirect : item.path)"
+                        
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span>{{ item.title }}</span>
@@ -235,9 +240,9 @@ interface SubItemInterface {
                       Notifications
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem class="drop-menu-item">
+                    <DropdownMenuItem class="drop-menu-item" @click="logout()">
                       <LogOut />
-                      Log out
+                     退出
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

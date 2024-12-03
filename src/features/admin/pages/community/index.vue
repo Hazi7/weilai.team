@@ -51,9 +51,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useDateFormatter } from "@/composables/useDateFormatter";
 import { cn } from "@/lib/utils";
 import { getLocalTimeZone, type DateValue } from "@internationalized/date";
 import { Calendar as CalendarIcon } from "lucide-vue-next";
+const { formatDatetoDay } = useDateFormatter();
 const { executeRequest, error, loading, data } = useRequest();
 const postList = ref<ArticleList[]>([]);
 // 初始化数据
@@ -63,11 +65,13 @@ const selectType = ref("");
 const selectTime = ref<string>("");
 const value = ref<DateValue>();
 const condition = ref("");
+// 声明一个批量删除的数组
+const deleteTodos = ref([]);
 
 let total = ref<number>();
 let page = ref(1);
 let pageSize = ref(10);
-let type = ref<number>(0);
+
 watch(value, (newVal) => {
   const selectTimeValue = newVal;
   if (selectTimeValue) {
@@ -76,6 +80,8 @@ watch(value, (newVal) => {
     selectTime.value = `${year}-${month}-${day} 00:00:00`;
   }
 });
+// 批量删除的方法
+
 // 进行搜索
 const getArticleInAdmin = () => {
   getArticle(undefined, condition.value).then((res) => {
@@ -96,17 +102,15 @@ watch(page, (newPage) => {
     postList.value = res.records;
   });
 });
+// 搜索文章的方法
 async function searchArticle() {
   let selectTimeValue = value.value;
   if (selectTimeValue) {
     let { year, month, day } = selectTimeValue;
     selectTime.value = `${year}-${month}-${day} 00:00:00`;
-    console.log(selectTimeValue);
   } else {
     selectTime.value = "";
   }
-
-  console.log(selectTime.value);
 
   let res = await getArticle(
     selectType.value,
@@ -127,15 +131,27 @@ function deleteArticle(id: number) {
     });
   });
 }
+function deleteArticles() {
+  executeRequest({ url: "/post/deleteAll", method: "put" }).then(() => {
+    getArticle(page.value).then((res) => {
+      postList.value = res.records;
+    });
+  });
+}
 
 // 实现全选反选多选
 function handleSelectAll() {
   if (postList.value.length === 0) return;
-
   // 全选
   postList.value.forEach((item: any) => {
     item.selected = isAllSelected.value;
   });
+}
+function reset() {
+  value.value = undefined;
+  selectType.value = "";
+  condition.value = "";
+  getArticleInAdmin();
 }
 
 const handleItemSelect = (item: any) => {
@@ -232,13 +248,6 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
                 <div class="header-search">
                   <span>作者/标题:</span>
                   <div class="search_input_box">
-                    <!-- <span class="search-icon"
-                      ><Icon
-                        icon="bitcoin-icons:search-filled"
-                        color="#b9c2d0"
-                        font-size="26px"
-                      />
-                    </span> -->
                     <input
                       placeholder="请输入关键词"
                       class="search_input"
@@ -250,7 +259,7 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
                 <button class="search-btn" @click="searchArticle()">
                   搜索
                 </button>
-                <div class="reset">
+                <div class="reset" @click="reset()">
                   <Icon icon="grommet-icons:power-reset" />
                 </div>
                 <br />
@@ -334,7 +343,7 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
                     </TableCell>
 
                     <TableCell class="hidden md:table-cell">
-                      {{ item.postTime }}
+                      {{ formatDatetoDay(item.postTime) }}
                     </TableCell>
 
                     <TableCell class="font-medium table_type">
@@ -415,16 +424,20 @@ td {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
+    padding: 15px 20px;
     justify-content: space-between;
   }
   &_content {
-    min-height: 600px;
+    min-height: 580px;
+    padding-bottom: 5px;
   }
 }
 .content {
+  top: 0;
   height: max-content;
   margin-bottom: 50px;
   background-color: white;
+  padding-top: 5px;
   #sidebar {
     color: var(--secondary-foreground);
     width: 20rem;
@@ -601,6 +614,9 @@ td {
 .reset {
   color: var(--secondary-foreground);
   font-size: 0.9vw;
+  &:hover {
+    cursor: pointer;
+  }
 }
 .top-title {
   text-align: center;

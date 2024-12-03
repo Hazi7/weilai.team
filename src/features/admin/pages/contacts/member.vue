@@ -11,7 +11,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Command, CommandInput } from "@/components/ui/command";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,6 +38,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
+import { useRequest } from "@/composables/useRequest";
+import type { ContactData, TeamInfo, TeamUserList } from "@/types/Contacts";
 import { Icon } from "@iconify/vue";
 import {
   Bot,
@@ -47,6 +48,28 @@ import {
   SquareTerminal,
 } from "lucide-vue-next";
 import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import Search from "../../components/contacts/Search.vue";
+import { getMembers } from "../../composables/useContacts";
+const router = useRouter();
+const { executeRequest, error, loading, data } = useRequest();
+const route = useRoute();
+const member = ref("");
+console.log(route.params);
+const chineseNums = {
+  "1": "一",
+  "2": "二",
+  "3": "三",
+  "4": "四",
+  "5": "五",
+  "6": "六",
+  "7": "七",
+  "8": "八",
+  "9": "九",
+};
+const userCount = ref(0);
+const teamUserList = ref<TeamUserList[]>([]);
+const teamAble = ref<TeamInfo[]>([]);
 const navMain = [
   {
     title: "2024未来软件工作室",
@@ -100,11 +123,54 @@ const onInputFocus = () => {
 const onInputBlur = () => {
   isVisible.value = false;
 };
+getMembers().then((res) => {
+  userCount.value = res.userCount;
+  teamAble.value = res.teamAble;
+  // teamUserList.value = res.teamUserList;
+});
+const thisGrade = ref<string>("");
 
 const items: Item[] = [
   { name: "Item 1", description: "This is item 1" },
   { name: "Item 1", description: "This is item 1" },
 ];
+
+function getMembersOfGroup(str: string) {
+  let parts = str.split("$");
+  const chineseNums = {
+    1: "一",
+    2: "二",
+    3: "三",
+    4: "四",
+    5: "五",
+    6: "六",
+    7: "七",
+    8: "八",
+    9: "九",
+  };
+  return {
+    title: `${chineseNums[parts[0] as unknown as keyof typeof chineseNums]}组（${parts[1]}人）`,
+    group: parts[0],
+    count: parts[1],
+    info: `${parts[0]},${parts[1]}`,
+  };
+}
+async function getMembersByGroupGrade(
+  grade: string,
+  group: string,
+  pageNumber = 1,
+  pageSize = 10,
+) {
+  thisGrade.value = grade;
+
+  await executeRequest({
+    url: `/userManager/teamInfo/getUserListByGroup?grade=${grade}&group=${group}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    method: "get",
+  });
+  const res = data.value as ContactData;
+  console.log(res);
+  teamUserList.value = res.data.teamUserList;
+}
 </script>
 
 <template>
@@ -117,7 +183,8 @@ const items: Item[] = [
           id="sidebar"
           style="padding: 0.9vw; width: 20vw"
         >
-          <div id="search">
+          <Search />
+          <!-- <div id="search">
             <Command class="h-full">
               <CommandInput
                 placeholder="请输入关键词"
@@ -130,9 +197,25 @@ const items: Item[] = [
                   }
                 "
               />
-             
+
+              <CommandList
+                class="search_list"
+                v-show="items.length && isVisible"
+              >
+                <CommandEmpty>未找到搜索结果</CommandEmpty>
+                <CommandGroup heading="" class="p-0">
+                  <CommandItem
+                    :value="item.description"
+                    v-for="item in items"
+                    class="search_item"
+                  >
+                    <span>{{ item.name }}</span>
+                  </CommandItem>
+                </CommandGroup>
+                <CommandSeparator />
+              </CommandList>
             </Command>
-          </div>
+          </div> -->
           <div class="sidebar-link">
             <RouterLink to="">
               <Button
@@ -165,21 +248,20 @@ const items: Item[] = [
               <SidebarMenu class="sidebar-menu">
                 <SidebarMenuButton>
                   <Icon icon="fluent:people-28-regular" />
-                  <span>小组全体成员</span><span>(61人)</span>
+                  <span>小组全体成员</span><span>({{ userCount }})</span>
                 </SidebarMenuButton>
                 <Collapsible
-                  v-for="item in navMain"
-                  :key="item.title"
+                  v-for="item in teamAble"
                   as-child
                   class="group/collapsible"
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger as-child>
-                      <SidebarMenuButton :tooltip="item.title">
+                      <SidebarMenuButton :tooltip="item.grade">
                         <Icon
                           icon="material-symbols-light:account-tree-outline-rounded"
                         />
-                        <span>{{ item.title }}</span>
+                        <span>{{ item.grade }}未来软件工作室</span>
                         <ChevronRight
                           class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
                         />
@@ -187,13 +269,19 @@ const items: Item[] = [
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                        <SidebarMenuSubItem
-                          v-for="subItem in item.items"
-                          :key="subItem.title"
-                        >
+                        <SidebarMenuSubItem v-for="subItem in item.group">
                           <SidebarMenuSubButton as-child>
-                            <a :href="subItem.url">
-                              <span>{{ subItem.title }}</span>
+                            <a
+                              @click.prevent="
+                                getMembersByGroupGrade(
+                                  item.grade,
+                                  getMembersOfGroup(subItem).group,
+                                )
+                              "
+                            >
+                              <span>{{
+                                getMembersOfGroup(subItem).title
+                              }}</span>
                             </a>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -207,6 +295,7 @@ const items: Item[] = [
         </Sidebar>
       </SidebarProvider>
     </div>
+    <!-- <Member :teamAble="teamAble" :teamUserList="teamUserList"></Member> -->
     <main class="flex-1 items-start gap-4 md:gap-8 main">
       <Tabs default-value="all">
         <div
@@ -215,7 +304,7 @@ const items: Item[] = [
         >
           <TabsList>
             <div class="top-title">
-              <span>2024未来软件工作室</span>
+              <span>{{ thisGrade }}未来软件工作室</span>
             </div>
           </TabsList>
           <div class="ml-auto flex items-center gap-2">
@@ -291,15 +380,23 @@ const items: Item[] = [
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow class="group-leader">
+                  <!-- 属性class=group-leader 为组长样式  -->
+                  <TableRow v-for="(user, index) in teamUserList" :key="index">
                     <TableCell class="hidden sm:table-cell"
                       ><input type="checkbox" name="" id=""
                     /></TableCell>
-                    <TableCell class="font-medium"> 爆米奇 </TableCell>
-                    <TableCell> 一组 </TableCell>
-                    <TableCell class="hidden md:table-cell"> 2023级 </TableCell>
+                    <TableCell class="font-medium"> {{ user.name }}</TableCell>
+                    <TableCell>
+                      {{
+                        chineseNums[user.group as keyof typeof chineseNums] +
+                          "组" || "未知"
+                      }}
+                    </TableCell>
                     <TableCell class="hidden md:table-cell">
-                      计科235
+                      {{ user.grade }}级
+                    </TableCell>
+                    <TableCell class="hidden md:table-cell">
+                      {{ user.clazz }}
                     </TableCell>
                     <TableCell class="hidden md:table-cell">
                       20231514530
@@ -344,6 +441,9 @@ th {
 tr {
   text-align: center;
   font-size: 0.9vw;
+  &:hover {
+    background-color: var(--hover);
+  }
 }
 #tb {
   padding: 0;
@@ -370,8 +470,10 @@ td {
 }
 .content {
   width: 100%;
-  height: 90vh;
-  overflow: hidden;
+
+  top: 0;
+  margin-bottom: 50px;
+
   background-color: white;
   #sidebar {
     color: var(--secondary-foreground);
