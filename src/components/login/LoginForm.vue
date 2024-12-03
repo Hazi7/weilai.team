@@ -14,32 +14,32 @@ const { loading, getLogin } = UseLogin()
 </script>
 
 <template>
-    <div>
-        <Card class="mx-auto max-w-sm">
+    <div class="loginOut">
+        <Card class="loginContent mx-auto max-w-sm">
             <CardHeader>
-                <CardTitle class="text-2xl">
-                    登录
+                <CardTitle class="loginTitle text-2xl">
+                    Login
                 </CardTitle>
-                <CardDescription>
-                    在下方输入学号或邮箱以登录账户
-                </CardDescription>
             </CardHeader>
             <CardContent>
                 <div class="grid gap-4">
                     <div class="grid gap-2">
-                        <Label for="stuId">学号 / 邮箱</Label>
-                        <Input id="stuId" placeholder="ID/Emile" required v-model="account" />
+                        <Label class="inputTitle" for="stuId">学号 / 邮箱</Label>
+                        <Input class="formInput" id="stuId" placeholder="请输入学号或邮箱" required v-model="account" />
                     </div>
                     <div class="grid gap-2">
-                        <div class="flex items-center">
-                            <Label for="password">Password</Label>
-                            <!-- <a href="#" class="ml-auto inline-block text-sm underline">
-                            忘记密码？
-                        </a> -->
+                        <div class="flex items-center justify-between">
+                            <Label class="inputTitle" for="password">Password</Label>
+                        </div>
+                        <Input class="formInput" id="password" type="password" placeholder="请输入密码" required
+                            v-model="password" />
+                    </div>
+                    <div class="grid gap-2">
+                        <div class="flex items-center justify-end">
                             <ForgotPassword></ForgotPassword>
                         </div>
-                        <Input id="password" type="password" required v-model="password" />
                     </div>
+
                     <Button type="submit" class="w-full" @click="getLogin(account, password)" v-if="!loading">
                         登录
                     </Button>
@@ -55,26 +55,40 @@ const { loading, getLogin } = UseLogin()
 
 <style scoped lang="scss">
 .loginOut {
-    height: 100vh;
+    width: 100%;
+
 }
 
 .loginContent {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    // position: ;
+    // top: 50%;
+    // left: 50%;
     // transform: translateX(50%);
     // transform: translateY(-50%);
-    // animation: fadeIn 2s linear;
-    // animation-delay: 1s;
+    background-color: #ffffff;
+    opacity: 0;
+    transform: scale(0);
+    animation: fadeIn 1.5s linear forwards;
+    animation-delay: 1s;
+
+    .loginTitle {
+        text-align: center;
+        font-size: 36px;
+    }
+
+    .inputTitle {
+        font-size: 18px;
+        margin: 5px 0;
+    }
 }
 
 @keyframes fadeIn {
-    from {
+    0% {
         opacity: 0;
         transform: scale(0);
     }
 
-    to {
+    100% {
         opacity: 1;
         transform: scale(1);
     }

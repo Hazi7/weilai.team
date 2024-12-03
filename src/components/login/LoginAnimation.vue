@@ -27,7 +27,8 @@
 
 <style scoped lang="scss">
 .box {
-    background-color: #fff;
+    // position: absolute;
+    // background-color: #fff;
     /* 100%窗口宽度和高度 */
     width: 100vw;
     height: 100vh;
@@ -41,7 +42,7 @@
     perspective: 300;
     -webkit-perspective: 300;
     overflow: hidden;
-    animation: show4 2s linear forwards;
+    animation: show4 1.4s linear forwards;
     animation-delay: 1s;
 
     /* 动画字符所在的块 */
@@ -318,7 +319,7 @@
 
     100% {
         opacity: 1;
-        height: 200px;
+        height: 150px;
     }
 }
 
