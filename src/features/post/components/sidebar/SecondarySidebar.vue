@@ -25,11 +25,20 @@ import type { Editor } from "@tiptap/vue-3";
 import type { AcceptableInputValue } from "node_modules/radix-vue/dist/TagsInput/TagsInputRoot";
 import { ref } from "vue";
 
+interface PostErrors {
+  postTitle: string;
+  postContent: string;
+  postTags: string[];
+  postCategories: string;
+  postSummary: string;
+}
+
 defineProps<{
   editor: Editor | undefined;
   postCategories: string | undefined;
   postTags: AcceptableInputValue[] | undefined;
   postSummary: string | number | undefined;
+  errors: Zod.ZodFormattedError<PostErrors> | undefined;
 }>();
 
 defineEmits<{
@@ -58,16 +67,26 @@ const isTocOpen = ref(true);
       </CollapsibleTrigger>
       <CollapsibleContent class="secondary-sidebar__content">
         <Select
-          class="secondary-sidebar__content-item"
           :model-value="postCategories"
+          class="outline-none"
           @update:model-value="
             (val) => {
               $emit('update:postCategories', val);
             }
           "
         >
-          <SelectTrigger>
-            <SelectValue placeholder="设置分类" />
+          <div
+            v-if="errors?.postCategories?._errors"
+            class="secondary-sidebar__error"
+          >
+            <Icon icon="fluent:line-horizontal-5-error-20-regular"</Icon>
+            <span>{{ errors.postCategories?._errors[0] }}</span>
+          </div>
+          <SelectTrigger
+            class="secondary-sidebar__content-item"
+            :class="{ 'filed--error': errors?.postCategories?._errors }"
+          >
+            <SelectValue placeholder="设置分类" class="" />
           </SelectTrigger>
           <SelectContent class="bg-white">
             <SelectGroup>
@@ -81,8 +100,16 @@ const isTocOpen = ref(true);
             </SelectGroup>
           </SelectContent>
         </Select>
+        <div
+          v-if="errors?.postTags?._errors"
+          class="secondary-sidebar__error"
+        >
+          <Icon icon="fluent:tag-error-16-regular"></Icon>
+          <span>{{ errors.postTags?._errors[0] }}</span>
+        </div>
         <TagsInput
           class="secondary-sidebar__content-item"
+          :class="{ 'filed--error': errors?.postTags?._errors }"
           :model-value="postTags"
           @update:model-value="
             (value) => {
@@ -101,8 +128,16 @@ const isTocOpen = ref(true);
 
           <TagsInputInput placeholder="标签..." />
         </TagsInput>
+        <div
+          v-if="errors?.postSummary?._errors"
+          class="secondary-sidebar__error"
+        >
+          <Icon icon="fluent:document-error-16-regular"</Icon>
+          <span>{{ errors.postSummary?._errors[0] }}</span>
+        </div>
         <Textarea
           class="secondary-sidebar__content-item bg-transparent"
+          :class="{ 'filed--error': errors?.postSummary?._errors }"
           placeholder="文章摘要"
           :model-value="postSummary"
           @update:model-value="
@@ -166,8 +201,23 @@ const isTocOpen = ref(true);
 
   &__content {
     &-item {
-      margin-top: 1rem;
+      margin-bottom: 1rem;
+      color: var(--secondary-foreground);
+      font-size: 0.85rem;
     }
   }
+
+  &__error {
+    color: var(--destructive-foreground);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem
+  }
+}
+
+.filed--error {
+  border: 1px solid var(--destructive-foreground);
 }
 </style>

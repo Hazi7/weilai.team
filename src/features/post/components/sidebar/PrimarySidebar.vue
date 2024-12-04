@@ -17,17 +17,7 @@ const isOpen = ref(true);
         <Icon icon="icon-park:down" class="primary-sidebar__header-down"></Icon>
       </CollapsibleTrigger>
       <CollapsibleContent class="primary-sidebar__content">
-        <div class="">dssd</div>
-      </CollapsibleContent>
-    </Collapsible>
-    <Collapsible v-model:open="isOpen" class="primary-sidebar__group">
-      <CollapsibleTrigger class="primary-sidebar__header">
-        <Icon icon="carbon:template"></Icon>
-        <span class="primary-sidebar__header-text">模板</span>
-        <Icon icon="icon-park:down" class="primary-sidebar__header-down"></Icon>
-      </CollapsibleTrigger>
-      <CollapsibleContent class="primary-sidebar__content">
-        <div class="">dssd</div>
+        <div class="">模板1</div>
       </CollapsibleContent>
     </Collapsible>
   </aside>
