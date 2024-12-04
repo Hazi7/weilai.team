@@ -129,26 +129,8 @@ const items: Item[] = [
                     console.log('enter');
                   }
                 "
-                @focus="onInputFocus"
-                @blur="onInputBlur"
               />
-              <!-- 
-              <CommandList
-                class="search_list"
-                v-show="items.length && isVisible"
-              >
-                <CommandEmpty>未找到搜索结果</CommandEmpty>
-                <CommandGroup heading="" class="p-0">
-                  <CommandItem
-                    :value="item.description"
-                    v-for="item in items"
-                    class="search_item"
-                  >
-                    <span>{{ item.name }}</span>
-                  </CommandItem>
-                </CommandGroup>
-                <CommandSeparator />
-              </CommandList> -->
+             
             </Command>
           </div>
           <div class="sidebar-link">

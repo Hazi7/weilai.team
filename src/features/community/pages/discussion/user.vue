@@ -1,7 +1,9 @@
 <template>
-  <div>用户</div>
+  <User />
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import User from "../../components/User.vue";
+</script>
 
 <style scoped></style>

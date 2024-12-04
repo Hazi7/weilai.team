@@ -1,6 +1,12 @@
 export interface Data {
   data: ArticleInfo;
-  code: Number
+  code: Number;
+}
+export interface UserData {
+  data: {
+    searchUsers: UserInfo[];
+    pageInfo: PageInfo;
+  };
 }
 export interface AdminData {
   data: AdminPostInfo;
@@ -39,6 +45,22 @@ export interface AdminPost {
   title: string;
   type: number;
 }
+export interface UserInfo {
+  headPortrait: string;
+  name: string;
+  postCount: number;
+  userDestination: string;
+  userId: number;
+  viewCount: number;
+}
+export interface PageInfo {
+  countId: null;
+  current: number;
+  pages: number;
+  searchCount: true;
+  size: number;
+  total: number;
+}
 
 export interface ArticleList {
   id: number;
@@ -48,6 +70,7 @@ export interface ArticleList {
   isCollect?: false;
   type: number;
   isLike?: false;
+  headPortrait: string;
   likeCount?: number;
   postAbstract: string;
   postTags: string[];

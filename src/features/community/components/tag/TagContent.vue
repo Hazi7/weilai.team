@@ -11,18 +11,23 @@ const { tagPostList, getPostList } = CommunityTag();
 const props = defineProps({
     tag: {
         type: String,
+        default: '',
+    },
+    type: {
+        type: Number,
         default: 0,
     },
+    tagType: {
+        type: String
+    }
 });
-const tag = ref('');
 function getTag() {
-    console.log(props.tag);
     // if ("tag" in route.params) {
     //     tag.value = route.params.tag as string;
     // } else {
     //     tag.value = "";
     // }
-    getPostList(props.tag);
+    getPostList(props.tag, props.type);
 }
 getTag();
 
@@ -42,9 +47,9 @@ watch(
             <NewsContent :tagPostList="tagPostList" />
         </div>
         <div class="right-bar">
-            <tag-suggest style="margin: 0 0 30px 0;"></tag-suggest>
+            <tag-suggest :type="props.type" :tagType="props.tagType" style="margin: 0 0 30px 0;"></tag-suggest>
             <!-- <HotTag style="width: 350px;"></HotTag> -->
-            <tag-right-bar style=""></tag-right-bar>
+            <tag-right-bar :type="props.type" :tagType="props.tagType"></tag-right-bar>
         </div>
     </div>
 </template>

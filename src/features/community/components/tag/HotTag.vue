@@ -4,7 +4,17 @@ import CommunityTag from '@/features/community/composables/CommunityTag';
 import { reactive } from 'vue';
 
 const { hotTagList, getHotTagList } = CommunityTag()
-getHotTagList()
+const props = defineProps({
+    type: {
+        type: Number,
+        default: null
+    },
+    tagType: {
+        type: String,
+        default: "comprehensive"
+    }
+})
+getHotTagList(props.type)
 </script>
 
 <template>

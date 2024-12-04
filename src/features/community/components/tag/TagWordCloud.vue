@@ -2,13 +2,28 @@
 import { ref } from 'vue';
 import VueWordCloud from 'vuewordcloud';
 import CommunityTag from '../../composables/CommunityTag';
-import { Weight } from 'lucide-vue-next';
+import { get } from 'node_modules/axios/index.d.cts';
+// import { weight } from 'lucide-vue-next';
 
 const { tagCloudList, getTagCloudList } = CommunityTag();
 const words = ref<[string, number][]>([]);
 // 随机生成一个数，范围0-99
 function assignRandomNumbers(strArray: string[]): [string, number][] {
     return strArray.map(str => [str, Math.floor(Math.random() * (30 + 1)) + 20]);  // 随机数范围 0-15
+}
+
+function getColor(weight: number){
+    if (weight > 50) return '#552af4';
+    if (weight > 47) return '#412045';
+    if (weight > 45) return '#5bc496';
+    if (weight > 42) return '#f3cf77';
+    if (weight > 40) return '#416af6';
+    if (weight > 38) return '#eb7eb1';
+    if (weight > 35) return '#ee8231';
+    if (weight > 32) return '#552af4';
+    if (weight > 30) return '#ae8af0';
+    if (weight > 25) return '#579ce4';
+    return '#ec5c6c';
 }
 
 getTagCloudList().then(res => {
@@ -22,7 +37,7 @@ getTagCloudList().then(res => {
     <div class="word-cloud">
         <!-- <vue-word-cloud class="cloud" :words=words /> -->
         <vue-word-cloud :words="words"
-            :color="([, weight]) => weight > 50 ? '#552af4' : weight > 47 ? '#412045' : weight > 45 ? '#5bc496' : weight > 42 ? '#f3cf77' : weight > 40 ? '#416af6' : weight > 38 ? '#eb7eb1' : weight > 35 ? '#ee8231' : weight > 32 ? '#552af4' : weight > 30 ? '#ae8af0' : weight > 25 ? '#579ce4' : '#ec5c6c'"
+            :color="([, weight]) => getColor(weight)"
             font-family="微软雅黑,Microsoft YaHei" spacing="0.2">
             <template v-slot="{ text }">
                 <div style="cursor: pointer;">

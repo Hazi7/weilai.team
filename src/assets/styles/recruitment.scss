@@ -65,9 +65,9 @@
     padding: 20px;
     background-color: var(--background);
     position: relative;
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow: hidden;
     top: 1em;
+    margin-bottom: 40px;
 }
 
 //顶部筛选器样式
@@ -133,7 +133,6 @@
     width: 100%;
     height: 80px;
     position: relative;
-    top: 20px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -165,11 +164,11 @@
     height: auto;
     background-color: var(--background);
     position: relative;
-    top: 40px;
+    top: 20px;
     .pagination-container{
      padding-bottom:20px;
+     margin-bottom: 30px;
     }
-
 }
 //卡片展示
 .main-content-show{
@@ -189,20 +188,20 @@
  }
 
 
-//滚动条样式
-/* 定义滚动条的轨道样式 */
+/* 整个滚动条 */
 ::-webkit-scrollbar {
-  width: 1px;
-  height: 2px;/* 滚动条轨道的宽度 */
+	width : 4px;
+	height: 4px;
 }
-
-/* 定义滚动条的滑块样式 */
+/* 滚动条里面滑块 */
 ::-webkit-scrollbar-thumb {
-  background-color:skyblue; /* 滑块的颜色 */
-  border-radius: 2px; /* 滑块的圆角 */
+	border-radius: 10px;
+	background: skyblue;
+}
+/*滚动条里面轨道*/
+::-webkit-scrollbar-track {
+	border-radius: 10px;
+	box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.2);
+	background: #eee;
 }
 
-/* 定义滚动条的轨道样式（当滑块处于悬停状态时） */
-::-webkit-scrollbar-track {
-  background: var(--background); /* 轨道的颜色 */
-}

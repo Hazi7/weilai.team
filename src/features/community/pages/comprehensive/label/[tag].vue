@@ -5,6 +5,8 @@ import TagContent from '@/features/community/components/tag/TagContent.vue';
 
 const route = useRoute();
 const tag = ref('');
+const type = ref(0)
+const tagType = ref('discussion')
 function getTag() {
     if ("tag" in route.params) {
         tag.value = route.params.tag as string;
@@ -23,7 +25,7 @@ watch(
 </script>
 
 <template>
-    <TagContent :tag="tag" />
+    <TagContent :tag="tag" :type="type" :tagType="tagType" />
 </template>
 
 <style scoped></style>
