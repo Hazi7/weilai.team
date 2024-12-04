@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive,defineProps } from 'vue';
 import { useRequest } from '@/composables/useRequest';
 import CommentItem from './CommentItem.vue';
 
 const { data, error, executeRequest } = useRequest();
-const postId = ref<number>(1);
 const pageSize = ref<number>(10);
 const pageNumber = ref<number>(1);
 const comments = reactive<any[]>([]);
+const props = defineProps({
+  postId: {
+    type: Number,
+    required: true
+  }
+});
+console.log(props.postId);
+
 
 // 获取一级评论
 const getFirstComment = async () => {
     await executeRequest({
-        url: `/comment/getCommentOne?postId=${postId.value}&pageSize=${pageSize.value}&pageNumber=${pageNumber.value}`,
+        url: `/comment/getCommentOne?postId=${props.postId}&pageSize=${pageSize.value}&pageNumber=${pageNumber.value}`,
         method: 'get',
     });
 

@@ -1,5 +1,6 @@
 export interface SSEMessageData {
     messageId: number;
+    messageType:number;
     senderId: number;
     username: string;
     headPortrait: string | null;
@@ -14,7 +15,6 @@ export interface SSENoticeData  {
     title: string;
     content: string;
     createAt: string;
-    noticeUrls: string[];
     senderId: number;
     username: string;
     headPortrait: string | null;
