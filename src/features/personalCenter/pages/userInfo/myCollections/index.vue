@@ -33,25 +33,11 @@
             </ul>
         </div>
         <div class="pageBox">
-            <Pagination v-slot="{ page }" :total="pages * 10" :sibling-count="1" show-edges :default-page="1"
-                @update:page="handlePageChange">
-                <PaginationList v-slot="{ items }" class="flex items-center gap-1">
-                    <PaginationFirst />
-                    <PaginationPrev />
-                    <template v-for="(item, index) in items">
-                        <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-                            <Button class="w-10 h-10 p-0" :variant="item.value === page ? 'default' : 'outline'">
-                                {{ item.value }}
-                            </Button>
-                        </PaginationListItem>
-                        <PaginationEllipsis v-else :key="item.type" :index="index" />
-                    </template>
-
-                    <PaginationNext />
-                    <PaginationLast />
-                </PaginationList>
+            <div class="pageBox pagination-container">
+            <Pagination :totalItems="total" :pageSize="pageSize" @update:page="handlePageChange">
             </Pagination>
-            <span class="collectionsNum">共 {{ collectNum }} 收藏</span>
+            <span class="collectionsNum">共 {{ total }} 收藏</span>
+        </div>
         </div>
     </div>
 </template>
@@ -67,17 +53,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import Button from '@/components/ui/button/Button.vue';
-import {
-    Pagination,
-    PaginationEllipsis,
-    PaginationFirst,
-    PaginationLast,
-    PaginationList,
-    PaginationListItem,
-    PaginationNext,
-    PaginationPrev,
-} from '@/components/ui/pagination'
-
+import Pagination from '@/components/recruitment/Pagination.vue'
 //引入ref
 import { ref } from 'vue'
 
@@ -95,8 +71,8 @@ const userId = getLocalStorageWithExpire('userId')
 //定义页码信息
 let pages = 0;
 let currentPage = 1;
-let collectNum = 0;
-
+let total = 0;
+let pageSize =ref<number>(10);
 //定义userPost，储存当前页的文章数据
 let userCollect = ref([]);
 
@@ -108,13 +84,13 @@ function handlePageChange(newPage: number) {
 
 //获取文章函数
 async function getUserCollect() {
-    await executeRequest({ url: `/user/getUserCollect?userId=${userId}&pageNumber=${currentPage}&pageSize=5` })
+    await executeRequest({ url: `/user/getUserCollect?userId=${userId}&pageNumber=${currentPage}&pageSize=${pageSize.value}` })
     if (data.value && data.value.code == 200) {
         let postData=data.value.data
         // 将数据赋值给userCollect、pages
         userCollect.value = postData.userCollect
         pages = postData.pageInfo.pages
-        collectNum = postData.pageInfo.total
+        total = postData.pageInfo.total
         console.log('我的收藏',data.value);        
     }else{
         console.log(data.value.message);    
@@ -148,7 +124,6 @@ getUserCollect()
         ul {
             li {
                 margin-top: 20px;
-                height: 130px;
                 display: flex;
                 border-radius: 10px;
                 background-color: white;
@@ -164,17 +139,17 @@ getUserCollect()
                     .postTitle {
                         color: black;
                         font-size: larger;
-                        height: 25%;
                     }
 
                     .postDesc {
                         font-size: small;
-                        height: 55%;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        width: 100%;
                     }
 
                     .postFooter {
-                        font-size: small;
-                        height: 20%;
+                        font-size: xx-small;
                     }
                 }
 
@@ -191,15 +166,20 @@ getUserCollect()
     }
 
     .pageBox {
-        margin: 20px auto;
         display: flex;
-        button[data-selected] {
-            background-color: #97d5ff;
-        }
-        .collectionsNum{
-            margin-left: 20px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+
+        .collectionsNum {
+            margin-right: 20px;
             line-height: 40px;
         }
+    }
+}
+
+@media (max-width: 768px) {
+    .myCollections .postsListBox ul li .postInfo .postFooter {
+        font-size: 10px;
     }
 }
 </style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRequest } from "@/composables/useRequest";
-import type { ArticleList, Data } from "@/types/Community";
+import type { ArticleList, Data, UserData, UserInfo } from "@/types/Community";
 import { debounce } from "@community/composables/search";
 import { Icon } from "@iconify/vue";
 import { ref, watch } from "vue";
@@ -12,11 +12,21 @@ const searchValue = ref();
 const { executeRequest, error, loading, data } = useRequest();
 const searchList = ref<ArticleList[]>([]);
 const filterList = ref<ArticleList[]>([]);
-let debounceTimer: number | null = null;
+const searchUserList = ref<UserInfo[]>([]);
+const filterUserList = ref<UserInfo[]>([]);
 const route = useRoute();
 const path = route.path;
 // 接受父组件传来的函数
-const props = defineProps(["typeId"]);
+const props = defineProps({
+  typeId: {
+    type: Number,
+    default: 0,
+  },
+  isUser: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 // 用于记录已经出现的标题
 const titleMap = new Map<string, boolean>();
@@ -24,23 +34,49 @@ let body = document.body as HTMLElement;
 body.addEventListener("click", handleClick);
 // 监视输入框的输入
 const debouncedSearchTitle = debounce((newValue) => searchTitle(newValue), 300);
+const debouncedSearchUser = debounce((newValue) => searchUser(newValue), 300);
 watch(searchValue, (newValue) => {
-  if (newValue) {
-    debouncedSearchTitle(newValue);
+  if (!props.isUser) {
+    if (newValue) {
+      debouncedSearchTitle(newValue);
+    } else {
+      filterList.value = [];
+    }
   } else {
-    filterList.value = [];
+    if (newValue) {
+      debouncedSearchUser(newValue);
+    } else {
+      filterUserList.value = [];
+    }
   }
 });
 // 获取搜索列表
+
+async function searchUser(content = "", pageNumber = 1, pageSize = 10) {
+  await executeRequest({
+    url: `/user/searchUser?content=${content}&pageNumber=${pageNumber}&pageSize=10 `,
+    method: "get",
+  });
+  let res = data.value as UserData;
+  searchUserList.value = res.data.searchUsers;
+
+  filterUserList.value = res.data.searchUsers;
+  titleMap.clear();
+  filterUserList.value = [];
+  searchUserList.value.forEach((user) => {
+    if (!titleMap.has(user.name)) {
+      filterUserList.value.push(user);
+      titleMap.set(user.name, true);
+    }
+  });
+}
 async function searchTitle(condition = "", type = 0) {
   await executeRequest({
     url: `/post/selectAll?condition=${condition}&type=${props.typeId || type}`,
     method: "get",
   });
-
   let res = data.value as Data;
   console.log(res);
-
   searchList.value = res.data.records;
   titleMap.clear();
   filterList.value = [];
@@ -51,7 +87,6 @@ async function searchTitle(condition = "", type = 0) {
     }
   });
 }
-
 // 防止input框失去焦点时搜索列表消失
 function handleClick(e: Event) {
   let target = e.target as HTMLElement;
@@ -65,21 +100,20 @@ function handleClick(e: Event) {
   }
 }
 function skip(e: Event) {
-  console.log(path);
-
-  router.push(`${path}/${searchValue.value}`);
+  if (searchValue.value) {
+    router.push(`${path}/${searchValue.value}`);
+  } else {
+    router.push(`${path}`);
+  }
 }
 </script>
 
 <template>
   <div class="search_container">
-    <!-- <Command
-      class="command_box w-64 bg-white float-right rounded-3xl border border-slate-300 relative overflow-visible"
-    > -->
     <div class="search">
       <div class="search_input_box">
-        <span class="search-icon"
-          ><Icon
+        <span class="search-icon">
+          <Icon
             icon="bitcoin-icons:search-filled"
             color="#b9c2d0"
             font-size="26px"
@@ -99,36 +133,26 @@ function skip(e: Event) {
         />
       </div>
 
-      <div class="search_list" v-show="searchValue && isVisible">
+      <div class="search_list" v-show="searchValue && isVisible && !isUser">
         <div class="search_empty" v-if="!filterList.length">未找到搜索结果</div>
         <div class="search_item" v-for="item in filterList">
           <a @click="router.push(`/community/comprehensive/${item.title}`)">
-            <span>{{ item.title }}</span></a
-          >
+            <span>{{ item.title }}</span>
+          </a>
+        </div>
+      </div>
+      <div class="search_list" v-show="searchValue && isVisible && isUser">
+        <div class="search_empty" v-if="!filterUserList.length">
+          未找到搜索结果
+        </div>
+        <div class="search_item" v-for="item in filterUserList">
+          <a @click="router.push(`/community/comprehensive/user/${item.name}`)">
+            <span>{{ item.name }}</span>
+          </a>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- @click="handleClick($event)"
-        @focus="onInputFocus" -->
-  <!-- @blur="onInputBlur" -->
-  <!-- <CommandList class="search_list" v-show="items.length && isVisible">
-        <CommandEmpty>未找到搜索结果</CommandEmpty>
-        <CommandGroup heading="" class="p-0">
-          <CommandItem
-            :value="item.title"
-            v-for="item in items"
-            class="search_item"
-          >
-            <a @click.stop="SearchTitle($event)">
-              <span>{{ item.title }}</span></a
-            >
-          </CommandItem>
-        </CommandGroup>
-        <CommandSeparator />
-      </CommandList>
-    </Command> -->
 </template>
 <style lang="scss" scoped>
 .command_box {
@@ -146,23 +170,6 @@ function skip(e: Event) {
   height: 45px;
 }
 .search {
-  // &_input {
-  //   border-style: none !important;
-  // }
-  // &_list {
-  //   box-shadow:
-  //     0px 2px 5px rgba(0, 0, 0, 0.1),
-  //     inset 0px 0.2px 0.5px rgba(0, 0, 0, 0.24);
-  //   border: 1px solid var(--secondary-border);
-  //   position: absolute;
-  //   top: 50px;
-  //   padding: 5px 0;
-  //   border-radius: 2px;
-  //   width: 250px;
-  //   z-index: 5;
-  //   background-color: white;
-  // }
-
   float: right;
   position: relative;
   &_input_box {

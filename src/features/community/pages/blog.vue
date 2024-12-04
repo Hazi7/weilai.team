@@ -16,7 +16,7 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
     "thirdNavItems": [
       {
         "title": "热门",
-        "path": "/community/blog",
+        "path": "/community/blog/hot",
         "icon": "i-mdi-file-document-multiple-outline"
       },
       {
@@ -26,7 +26,7 @@ import TheTopNav from "@/components/layouts/AppThirdNav.vue";
       },
       {
         "title": "标签",
-        "path": "/community/blog/label",
+        "path": "/community/blog/label/suggest",
         "icon": "i-mdi-file-document-multiple-outline"
     }
     ]

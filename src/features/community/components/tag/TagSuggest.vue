@@ -4,7 +4,17 @@ import { Icon } from "@iconify/vue";
 import CommunityTag from '../../composables/CommunityTag';
 
 const { likeTagList, getRecommendTag } = CommunityTag();
-getRecommendTag()
+const props = defineProps({
+    type: {
+        type: Number,
+        default: null
+    },
+    tagType: {
+        type: String,
+        default: "comprehensive"
+    }
+})
+getRecommendTag(props.type)
 </script>
 
 <template>
@@ -24,7 +34,7 @@ getRecommendTag()
                 <span>猜你喜欢</span>
             </div>
         </div>
-        <div v-if="!likeTagList" class="noMoreTag">
+        <div v-if="!likeTagList || likeTagList.length == 0" class="noMoreTag">
             暂无相关推荐
         </div>
         <div class="hotTagList" v-if="likeTagList">

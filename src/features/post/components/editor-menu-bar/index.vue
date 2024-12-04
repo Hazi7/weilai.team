@@ -18,7 +18,7 @@ const addImage = () => {
 <template>
   <div class="menu-bar">
     <ul class="menu-bar__list">
-      <li
+      <!-- <li
         class="menu-bar__item"
         :class="{ 'is-active': props.editor?.isActive('bold') }"
         @click="editor?.chain().focus().toggleBold().run()"
@@ -38,6 +38,13 @@ const addImage = () => {
         @click="editor?.chain().focus().toggleBold().run()"
       >
         <Icon icon="ph:text-underline-duotone"></Icon>
+      </li> -->
+      <li
+        class="menu-bar__item"
+        :class="{ 'is-active': props.editor?.isActive('bold') }"
+        @click="editor?.chain().focus().setColor('#958DF1').run()"
+      >
+        <Icon icon="ic:outline-color-lens"></Icon>
       </li>
       <li
         class="menu-bar__item"
@@ -70,6 +77,11 @@ const addImage = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 
   &__list {
     height: 100%;

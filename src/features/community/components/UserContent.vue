@@ -1,11 +1,29 @@
 <template>
+  <a class="news-item" v-for="item in userList">
+    <div class="news-writer">
+      <div class="avatar">
+        <img v-if="item.headPortrait" :src="`${item.headPortrait}`" alt="" />
+        <div v-else class="flex items-center space-x-4">
+          <Skeleton class="bg-[--muted] h-12 w-12 rounded-full" />
+        </div>
+      </div>
+      <div class="writer-info">
+        <h3 class="name">{{ item.name }}</h3>
+        <div class="work-info">
+          <span class="origin">原创 {{ item.postCount }}</span>
+          <span class="read">阅读 {{ item.viewCount }}</span>
+          <span class="like">点赞</span>
+        </div>
+        <div class="brief">{{ item.userDestination }}</div>
+      </div>
+    </div>
+  </a>
   <a class="news-item">
     <div class="news-writer">
       <div class="avatar">
         <img src="@/assets/img/headImg.jpg" alt="" />
       </div>
       <div class="writer-info">
-        <h3 class="name">爆米奇</h3>
         <div class="work-info">
           <span class="origin">原创 400</span>
           <span class="read">阅读 123</span>
@@ -18,39 +36,85 @@
 </template>
 
 <script setup lang="ts">
+import { Skeleton } from "@/components/ui/skeleton";
 import { useRequest } from "@/composables/useRequest";
-import { ref } from "vue";
-const { executeRequest, error, loading, data } = useRequest();
-const userList = ref();
-// async function getArticleList(page = 1, type = 0, condition = "") {
-//   await executeRequest({
-//     url: `/post/selectAll?condition=${condition}&page=${page}&type=${type}`,
-//     method: "get",
-//   });
-//   const res = data.value as Data;
-//   console.log(res);
+import type { UserData, UserInfo } from "@/types/Community";
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
-//   articleList.value = res.data.records;
-//   console.log(articleList.value);
-//   return res.data;
+const props = defineProps({
+  content: {
+    type: String,
+    default: "",
+  },
+  pageNumber: {
+    type: Number,
+    default: 1,
+  },
+});
+const route = useRoute();
+watch(
+  () => route.params,
+  (newVal) => {
+    console.log((newVal as any).user);
+    let user = (newVal as any).user;
+    getUserList(user);
+  },
+);
+
+const { executeRequest, error, loading, data } = useRequest();
+const userList = ref<UserInfo[]>([]);
+async function getUserList(content = "", pageNumber = 1) {
+  await executeRequest({
+    url: `/user/searchUser?content=${content}&pageNumber=${pageNumber}&pageSize=10 `,
+    method: "get",
+  });
+  const res = data.value as UserData;
+  userList.value = res.data.searchUsers;
+}
+getUserList(props.content);
+// async function checkImageUrl(url: string) {
+//   return new Promise((resolve, reject) => {
+//     let img = new Image();
+//     img.onload = () => {
+//       resolve(true);
+//     };
+//     img.onerror = () => {
+//       reject(false);
+//     };
+//     img.src = url;
+//   });
 // }
+
+// 调用checkImageUrl函数并处理结果
+// checkImageUrl(
+//   "http://49.232.183.67:19000/wlgzs-official-website/user/2024-11-15/3b031693-7d54-40a0-9656-f72b01f7f662IDEAbackgroundImage.jpg",
+// )
+//   .then((result) => {
+//     console.log(Boolean(result)); // 将结果转换为布尔值并打印
+//   })
+//   .catch((error) => {
+//     console.log("检查图片链接时出错：", error);
+//   });
 </script>
 
 <style scoped lang="scss">
 .news-item {
   display: block;
-  padding: 15px;
+  padding: 10px 15px;
   border-radius: 10px;
   cursor: pointer;
-  min-height: 100px;
+  min-height: 85px;
   background-color: var(--background);
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   .news-writer {
     display: flex;
     align-items: center;
+
     .avatar {
       width: 50px;
       height: 50px;
+      margin-right: 10px;
       img {
         width: 100%;
         height: 100%;
@@ -60,6 +124,7 @@ const userList = ref();
     }
     .name {
       font-weight: 500;
+      font-size: 15px;
     }
 
     .work-info,
