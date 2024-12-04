@@ -16,31 +16,15 @@ import {
 } from '@/components/ui/popover'
 import {  defineProps,ref,computed } from 'vue';
 import { Icon } from '@iconify/vue';
-type Item= {
-    id: string;
-    name: string;
-    session: string;
-    clazz: string;
-    studentId: string;
-    gender: string;
-    QQ: string;
-    email: string;
-    state: string;
-}
 
-type headers= {
-    title: string;
-    key: string;
-}
+import type { IAllApplyUserVO,tableActionsVO,tableHeadersVO } from '@/types/recruitmentType';
 
-type actionItems= {
-    title: string;
-    icon: string;
-}
+
+
 const props = defineProps<{
-    items: Item[];
-    headers: headers[];
-    actionItems: actionItems[];
+    items: IAllApplyUserVO[];
+    headers: tableHeadersVO[];
+    actionItems: tableActionsVO[];
 }>()
 
 
@@ -58,6 +42,7 @@ const handleSelect = (id: string) => {
 
 // 用于处理全选的 id
 const handleSelectAll = () => {
+
   if (selectedIds.value.length === props.items.length) {
     selectedIds.value = [];
   } else {
@@ -95,7 +80,13 @@ const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.
       </TableRow>
     </TableHeader>
     <TableBody>
-      <TableRow v-for="item in items" :key="item.id" class="hover-tr" >
+
+      <TableRow v-show="items.length === 0" style="font-size: large;height: 40px;text-align: center;">
+        <TableCell colspan="100%">
+          暂无数据
+        </TableCell>
+      </TableRow>
+      <TableRow  v-for="item in items" :key="item.id" class="hover-tr"  >
 
         <TableCell
         class="font-medium text-center"
@@ -123,11 +114,16 @@ const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.
             </PopoverTrigger>
             <PopoverContent class="popover-content"   >
               <div>
-                <div class="pop-content-item" v-for="(item,index) in actionItems">
-                  <Icon :icon=item.icon
+                <div
+                  class="pop-content-item"
+                  v-for="(i,index) in actionItems"
+                  :key="index"
+                  @click="i.onclick(item.id)"
+                  >
+                  <Icon :icon=i.icon
                   :key="index"
                   style="display: inline-block;font-size: 18px; cursor: pointer;"/>
-                  <span class="pop-content-item-text">{{ item.title }}</span>
+                  <span class="pop-content-item-text">{{ i.title }}</span>
                 </div>
               </div>
 
@@ -151,7 +147,7 @@ const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.
   border-radius: 5px;
   padding: 10px;
   box-shadow: 0 0 10px #ccc;
-  overflow: scroll;
+  overflow: auto;
 }
 .hover-tr{
   &:hover{
@@ -170,9 +166,9 @@ const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.
   border-radius: 5px;
   padding: 10px;
   box-shadow: 0 0 10px #ccc;
-  position: absolute;
+  position: relative;
+  left: -80px;
   top: 0;
-  left: -150px;
   z-index: 100;
  .pop-content-item{
     width: 100%;

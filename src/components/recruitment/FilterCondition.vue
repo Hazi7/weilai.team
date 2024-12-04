@@ -44,10 +44,10 @@ const filter_condition = (e:Event) => {
         <DropdownMenu v-for="i in itemsObjArr " :key="i.title">
             <DropdownMenuTrigger>
                <div class="filter-title">
-                {{ i.title }} <Icon icon="pepicons-pencil:triangle-down" />
+                {{ i.title }} <Icon icon="pepicons-pencil:triangle-down" class="ml-2" />
                </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent  class="filter-content bg-white">
+            <DropdownMenuContent  class="filter-content bg-white" style="position: absolute;">
                 <DropdownMenuLabel class="filter-label">{{ i.label }}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem class="drap-menu-content" v-for="j in i.arr">
@@ -83,7 +83,7 @@ $undertone: #647499;
 }
 .filter-title{
     width: 100px;
-    display: flex;
+    display:inline-flex;
     flex-direction: row;
     justify-content:center;
     align-items: center;
@@ -92,6 +92,8 @@ $undertone: #647499;
     border: 1px dashed var(--border);
     font-size: 0.8em;
     margin-right: 10px;
+    letter-spacing: 0.1em;
+
 }
 .drap-menu-content{
    background-color: var(--card);
