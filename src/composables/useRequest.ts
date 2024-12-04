@@ -1,4 +1,4 @@
-import { shallowRef, type Ref } from "vue";
+import { ref, type Ref } from "vue";
 import apiClient from "@/api/axios";
 
 // 定义 HTTP 方法的类型
@@ -13,16 +13,16 @@ interface RequestOptions {
 
 // 定义 useRequest 返回的类型
 interface UseRequestResult<T> {
-  data: Ref<T | null>;
+  data: Ref<T | any>;
   error: Ref<Error | null>;
   loading: Ref<boolean>;
   executeRequest: (options: RequestOptions) => Promise<void>;
 }
 
-export function useRequest<T = unknown>(): UseRequestResult<T> {
-  const data = shallowRef<T | null>(null);
-  const error = shallowRef<Error | null>(null);
-  const loading = shallowRef<boolean>(false);
+export function useRequest<T = any>(): UseRequestResult<T> {
+  const data = ref<T | null>(null);
+  const error = ref<Error | null>(null);
+  const loading = ref<boolean>(false);
 
   const executeRequest = async ({
     url,
@@ -31,6 +31,7 @@ export function useRequest<T = unknown>(): UseRequestResult<T> {
     headers, // 接收 headers 参数
   }: RequestOptions): Promise<void> => {
     loading.value = true;
+    console.log(loading);
     error.value = null;
 
     try {

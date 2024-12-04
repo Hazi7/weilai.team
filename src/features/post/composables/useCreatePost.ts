@@ -8,10 +8,11 @@ export default function useCreatePost() {
     postAbstract: string | number | undefined,
     postTxt: string | undefined,
     tags: AcceptableInputValue[] | undefined,
-    title: string | undefined,
+    title: string | number | undefined,
     type: string | undefined,
   ) {
-    await executeRequest({
+    
+    executeRequest({
       url: "/post/put",
       method: "post",
       requestData: {
