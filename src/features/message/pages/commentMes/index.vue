@@ -6,7 +6,7 @@
         <div class="clearAll">清空所有</div>
       </div>
       <div class="messageCon">
-        <div v-for="message in messages" :key="message.messageId">
+        <div v-for="message in messages" :key="message.messageId" class="mess">
           <MesItem :message="message" />
         </div>
       </div>
@@ -75,6 +75,9 @@ const deleteAll = async () => {
 .comments{
   width: 690px;
 }
+.mess{
+    width: 95%;
+  }
    .commentCon{
       width: 100%;
       .titleOptions{

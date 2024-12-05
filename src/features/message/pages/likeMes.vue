@@ -23,6 +23,11 @@ import TheTopNav from "../../../components/layouts/AppThirdNav.vue";
         "title": "评论",
         "path": "/message/commentMes",
         "icon": "i-mdi-file-document-multiple-outline"
+      },
+      {
+        "title": "系统通知",
+        "path": "/message/systemMes",
+        "icon": "i-mdi-file-document-multiple-outline"
       }
     ]
   }

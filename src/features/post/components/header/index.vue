@@ -1,12 +1,40 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue/dist/iconify.js";
+import TitleInput from "./TitleInput.vue";
+import Button from "@/components/ui/button/Button.vue";
+import { Loader2 } from "lucide-vue-next";
+import { watch } from "vue";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-defineProps<{
-  postTitle: string | undefined;
+interface PostErrors {
+  postTitle: string;
+  postContent: string;
+  postTags: string[];
+  postCategories: string;
+  postSummary: string;
+}
+
+const props = defineProps<{
+  postTitle: string | number | undefined;
+  isPublishing: boolean;
+  isTitleTooltip: boolean;
+  errors: Zod.ZodFormattedError<PostErrors> | undefined;
 }>();
 
+watch(
+  () => props.isPublishing,
+  (newValue) => {
+    console.log(newValue);
+  },                                                                                             
+);
+
 defineEmits<{
-  (e: "update:postTitle", value: () => string): void;
+  (e: "update:postTitle", value: string | number | undefined): void;
   (e: "published:post", value: () => void): void;
 }>();
 </script>
@@ -15,19 +43,25 @@ defineEmits<{
   <header class="post-header">
     <div class="post-header__profile">头像</div>
     <div class="post-header__message">消息</div>
-    <input
-      type="text"
-      placeholder="🎉  输入文章标题"
-      class="post-header__title"
-      :value="postTitle"
-      @input="
-        (event: Event) =>
-          $emit('update:postTitle', () => {
-            return (event.target as HTMLInputElement).value;
-          })
-      "
-    />
-    <button
+    <div class="post-header__title">
+      <TooltipProvider :disable-hoverable-content="true">
+        <Tooltip :open="!!errors?.postTitle">
+          <TooltipTrigger>
+            <TitleInput
+              class="post-header__title-input w-auto"
+              type="text"
+              placeholder="🎉  输入文章标题"
+              :model-value="postTitle"
+              @update:model-value="(val) => $emit('update:postTitle', val)"
+            ></TitleInput>
+          </TooltipTrigger>
+          <TooltipContent class="text-destructive-foreground">
+            <p>{{ errors?.postTitle?._errors[0] }}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+    <Button
       class="post-header__publish"
       @click="
         () => {
@@ -35,13 +69,15 @@ defineEmits<{
         }
       "
     >
+      <Loader2 v-if="isPublishing" class="w-4 h-4 mr-2 animate-spin" />
       <Icon
+        v-else
         icon="lets-icons:circle-right-light"
         width="1.6rem"
         height="1.6rem"
       ></Icon>
       <span>发布</span>
-    </button>
+    </Button>
   </header>
   <hr />
 </template>
@@ -61,15 +97,28 @@ defineEmits<{
   background-color: rgba(255, 255, 255, 0.1);
 
   &__title {
-    height: 100%;
     background-color: transparent;
 
-    &:focus {
-      outline: none;
+    &-input {
+      height: 100%;
+      background-color: transparent;
+
+      &:focus {
+        outline: none;
+      }
     }
   }
 
   &__publish {
+    color: var(--primary-foreground);
+    background-color: var(--primary);
+    border-radius: 1rem;
+    padding: 0.25rem 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    transition: all 0.5s ease;
+
     span {
       font-size: 0.85rem;
     }
@@ -77,16 +126,6 @@ defineEmits<{
 
   &__title {
     margin: 0 auto;
-  }
-
-  button {
-    color: var(--secondary-foreground);
-    border-radius: 1rem;
-    padding: 0.25rem 0.75rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
   }
 }
 </style>

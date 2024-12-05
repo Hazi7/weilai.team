@@ -7,7 +7,11 @@ import {
 } from '@/components/ui/menubar';
 import { Button } from '@/components/ui/button';
 
-import {  defineProps } from 'vue';
+import {  defineProps,ref,defineEmits,watch } from 'vue';
+
+const emit = defineEmits(['transferToggleShowStatus'])
+
+
 type Item= {
     index: number;
     title: string;
@@ -17,13 +21,21 @@ type Item= {
 const props = defineProps<{
     toggleItems: Item[];
 }>()
-
+const status = ref<number>(0);
 // 切换组件的样式控制
 function toggleActive(index: number) {
+
+    status.value = index;
     props.toggleItems.forEach((item) => {
         item.isActive = item.index === index;
     });
 }
+
+watch(status, (newValue) => {
+    // 发送事件
+
+    emit('transferToggleShowStatus',newValue);
+});
 
 </script>
 

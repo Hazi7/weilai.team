@@ -39,7 +39,12 @@ const deleteMessage = async (messageId: number) =>  {
           <div class="avatar"><img :src="props.message.headPortrait ? props.message.headPortrait : '../../../../public/logo.png'"/></div>
           <div class="mesContent">
             <div class="details">
-              <div class="name">{{ props.message.username }}<span class="type">点赞了你的文章</span></div>
+              <div class="name">{{ props.message.username }}
+                <span v-if="props.message.messageType === 1" class="type">点赞了你的文章</span>
+                <span v-else-if="props.message.messageType === 2" class="type">收藏了你的文章</span>
+                <span v-else-if="props.message.messageType === 3" class="type">评论了你的文章</span>
+                <span v-else-if="props.message.messageType === 4" class="hide"></span>
+              </div>
               <div class="time">{{ formattedTime }}</div>
             </div>
             <div v-if="props.message.content!=null" class="content" >{{props.message.content}}</div>
@@ -51,8 +56,11 @@ const deleteMessage = async (messageId: number) =>  {
 </template>
 
 <style scoped lang="scss">
+.hide{
+  display: none;
+}
  .mesItem{
-          width: 670px;
+          width: 98%;
           margin-bottom: 10px;
           padding-bottom: 15px;
           background-color: white;
@@ -144,7 +152,7 @@ const deleteMessage = async (messageId: number) =>  {
 
 @media screen and (max-width: 768px) {
       .mesItem{
-        width: 98%;
+        width: 100%;
         margin-right: 0;
         .avatar{
             width: 38px;

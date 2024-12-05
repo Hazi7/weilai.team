@@ -85,6 +85,7 @@ const quickShowItems = ref([
   gap: 30px;
   top: 20px;
   box-sizing: content-box;
+  margin-bottom: 40px;
   @media screen and (min-width: 1300px) {
     grid-template-columns:200px calc(100% - 220px);
   }
@@ -101,7 +102,7 @@ const quickShowItems = ref([
   position: relative;
   margin-left: 2em;
   display: inline-block;
-  margin-top: 20px;
+  margin-top: 30px;
   border: none;
   @media screen and (max-width: 1100px) {
     display: none;
@@ -148,7 +149,6 @@ const quickShowItems = ref([
   width: 100%;
   background-color:var(--background);
   position: relative;
-  display: inline-block;
   top: 20px;
   left: 20px;
   border: none;
