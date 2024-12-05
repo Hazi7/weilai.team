@@ -74,11 +74,11 @@ const isTag = ref(false);
 console.log(loading.value);
 
 const props = defineProps<{
-  type: number;
-  page: number;
-  condition: string;
-  tagPostList: Array<ArticleList>;
-  isTag: boolean;
+  type?: number;
+  page?: number;
+  condition?: string;
+  tagPostList?: Array<ArticleList>;
+  isTag?: boolean;
 }>();
 const route = useRoute();
 
