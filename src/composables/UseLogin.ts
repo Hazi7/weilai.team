@@ -47,7 +47,41 @@ export default function () {
           setLocalStorageWithExpire("userId", resData.userId, 1000 * 60 * 60);
           router.push("/");
         } else {
-          showAlert("服务器返回数据异常", "error");
+          // loginError.value = ''
+          await executeRequest({
+            url: `/index/login`,
+            method: "post",
+            requestData: { account, password },
+          }); // 在这里传入请求的 URL 和 method
+          const res = data.value as Data;
+          const resData = res.data;
+          console.log(error);
+          console.log(data);
+          if (res.code == 1000) {
+            if (resData) {
+              setLocalStorageWithExpire("token", resData.token, 1000 * 60 * 60);
+              setLocalStorageWithExpire(
+                "userId",
+                resData.userId,
+                1000 * 60 * 60,
+              );
+              router.push("/");
+            } else {
+              showAlert("服务器返回数据异常", "error");
+            }
+          }
+          if (res.code == 1002) {
+            showAlert("用户名不存在", "error");
+            // loginError.value = '用户名不存在'
+          } else if (res.code == 1001) {
+            showAlert("密码错误", "error");
+            // loginError.value = '用户名不存在'
+          } else if (res.code == 1003) {
+            showAlert("账户已在别处登录，请重新登录", "waring");
+            // loginError.value = '用户名不存在'
+          } else if (res.code == 403) {
+            showAlert("请勿重新登录！", "waring");
+          }
         }
       }
       if (res.code == 1002) {

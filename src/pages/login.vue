@@ -13,6 +13,7 @@ import LoginAnimation from '@/components/login/LoginAnimation.vue';
 <style scoped lang="scss">
 .login-container {
     min-height: 100vh;
+    padding: 50px 0;
     display: flex;
     flex-direction: column;
     justify-content: center;

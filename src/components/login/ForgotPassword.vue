@@ -31,7 +31,7 @@ const getCode = (email: string) => {
 <template>
     <Dialog>
         <DialogTrigger as-child>
-            <Button variant="outline" style="border: none;box-shadow: none;"> 忘记密码 </Button>
+            <Button class="fontPassBtn" variant="outline" style="border: none;box-shadow: none;"> 忘记密码 ？ </Button>
         </DialogTrigger>
         <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
@@ -71,8 +71,16 @@ const getCode = (email: string) => {
         </DialogContent>
     </Dialog>
 </template>
-<style>
+<style scoped lang="scss">
 #radix-vue-dialog-content-v-0 {
     background-color: #fff;
+}
+
+.fontPassBtn{
+    color: #529ee0;
+    cursor: pointer;
+    &:hover{
+        color: #79bcf6;
+    }
 }
 </style>

@@ -46,8 +46,6 @@ export const useLoginStore = defineStore("login", {
             this.isRequesting = false
         },
     },
-    // 手动重置倒计时
-
     persist: {
         key: 'login',
         storage: localStorage,
