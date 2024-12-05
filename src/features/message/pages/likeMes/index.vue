@@ -6,7 +6,7 @@
         <div class="clearAll">清空所有</div>
        </div>
       <div class="messageCon">
-        <div v-for="message in messages" :key="message.messageId">
+        <div v-for="message in messages" :key="message.messageId" class="mess">
           <MesItem :message="message" @delete-success="messageList" />
         </div>
       </div>
@@ -28,12 +28,14 @@ const messages = ref<SSEMessageData[]>([]);
 const messageType = 1
 const pageSize = 10
 const pageNumber=1
+const hasNewMessage=ref(false)
 onMounted(() => {
-      connect()
+      // connect()
       subscribe('message', (message: SSEMessageData) => {
         messages.value.push(message);
+        hasNewMessage.value = true; 
         console.log(message);
-    });
+     });
       messageList()
 });
 
@@ -44,7 +46,7 @@ const messageList=async () => {
   if(data.value?.code==200){
     const allMessages = data.value?.data.AllMessages || [];
     messages.value = allMessages; 
-    
+    hasNewMessage.value = false;
     console.log("获取的全部消息数据：", allMessages);
   }else if(data.value?.code==401){
     console.log("请先登录"); 
@@ -58,6 +60,9 @@ const messageList=async () => {
 <style scoped lang="scss">
 .con{
   width: 100%;
+  .mess{
+    width: 95%;
+  }
 }
    .mesCon{
     width: 100%;
@@ -88,7 +93,7 @@ const messageList=async () => {
    }
    @media screen and (max-width: 768px) {
   .mesCon{
-    margin-top: 100px;
+    margin-top: 70px;
     width: 100%;
     .titleOptions{
       width: 100%;
@@ -102,7 +107,7 @@ const messageList=async () => {
     .messageCon{
       width: 100%;
       .mesItem{
-        width: 98%;
+        width: 100%;
         margin-right: 0;
       }
     }

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { Icon } from "@iconify/vue";
 import CommunityTag from '@/features/community/composables/CommunityTag';
+import { useTagStore } from "@/store/tagTypeStore";
 
+const tagStore = useTagStore();
+const tagType = tagStore.tagType.tagType
 const { allTagList, getAllTagList } = CommunityTag()
-
-// const tagLists: TagLists[] = reactive([])
 getAllTagList()
-// const tagList = reactive(['推荐', '前端', '后端', 'java', 'python', 'go', 'c', 'C++', 'php', 'html', 'css', 'scss', 'js', 'ts', '人工智能', 'AIGC', '大数据', '数据库'])
 </script>
 
 <template>
@@ -15,10 +15,10 @@ getAllTagList()
         <div class="tag-head-bar">
             <div class="tagHeadNone"></div>
             <div class="tag-head-bar-item">
-                <router-link active-class="active" :to="`/community/discussion/label`">推荐</router-link>
+                <router-link active-class="active" :to="`/community/${tagType}/label/suggest`">推荐</router-link>
             </div>
             <div v-for="(item, index) in allTagList" :key="index" class="tag-head-bar-item">
-                <router-link active-class="active" :to="`/community/discussion/label/${item}`">{{ item }}</router-link>
+                <router-link active-class="active" :to="`/community/${tagType}/label/${item}`">{{ item }}</router-link>
             </div>
             <span class="tag-head-bar-more">
                 <Icon icon="bytesize:chevron-bottom"></Icon>

@@ -2,9 +2,13 @@
 import { reactive } from 'vue';
 import { Icon } from "@iconify/vue";
 import CommunityTag from '../../composables/CommunityTag';
+import { useTagStore } from "@/store/tagTypeStore";
 
-const { likeTagList, getRecommendTag } = CommunityTag();
-getRecommendTag()
+const tagStore = useTagStore();
+const tagType = tagStore.tagType.tagType
+const { likeTagList, getHotTagList } = CommunityTag();
+
+getHotTagList()
 </script>
 
 <template>
@@ -24,12 +28,12 @@ getRecommendTag()
                 <span>猜你喜欢</span>
             </div>
         </div>
-        <div v-if="!likeTagList" class="noMoreTag">
+        <div v-if="!likeTagList || likeTagList.length == 0" class="noMoreTag">
             暂无相关推荐
         </div>
         <div class="hotTagList" v-if="likeTagList">
             <span class="tag" v-for="(tag, index) in likeTagList" :key="index">
-                <router-link :to="`/community/discussion/label/${tag}`">#{{ tag }}</router-link>
+                <router-link :to="`/community/${tagType}/label/${tag}`">#{{ tag }}</router-link>
             </span>
         </div>
     </div>

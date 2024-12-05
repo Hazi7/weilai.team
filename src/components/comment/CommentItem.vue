@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive,computed, onMounted} from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { Icon } from '@iconify/vue';
 import { useRequest } from '@/composables/useRequest';
 import CommentForm from './CommentForm.vue';
 import { createUserInfo, getUserInfo } from './index';
-
+import sonComment from './sonComment.vue';
 
 const props = defineProps({
   comment: {
@@ -24,14 +24,12 @@ const props = defineProps({
 
 const { data, executeRequest } = useRequest();
 const isFormVisible = ref(false);
-const pageSize = ref<number>(5);
-const pageNumber = ref<number>(1);
-const sonComment = ref([]);
-const userInfo = reactive(createUserInfo());
-const visibleCount = ref(2); 
+const pageSize = ref(2);
+const pageNumber = ref(1);
+const sonComments = ref<any[]>([]);
+const userInfo = ref(createUserInfo());
+const total=ref(0)
 const showMore = ref(true);
-const isLiked = ref(false);
-
 
 const formattedTime = computed(() => {
   const commentTime = new Date(props.comment.commentTime);
@@ -42,95 +40,94 @@ const formattedTime = computed(() => {
   const minutes = commentTime.getMinutes().toString().padStart(2, '0');
   return `${year}.${month}.${day} ${hours}:${minutes}`;
 });
-//展开回复输入框
+
+// 展开回复输入框
 const toggleForm = () => {
   isFormVisible.value = !isFormVisible.value;
 };
-// 将子评论id变成负数
-const transformId = (id: number) => -id;
-//获取初始两条子评论
-const visibleComments = computed(() => {
-  return sonComment.value.slice(0, visibleCount.value);
-});
-//获取子评论数据并返回
+// 获取二级评论
 const getSecondComment = async (commentId: number) => {
   await executeRequest({
     url: `/comment/getCommentTwo?commentId=${commentId}&pageSize=${pageSize.value}&pageNumber=${pageNumber.value}`,
     method: 'get',
   });
 
-  if (data.value.data.postCommentAll) {
-    sonComment.value = data.value.data.postCommentAll;
-    const promises = sonComment.value.map(async (comment) => {
-      const replyInfo = reactive(createUserInfo());
-      await getUserInfo(comment.pointUser, replyInfo);
+  if (data.value?.data.postCommentAll) {
+    total.value = data.value.data.pageInfo.total;
+    sonComments.value = data.value.data.postCommentAll.map((comment: any) => {
+      const replyInfo = createUserInfo();
+      getUserInfo(comment.pointUser, replyInfo);
       comment.userInfo = replyInfo;
+      comment.parentId = commentId;
+      return comment;
     });
-    await Promise.all(promises);
-    console.log(sonComment.value);
-    return sonComment.value;
   }
 };
 
-//展开更多和收起切换逻辑
-const loadMoreReplies = () => {
-  visibleCount.value = showMore.value
-    ? Math.min(sonComment.value.length, visibleCount.value + 5)
-    : 2;
-  showMore.value = !showMore.value;
+const handleLike = async (parentId: number) => {
+  await getSecondComment(parentId);
 };
-//删除评论
-// const deleteComment = async (commentId: number) => {
-//   await executeRequest({
-//       url: `/comment/deleteComment/${commentId}`,
-//       method: 'delete',
-//     });
-//     if (data.value  && data.value.data.code === 200) {
-//       alert('删除成功');
-//     } else {
-//       alert('删除失败');
-//     }
-// }
-//点赞/取消点赞评论
-const likeComment = async (commentId: number) => {
-  const CommentIded = props.isReply? transformId(commentId) : commentId;
-    await executeRequest({
-        url: `/comment/likeOption/${CommentIded}`,
-        method: 'put',
-    });
 
-    if (data.value) {
-        isLiked.value =!isLiked.value;
-        alert(isLiked.value? '点赞成功' : '取消点赞成功');
-
-        if (props.isReply === true && CommentIded < 0) {
-            // 重新获取二级评论
-            console.log(commentId);
-            console.log(props.comment.commentId);
-            getSecondComment(props.comment.commentId)
-            console.log(sonComment.value);
-        } else {
-            props.getFirstComment();
-        }
-    } else {
-        alert('点赞失败');
+// 展开更多和收起切换逻辑
+const loadMoreReplies = (commentId: number) => {
+  if (total.value > pageSize.value && showMore.value) {
+    pageSize.value += 5;
+    getSecondComment(commentId);
+    if (pageSize.value >= total.value) {
+      showMore.value = false;
     }
+  } else {
+    pageSize.value = 2;
+    showMore.value = true;
+    getSecondComment(commentId);
+  }
+};
+
+// 点赞/取消点赞评论
+const likeComment = async (commentId: number) => {
+  await executeRequest({
+    url: `/comment/likeOption/${commentId}`,
+    method: 'put',
+  });
+
+  if (data.value?.code === 200) {
+      props.getFirstComment();
+      if(props.comment.isLike){
+        alert('取消点赞成功');
+      } else {
+        alert('点赞成功');
+      }
+  } else {
+    alert('点赞失败');
+  }
+};
+//删除一级评论
+const deleteComment = async (commentId: number) => {
+  await executeRequest({
+    url: `/comment/deleteComment/${commentId}`,
+    method: 'delete',
+  });
+  if (data.value?.code === 200) {
+    props.getFirstComment();
+    alert('删除成功');
+  } else {
+    alert('删除失败');
+  }
 };
 
 onMounted(async () => {
   const currentUserId = props.comment.userId;
-  getUserInfo(currentUserId, userInfo);
-  getSecondComment(props.comment.commentId)
+  getUserInfo(currentUserId, userInfo.value);
+  await getSecondComment(props.comment.commentId);
+  
 });
-
 defineExpose({ userInfo });
 </script>
-
 
 <template>
   <div class="comment-item" :class="{'is-reply': isReply}">
     <div class="avatar">
-      <img :src="userInfo.headPortrait ? userInfo.headPortrait : '../../../public/logo.png'" />
+      <img :src="userInfo.headPortrait || '../../../public/logo.png'" />
     </div>
     <div class="content-box">
       <div class="user-info">
@@ -139,17 +136,22 @@ defineExpose({ userInfo });
       </div>
       <div class="comment-text">
         <span v-if="isReply" :key="comment.pointUser" class="reply-to">{{ `@${comment.userInfo?.name}` }}</span>
-          {{ comment.commentTxt }}
+        {{ comment.commentTxt }}
       </div>
-      <div v-if="comment.urls" class="image" ><img :src="comment.urls"/></div>
+      <div v-if="comment.urls" class="image">
+        <img :src="comment.urls" />
+      </div>
       <div class="action-box">
         <div class="btnBox">
           <span class="reply-btn" @click="toggleForm">
             <Icon icon="fontisto:comment" class="replyIcon" />回复
           </span>
-          <span class="delete-btn"><Icon icon="fluent:delete-24-regular" class="deleteIcon"/>删除</span>
-          <span class="like-btn" :class="{'liked':isLiked}" @click="likeComment(comment.commentId)">
-            <Icon icon="uiw:like-o" class="likeIcon" />{{ comment.likeCount }}
+          <span v-if="comment.isMyComment" class="delete-btn" @click="deleteComment(comment.commentId)">
+            <Icon icon="fluent:delete-24-regular" class="deleteIcon" />删除
+          </span>
+          <span class="like-btn" :class="{'liked': comment.isLike}" @click="likeComment(comment.commentId)">
+            <Icon icon="uiw:like-o" class="likeIcon" />
+            {{ comment.likeCount }}
           </span>
         </div>
       </div>
@@ -158,25 +160,27 @@ defineExpose({ userInfo });
       </transition>
       <!-- 子评论 -->
       <div class="son-comments">
-        <CommentItem
-          v-for="childComment in visibleComments"
-          :key="childComment.commentId"
-          :comment="childComment"
-          :is-reply="true"
-        />
+       <sonComment
+         v-for="son in sonComments"
+         :key="son.commentId"
+         :son="son"
+         :is-reply="true"
+         :parent-id="comment.commentId"
+         @liked="handleLike"
+         @deleted="handleLike"
+       />
       </div>
     </div>
-    <div class="more-comments">
-      <div v-if="!isReply && comment.commentCount > 2" class="lookComment" @click="loadMoreReplies">
-        {{ showMore ? `查看更多回复` : `收起` }}
-        <Icon icon="weui:arrow-outlined" class="arrowIcon" />
+    <!-- 展开更多评论 -->
+    <div v-if="total > 2" class="more-comments">
+      <div class="lookComment" @click="loadMoreReplies(props.comment.commentId)">
+        {{ showMore ? '查看更多回复' : '收起' }}
+        <Icon v-if="showMore" icon="weui:arrow-outlined" class="arrowIcon" />
+        <Icon v-else icon="iconamoon:arrow-up-2-light" class="arrowsIcon" style="color: #5db0da" />
       </div>
     </div>
   </div>
 </template>
-
-
-
 
 <style scoped lang="scss">
 * {
@@ -230,7 +234,7 @@ defineExpose({ userInfo });
   }
 
   .content-box {
-    width: 550px;
+    width: calc(100% - 70px);
     margin-top: 12px;
 
     .user-info {
@@ -254,7 +258,7 @@ defineExpose({ userInfo });
       font-size: 14px;
       line-height: 1.4;
       max-width: 550px;
-      margin-bottom: 5px;
+      // margin-bottom: 5px;
       word-break: break-all;
 
       .reply-to {
@@ -288,13 +292,14 @@ defineExpose({ userInfo });
           margin-right: 5px;
         }
       }
-      .liked {
-        color: #9cdcfe; 
-      }
-
-      .liked .likeIcon {
-         text-shadow: 0 0 10px rgba(0, 187, 255, 0.8); 
-      }
+      .likeIcon.liked {
+        color: #619fc9;
+        filter: drop-shadow(0 0 10px rgba(0, 187, 255, 0.8));
+       }
+       .like-btn.liked{
+        color: #619fc9;
+        text-shadow: 0 0 10px rgba(0, 187, 255, 0.8); 
+       }
 
       .like-btn {
         display: flex;
@@ -303,7 +308,8 @@ defineExpose({ userInfo });
         cursor: pointer;
 
         .likeIcon {
-          color: gray;
+          display: inline-block;
+          transition: box-shadow 0.3s ease-in-out;
           font-size: 17px;
           margin-top: 2px;
           margin-right: 5px;
@@ -344,11 +350,15 @@ defineExpose({ userInfo });
         .arrowIcon {
           margin-left: 7px;
           font-size: 21px;
+          color: #5db0da;
+        }
+        .arrowsIcon{
+          font-size: 21px;
         }
       }
 
   &.is-reply {
-    width: 550px;
+    width: 85%;
     min-height: 80px;
     overflow: hidden;
     border-bottom: 1px solid #d9d7d7;
@@ -371,7 +381,7 @@ defineExpose({ userInfo });
        }
   }
     .content-box {
-      width:480px ;
+      width: calc(100% - 60px); 
 
       .comment-text {
         color: #777;
@@ -414,14 +424,16 @@ defineExpose({ userInfo });
           margin-right: 3px;
         }
       }
+      .liked {
+        color: #619fc9;
+        filter: drop-shadow(0 0 15px rgba(0, 187, 255, 0.8));
+       }
+       
       .like-btn {
         display: flex;
         font-size: 13px;
-        color: gray;
         cursor: pointer;
-
         .likeIcon {
-          color: gray;
           font-size: 16px;
           margin-top: 1px;
           margin-right: 4px;
@@ -430,5 +442,8 @@ defineExpose({ userInfo });
       }
     }
   }
+}
+@media screen and (max-width: 768px)  {
+  
 }
 </style>

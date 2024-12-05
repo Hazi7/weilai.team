@@ -2,9 +2,12 @@
 import 'iconify-icon';
 import CommunityTag from '@/features/community/composables/CommunityTag';
 import { reactive } from 'vue';
+import { useTagStore } from "@/store/tagTypeStore";
 
-const { hotTagList, getHotTagList } = CommunityTag()
-getHotTagList()
+const tagStore = useTagStore();
+const tagType = tagStore.tagType.tagType
+const { hotTagList, getRecommendTag } = CommunityTag()
+getRecommendTag()
 </script>
 
 <template>
@@ -17,13 +20,17 @@ getHotTagList()
             <iconify-icon icon="icon-park-outline:right" class="moreTag"></iconify-icon>
         </div>
         <div class="hotTagList">
-            <span class="tag" v-for="(tag, index) in hotTagList" :key="index">#{{ tag }}</span>
+
+            <span class="tag" v-for="(tag, index) in hotTagList" :key="index">
+                <router-link active-class="active" :to="`/community/${tagType}/label/${tag}`">#{{ tag }}</router-link>
+            </span>
         </div>
     </div>
 </template>
 
 <style scoped lang="scss">
 .rightBarTag {
+    background-color: #fff;
     border: 2px solid #ffffff;
     max-height: 168px;
     overflow: hidden;

@@ -24,7 +24,8 @@ declare module 'vue-router/auto-routes' {
     '/admin/community': RouteRecordInfo<'/admin/community', '/admin/community', Record<never, never>, Record<never, never>>,
     '/admin/community/': RouteRecordInfo<'/admin/community/', '/admin/community', Record<never, never>, Record<never, never>>,
     '/admin/contacts': RouteRecordInfo<'/admin/contacts', '/admin/contacts', Record<never, never>, Record<never, never>>,
-    '/admin/contacts/': RouteRecordInfo<'/admin/contacts/', '/admin/contacts', Record<never, never>, Record<never, never>>,
+    '/admin/contacts/member': RouteRecordInfo<'/admin/contacts/member', '/admin/contacts/member', Record<never, never>, Record<never, never>>,
+    '/admin/contacts/member/[member]': RouteRecordInfo<'/admin/contacts/member/[member]', '/admin/contacts/member/:member', { member: ParamValue<true> }, { member: ParamValue<false> }>,
     '/admin/limits': RouteRecordInfo<'/admin/limits', '/admin/limits', Record<never, never>, Record<never, never>>,
     '/admin/limits/': RouteRecordInfo<'/admin/limits/', '/admin/limits', Record<never, never>, Record<never, never>>,
     '/admin/profile': RouteRecordInfo<'/admin/profile', '/admin/profile', Record<never, never>, Record<never, never>>,
@@ -48,8 +49,18 @@ declare module 'vue-router/auto-routes' {
     '/community/comprehensive/': RouteRecordInfo<'/community/comprehensive/', '/community/comprehensive', Record<never, never>, Record<never, never>>,
     '/community/comprehensive/[title]': RouteRecordInfo<'/community/comprehensive/[title]', '/community/comprehensive/:title', { title: ParamValue<true> }, { title: ParamValue<false> }>,
     '/community/comprehensive/label': RouteRecordInfo<'/community/comprehensive/label', '/community/comprehensive/label', Record<never, never>, Record<never, never>>,
+<<<<<<< HEAD
+<<<<<<< HEAD
+    '/community/comprehensive/label/[tag]': RouteRecordInfo<'/community/comprehensive/label/[tag]', '/community/comprehensive/label/:tag', { tag: ParamValue<true> }, { tag: ParamValue<false> }>,
+    '/community/comprehensive/label/suggest': RouteRecordInfo<'/community/comprehensive/label/suggest', '/community/comprehensive/label/suggest', Record<never, never>, Record<never, never>>,
+=======
     '/community/comprehensive/label/': RouteRecordInfo<'/community/comprehensive/label/', '/community/comprehensive/label', Record<never, never>, Record<never, never>>,
     '/community/comprehensive/label/[tag]': RouteRecordInfo<'/community/comprehensive/label/[tag]', '/community/comprehensive/label/:tag', { tag: ParamValue<true> }, { tag: ParamValue<false> }>,
+>>>>>>> d2310d3e488f42162a47d724d350481386cab52b
+=======
+    '/community/comprehensive/label/[tag]': RouteRecordInfo<'/community/comprehensive/label/[tag]', '/community/comprehensive/label/:tag', { tag: ParamValue<true> }, { tag: ParamValue<false> }>,
+    '/community/comprehensive/label/suggest': RouteRecordInfo<'/community/comprehensive/label/suggest', '/community/comprehensive/label/suggest', Record<never, never>, Record<never, never>>,
+>>>>>>> 97cb61a84ba30a5613f6647e8d00a793ae7b05f2
     '/community/comprehensive/latest': RouteRecordInfo<'/community/comprehensive/latest', '/community/comprehensive/latest', Record<never, never>, Record<never, never>>,
     '/community/comprehensive/user': RouteRecordInfo<'/community/comprehensive/user', '/community/comprehensive/user', Record<never, never>, Record<never, never>>,
     '/community/comprehensive/user/[user]': RouteRecordInfo<'/community/comprehensive/user/[user]', '/community/comprehensive/user/:user', { user: ParamValue<true> }, { user: ParamValue<false> }>,
@@ -69,6 +80,8 @@ declare module 'vue-router/auto-routes' {
     '/message/commentMes/': RouteRecordInfo<'/message/commentMes/', '/message/commentMes', Record<never, never>, Record<never, never>>,
     '/message/likeMes': RouteRecordInfo<'/message/likeMes', '/message/likeMes', Record<never, never>, Record<never, never>>,
     '/message/likeMes/': RouteRecordInfo<'/message/likeMes/', '/message/likeMes', Record<never, never>, Record<never, never>>,
+    '/message/systemMes': RouteRecordInfo<'/message/systemMes', '/message/systemMes', Record<never, never>, Record<never, never>>,
+    '/message/systemMes/': RouteRecordInfo<'/message/systemMes/', '/message/systemMes', Record<never, never>, Record<never, never>>,
     '/personalCenter': RouteRecordInfo<'/personalCenter', '/personalCenter', Record<never, never>, Record<never, never>>,
     '/personalCenter/userInfo': RouteRecordInfo<'/personalCenter/userInfo', '/personalCenter/userInfo', Record<never, never>, Record<never, never>>,
     '/personalCenter/userInfo/myCollections': RouteRecordInfo<'/personalCenter/userInfo/myCollections', '/personalCenter/userInfo/myCollections', Record<never, never>, Record<never, never>>,

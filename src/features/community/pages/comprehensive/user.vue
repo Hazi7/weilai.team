@@ -1,48 +1,34 @@
 <template>
-  <div style="display: flex">
+  <User />
+  <!-- <div style="display: flex">
     <div class="content">
-      <!-- 放搜索框的位置 -->
       <div id="search">
-        <Search />
+        <Search :isUser="true" />
       </div>
-
-      <!-- 放内容 -->
       <div id="news">
-        <UserContent />
-        <a class="news-item">
-          <div class="news-writer">
-            <div class="avatar">
-              <img src="@/assets/img/headImg.jpg" alt="" />
-            </div>
-            <div class="writer-info">
-              <h3 class="name">爆米奇</h3>
-              <div class="work-info">
-                <span class="origin">原创 400</span>
-                <span class="read">阅读 123</span>
-                <span class="like">点赞</span>
-              </div>
-              <div class="brief">致力于干饭</div>
-            </div>
-          </div>
-        </a>
+        <UserContent :content="user" />
       </div>
     </div>
     <Rightbar />
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
-// import { Icon } from "@iconify/vue";
-import { useRequest } from "@/composables/useRequest";
-import UserContent from "@community/components/UserContent.vue";
-import Rightbar from "../../../../components/community/Rightbar.vue";
-import Search from "../../components/SearchArticle.vue";
-const { executeRequest, error, loading, data } = useRequest();
-function getUserList() {
-  executeRequest({ url: "/user/searchUser", method: "get" }).then((res) => {
-    console.log(res);
-  });
-}
+import User from "@community/components/User.vue";
+// import { useRequest } from "@/composables/useRequest";
+// import UserContent from "@community/components/UserContent.vue";
+// import { ref } from "vue";
+// import { useRoute } from "vue-router";
+// import Rightbar from "../../../../components/community/Rightbar.vue";
+// import Search from "../../components/Search.vue";
+// const { executeRequest, error, loading, data } = useRequest();
+// const route = useRoute();
+// const user = ref("");
+// if ("user" in route.params) {
+//   user.value = route.params.user as string;
+// } else {
+//   user.value = "";
+// }
 </script>
 
 <style scoped lang="scss">
@@ -50,94 +36,6 @@ function getUserList() {
   padding: 0 100px;
   width: 100%;
   height: auto;
-}
-#news {
-  width: 100%;
-
-  .news-item {
-    display: block;
-    padding: 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    min-height: 100px;
-    background-color: var(--background);
-    margin-bottom: 25px;
-    .news-writer {
-      display: flex;
-      align-items: center;
-      .avatar {
-        width: 50px;
-        height: 50px;
-        img {
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-        }
-        margin-right: 10px;
-      }
-      .name {
-        font-weight: 500;
-      }
-
-      .work-info,
-      .brief {
-        font-size: 13px;
-        font-weight: 400;
-        color: #686570;
-        span {
-          margin-right: 12px;
-          &:last-child {
-            margin-right: 0;
-          }
-        }
-      }
-    }
-    .news-content {
-      padding: 10px 55px;
-      display: block;
-      &:hover {
-        background-color: #f8f8fa;
-        cursor: pointer;
-      }
-      .news-details {
-        font-size: 14.5px;
-        color: #a7a7a7;
-        p {
-          max-height: 40px;
-          line-height: 20px;
-          display: -webkit-box;
-          -webkit-line-clamp: 2; //行数
-          text-overflow: ellipsis; //省略号
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          white-space: normal;
-          word-break: break-all;
-        }
-      }
-      .news-label {
-        margin-top: 10px;
-        display: flex;
-        .type {
-          width: 50px;
-          font-size: 14px;
-          color: #909ba6;
-          text-align: center;
-          border-radius: 15px;
-          border: 2px solid #e1edf8;
-          margin-right: 8px;
-        }
-
-        .labels {
-          display: flex;
-          color: #909ba6;
-          font-size: 14px;
-          .label-item {
-            margin: 0 5px;
-          }
-        }
-      }
-    }
-  }
 }
 @media screen and (max-width: 768px) {
   .content {

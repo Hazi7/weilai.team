@@ -39,26 +39,51 @@ import {
 } from "@/components/ui/tooltip";
 import { useRequest } from "@/composables/useRequest";
 
+import { Calendar } from "@/components/ui/calendar";
 import type { ArticleList } from "@/types/Community";
 import { checkType, getArticle } from "@community/composables/search";
 import { Icon } from "@iconify/vue";
 import { MoreHorizontal } from "lucide-vue-next";
 import { ref, watch } from "vue";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useDateFormatter } from "@/composables/useDateFormatter";
+import { cn } from "@/lib/utils";
+import { getLocalTimeZone, type DateValue } from "@internationalized/date";
+import { Calendar as CalendarIcon } from "lucide-vue-next";
+const { formatDatetoDay } = useDateFormatter();
 const { executeRequest, error, loading, data } = useRequest();
 const postList = ref<ArticleList[]>([]);
-const articleData = ref();
+// 初始化数据
 const isAllSelected = ref(false);
 const selectType = ref("");
-let pages = ref(1);
+// const selectTime = ref<Date | string>("");
+const selectTime = ref<string>("");
+const value = ref<DateValue>();
+const condition = ref("");
+// 声明一个批量删除的数组
+const deleteTodos = ref([]);
+
 let total = ref<number>();
 let page = ref(1);
 let pageSize = ref(10);
-let startTime: string = "";
-let type = ref<number>(0);
-const condition = ref("");
+
+watch(value, (newVal) => {
+  const selectTimeValue = newVal;
+  if (selectTimeValue) {
+    let { year, month, day } = selectTimeValue;
+
+    selectTime.value = `${year}-${month}-${day} 00:00:00`;
+  }
+});
+// 批量删除的方法
+
 // 进行搜索
 const getArticleInAdmin = () => {
-  console.log(condition.value, 11111);
   getArticle(undefined, condition.value).then((res) => {
     postList.value = res.records;
     total.value = res.total;
@@ -66,19 +91,48 @@ const getArticleInAdmin = () => {
   });
 };
 getArticleInAdmin();
+// 改变页数
 const changePage = (newPage: number) => {
   page.value = newPage;
   isAllSelected.value = false;
 };
 
 watch(page, (newPage) => {
-  getArticle(newPage).then((res) => {
+  getArticle(undefined, undefined, newPage).then((res) => {
     postList.value = res.records;
   });
 });
+// 搜索文章的方法
+async function searchArticle() {
+  let selectTimeValue = value.value;
+  if (selectTimeValue) {
+    let { year, month, day } = selectTimeValue;
+    selectTime.value = `${year}-${month}-${day} 00:00:00`;
+  } else {
+    selectTime.value = "";
+  }
+
+  let res = await getArticle(
+    selectType.value,
+    condition.value || undefined,
+    page.value || 1,
+    selectTime.value || "",
+  );
+  console.log(res);
+  postList.value = res.records;
+  total.value = res.total;
+  pageSize.value = res.size;
+}
 function deleteArticle(id: number) {
   console.log(id);
   executeRequest({ url: `/post/delete/${id}`, method: "put" }).then(() => {
+    getArticle(page.value).then((res) => {
+      postList.value = res.records;
+    });
+  });
+}
+function deleteArticles() {
+  executeRequest({ url: "/post/deleteAll", method: "put" }).then(() => {
     getArticle(page.value).then((res) => {
       postList.value = res.records;
     });
@@ -88,11 +142,16 @@ function deleteArticle(id: number) {
 // 实现全选反选多选
 function handleSelectAll() {
   if (postList.value.length === 0) return;
-
   // 全选
   postList.value.forEach((item: any) => {
     item.selected = isAllSelected.value;
   });
+}
+function reset() {
+  value.value = undefined;
+  selectType.value = "";
+  condition.value = "";
+  getArticleInAdmin();
 }
 
 const handleItemSelect = (item: any) => {
@@ -104,20 +163,6 @@ const handleItemSelect = (item: any) => {
   });
 };
 
-import { Calendar } from "@/components/ui/calendar";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { getLocalTimeZone, type DateValue } from "@internationalized/date";
-import { Calendar as CalendarIcon } from "lucide-vue-next";
-
-// const df = new DateFormatter("en-US", {
-//   dateStyle: "long",
-// });
 function df(date: any, format = "yyyy - MM - dd HH:mm") {
   // 获取日期的各个部分，包括分钟
   let year = date.getFullYear();
@@ -134,7 +179,6 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
     .replace("mm", minutes.toString().padStart(2, "0"));
   return formattedDate;
 }
-const value = ref<DateValue>();
 </script>
 
 <template>
@@ -172,6 +216,7 @@ const value = ref<DateValue>();
                     <PopoverTrigger as-child>
                       <Button
                         variant="outline"
+                        v-model="selectTime"
                         :class="
                           cn(
                             'w-[280px] justify-start text-left font-normal',
@@ -191,31 +236,30 @@ const value = ref<DateValue>();
                     <PopoverContent
                       class="w-full p-0 select-time-content bg-white"
                     >
-                      <Calendar v-model="value" initial-focus locale="zh-CN" />
+                      <Calendar
+                        v-model="value"
+                        ref="selectTime"
+                        initial-focus
+                        locale="zh-CN"
+                      />
                     </PopoverContent>
                   </Popover>
                 </div>
                 <div class="header-search">
                   <span>作者/标题:</span>
                   <div class="search_input_box">
-                    <!-- <span class="search-icon"
-                      ><Icon
-                        icon="bitcoin-icons:search-filled"
-                        color="#b9c2d0"
-                        font-size="26px"
-                      />
-                    </span> -->
                     <input
                       placeholder="请输入关键词"
                       class="search_input"
-                      ref="inputRef"
                       v-model="condition"
                       @keydown.enter="getArticleInAdmin"
                     />
                   </div>
                 </div>
-                <button class="search-btn">搜索</button>
-                <div class="reset">
+                <button class="search-btn" @click="searchArticle()">
+                  搜索
+                </button>
+                <div class="reset" @click="reset()">
                   <Icon icon="grommet-icons:power-reset" />
                 </div>
                 <br />
@@ -299,7 +343,7 @@ const value = ref<DateValue>();
                     </TableCell>
 
                     <TableCell class="hidden md:table-cell">
-                      {{ item.postTime }}
+                      {{ formatDatetoDay(item.postTime) }}
                     </TableCell>
 
                     <TableCell class="font-medium table_type">
@@ -380,16 +424,20 @@ td {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
+    padding: 15px 20px;
     justify-content: space-between;
   }
   &_content {
-    min-height: 600px;
+    min-height: 580px;
+    padding-bottom: 5px;
   }
 }
 .content {
+  top: 0;
   height: max-content;
   margin-bottom: 50px;
   background-color: white;
+  padding-top: 5px;
   #sidebar {
     color: var(--secondary-foreground);
     width: 20rem;
@@ -566,6 +614,9 @@ td {
 .reset {
   color: var(--secondary-foreground);
   font-size: 0.9vw;
+  &:hover {
+    cursor: pointer;
+  }
 }
 .top-title {
   text-align: center;

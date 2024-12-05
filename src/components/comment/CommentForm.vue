@@ -311,4 +311,9 @@ const submitReply = async (commentId: number,userId: number) => {
     }
 
 }
+@media screen and (max-width: 768px)  {
+  .emoji{
+           display: none;
+       }
+}
   </style>

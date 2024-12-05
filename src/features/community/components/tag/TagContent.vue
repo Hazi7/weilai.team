@@ -5,18 +5,17 @@ import NewsContent from '@/features/community/components/NewsContent.vue';
 import CommunityTag from '@/features/community/composables/CommunityTag';
 import { ref, watch } from 'vue';
 import { useRoute } from "vue-router";
+
 const route = useRoute();
 
 const { tagPostList, getPostList } = CommunityTag();
 const props = defineProps({
     tag: {
         type: String,
-        default: 0,
-    },
+        default: '',
+    }
 });
-const tag = ref('');
 function getTag() {
-    console.log(props.tag);
     // if ("tag" in route.params) {
     //     tag.value = route.params.tag as string;
     // } else {
@@ -39,12 +38,12 @@ watch(
         <!-- <div>标签</div> -->
         <!-- <tag-word-cloud></tag-word-cloud> -->
         <div class="all-article">
-            <NewsContent :tagPostList="tagPostList" />
+            <NewsContent :tagPostList="tagPostList" :isTag="true" />
         </div>
         <div class="right-bar">
             <tag-suggest style="margin: 0 0 30px 0;"></tag-suggest>
             <!-- <HotTag style="width: 350px;"></HotTag> -->
-            <tag-right-bar style=""></tag-right-bar>
+            <tag-right-bar></tag-right-bar>
         </div>
     </div>
 </template>

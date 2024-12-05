@@ -9,12 +9,32 @@ import {
 } from "@/components/ui/tooltip";
 import { computed } from "vue";
 import CommunityTag from "../../composables/CommunityTag";
+import { useTagStore } from "@/store/tagTypeStore";
 
+const tagStore = useTagStore();
+const tagType = tagStore.tagType.tagType
 const { useTagList, getUseTagList } = CommunityTag()
-const firstUseTagList = ref<{ tag_name: string; tag_usage_count: number }[]>([]);
+
+
+interface UseTagList {
+    tagName: string;
+    count: number
+}
+
+
+const firstUseTagList = ref<UseTagList[]>([]);
 getUseTagList()
     .then(() => {
-        firstUseTagList.value = useTagList.value.slice(0, 10);
+        const allUseTagList = Object.entries(useTagList.value).map(([key, value]) => ({
+            tagName: key,
+            count: value as unknown as number
+        }))
+        if (useTagList.value.length > 10) {
+            firstUseTagList.value = allUseTagList.slice(0, 10);
+        } else {
+            firstUseTagList.value = allUseTagList
+        }
+
     })
 
 </script>
@@ -26,30 +46,31 @@ getUseTagList()
                 <Icon icon="icon-park-outline:tag" class="tagHeadIcon" /> &nbsp;<span>标签榜
                 </span>
             </p>
-            <Icon icon="material-symbols-light:navigate-next"
-                style="font-size: 25px; float: right; font-weight: bold" />
+
         </div>
         <hr />
         <ul>
+            <li v-if="firstUseTagList.length === 0">
+                <div class="no-data">暂无数据</div>
+            </li>
             <li v-for="(item, index) in firstUseTagList" :key="index">
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
-                            <router-link :to="`/community/discussion/label/${item.tag_name}`">
-                                <span class="ranking">{{ index + 1 }}</span><span>{{ item.tag_name }}</span>
+                            <router-link :to="`/community/${tagType}/label/${item.tagName}`">
+                                <span class="ranking">{{ index + 1 }}</span><span>{{ item.tagName }}</span>
                             </router-link>
-                            <a href="#"></a>
                         </TooltipTrigger>
                         <TooltipContent class="bg-white">
-                            <router-link :to="`/community/discussion/label/${item.tag_name}`">
-                                <span>{{ item.tag_name }}</span>
+                            <router-link :to="`/community/${tagType}}/label/${item.tagName}`">
+                                <span>{{ item.tagName }}</span>
                             </router-link>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
                 <div class="bar">
                     <Icon v-if="index < 3" icon="bxs:hot" class="hotIcon"></Icon>
-                    <span class="rank-num">{{ item.tag_usage_count }}</span>
+                    <span class="rank-num">{{ item.count }}</span>
                 </div>
             </li>
         </ul>
@@ -103,6 +124,12 @@ getUseTagList()
 ul {
     padding: 10px 15px;
     width: 100%;
+
+    .no-data {
+        width: 100%;
+        text-align: center;
+        font-size: 17px;
+    }
 
     li {
         font-size: 15px;

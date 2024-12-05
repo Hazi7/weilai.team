@@ -1,9 +1,13 @@
+import { useAlert } from "@/composables/alert";
 import { useRequest } from "@/composables/useRequest";
 import type { ArticleList, Data } from "@/types/Community";
 import { ref } from "vue";
+const { showAlert } = useAlert();
+
 const { executeRequest, error, loading, data } = useRequest();
 let articleList = ref<ArticleList[]>([]);
 let searchResult = ref<ArticleList[]>([]);
+
 let userInfo = ref<Data>({} as Data);
 export function debounce<T>(
   func: (this: T, ...args: any[]) => void,
@@ -28,15 +32,26 @@ export function debounce<T>(
     }, wait);
   };
 }
-export async function getArticle(type = 0, condition = "", page = 1, sort = 0) {
+export async function getArticle(
+  type: number | string = 0,
+  condition = "",
+  page = 1,
+  startTime: Date | string = "",
+  sort = 0,
+) {
   await executeRequest({
-    url: `/post/selectAll?condition=${condition}&page=${page}&sort=${sort}&type=${type}`,
+    url: `/post/selectAll?condition=${condition}&page=${page}&sort=${sort}&startTime=${startTime}&type=${type}`,
     method: "get",
   });
+  console.log("渲染文章");
+
   const res = data.value as Data;
   console.log(res);
+  if (res.code === 401) {
+    showAlert("登录过期，请重新登录", "waring");
+  }
   articleList.value = res.data.records;
-  console.log(articleList.value);
+
   return res.data;
 }
 export function checkType(type: any) {
@@ -49,20 +64,11 @@ export function checkType(type: any) {
   }
   return "";
 }
-export async function SearchArticle(condition = "") {
-  await executeRequest({
-    url: `/post/selectPost?condition=${condition}`,
-    method: "get",
-  });
-  const res = data.value as Data;
 
-  searchResult.value = res.data.records;
-  console.log(searchResult.value);
-}
 export async function getUserList(content = "", pageNumber = 1, pageSize = 10) {
   executeRequest({ url: "/user/searchUser", method: "get" }).then((res) => {
     console.log(res);
   });
 }
 
-export { articleList, searchResult };
+export { articleList, error, loading, searchResult };

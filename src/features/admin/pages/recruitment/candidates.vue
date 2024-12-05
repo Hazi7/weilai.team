@@ -1,9 +1,12 @@
-<script setup lang="ts">
-import { FilterCondition,DataRangePicker,ToggleShow ,DataTable,Pagination ,SearchInput,AutoLongerInput } from '@/components/recruitment';
-import { Icon } from '@iconify/vue';
-import { Button } from '@/components/ui/button';
-import { ref, watch, type ObjectDirective, } from 'vue';
 
+<script setup lang="ts">
+import { FilterCondition,DataRangePicker,ToggleShow ,DataTable,Pagination,AutoLongerInput } from '@/components/recruitment';
+import { Icon, loadIcon } from '@iconify/vue';
+import { Button } from '@/components/ui/button';
+import { ref, watch ,watchEffect} from 'vue';
+import {getAllApplyUser,getAllGrade} from "@/composables/useRecruitmentRequest";
+import type {IAllApplyUserVO,IGetAllApplyUserDTO ,IResponseDataApplyUser,IAllApplyUserDTO } from '@/types/recruitmentType';
+import {interviewStatusMap} from '@/types/recruitmentType';
 const searchValue = ref('');
 
 const handleInput = (value: string) => {
@@ -59,6 +62,12 @@ const candidates_itemsObjArr = ref([
         ]
     }
 ]);
+
+    getAllGrade({pageNo:1,pageSize:100})
+        .then(({data,error,loading})=>{
+            console.log(data,error,loading);
+        })
+
 
 //获得子组件的过滤条件
 const handleFilterCondition = (value: string, title: string) => {
@@ -126,107 +135,24 @@ const toggleItems = ref([
 ]);
 
 
-const data = ref([
-    {
-        id: "1",
-        name: '张三',
-        session: '24级',
-        gender: '男',
-        clazz: '计科233',
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "2",
-        name: '李四',
-        session: '24级',
-        gender: '女',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "3",
-        name: '王五',
-        session: '24级',
-        gender: '男',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "4",
-        name: '赵六',
-        session: '24级',
-        gender: '女',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "5",
-        name: '田七',
-        session: '24级',
-        gender: '男',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "6",
-        name: '孙八',
-        session: '24级',
-        gender: '女',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "7",
-        name: '周九',
-        session: '24级',
-        gender: '男',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    },
-    {
-        id: "8",
-        name: '吴十',
-        session: '24级',
-        gender: '女',
-        clazz: "计科233",
-        studentId: '20230000001',
-        QQ: '123456789',
-        email: '123456789@qq.com',
-        state: '待安排',
-    }
-]);
+const tableData = ref(<IAllApplyUserVO[]>[]);
 //分页
 const pageSize = ref(10);
-const page = ref(1);
-//从分页组件拿到页码信息兵更新
+const pageNo = ref(1);
+const total = ref(0);
+const getApplyUserData=ref<IResponseDataApplyUser|null>(null);
+const status = ref(0);
+//从分页组件拿到页码信息并更新
 const changePage = (newPage: number) => {
-    page.value = newPage;
+    pageNo.value = newPage;
 };
-//监听页数变化时发送请求
-watch(page,(newPage)=>{
-    console.log(newPage);
-})
+//筛选状态
+const handleToggleShowStatus = (newStatus: number) => {
+    status.value = newStatus;
+};
+
+
+
 const headers = ref([
     {
         title: '姓名',
@@ -261,30 +187,90 @@ const headers = ref([
         key: 'state',
     },
 ]);
+//表格操作事件
+
+// 查看简历
+const viewResume = (id: string) => {
+    console.log(id,'查看简历');
+}
+
+// 编辑
+const tableEdit = (id: string) => {
+    console.log(id,'编辑');
+}
+
+// 安排面试
+const arrangeInterview = (id: string) => {
+    console.log(id,'安排面试');
+}
+
+// 淘汰
+const eliminateCandidate = (id: string) => {
+    console.log(id,'淘汰');
+}
+
+// 删除候选人
+const DeleteCandidate = (id: string) => {
+    console.log(id,'删除候选人');
+}
 
 
 const actionItems = ref([
     {
         title: '查看简历',
         icon: 'tabler:eye',
+        onclick: viewResume,
     },
     {
         title: '编辑',
         icon: 'tabler:pencil',
+        onclick: tableEdit,
     },
     {
         title: '安排面试',
         icon: 'tabler:calendar-check',
+        onclick: arrangeInterview,
     },
     {
         title: '淘汰',
         icon: 'tabler:cross',
+        onclick: eliminateCandidate,
     },
     {
         title: '删除候选人',
         icon: 'tabler:trash',
+        onclick: DeleteCandidate,
     },
 ]);
+
+watchEffect(()=>{
+    getAllApplyUser({ pageNo: pageNo.value, pageSize: 10, condition:searchValue.value, status: status.value  })
+  .then(( {data,error,loading } ) => {
+        console.log(data,error,loading);
+        getApplyUserData.value = data.value as IResponseDataApplyUser;
+        total.value = getApplyUserData.value.data.total;
+        console.log(getApplyUserData.value.data);
+        if (getApplyUserData.value && getApplyUserData.value.data && getApplyUserData.value.data.data) {
+            tableData.value = getApplyUserData.value.data.data.map((item: IAllApplyUserDTO) => {
+                return {
+                    id: item.id.toString(),
+                    name: item.name,
+                    session: item.grade,
+                    gender: item.sex,
+                    clazz: item.clazz,
+                    studentId: item.studentId,
+                    QQ: item.qqNumber,
+                    email: item.email,
+                    state:interviewStatusMap[item.status],
+                };
+            });
+        } else {
+            tableData.value = [];
+        }
+
+})
+})
+
 </script>
 
 <template>
@@ -312,20 +298,20 @@ const actionItems = ref([
             </div>
         </div>
         <div class="toggle-handle">
-            <ToggleShow :toggleItems="toggleItems"></ToggleShow>
+            <ToggleShow :toggleItems="toggleItems" @transferToggleShowStatus="handleToggleShowStatus"></ToggleShow>
 
             <div class="handle-btns">
-                <Button type="primary" class="btn-style">安排简历</Button>
+                <Button type="primary" class="btn-style">安排面试</Button>
                 <Button type="primary" class="btn-style">修改状态</Button>
                 <Button type="primary" class="btn-style">结果导出</Button>
             </div>
         </div>
 
         <div class="data-table">
-            <DataTable :items="data" :headers="headers" :actionItems="actionItems"></DataTable>
+            <DataTable :items="tableData" :headers="headers" :actionItems="actionItems"></DataTable>
             <div class="pagination-container">
                 <Pagination
-                :totalItems="data.length"
+                :totalItems="total"
                 :pageSize="pageSize"
                 @update:page="changePage"
                 >
