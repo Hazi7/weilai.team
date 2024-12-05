@@ -2,19 +2,13 @@
 import { reactive } from 'vue';
 import { Icon } from "@iconify/vue";
 import CommunityTag from '../../composables/CommunityTag';
+import { useTagStore } from "@/store/tagTypeStore";
 
-const { likeTagList, getRecommendTag } = CommunityTag();
-const props = defineProps({
-    type: {
-        type: Number,
-        default: null
-    },
-    tagType: {
-        type: String,
-        default: "comprehensive"
-    }
-})
-getRecommendTag(props.type)
+const tagStore = useTagStore();
+const tagType = tagStore.tagType.tagType
+const { likeTagList, getHotTagList } = CommunityTag();
+
+getHotTagList()
 </script>
 
 <template>
@@ -39,7 +33,7 @@ getRecommendTag(props.type)
         </div>
         <div class="hotTagList" v-if="likeTagList">
             <span class="tag" v-for="(tag, index) in likeTagList" :key="index">
-                <router-link :to="`/community/discussion/label/${tag}`">#{{ tag }}</router-link>
+                <router-link :to="`/community/${tagType}/label/${tag}`">#{{ tag }}</router-link>
             </span>
         </div>
     </div>

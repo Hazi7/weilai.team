@@ -27,11 +27,13 @@
 
 <style scoped lang="scss">
 .box {
-    // position: absolute;
+    position: absolute;
+    left: 0;
+    top: 0;
     // background-color: #fff;
     /* 100%窗口宽度和高度 */
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 110px);
     /* 弹性布局 水平、垂直居中 */
     display: flex;
     justify-content: center;
@@ -314,7 +316,7 @@
 @keyframes show4 {
     0% {
         opacity: 1;
-        height: 100vh;
+        height: calc(100vh - 110px);
     }
 
     100% {
@@ -359,5 +361,17 @@
 .box div:nth-child(7) {
     animation: show3 1.2s linear 1 forwards;
     animation-delay: 1.6s;
+}
+
+@media screen and (max-width: 1400px) {
+    .box {
+        transform: scale(0.9);
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .box {
+        transform: scale(0.8);
+    }
 }
 </style>

@@ -40,6 +40,8 @@ export default function () {
             await executeRequest({ url: `/index/login`, method: 'post', requestData: { account, password } })  // 在这里传入请求的 URL 和 method
             const res = data.value as Data;
             const resData = res.data;
+            console.log(error);
+            console.log(data);
             if (res.code == 1000) {
                 if (resData) {
                     setLocalStorageWithExpire('token', resData.token, 1000 * 60 * 60);
@@ -59,6 +61,8 @@ export default function () {
             } else if (res.code == 1003) {
                 showAlert('账户已在别处登录，请重新登录', 'waring')
                 // loginError.value = '用户名不存在'
+            } else if (res.code == 403) {
+                showAlert('请勿重新登录！', 'waring')
             }
         }
     }

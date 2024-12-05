@@ -4,7 +4,10 @@ import VueWordCloud from 'vuewordcloud';
 import CommunityTag from '../../composables/CommunityTag';
 import { get } from 'node_modules/axios/index.d.cts';
 // import { weight } from 'lucide-vue-next';
+import { useTagStore } from "@/store/tagTypeStore";
 
+const tagStore = useTagStore();
+const tagType = tagStore.tagType.tagType
 const { tagCloudList, getTagCloudList } = CommunityTag();
 const words = ref<[string, number][]>([]);
 // 随机生成一个数，范围0-99
@@ -12,7 +15,7 @@ function assignRandomNumbers(strArray: string[]): [string, number][] {
     return strArray.map(str => [str, Math.floor(Math.random() * (30 + 1)) + 20]);  // 随机数范围 0-15
 }
 
-function getColor(weight: number){
+function getColor(weight: number) {
     if (weight > 50) return '#552af4';
     if (weight > 47) return '#412045';
     if (weight > 45) return '#5bc496';
@@ -36,12 +39,11 @@ getTagCloudList().then(res => {
 <template>
     <div class="word-cloud">
         <!-- <vue-word-cloud class="cloud" :words=words /> -->
-        <vue-word-cloud :words="words"
-            :color="([, weight]) => getColor(weight)"
-            font-family="微软雅黑,Microsoft YaHei" spacing="0.2">
+        <vue-word-cloud :words="words" :color="([, weight]) => getColor(weight)" font-family="微软雅黑,Microsoft YaHei"
+            spacing="0.2">
             <template v-slot="{ text }">
                 <div style="cursor: pointer;">
-                    <router-link active-class="active" :to="`/community/discussion/label/${text}`">
+                    <router-link active-class="active" :to="`/community/${tagType}/label/${text}`">
                         {{ text }}</router-link>
                 </div>
             </template>
