@@ -23,22 +23,21 @@
         />
       </div>
 
-      <div class="search_list" v-show="searchValue && isVisible && !isUser">
-        <div class="search_empty" v-if="!filterList.length">未找到搜索结果</div>
-        <div class="search_item" v-for="item in filterList">
-          <a @click="router.push(`/community/comprehensive/${item.title}`)">
-            <span>{{ item.title }}</span>
-          </a>
-        </div>
-      </div>
-      <div class="search_list" v-show="searchValue && isVisible && isUser">
-        <div class="search_empty" v-if="!filterUserList.length">
-          未找到搜索结果
-        </div>
-        <div class="search_item" v-for="item in filterUserList">
-          <a @click="router.push(`/community/comprehensive/user/${item.name}`)">
-            <span>{{ item.name }}</span>
-          </a>
+      <div class="search_list" v-show="searchValue && isVisible">
+        <div class="search_empty" v-if="!searchList.length">未找到搜索结果</div>
+        <div class="search_item" v-for="item in searchList">
+          <!-- <a @click.prevent=""> -->
+          <!-- <span>{{ item.name }}</span> -->
+
+          <MemberInfo :userId="item.id">
+            <DialogTrigger as-child>
+              <!-- <Button variant="outline"> Edit Profile </Button> -->
+              <span class="search-item"
+                ><Icon icon="bi:person-fill" />{{ item.name }}</span
+              >
+            </DialogTrigger>
+          </MemberInfo>
+          <!-- </a> -->
         </div>
       </div>
     </div>
@@ -46,18 +45,21 @@
 </template>
 
 <script setup lang="ts">
+import { DialogTrigger } from "@/components/ui/dialog";
 import { useRequest } from "@/composables/useRequest";
-import type { ArticleList, Data, UserData, UserInfo } from "@/types/Community";
+import type { ArticleList, UserInfo } from "@/types/Community";
+import type { searchData, TeamUserList } from "@/types/Contacts";
 import { debounce } from "@community/composables/search";
 import { Icon } from "@iconify/vue";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
+import MemberInfo from "./MemberInfo.vue";
+// import { searchMember } from "../../composables/useContacts";
 const isVisible = ref(false);
 const router = useRouter();
 const searchValue = ref();
 const { executeRequest, error, loading, data } = useRequest();
-const searchList = ref<ArticleList[]>([]);
+const searchList = ref<TeamUserList[]>([]);
 const filterList = ref<ArticleList[]>([]);
 const searchUserList = ref<UserInfo[]>([]);
 const filterUserList = ref<UserInfo[]>([]);
@@ -65,75 +67,76 @@ const route = useRoute();
 const path = route.path;
 // 接受父组件传来的函数
 const props = defineProps({
-  typeId: {
-    type: Number,
-    default: 0,
-  },
-  isUser: {
-    type: Boolean,
-    default: false,
+  content: {
+    type: String,
+    default: "",
   },
 });
+async function searchMember(content = "") {
+  await executeRequest({
+    url: `/userManager/teamInfo/searchTeamUser?content=${content}`,
+    method: "get",
+  });
+  const res = data.value as searchData;
+  console.log(res);
+
+  searchList.value = res.data;
+}
 
 // 用于记录已经出现的标题
 const titleMap = new Map<string, boolean>();
 let body = document.body as HTMLElement;
 body.addEventListener("click", handleClick);
 // 监视输入框的输入
-const debouncedSearchTitle = debounce((newValue) => searchTitle(newValue), 300);
-const debouncedSearchUser = debounce((newValue) => searchUser(newValue), 300);
+
+const debouncedSearchMember = debounce(
+  (newValue) => searchMember(newValue),
+  300,
+);
 watch(searchValue, (newValue) => {
-  if (!props.isUser) {
-    if (newValue) {
-      debouncedSearchTitle(newValue);
-    } else {
-      filterList.value = [];
-    }
+  if (newValue) {
+    debouncedSearchMember(newValue);
   } else {
-    if (newValue) {
-      debouncedSearchUser(newValue);
-    } else {
-      filterUserList.value = [];
-    }
+    searchUserList.value = [];
   }
 });
 // 获取搜索列表
 
-async function searchUser(content = "", pageNumber = 1, pageSize = 10) {
-  await executeRequest({
-    url: `/user/searchUser?content=${content}&pageNumber=${pageNumber}&pageSize=10 `,
-    method: "get",
-  });
-  let res = data.value as UserData;
-  searchUserList.value = res.data.searchUsers;
+// async function searchUser(content = "", pageNumber = 1, pageSize = 10) {
+//   await executeRequest({
+//     url: `/user/searchUser?content=${content}&pageNumber=${pageNumber}&pageSize=10 `,
+//     method: "get",
+//   });
+//   let res = data.value as UserData;
+//   searchUserList.value = res.data.searchUsers;
 
-  filterUserList.value = res.data.searchUsers;
-  titleMap.clear();
-  filterUserList.value = [];
-  searchUserList.value.forEach((user) => {
-    if (!titleMap.has(user.name)) {
-      filterUserList.value.push(user);
-      titleMap.set(user.name, true);
-    }
-  });
-}
-async function searchTitle(condition = "", type = 0) {
-  await executeRequest({
-    url: `/post/selectAll?condition=${condition}&type=${props.typeId || type}`,
-    method: "get",
-  });
-  let res = data.value as Data;
-  console.log(res);
-  searchList.value = res.data.records;
-  titleMap.clear();
-  filterList.value = [];
-  searchList.value.forEach((title) => {
-    if (!titleMap.has(title.title)) {
-      filterList.value.push(title);
-      titleMap.set(title.title, true);
-    }
-  });
-}
+//   filterUserList.value = res.data.searchUsers;
+//   //   titleMap.clear();
+//   //   filterUserList.value = [];
+//   //   searchUserList.value.forEach((user) => {
+//   //     if (!titleMap.has(user.name)) {
+//   //       filterUserList.value.push(user);
+//   //       titleMap.set(user.name, true);
+//   //     }
+//   //   });
+// }
+// async function searchTitle(condition = "", type = 0) {
+//   await executeRequest({
+//     url: `/post/selectAll?condition=${condition}&type=${props.typeId || type}`,
+//     method: "get",
+//   });
+//   let res = data.value as Data;
+//   console.log(res);
+//   searchList.value = res.data.records;
+//   titleMap.clear();
+//   filterList.value = [];
+//   searchList.value.forEach((title) => {
+//     if (!titleMap.has(title.title)) {
+//       filterList.value.push(title);
+//       titleMap.set(title.title, true);
+//     }
+//   });
+// }
 // 防止input框失去焦点时搜索列表消失
 function handleClick(e: Event) {
   let target = e.target as HTMLElement;
@@ -179,13 +182,18 @@ function skip(e: Event) {
   }
   .search-icon {
     position: absolute;
+
     top: 50%;
     left: 2%;
     transform: translateY(-50%);
   }
+
   &_list {
     border-radius: var(--radius);
     background-color: white;
+    position: relative;
+    z-index: 15;
+    padding: 5px 5px;
     box-shadow:
       0px 2px 5px rgba(0, 0, 0, 0.1),
       inset 0px 0.2px 0.5px rgba(0, 0, 0, 0.24);
@@ -200,7 +208,7 @@ function skip(e: Event) {
     cursor: default;
   }
   &_item {
-    padding: 5px 6px;
+    padding: 5px 10px;
     font-size: 15px;
     color: var(--secondary-foreground);
     a {
@@ -209,6 +217,17 @@ function skip(e: Event) {
     }
     &:hover {
       background-color: #f8f8fa;
+    }
+    span {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+
+      svg {
+        color: #cfdff1;
+        margin-right: 5px;
+        font-size: 15px;
+      }
     }
   }
 }

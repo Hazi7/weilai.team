@@ -40,7 +40,7 @@
   </div>
 
   <!-- <div v-if="loading">加载中</div> -->
-  <div v-if="!loading" class="loading">
+  <div v-if="loading" class="loading">
     <div class="news-item" v-for="item in articleList" :id="`${item.id}` + ''">
       <div class="news-writer">
         <div class="flex items-center space-x-4">
@@ -60,47 +60,70 @@
 
 <script setup lang="ts">
 import { Skeleton } from "@/components/ui/skeleton";
+import type { ArticleList } from "@/types/Community";
 import {
   articleList,
   checkType,
-  error,
   getArticle,
   loading,
 } from "@community/composables/search";
-import { watch } from "vue";
+import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import NewsFooter from "./NewsFooter.vue";
-
+const isTag = ref(false);
 console.log(loading.value);
-console.log(error.value);
 
-const props = defineProps({
-  type: {
-    type: Number,
-    default: 0,
-  },
-  page: {
-    type: Number,
-    default: 1,
-  },
-  condition: {
-    type: String,
-    default: "",
-  },
-});
+const props = defineProps<{
+  type: number;
+  page: number;
+  condition: string;
+  tagPostList: Array<ArticleList>;
+  isTag: boolean;
+}>();
 const route = useRoute();
 
-watch(
-  () => route.params,
-  (newVal) => {
-    console.log((newVal as any).title);
-    let title = (newVal as any).title;
+if (!props.isTag) {
+  // 搜索数据要用的
+  watch(
+    () => route.params,
+    (newVal) => {
+      console.log("params改变了");
 
-    getArticle(props.type, title, props.page);
-  },
-);
-getArticle(props.type, props.condition, props.page);
-checkType(props.type);
+      console.log((newVal as any).title);
+      let title = (newVal as any).title;
+      getArticle(props.type, title, props.page);
+    },
+  );
+
+  // 传递数据
+  checkType(props.type);
+  watch(
+    () => props.type,
+    (newVal) => {
+      console.log("type改变了", newVal);
+      getArticle(newVal, props.condition, props.page);
+    },
+    { deep: true, immediate: true },
+  );
+} else {
+  watch(
+    () => props.tagPostList,
+    (newVal) => {
+      if (newVal) {
+        articleList.value = newVal;
+        isTag.value = true;
+        console.log(newVal);
+      } else {
+        console.log("帖子数据为空");
+        console.log(newVal);
+
+        articleList.value = [];
+      }
+      console.log("tagPostList改变了", newVal);
+    },
+    { deep: true, immediate: true },
+  );
+}
 </script>
 
 <style scoped lang="scss">
@@ -111,6 +134,7 @@ checkType(props.type);
     padding: 15px;
     border-radius: 10px;
     min-height: 100px;
+
     background-color: var(--background);
     margin-bottom: 25px;
     .news-writer {

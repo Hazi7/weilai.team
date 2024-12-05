@@ -1,22 +1,10 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -29,44 +17,15 @@ import {
   SidebarMenuSubItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
-import { useRequest } from "@/composables/useRequest";
-import type { ContactData, TeamInfo, TeamUserList } from "@/types/Contacts";
+import router from "@/router";
+import type { TeamInfo, TeamUserList } from "@/types/Contacts";
 import { Icon } from "@iconify/vue";
-import {
-  Bot,
-  ChevronRight,
-  MoreHorizontal,
-  SquareTerminal,
-} from "lucide-vue-next";
+import { Bot, ChevronRight, SquareTerminal } from "lucide-vue-next";
 import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
 import Search from "../../components/contacts/Search.vue";
 import { getMembers } from "../../composables/useContacts";
-const router = useRouter();
-const { executeRequest, error, loading, data } = useRequest();
-const route = useRoute();
-const member = ref("");
-console.log(route.params);
-const chineseNums = {
-  "1": "一",
-  "2": "二",
-  "3": "三",
-  "4": "四",
-  "5": "五",
-  "6": "六",
-  "7": "七",
-  "8": "八",
-  "9": "九",
-};
+import Member from "./member/[member].vue";
+
 const userCount = ref(0);
 const teamUserList = ref<TeamUserList[]>([]);
 const teamAble = ref<TeamInfo[]>([]);
@@ -126,9 +85,8 @@ const onInputBlur = () => {
 getMembers().then((res) => {
   userCount.value = res.userCount;
   teamAble.value = res.teamAble;
-  // teamUserList.value = res.teamUserList;
+  teamUserList.value = res.teamUserList;
 });
-const thisGrade = ref<string>("");
 
 const items: Item[] = [
   { name: "Item 1", description: "This is item 1" },
@@ -154,22 +112,6 @@ function getMembersOfGroup(str: string) {
     count: parts[1],
     info: `${parts[0]},${parts[1]}`,
   };
-}
-async function getMembersByGroupGrade(
-  grade: string,
-  group: string,
-  pageNumber = 1,
-  pageSize = 10,
-) {
-  thisGrade.value = grade;
-
-  await executeRequest({
-    url: `/userManager/teamInfo/getUserListByGroup?grade=${grade}&group=${group}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
-    method: "get",
-  });
-  const res = data.value as ContactData;
-  console.log(res);
-  teamUserList.value = res.data.teamUserList;
 }
 </script>
 
@@ -273,9 +215,8 @@ async function getMembersByGroupGrade(
                           <SidebarMenuSubButton as-child>
                             <a
                               @click.prevent="
-                                getMembersByGroupGrade(
-                                  item.grade,
-                                  getMembersOfGroup(subItem).group,
+                                router.push(
+                                  `/admin/contacts/member/${item.grade + ',' + getMembersOfGroup(subItem).info} `,
                                 )
                               "
                             >
@@ -295,140 +236,7 @@ async function getMembersByGroupGrade(
         </Sidebar>
       </SidebarProvider>
     </div>
-    <!-- <Member :teamAble="teamAble" :teamUserList="teamUserList"></Member> -->
-    <main class="flex-1 items-start gap-4 md:gap-8 main">
-      <Tabs default-value="all">
-        <div
-          class="flex items-center"
-          style="margin: 5px 0px; height: 5vh; width: 100%"
-        >
-          <TabsList>
-            <div class="top-title">
-              <span>{{ thisGrade }}未来软件工作室</span>
-            </div>
-          </TabsList>
-          <div class="ml-auto flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  class="h-7 gap-1 header-btn"
-                >
-                  <Icon icon="proicons:person-2" />
-                  <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    设置组长
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <!-- <DropdownMenuContent>
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem checked> Active </DropdownMenuItem>
-                <DropdownMenuItem>Draft</DropdownMenuItem>
-                <DropdownMenuItem> Archived </DropdownMenuItem>
-              </DropdownMenuContent> -->
-            </DropdownMenu>
-            <Button size="sm" variant="outline" class="h-7 gap-1 header-btn">
-              <Icon icon="proicons:person-2" />
-              <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                编辑组织
-              </span>
-            </Button>
-          </div>
-        </div>
-        <hr />
-        <TabsContent value="all" class="tc">
-          <Card class="border-none shadow-none card">
-            <CardHeader class="card-header">
-              <div class="header-link">
-                <button>
-                  <RouterLink
-                    to="/admin/recruitment/detail"
-                    class="addMember head"
-                  >
-                    <Icon icon="icon-park-outline:people-plus-one" />
-                    &nbsp;
-                    <span>添加成员</span>
-                  </RouterLink>
-                </button>
-                <button>
-                  <RouterLink
-                    to="/admin/recruitment/detail"
-                    class="addMember head"
-                  >
-                    <span>批量管理</span>
-                  </RouterLink>
-                </button>
-              </div>
-            </CardHeader>
-            <CardContent class="p-0">
-              <Table id="tb">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead class="hidden w-[100px] md:table-cell text-left">
-                      <input type="checkbox" name="" id="" />
-                    </TableHead>
-                    <TableHead class="hidden md:table-cell" id="th"
-                      >姓名</TableHead
-                    >
-                    <TableHead class="hidden md:table-cell">组织</TableHead>
-                    <TableHead class="hidden md:table-cell"> 年级 </TableHead>
-                    <TableHead class="hidden md:table-cell"> 班级 </TableHead>
-                    <TableHead class="hidden md:table-cell"> 学号 </TableHead>
-                    <TableHead class="hidden md:table-cell"> 操作 </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <!-- 属性class=group-leader 为组长样式  -->
-                  <TableRow v-for="(user, index) in teamUserList" :key="index">
-                    <TableCell class="hidden sm:table-cell"
-                      ><input type="checkbox" name="" id=""
-                    /></TableCell>
-                    <TableCell class="font-medium"> {{ user.name }}</TableCell>
-                    <TableCell>
-                      {{
-                        chineseNums[user.group as keyof typeof chineseNums] +
-                          "组" || "未知"
-                      }}
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      {{ user.grade }}级
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      {{ user.clazz }}
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      20231514530
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger as-child>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                            class="h-[3vh]"
-                          >
-                            <MoreHorizontal class="h-4 w-4" />
-                            <span class="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent class="bg-white">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter> </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </main>
+    <Member :teamAble="teamAble" :teamUserList="teamUserList"></Member>
   </div>
 </template>
 
@@ -441,9 +249,6 @@ th {
 tr {
   text-align: center;
   font-size: 0.9vw;
-  &:hover {
-    background-color: var(--hover);
-  }
 }
 #tb {
   padding: 0;

@@ -25,7 +25,7 @@
                 ></a
               ></TooltipTrigger
             >
-            <TooltipContent class="bg-white">
+            <TooltipContent class="bg-white font-[0.9vw]">
               <a href=""
                 ><span
                   >那些为了六便士努力的日子里，也常常有月光落在归路上。</span
@@ -66,7 +66,7 @@ import { Icon } from "@iconify/vue";
   border-radius: var(--radius);
 }
 .rank-top {
-  height: 3rem;
+  height: 6vh;
   padding: 5px 10px;
   display: flex;
   justify-content: space-between;
@@ -77,32 +77,38 @@ import { Icon } from "@iconify/vue";
     align-items: center;
     color: var(--secondary-foreground);
     height: 100%;
-    font-size: 13px;
+    font-size: 0.9vw;
     line-height: 4rem;
+  }
+  svg {
+    font-size: 1rem !important;
   }
 }
 .ranking {
   font-weight: bold;
-  font-size: 17px;
+  font-size: 1vw;
   font-family: sans-serif;
   background-image: linear-gradient(#e9afa6, #eee0d4, #eadccc);
   -webkit-background-clip: text; /* Safari 和 Chrome 需要此属性 */
   color: transparent; /* 确保文字是透明的 */
   margin-right: 5px;
   display: inline-block;
-  width: 30px;
+  width: 1vw;
   text-align: center;
 }
 ul {
   padding: 10px 15px;
   width: 100%;
   li {
-    font-size: 15px;
+    font-size: 0.9vw;
     color: var(--secondary-foreground);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 8px;
+    margin-bottom: 1.4vh;
+    button {
+      width: 100%;
+    }
     &:hover {
       cursor: pointer;
     }
@@ -111,8 +117,55 @@ ul {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 320px;
+      width: 100%;
     }
   }
 }
+// @media screen and (max-width: 1280px) {
+//   .rank-top {
+//     height: 2rem;
+//     padding: 5px 10px;
+
+//     p {
+//       font-size: 0.7rem;
+//       line-height: 4rem;
+//     }
+//     svg {
+//       font-size: 1rem !important;
+//     }
+//   }
+//   .ranking {
+//     font-size: 14px;
+
+//     margin-right: 5px;
+//     display: inline-block;
+//     width: 20px;
+//   }
+//   ul {
+//     padding: 6px 12px;
+//     width: 100%;
+//     li {
+//       font-size: 11px;
+//       color: var(--secondary-foreground);
+//       white-space: nowrap;
+//       overflow: hidden;
+//       text-overflow: ellipsis;
+//       margin-bottom: 4px;
+//       button {
+//         width: 100%;
+//       }
+//       &:hover {
+//         cursor: pointer;
+//       }
+//       a {
+//         display: inline-block;
+//         white-space: nowrap;
+//         overflow: hidden;
+//         text-overflow: ellipsis;
+
+//         width: 100%;
+//       }
+//     }
+//   }
+// }
 </style>

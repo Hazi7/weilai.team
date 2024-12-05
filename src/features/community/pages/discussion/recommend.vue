@@ -22,11 +22,12 @@ import NewsContent from "../../components/NewsContent.vue";
 let isLike = ref(true);
 </script>
 <style scoped lang="scss">
-.content {
-  padding: 0 100px;
-  width: 100%;
-  height: auto;
-}
+@use "@community/styles/community";
+// .content {
+//   padding: 0 100px;
+//   width: 100%;
+//   height: auto;
+// }
 .already {
   color: red !important;
 }

@@ -28,6 +28,7 @@
                 <DropdownMenuItem> Archived </DropdownMenuItem>
               </DropdownMenuContent> -->
           </DropdownMenu>
+          <SelectLeader :grade="grade" :group="group" />
           <Button size="sm" variant="outline" class="h-7 gap-1 header-btn">
             <Icon icon="proicons:person-2" />
             <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -80,6 +81,59 @@
               </TableHeader>
               <TableBody>
                 <!-- 属性class=group-leader 为组长样式  -->
+                <TableRow v-if="userGroupList" class="group-leader">
+                  <TableCell class="hidden sm:table-cell"
+                    ><input type="checkbox" name="" id=""
+                  /></TableCell>
+                  <TableCell class="font-medium">
+                    {{ userGroupList.name }}</TableCell
+                  >
+                  <TableCell>
+                    {{
+                      chineseNums[
+                        userGroupList.group as keyof typeof chineseNums
+                      ] + "组" || "未知"
+                    }}
+                  </TableCell>
+                  <TableCell class="hidden md:table-cell">
+                    {{ userGroupList.grade }}级
+                  </TableCell>
+                  <TableCell class="hidden md:table-cell">
+                    {{ userGroupList.clazz }}
+                  </TableCell>
+                  <TableCell class="hidden md:table-cell">
+                    {{ userGroupList.studyId }}
+                  </TableCell>
+                  <TableCell>
+                    <MemberInfo>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                          <Button
+                            aria-haspopup="true"
+                            size="icon"
+                            variant="ghost"
+                            class="h-[3vh]"
+                          >
+                            <MoreHorizontal class="h-4 w-4" />
+                            <span class="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent class="bg-white">
+                          <!-- <MemberInfo>编辑</MemberInfo> -->
+                          <DialogTrigger
+                            ><DropdownMenuItem
+                              ><Icon
+                                icon="cuida:edit-outline"
+                              />编辑</DropdownMenuItem
+                            ></DialogTrigger
+                          >
+
+                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </MemberInfo>
+                  </TableCell>
+                </TableRow>
                 <TableRow v-for="(user, index) in userList" :key="index">
                   <TableCell class="hidden sm:table-cell"
                     ><input type="checkbox" name="" id=""
@@ -98,10 +152,10 @@
                     {{ user.clazz }}
                   </TableCell>
                   <TableCell class="hidden md:table-cell">
-                    20231514530
+                    {{ user.studyId }}
                   </TableCell>
                   <TableCell>
-                    <DropdownMenu>
+                    <!-- <DropdownMenu>
                       <DropdownMenuTrigger as-child>
                         <Button
                           aria-haspopup="true"
@@ -114,10 +168,38 @@
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent class="bg-white">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>
+                     
+                        </DropdownMenuItem>
+
                         <DropdownMenuItem>Delete</DropdownMenuItem>
                       </DropdownMenuContent>
-                    </DropdownMenu>
+                    </DropdownMenu> -->
+                    <MemberInfo>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                          <Button
+                            aria-haspopup="true"
+                            size="icon"
+                            variant="ghost"
+                            class="h-[3vh]"
+                          >
+                            <MoreHorizontal class="h-4 w-4" />
+                            <span class="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent class="bg-white">
+                          <!-- <MemberInfo>编辑</MemberInfo> -->
+                          <DialogTrigger
+                            ><DropdownMenuItem
+                              >编辑</DropdownMenuItem
+                            ></DialogTrigger
+                          >
+
+                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </MemberInfo>
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -138,6 +220,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -153,6 +236,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
+import MemberInfo from "@/features/admin/components/contacts/MemberInfo.vue";
+import SelectLeader from "@/features/admin/components/contacts/SelectLeader.vue";
 import { getMembersByGroupAndGrade } from "@/features/admin/composables/useContacts";
 import type { TeamUserList } from "@/types/Contacts";
 import { Icon } from "@iconify/vue";
@@ -175,23 +260,34 @@ const chineseNums = {
 };
 
 const userList = ref<TeamUserList[]>();
+const userGroupList = ref<TeamUserList>();
 const grade = ref("");
-grade.value = member.value.split(",")[0];
 const group = ref("");
-group.value = member.value.split(",")[1];
-// getMembersByGroupAndGrade(grade.value, group.value).then((res) => {
-//   userList.value = res.teamUserList;
-//   console.log(userList.value);
-// });
+if (route.params && "member" in route.params) {
+  const memberValue = route.params.member as string;
+  grade.value = member.value.split(",")[0] || route.params.member.split(",")[0];
+  group.value = member.value.split(",")[1] || route.params.member.split(",")[1];
+} else {
+  grade.value = "";
+  group.value = "";
+}
+
+getMembersByGroupAndGrade(grade.value, group.value).then((res) => {
+  console.log(res);
+  userGroupList.value = res.userGroupLeader;
+  userList.value = res.teamUserList;
+  console.log(userList.value);
+});
 watch(route, (newVal) => {
-  console.log("路由变量");
+  console.log("路由变了");
   member.value = (route.params as any).member as string;
   console.log(member.value);
   grade.value = member.value.split(",")[0];
   group.value = member.value.split(",")[1];
-  getMembersByGroupAndGrade(grade.value, group.value).then((res) => {
-    console.log(res);
+  console.log(grade.value, group.value);
 
+  getMembersByGroupAndGrade(grade.value, group.value).then((res) => {
+    userGroupList.value = res.userGroupLeader;
     userList.value = res.teamUserList;
     console.log(userList.value);
   });
@@ -328,17 +424,6 @@ td {
     left: 2%;
     transform: translateY(-50%);
   }
-
-  // .command_box {
-  //   background-color: white;
-
-  //   position: relative;
-  //   overflow: visible;
-  //   width: 250px;
-  //   float: right;
-  //   height: 45px;
-  //   border-radius: 25px;
-  // }
 }
 #sideber {
   &-provider {

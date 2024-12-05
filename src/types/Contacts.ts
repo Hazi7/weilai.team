@@ -20,7 +20,7 @@ export interface TeamInfo {
   userId: number;
   viewCount: number;
 }
-export interface TeamUserList {
+export interface TeamUser {
   clazz: string;
   grade: string;
   group: string;
@@ -28,12 +28,30 @@ export interface TeamUserList {
   name: string;
   studyId: string;
 }
+export interface TeamUserList {
+  clazz: string;
+  grade: string;
+  group: string;
+  id: number;
+  name: string;
+  studyId: string;
+  ladleUserId?: number;
+  ladleName?: string;
+  ladleGrade?: string;
+}
 
 export interface ContactData {
   data: {
     teamUserList: TeamUserList[];
+    userGroupLeader: TeamUserList;
     teamAble: TeamInfo[];
     pageInfo: PageInfo;
     userCount: number;
   };
+}
+export interface searchData {
+  data: Array<TeamUserList>;
+}
+export interface MemeberData {
+  data: TeamUserList;
 }
