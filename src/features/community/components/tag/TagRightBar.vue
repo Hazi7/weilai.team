@@ -9,18 +9,12 @@ import {
 } from "@/components/ui/tooltip";
 import { computed } from "vue";
 import CommunityTag from "../../composables/CommunityTag";
+import { useTagStore } from "@/store/tagTypeStore";
 
+const tagStore = useTagStore();
+const tagType = tagStore.tagType.tagType
 const { useTagList, getUseTagList } = CommunityTag()
-const props = defineProps({
-    type: {
-        type: Number,
-        default: null
-    },
-    tagType: {
-        type: String,
-        default: "comprehensive"
-    }
-});
+
 
 interface UseTagList {
     tagName: string;
@@ -29,7 +23,7 @@ interface UseTagList {
 
 
 const firstUseTagList = ref<UseTagList[]>([]);
-getUseTagList(props.type)
+getUseTagList()
     .then(() => {
         const allUseTagList = Object.entries(useTagList.value).map(([key, value]) => ({
             tagName: key,
@@ -52,8 +46,7 @@ getUseTagList(props.type)
                 <Icon icon="icon-park-outline:tag" class="tagHeadIcon" /> &nbsp;<span>标签榜
                 </span>
             </p>
-            <Icon icon="material-symbols-light:navigate-next"
-                style="font-size: 25px; float: right; font-weight: bold" />
+
         </div>
         <hr />
         <ul>
