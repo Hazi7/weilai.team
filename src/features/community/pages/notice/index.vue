@@ -65,7 +65,7 @@ import {
 
 
 onMounted(() => {
-      // connect()
+      connect()
       subscribe('message', (notice: SSENoticeData) => {
         notices.value.push(notice);
         console.log(notice);
