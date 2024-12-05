@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig, type AxiosResponse } from 'axios';
 import { useLocalStorageWithExpire } from "../composables/useLocalStorage";
+import router from '@/router';
 const {setLocalStorageWithExpire,getLocalStorageWithExpire}=useLocalStorageWithExpire()
 const apiClient: AxiosInstance = axios.create({
   baseURL:"http://49.232.183.67:8087",
@@ -12,12 +13,9 @@ const apiClient: AxiosInstance = axios.create({
 // 添加请求拦截器
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // 添加 token
     const token = getLocalStorageWithExpire('token');
-    // const token = localStorage.getItem('token');
     if (token && config.headers) {
       setLocalStorageWithExpire('token',token,1000*60*60)
-      // localStorage.setItem('token',token)
       config.headers.token = token;
     }
     return config;
@@ -30,6 +28,10 @@ apiClient.interceptors.request.use(
 // 添加响应拦截器
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
+    if (response.data.code === 401) {
+      console.log('token过期或未登录');
+      router.push('/login')
+    }
     return response.data;
   },
   (error) => {

@@ -43,7 +43,7 @@
                         <DropdownMenuContent class="p-0  bg-white">
                             <DropdownMenuLabel>操作</DropdownMenuLabel>
                             <DropdownMenuItem>
-                                <Button class="operationsBtn deletePost">删除文章</Button>
+                                <Button class="operationsBtn deletePost" @click="deletePost(item.id)">删除文章</Button>
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 <Button class="operationsBtn updatePost">修改文章</Button>
@@ -83,6 +83,7 @@ const { data, error, loading, executeRequest } = useRequest()
 import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire()
 import { useDateFormatter } from '@/composables/useDateFormatter'
+import { get } from '@vueuse/core';
 const { formatDateToYYYYMMDD } = useDateFormatter()
 
 // 获取userId
@@ -119,6 +120,8 @@ async function getPosts() {
         // 将数据赋值给userPostAllInfo及userPost、pages
         Object.assign(userPostAllInfo.value, postData.userPostAllInfo);
         userPost.value = postData.userPost
+        console.log('我的文章',userPost.value);
+        
         pages = postData.pageInfo.pages
         total = postData.pageInfo.total
     }
@@ -126,6 +129,12 @@ async function getPosts() {
 //打开页面立刻调用一次获取文章
 getPosts()
 
+async function deletePost(id:number) {
+    
+    await executeRequest({ url: `/post/delete/${id}`,method:'put'})
+    console.log(data.value);
+    getPosts()
+}
 </script>
 <style lang="scss" scoped>
 .operationsBtn {
@@ -148,7 +157,7 @@ getPosts()
     background-color: white;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 5px 5px 5px #ccc;
+    // box-shadow: 5px 5px 5px #ccc;
 
     .postsData {
         display: flex;
@@ -171,7 +180,7 @@ getPosts()
                 border-radius: 10px;
                 background-color: white;
                 padding: 10px;
-                box-shadow: 5px 5px 5px #d9d9d9;
+                // box-shadow: 5px 5px 5px #d9d9d9;
                 border: 1px solid #d9d9d9;
 
                 .postInfo {
@@ -222,7 +231,7 @@ getPosts()
 
 @media (max-width: 768px) {
     .myPosts .postsListBox ul li .postInfo .postFooter {
-        font-size: 10px;
+        font-size: 9px;
     }
 }
 </style>

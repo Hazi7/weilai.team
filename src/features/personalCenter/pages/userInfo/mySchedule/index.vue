@@ -7,6 +7,8 @@
                 </Button>
             </DialogTrigger>
             <DialogContent class="sm:max-w-[425px] bg-white max-h-[500px] overflow-y-auto">
+                <DialogClose id="dialogClose"></DialogClose>
+
                 <DialogHeader>
                     <DialogTitle>添加课程</DialogTitle>
                     <DialogDescription>
@@ -502,6 +504,12 @@ async function submitAddForm() {
         coursePlace: coursePlace.value
     }
     await executeRequest({ url: '/user/addUserCourse', method: 'post', requestData: dataToSend })
+    weeks.value = '';
+    weekTime.value = '';
+    courseName.value = '';
+    courseTime.value = '';
+    coursePlace.value = '';
+    document.getElementById('dialogClose').click()
     if (data.value.code === 200) {
         console.log(data.value);
     }
@@ -515,12 +523,19 @@ let changeWeeks = ref('')
 let changeCoursePlace = ref('')
 let changeWeekTime = ref('')
 async function submitChangeForm(oneCourseId) {
-    console.log('修改表单提交',)
-    changeCourseName.value = document.getElementById('courseName').value
-    changeCourseTime.value = document.getElementById('courseTime').value
-    changeWeeks.value = document.getElementById('weeks').value
-    changeCoursePlace.value = document.getElementById('coursePlace').value
-    changeWeekTime.value = document.getElementById('weekTime').value
+    //获取输入框
+    const courseNameInput = document.getElementById('courseName')
+    const courseTimeInput = document.getElementById('courseTime')
+    const weeksInput = document.getElementById('weeks')
+    const coursePlaceInput = document.getElementById('coursePlace')
+    const weekTimeInput = document.getElementById('weekTime')
+    //获取输入框的值
+    changeCourseName.value = courseNameInput.value
+    changeCourseTime.value = courseTimeInput.value
+    changeWeeks.value = weeksInput.value
+    changeCoursePlace.value = coursePlaceInput.value
+    changeWeekTime.value = weekTimeInput.value
+    // 封装成对象
     const dataToSend = {
         courseName: changeCourseName.value,
         courseTime: changeCourseTime.value,
@@ -530,13 +545,11 @@ async function submitChangeForm(oneCourseId) {
         oneCourseId: oneCourseId
     }
     console.log(dataToSend);
+    // 发送请求
     await executeRequest({ url: '/user/updateUserCourse', method: 'put', requestData: dataToSend })
-    // if (data.value.code === 200) {
-    //     console.log(data.value);
-    // }
-    // console.log(error.value);
+
     console.log(data.value);
-    
+
     getSchedule()
 }
 </script>
@@ -561,7 +574,7 @@ async function submitChangeForm(oneCourseId) {
     background-color: white;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 5px 5px 5px #ccc;
+    // box-shadow: 5px 5px 5px #ccc;
 
 }
 </style>
