@@ -1,5 +1,17 @@
 <script setup lang="ts">
 import TheTopNav from "@/components/layouts/AppThirdNav.vue";
+import { useTagStore } from '@/store/tagTypeStore';
+import { ref } from 'vue';
+const type = ref(4)
+interface TagData {
+    type: number;
+    tagType: string;
+}
+// const tagType = ref('blog')
+const typeData = ref<TagData>({ type: 4, tagType: 'brainstorm' })
+
+const addTagType = useTagStore()
+addTagType.addTag(typeData.value)
 </script>
 
 <template>
