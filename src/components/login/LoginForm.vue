@@ -86,7 +86,7 @@ const submitForm = debounce(() => {
 
     .inputTitle {
         font-size: 16px;
-        margin: 20px 0 8px 0;
+        margin: 15px 0 8px 0;
     }
 
     .forgotPass {
@@ -96,6 +96,8 @@ const submitForm = debounce(() => {
 
     .loginButton {
         margin-bottom: 40px;
+        height: 40px;
+        font-size: 16px;
         border: none;
         box-shadow: none;
         border-radius: 20px;
@@ -143,22 +145,29 @@ const submitForm = debounce(() => {
 
         .inputTitle {
             font-size: 15px;
-            margin: 5px 0 6px 0;
+            margin: 10px 0 6px 0;
         }
 
         .formInput {
+            height: 36px;
             font-size: 12px;
+        }
+
+        .loginButton {
+            height: 35px;
+            font-size: 14px;
+            margin-bottom: 30px;
         }
     }
 }
 
-@media screen and (max-width: 1140px) {
+@media screen and (max-width: 1400px) {
     .loginOut {
-        width: 320px;
+        width: 350px;
     }
 
     .loginContent {
-        margin-top: 70px;
+        margin-top: 80px;
 
         .loginTitle {
             text-align: center;
@@ -168,14 +177,99 @@ const submitForm = debounce(() => {
 
         .inputTitle {
             font-size: 15px;
-            margin: 5px 0 6px 0;
+            margin: 10px 0 6px 0;
         }
 
         .formInput {
+            height: 36px;
             font-size: 12px;
+        }
+
+        .loginButton {
+            height: 35px;
+            font-size: 14px;
+            margin-bottom: 30px;
         }
     }
 }
 
-@media screen and (min-width: 768px) {}
+@media screen and (max-width: 1200px) {
+    .loginOut {
+        width: 300px;
+    }
+
+    .loginContent {
+        margin-top: 70px;
+
+        .loginTitle {
+            text-align: center;
+            font-size: 28px;
+            margin: 8px 0 5px 0;
+        }
+
+        .inputTitle {
+            font-size: 13px;
+            margin: 2px 0 5px 0;
+        }
+
+        .formInput {
+            height: 32px;
+            font-size: 10px;
+        }
+
+        .loginButton {
+            height: 30px;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+    }
+}
+
+@media screen and (min-width: 1024px) {
+}
+
+@media screen and (max-width: 500px) {
+    .loginOut {
+        width: 100%;
+        margin: 0;
+    }
+
+    .loginContent {
+        background: none;
+        margin-top: 90px;
+        border: none;
+        box-shadow: none;
+
+        .loginTitle {
+            // display: none;
+            width: 70px;
+            text-align: start;
+            font-size: 32px;
+            margin: 8px 0 5px 0;
+            padding: 2px 3px;
+            border-bottom: #5abaf9 3px solid;
+        }
+
+        .inputTitle {
+            display: none;
+            font-size: 18px;
+            margin: 2px 0 5px 0;
+        }
+
+        .formInput {
+            height: 60px;
+            font-size: 20px;
+            border-radius: 40px;
+            padding: 0 20px;
+            margin: 10px 0;
+        }
+
+        .loginButton {
+            height: 50px;
+            font-size: 24px;
+            border-radius: 25px;
+            margin-bottom: 15px;
+        }
+    }
+}
 </style>
