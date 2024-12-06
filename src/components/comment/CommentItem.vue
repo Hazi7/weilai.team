@@ -4,7 +4,7 @@ import { Icon } from '@iconify/vue';
 import { useRequest } from '@/composables/useRequest';
 import CommentForm from './CommentForm.vue';
 import { createUserInfo, getUserInfo } from './index';
-import sonComment from './sonComment.vue';
+import sonComment from './SonComment.vue';
 
 const props = defineProps({
   comment: {

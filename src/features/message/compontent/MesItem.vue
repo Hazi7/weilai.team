@@ -8,7 +8,7 @@ import type { SSEMessageData } from '../composables/types';
 const props = defineProps<{
   message: SSEMessageData;
 }>();
-const emit = defineEmits(['delete-success']);
+const emit = defineEmits(['like','comment','system']);
 const formattedTime = computed(() => {
   const commentTime = new Date(props.message.createdAt);
   const year = commentTime.getFullYear();
@@ -19,14 +19,20 @@ const formattedTime = computed(() => {
   return `${year}.${month}.${day} ${hours}:${minutes}`;
 });
 //删除单个信息
-const deleteMessage = async (messageId: number) =>  {
+const deleteMessage = async (messageId: number,messageType: number) =>  {
   await executeRequest({
       url: `/message/deleteOneMessage/${messageId}`,
       method: 'delete',
     });
     if(data.value?.code === 200){
       alert('删除成功');
-      emit('delete-success');
+      if (messageType === 1 || messageType === 2) {
+      emit('like');
+    } else if (messageType === 3) {
+      emit('comment');
+    } else if (messageType === 4) {
+      emit('system');
+    }
     } else {
       alert('删除失败');
     }
@@ -50,7 +56,7 @@ const deleteMessage = async (messageId: number) =>  {
             <div v-if="props.message.content!=null" class="content" >{{props.message.content}}</div>
             <!-- <div class="imgCon"><img src="../../../assets/img/headImg.jpg"/></div> -->
             <div class="postLink"># {{ props.message.postTitle }}</div>
-            <Icon icon="fluent:delete-24-regular" class="deleteIcon" @click="deleteMessage(props.message.messageId)"/>
+            <Icon icon="fluent:delete-24-regular" class="deleteIcon" @click="deleteMessage(props.message.messageId, props.message.messageType)"/>
           </div>
         </div>
 </template>

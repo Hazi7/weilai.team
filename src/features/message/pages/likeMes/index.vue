@@ -3,11 +3,13 @@
       <div class="mesCon">
         <div class="titleOptions">
         <Icon icon="ant-design:clear-outlined" class="clearIcon"/>
-        <div class="clearAll">清空所有</div>
+        <div class="clearAll">清空所有({{ totalCount }})</div>
        </div>
       <div class="messageCon">
         <div v-for="message in messages" :key="message.messageId" class="mess">
-          <MesItem :message="message" @delete-success="messageList" />
+          <MesItem :message="message" 
+          @like="messageList"
+          />
         </div>
       </div>
     </div>
@@ -19,22 +21,28 @@
 import Rightbar from '@/components/community/Rightbar.vue';
 import { Icon } from "@iconify/vue";
 import MesItem from '../../compontent/MesItem.vue';
-import useSSE from '../../composables/sse';
+import useSSE, { type SSEMessageData } from '../../composables/sse';
 import { onMounted,ref} from 'vue';
 import { useRequest } from '@/composables/useRequest';
+import { useMessageStore } from '@/store/messageStore';
 const { data, loading, error, executeRequest } = useRequest();
 const { connect, disconnect, subscribe, unsubscribe, isConnected } = useSSE();
+const messageStore = useMessageStore();
+
 const messages = ref<SSEMessageData[]>([]); 
 const messageType = 1
 const pageSize = 10
 const pageNumber=1
-const hasNewMessage=ref(false)
+const totalCount = ref(0)
+
 onMounted(() => {
-      // connect()
+      connect()
       subscribe('message', (message: SSEMessageData) => {
-        messages.value.push(message);
-        hasNewMessage.value = true; 
-        console.log(message);
+        if(message.messageType==messageType){
+          messages.value.unshift(message);
+          console.log(message);
+          messageStore.setHasNewMessage(true);
+        }
      });
       messageList()
 });
@@ -44,6 +52,7 @@ const messageList=async () => {
   messages.value = [];
   await executeRequest({url:`/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,method:'get'});
   if(data.value?.code==200){
+    totalCount.value=data.value?.data.PageInfo.totalCount
     const allMessages = data.value?.data.AllMessages || [];
     messages.value = allMessages; 
     hasNewMessage.value = false;

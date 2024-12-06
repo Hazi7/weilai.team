@@ -3,11 +3,14 @@
     <div class="commentCon">
       <div class="titleOptions">
         <Icon icon="ant-design:clear-outlined" class="clearIcon"/>
-        <div class="clearAll">清空所有</div>
+        <div class="clearAll">清空所有({{ totalCount }})</div>
       </div>
       <div class="messageCon">
         <div v-for="message in messages" :key="message.messageId" class="mess">
-          <MesItem :message="message" />
+          <MesItem
+           :message="message"
+           @comment="messageList"
+           />
         </div>
       </div>
     </div>
@@ -20,21 +23,25 @@
 import Rightbar from '@/components/community/Rightbar.vue';
 import { Icon } from "@iconify/vue";
 import MesItem from '../../compontent/MesItem.vue';
-import useSSE from '../../composables/sse';
+import useSSE, { type SSEMessageData } from '../../composables/sse';
 import { onMounted,ref} from 'vue';
 import { useRequest } from '@/composables/useRequest';
 const { data, loading, error, executeRequest } = useRequest();
 const { connect, disconnect, subscribe, unsubscribe, isConnected } = useSSE();
-import type { SSEMessageData } from '../../composables/types';
+import { useMessageStore } from '@/store/messageStore';
+const messageStore = useMessageStore();
 const messages = ref<SSEMessageData[]>([]); 
 const messageType = 3
 const pageSize = 10
 const pageNumber=1
+const totalCount = ref(0)
 onMounted(() => {
-      connect()
       subscribe('message', (message: SSEMessageData) => {
-        messages.value.push(message);
-        console.log(message);
+        if(message.messageType==messageType){
+          messages.value.unshift(message);
+          console.log(message);
+          messageStore.setHasNewMessage(true); 
+        }
     });
       messageList()
 });
@@ -44,6 +51,7 @@ const messageList=async () => {
   messages.value = [];
   await executeRequest({url:`/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,method:'get'});
   if(data.value?.code==200){
+    totalCount.value=data.value?.data.PageInfo.totalCount;
     const allMessages = data.value?.data.AllMessages || [];
     messages.value = allMessages; 
     console.log("获取的全部消息数据：", allMessages);

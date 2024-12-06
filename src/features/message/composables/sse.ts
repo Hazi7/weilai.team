@@ -1,7 +1,7 @@
 import { ref, onBeforeUnmount, watchEffect } from 'vue';
 
 // 定义SSE事件类型
-export type SSEEventType = 'message' | 'open' | 'error';
+export type SSEEventType = 'message' | 'open' | 'error' | 'notice';
 
 // 定义消息数据类型
 export type SSEMessageData = {
@@ -53,7 +53,13 @@ export default function useSSE() {
     let eventSource: EventSource | null = null;
 
     // 观察者对象，用于存储不同事件类型的回调函数数组
-    const observers: Record<SSEEventType, Function[]> = { message: [], open: [], error: [] };
+    const observers: Record<SSEEventType, Function[]> = {
+        message: [], // 消息订阅者
+        notice: [],  // 通知订阅者
+        open: [],
+        error: []
+    };
+
     const connect = () => {
         if (!navigator.onLine) {
             console.error('当前设备未联网，请检查网络连接后重试');
@@ -92,6 +98,7 @@ export default function useSSE() {
         if (!observers[eventType]) observers[eventType] = [];
         observers[eventType].push(callback);
     };
+
     // 取消订阅事件
     const unsubscribe = (eventType: SSEEventType, callback: Function) => {
         const eventObservers = observers[eventType];
@@ -100,6 +107,7 @@ export default function useSSE() {
             if (index > -1) eventObservers.splice(index, 1);
         }
     };
+
     // 处理接收到的消息
     const handleMessage = (event: MessageEvent) => {
         console.log('收到SSE消息:', event.data);
@@ -111,18 +119,19 @@ export default function useSSE() {
                 return;
             }
             if (data.hasOwnProperty('noticeId')) {
-                // 公告
-                const newData: SSENoticeData = data;
-                notify('message', newData); // 通知所有订阅者
-            } else {
-                // 消息
-                const oldData: SSEMessageData = data;
-                notify('message', oldData); // 通知所有订阅者
+                // 如果包含 noticeId, 是公告
+                const newNotice: SSENoticeData = data;
+                notify('notice', newNotice); // 通知所有 notice 订阅者
+            } else if (data.hasOwnProperty('messageId')) {
+                // 如果包含 messageId, 是消息
+                const newMessage: SSEMessageData = data;
+                notify('message', newMessage); // 通知所有 message 订阅者
             }
         } catch (error) {
             console.error('解析SSE消息数据失败', error);
         }
     };
+
     // 通知所有订阅者
     const notify = (eventType: SSEEventType, data?: SSEMessageData | SSENoticeData | Event) => {
         const eventObservers = observers[eventType];
@@ -130,6 +139,8 @@ export default function useSSE() {
             eventObservers.forEach((observer) => {
                 if (eventType === 'message' && data && !(data instanceof Event)) {
                     observer(data); // 传递消息数据
+                } else if (eventType === 'notice' && data && !(data instanceof Event)) {
+                    observer(data); // 传递公告数据
                 } else {
                     observer(data || new Event(eventType)); // 通知其他事件
                 }

@@ -125,7 +125,7 @@ const formattedTime = computed(() => {
 const deleteNotice = async(noticeId: string) => {
   await executeRequest({
       url: `/notice/deleteNotice/${noticeId}`,
-      method: 'put',
+      method: 'delete',
     });
     if(data.value?.code === 200){
       props.noticeList()

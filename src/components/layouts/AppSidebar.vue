@@ -21,11 +21,13 @@ import {
   CreditCard,
   LogOut,
 } from "lucide-vue-next";
-import { watch } from "vue";
+import { watch,computed } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
+import { useMessageStore } from '@/store/messageStore';
+const messageStore = useMessageStore();
 const route = useRoute();
 const router = useRouter();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
@@ -94,6 +96,7 @@ interface SubItemInterface {
   icon: string;
   path: string;
 }
+
 </script>
 
 <template>
@@ -180,6 +183,7 @@ interface SubItemInterface {
                       >
                         <Icon icon="mage:box-3d-notification" />&nbsp;
                         <span>消息</span>
+                        <span  v-if="messageStore.hasNewMessage" class="dot" ></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -290,6 +294,16 @@ interface SubItemInterface {
 .main-menu {
   display: none;
 }
+.dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #f74c30;
+  position: absolute;  
+  right: 20px;       
+  top: 50%;         
+  transform: translateY(-50%); 
+}
 
 .avatar {
   width: 40px;
@@ -353,6 +367,7 @@ interface SubItemInterface {
     box-sizing: border-box;
     padding: 0.65rem 1rem;
     border-radius: 2rem;
+    position: relative; 
   }
   &-logo {
     height: 80px;
