@@ -8,6 +8,7 @@ import ForgotPassword from './ForgotPassword.vue'
 import UseLogin from '../../composables/UseLogin'
 import { debounce } from "@community/composables/search";
 import { ref } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 const account = ref<string>('')
 const password = ref<string>('')
@@ -15,14 +16,29 @@ const { loading, getLogin } = UseLogin()
 
 // 防抖处理的提交方法
 const submitForm = debounce(() => {
-    console.log('登录提交');
     getLogin(account.value, password.value)
     // 在这里处理实际的表单提交逻辑，例如发送请求
 }, 1000); // 设置防抖时间为 1000ms
+
+// 控制动画显示的状态
+const isVisible = ref(false)
+// 监听点击事件，触发动画
+const handleClick = (event: MouseEvent) => {
+    console.log('页面被点击了');
+    if (!isVisible.value) {
+        isVisible.value = true
+    }
+};
+onMounted(() => {
+    document.addEventListener('click', handleClick);
+});
+onUnmounted(() => {
+    document.removeEventListener('click', handleClick);
+});
 </script>
 
 <template>
-    <div class="loginOut">
+    <div class="loginOut" :class="{ 'animate-fadeIn': isVisible }">
         <Card class="loginContent mx-auto max-w-sm">
             <CardHeader>
                 <CardTitle class="loginTitle text-2xl">
@@ -74,7 +90,6 @@ const submitForm = debounce(() => {
     opacity: 0;
     height: 0;
     overflow: hidden;
-    // transform: scale(0);
     animation: fadeIn 2s linear forwards;
     animation-delay: 2.4s;
 
@@ -104,6 +119,11 @@ const submitForm = debounce(() => {
         background-color: #e1f2fd;
     }
 }
+
+// .loginContent.animate-fadeIn {
+//     opacity: 1;
+//     height: 100%;
+// }
 
 @keyframes fadeIn {
     0% {
@@ -225,8 +245,7 @@ const submitForm = debounce(() => {
     }
 }
 
-@media screen and (min-width: 1024px) {
-}
+@media screen and (min-width: 1024px) {}
 
 @media screen and (max-width: 500px) {
     .loginOut {

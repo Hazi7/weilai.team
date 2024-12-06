@@ -25,14 +25,14 @@ interface UseTagList {
 const firstUseTagList = ref<UseTagList[]>([]);
 getUseTagList()
     .then(() => {
-        const allUseTagList = Object.entries(useTagList.value).map(([key, value]) => ({
-            tagName: key,
-            count: value as unknown as number
-        }))
+        // const allUseTagList = Object.entries(useTagList.value).map(([key, value]) => ({
+        //     tagName: key,
+        //     count: value as unknown as number
+        // }))
         if (useTagList.value.length > 10) {
-            firstUseTagList.value = allUseTagList.slice(0, 10);
+            firstUseTagList.value = useTagList.value.slice(0, 10);
         } else {
-            firstUseTagList.value = allUseTagList
+            firstUseTagList.value = useTagList.value
         }
 
     })
