@@ -1,6 +1,6 @@
 <template>
   <div id="news">
-    <div class="news-item" v-for="item in articleList" :id="`${item.id}` + ''">
+    <div class="news-item" v-for="item in articleList">
       <div class="news-writer">
         <div class="avatar">
           <img v-if="item.headPortrait" :src="`${item.headPortrait}`" alt="" />
@@ -15,7 +15,11 @@
           </div>
         </div>
       </div>
-      <a class="news-content">
+      <RouterLink
+        :to="{ name: '/community/post/[id]', params: { id: item.id } }"
+        target="_blank"
+        class="news-content"
+      >
         <div class="news-title">{{ item.title }}</div>
         <div class="news-details">
           <p>
@@ -30,7 +34,7 @@
             </li>
           </ul>
         </div>
-      </a>
+      </RouterLink>
       <NewsFooter
         :viewCount="item.viewCount"
         :likeCount="item.likeCount"
