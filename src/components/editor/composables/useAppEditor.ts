@@ -19,8 +19,12 @@ import Paragraph from "@tiptap/extension-paragraph";
 import CodeBlock from "@tiptap/extension-code-block";
 import Heading from "@tiptap/extension-heading";
 
-export default function useAppEditor(editable: boolean = true) {
+export default function useAppEditor(
+  context: string = "{}",
+  editable: boolean = true,
+) {
   const editor = useEditor({
+    content: JSON.parse(context),
     extensions: [
       Document,
       Placeholder.configure({

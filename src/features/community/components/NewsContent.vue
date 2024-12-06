@@ -1,6 +1,6 @@
 <template>
   <div id="news">
-    <div class="news-item" v-for="item in articleList" :id="`${item.id}` + ''">
+    <div class="news-item" v-for="item in articleList">
       <div class="news-writer">
         <div class="avatar">
           <img v-if="item.headPortrait" :src="`${item.headPortrait}`" alt="" />
@@ -15,7 +15,11 @@
           </div>
         </div>
       </div>
-      <a class="news-content">
+      <RouterLink
+        :to="{ name: '/community/post/[id]', params: { id: item.id } }"
+        target="_blank"
+        class="news-content"
+      >
         <div class="news-title">{{ item.title }}</div>
         <div class="news-details">
           <p>
@@ -30,60 +34,13 @@
             </li>
           </ul>
         </div>
-      </a>
+      </RouterLink>
       <NewsFooter
         :viewCount="item.viewCount"
         :likeCount="item.likeCount"
         :commentCount="item.commentCount"
       />
     </div>
-
-    <!-- <div class="news-item">
-      <div class="news-writer">
-        <div class="avatar">
-          <img src="@/assets/img/headImg.jpg" alt="" />
-        </div>
-        <div class="writer-info">
-          <div class="name">爆米奇</div>
-          <div class="time">发布于 <span>2022-05-05</span></div>
-        </div>
-      </div>
-      <div class="news-content">
-        <div class="news-title">约定式路由</div>
-        <div class="news-details">
-          <p>
-            约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-            约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-            约定式路由，也叫约定式导航，是一种路由模式，它将路由规则定义在代码中，而不是在配置文件中。
-          </p>
-        </div>
-        <div class="news-label">
-          <div class="type">博客</div>
-          <ul class="labels">
-            <li class="label-item">#js</li>
-            <li class="label-item">#vue</li>
-            <li class="label-item">#nue.js</li>
-          </ul>
-        </div>
-      </div>
-      <div class="news-footer">
-        <div class="news-view">
-          <Icon icon="iconamoon:eye-light" class="news-footer-icon" />
-          <span class="">1.6万+</span>
-        </div>
-        <div class="news-like">
-          <Icon icon="iconamoon:like-light" class="news-footer-icon" />11
-        </div>
-        <div class="news-comment">
-          <Icon
-            icon="fontisto:comment"
-            class="news-footer-icon"
-            style="font-size: 13px"
-          />
-          <span>11</span>
-        </div>
-      </div>
-    </div> -->
   </div>
 
   <div v-if="loading">加载中</div>
@@ -98,10 +55,8 @@ import {
   loading,
 } from "@community/composables/search";
 import { watch } from "vue";
-import { useRoute } from "vue-router";
+import { RouterLink, useRoute } from "vue-router";
 import NewsFooter from "./NewsFooter.vue";
-
-console.log(loading.value);
 
 const props = defineProps({
   type: {
