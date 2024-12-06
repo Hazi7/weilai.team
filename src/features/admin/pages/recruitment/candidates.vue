@@ -1,13 +1,27 @@
-
 <script setup lang="ts">
-import { FilterCondition,DataRangePicker,ToggleShow ,DataTable,Pagination,AutoLongerInput } from '@/components/recruitment';
-import { Icon, loadIcon } from '@iconify/vue';
-import { Button } from '@/components/ui/button';
-import { ref, watch ,watchEffect} from 'vue';
-import {getAllApplyUser,getAllGrade} from "@/composables/useRecruitmentRequest";
-import type {IAllApplyUserVO,IGetAllApplyUserDTO ,IResponseDataApplyUser,IAllApplyUserDTO } from '@/types/recruitmentType';
-import {interviewStatusMap} from '@/types/recruitmentType';
-const searchValue = ref('');
+import {
+  FilterCondition,
+  DataRangePicker,
+  ToggleShow,
+  DataTable,
+  Pagination,
+  AutoLongerInput,
+} from "@/components/recruitment";
+import { Icon, loadIcon } from "@iconify/vue";
+import { Button } from "@/components/ui/button";
+import { ref, watch, watchEffect } from "vue";
+import {
+  getAllApplyUser,
+  getAllGrade,
+} from "@/composables/useRecruitmentRequest";
+import type {
+  IAllApplyUserVO,
+  IGetAllApplyUserDTO,
+  IResponseDataApplyUser,
+  IAllApplyUserDTO,
+} from "@/types/recruitmentType";
+import { interviewStatusMap } from "@/types/recruitmentType";
+const searchValue = ref("");
 
 const handleInput = (value: string) => {
   searchValue.value = value;
@@ -63,11 +77,9 @@ const candidates_itemsObjArr = ref([
   },
 ]);
 
-    getAllGrade({pageNo:1,pageSize:100})
-        .then(({data,error,loading})=>{
-            console.log(data,error,loading);
-        })
-
+getAllGrade({ pageNo: 1, pageSize: 100 }).then(({ data, error, loading }) => {
+  console.log(data, error, loading);
+});
 
 //获得子组件的过滤条件
 const handleFilterCondition = (value: string, title: string) => {
@@ -132,24 +144,21 @@ const toggleItems = ref([
   },
 ]);
 
-
 const tableData = ref(<IAllApplyUserVO[]>[]);
 //分页
 const pageSize = ref(10);
 const pageNo = ref(1);
 const total = ref(0);
-const getApplyUserData=ref<IResponseDataApplyUser|null>(null);
+const getApplyUserData = ref<IResponseDataApplyUser | null>(null);
 const status = ref(0);
 //从分页组件拿到页码信息并更新
 const changePage = (newPage: number) => {
-    pageNo.value = newPage;
+  pageNo.value = newPage;
 };
 //筛选状态
 const handleToggleShowStatus = (newStatus: number) => {
-    status.value = newStatus;
+  status.value = newStatus;
 };
-
-
 
 const headers = ref([
   {
@@ -189,85 +198,93 @@ const headers = ref([
 
 // 查看简历
 const viewResume = (id: string) => {
-    console.log(id,'查看简历');
-}
+  console.log(id, "查看简历");
+};
 
 // 编辑
 const tableEdit = (id: string) => {
-    console.log(id,'编辑');
-}
+  console.log(id, "编辑");
+};
 
 // 安排面试
 const arrangeInterview = (id: string) => {
-    console.log(id,'安排面试');
-}
+  console.log(id, "安排面试");
+};
 
 // 淘汰
 const eliminateCandidate = (id: string) => {
-    console.log(id,'淘汰');
-}
+  console.log(id, "淘汰");
+};
 
 // 删除候选人
 const DeleteCandidate = (id: string) => {
-    console.log(id,'删除候选人');
-}
+  console.log(id, "删除候选人");
+};
 
 const actionItems = ref([
-    {
-        title: '查看简历',
-        icon: 'tabler:eye',
-        onclick: viewResume,
-    },
-    {
-        title: '编辑',
-        icon: 'tabler:pencil',
-        onclick: tableEdit,
-    },
-    {
-        title: '安排面试',
-        icon: 'tabler:calendar-check',
-        onclick: arrangeInterview,
-    },
-    {
-        title: '淘汰',
-        icon: 'tabler:cross',
-        onclick: eliminateCandidate,
-    },
-    {
-        title: '删除候选人',
-        icon: 'tabler:trash',
-        onclick: DeleteCandidate,
-    },
+  {
+    title: "查看简历",
+    icon: "tabler:eye",
+    onclick: viewResume,
+  },
+  {
+    title: "编辑",
+    icon: "tabler:pencil",
+    onclick: tableEdit,
+  },
+  {
+    title: "安排面试",
+    icon: "tabler:calendar-check",
+    onclick: arrangeInterview,
+  },
+  {
+    title: "淘汰",
+    icon: "tabler:cross",
+    onclick: eliminateCandidate,
+  },
+  {
+    title: "删除候选人",
+    icon: "tabler:trash",
+    onclick: DeleteCandidate,
+  },
 ]);
 
-watchEffect(()=>{
-    getAllApplyUser({ pageNo: pageNo.value, pageSize: 10, condition:searchValue.value, status: status.value  })
-  .then(( {data,error,loading } ) => {
-        console.log(data,error,loading);
-        getApplyUserData.value = data.value as IResponseDataApplyUser;
-        total.value = getApplyUserData.value.data.total;
-        console.log(getApplyUserData.value.data);
-        if (getApplyUserData.value && getApplyUserData.value.data && getApplyUserData.value.data.data) {
-            tableData.value = getApplyUserData.value.data.data.map((item: IAllApplyUserDTO) => {
-                return {
-                    id: item.id.toString(),
-                    name: item.name,
-                    session: item.grade,
-                    gender: item.sex,
-                    clazz: item.clazz,
-                    studentId: item.studentId,
-                    QQ: item.qqNumber,
-                    email: item.email,
-                    state:interviewStatusMap[item.status],
-                };
-            });
-        } else {
-            tableData.value = [];
-        }
-
-})
-})
-
+watchEffect(() => {
+  getAllApplyUser({
+    pageNo: pageNo.value,
+    pageSize: 10,
+    condition: searchValue.value,
+    status: status.value,
+  }).then(({ data, error, loading }) => {
+    console.log(data, error, loading);
+    getApplyUserData.value = data.value as IResponseDataApplyUser;
+    total.value = getApplyUserData.value.data.total;
+    console.log(getApplyUserData.value.data);
+    if (
+      getApplyUserData.value &&
+      getApplyUserData.value.data &&
+      getApplyUserData.value.data.data
+    ) {
+      tableData.value = getApplyUserData.value.data.data.map(
+        (item: IAllApplyUserDTO) => {
+          return {
+            id: item.id.toString(),
+            name: item.name,
+            session: item.grade,
+            gender: item.sex,
+            clazz: item.clazz,
+            studentId: item.studentId,
+            QQ: item.qqNumber,
+            email: item.email,
+            state: interviewStatusMap[item.status],
+          };
+        },
+      );
+    } else {
+      tableData.value = [];
+    }
+  });
+});
 </script>
 
 <template>
@@ -290,50 +307,56 @@ watchEffect(()=>{
         <Icon icon="bitcoin-icons:cross-outline" />
       </div>
 
-            <div class="search-input">
-                <AutoLongerInput
-                @input_src="handleInput"
-                placeholderText ="搜索候选人："
-                />
-            </div>
-        </div>
-        <div class="toggle-handle">
-            <ToggleShow :toggleItems="toggleItems" @transferToggleShowStatus="handleToggleShowStatus"></ToggleShow>
+      <div class="search-input">
+        <AutoLongerInput
+          @input_src="handleInput"
+          placeholderText="搜索候选人："
+        />
+      </div>
+    </div>
+    <div class="toggle-handle">
+      <ToggleShow
+        :toggleItems="toggleItems"
+        @transferToggleShowStatus="handleToggleShowStatus"
+      ></ToggleShow>
 
-            <div class="handle-btns">
-                <Button type="primary" class="btn-style">安排面试</Button>
-                <Button type="primary" class="btn-style">修改状态</Button>
-                <Button type="primary" class="btn-style">结果导出</Button>
-            </div>
-        </div>
-
-        <div class="data-table">
-            <DataTable :items="tableData" :headers="headers" :actionItems="actionItems"></DataTable>
-            <div class="pagination-container">
-                <Pagination
-                :totalItems="total"
-                :pageSize="pageSize"
-                @update:page="changePage"
-                >
-            </Pagination>
-            </div>
-        </div>
+      <div class="handle-btns">
+        <Button type="primary" class="btn-style">安排面试</Button>
+        <Button type="primary" class="btn-style">修改状态</Button>
+        <Button type="primary" class="btn-style">结果导出</Button>
+      </div>
     </div>
 
     <div class="data-table">
       <DataTable
-        :items="data"
+        :items="tableData"
         :headers="headers"
         :actionItems="actionItems"
       ></DataTable>
       <div class="pagination-container">
         <Pagination
-          :totalItems="data.length"
+          :totalItems="total"
           :pageSize="pageSize"
           @update:page="changePage"
         >
         </Pagination>
       </div>
+    </div>
+  </div>
+
+  <div class="data-table">
+    <DataTable
+      :items="data"
+      :headers="headers"
+      :actionItems="actionItems"
+    ></DataTable>
+    <div class="pagination-container">
+      <Pagination
+        :totalItems="data.length"
+        :pageSize="pageSize"
+        @update:page="changePage"
+      >
+      </Pagination>
     </div>
   </div>
 </template>
