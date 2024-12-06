@@ -3,6 +3,7 @@ export const useUserStore = defineStore("user", {
   // 定义初始状态
   state: () => ({
     userId: 0,
+    isSelf: true,
   }),
 
   actions: {
@@ -10,8 +11,12 @@ export const useUserStore = defineStore("user", {
     setUserId(id: number) {
       this.userId = id;
     },
+    setIsSelf(self: boolean) {
+      this.isSelf = self;
+    },
   },
   getters: {
     getUserId: (state) => state.userId,
+    getIsSelf: (state) => state.isSelf,
   },
 });

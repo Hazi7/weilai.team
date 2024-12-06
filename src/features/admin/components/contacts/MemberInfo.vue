@@ -52,7 +52,7 @@ const userInfo = ref<TeamUserList>({
   ladleGrade: "",
 });
 watch(group, (newVal) => {});
-const props = defineProps<{ userId?: number; sendUpdateInfo: Function }>();
+const props = defineProps<{ userId?: number; sendUpdateInfo?: Function }>();
 
 watch(
   () => props.userId,
@@ -101,7 +101,7 @@ const handleConfirm = () => {
   };
   updateInfo(updateInfoObj).then((res) => {
     console.log(res);
-    if (res.code == 200) {
+    if (res.code == 200 && props.sendUpdateInfo) {
       props.sendUpdateInfo(updateInfoObj);
     }
   });
