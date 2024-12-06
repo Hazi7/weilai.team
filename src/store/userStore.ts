@@ -14,6 +14,10 @@ export const useUserStore = defineStore("user", {
     setIsSelf(self: boolean) {
       this.isSelf = self;
     },
+    reset() {
+      this.userId = 0;
+      this.isSelf = true;
+    },
   },
   getters: {
     getUserId: (state) => state.userId,

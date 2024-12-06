@@ -91,6 +91,7 @@ const route = useRoute();
 //跳转个人中心;
 const skipPersonCenter = (id: number) => {
   userStore.setUserId(id);
+  userStore.setIsSelf(false);
   router.push({
     path: `/personalCenter/userInfo`,
   });
