@@ -35,36 +35,36 @@ const getCode = (email: string) => {
         </DialogTrigger>
         <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>找回密码</DialogTitle>
-                <DialogDescription> 忘记密码？输入邮箱找回密码吧。 </DialogDescription>
+                <DialogTitle class="fontPassTitle">找回密码</DialogTitle>
+                <DialogDescription> 忘记密码？输入邮箱找回密码吧 </DialogDescription>
             </DialogHeader>
             <div class="grid gap-4 py-4">
-                <div class="grid grid-cols-4 items-center gap-4">
+                <div class="fontPassFormInp grid grid-cols-4 items-center gap-4">
                     <Label for="name" class="text-right"> 邮箱 </Label>
                     <Input id="name" type="email" placeholder="请输入邮箱" class="col-span-3" v-model="email" />
                 </div>
-                <div class="grid grid-cols-4 items-center gap-4">
+                <div class="fontPassFormInp grid grid-cols-4 items-center gap-4">
                     <Label for="username" class="text-right"> 验证码 </Label>
                     <div class="flex w-full max-w-sm items-center gap-1.5">
                         <Input id="code" placeholder="请输入验证码" style="width: 170px" v-model="code" />
-                        <Button v-if="!loginStore.isRequesting" type="submit" @click="getCode(email)">
+                        <Button class="fontBtn" v-if="!loginStore.isRequesting" @click="getCode(email)">
                             获取验证码
                         </Button>
                         <Button v-if="loginStore.isRequesting" disabled>{{ loginStore.countdown }}s后重新发送</Button>
                     </div>
                 </div>
-                <div class="grid grid-cols-4 items-center gap-4">
+                <div class="fontPassFormInp grid grid-cols-4 items-center gap-4">
                     <Label for="username" class="text-right"> 密码 </Label>
                     <Input id="password" type="password" placeholder="请输入密码" class="col-span-3"
                         v-model="passwordAgin" />
                 </div>
-                <div class="grid grid-cols-4 items-center gap-4">
+                <div class="fontPassFormInp grid grid-cols-4 items-center gap-4">
                     <Label for="username" class="text-right"> 确认密码 </Label>
                     <Input id="password" type="password" placeholder="请再次输入密码" class="col-span-3" v-model="password" />
                 </div>
             </div>
             <DialogFooter>
-                <Button type="submit" @click="useResetPassword(email, code, password, passwordAgin)">
+                <Button class="fontBtn trueBtn" type="submit" @click="useResetPassword(email, code, password, passwordAgin)">
                     确认
                 </Button>
             </DialogFooter>
@@ -76,11 +76,39 @@ const getCode = (email: string) => {
     background-color: #fff;
 }
 
-.fontPassBtn{
+.fontPassBtn {
     color: #529ee0;
     cursor: pointer;
-    &:hover{
+    background: none;
+
+    &:hover {
         color: #79bcf6;
+    }
+}
+
+.fontPassFormInp{
+    position: relative;
+    left: -15px;
+    margin: 7px 0;
+}
+
+.fontPassTitle{
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.fontBtn{
+    box-shadow: none;
+}
+
+.trueBtn{
+    width: 100px;
+    margin: 0 20px 20px 0;
+}
+
+@media screen and (max-width: 756px) {
+    .fontPassBtn {
+        font-size: 18px;
     }
 }
 </style>

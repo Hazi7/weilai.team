@@ -1,48 +1,55 @@
 <script setup lang="ts">
 // 引入组件
-import{ MessageCard,ToggleShow,QuickShowCard,ShortcutOperation } from '@/components/recruitment'
+import {
+  MessageCard,
+  ToggleShow,
+  QuickShowCard,
+  ShortcutOperation,
+} from "@/components/recruitment";
 
 // 引入vue函数
 import { ref } from "vue";
 
 // 定义切换组件的基本信息 传给子组件
 const toggleItems = ref([
-    {
-        index: 0,
-        title: '待我反馈',
-        isActive: true,
-    },
-    {
-        index: 1,
-        title: '我录取的',
-        isActive: false,
-    },
-    {
-        index: 2,
-        title: '我淘汰的',
-        isActive: false,
-    }
+  {
+    index: 0,
+    title: "待我反馈",
+    isActive: true,
+  },
+  {
+    index: 1,
+    title: "我录取的",
+    isActive: false,
+  },
+  {
+    index: 2,
+    title: "我淘汰的",
+    isActive: false,
+  },
 ]);
 
 //
 const quickShowItems = ref([
-    {
-        label: '待安排',
-        number: 8,
-    },
-    {
-        label: '已录取',
-        number: 8,
-    }
+  {
+    label: "待安排",
+    number: 8,
+  },
+  {
+    label: "已录取",
+    number: 8,
+  },
 ]);
-
 </script>
 
 <template>
   <div class="main">
     <div class="left-side">
-
-      <div class="quick-show" v-for="(item, index) in quickShowItems" :key="index">
+      <div
+        class="quick-show"
+        v-for="(item, index) in quickShowItems"
+        :key="index"
+      >
         <QuickShowCard :quickShowItem="item"></QuickShowCard>
       </div>
 
@@ -58,7 +65,7 @@ const quickShowItems = ref([
     <div class="content">
       <div class="content-container">
         <div class="toggle-outer long-dashed-border">
-          <ToggleShow :toggleItems="toggleItems" ></ToggleShow>
+          <ToggleShow :toggleItems="toggleItems"></ToggleShow>
         </div>
         <div class="main-content-show">
           <MessageCard></MessageCard>
@@ -67,13 +74,12 @@ const quickShowItems = ref([
           <MessageCard></MessageCard>
         </div>
       </div>
-
     </div>
   </div>
 </template>
 <style lang="scss" scoped>
-@use '@/assets/styles';
-@use '@/assets/styles/recruitment.scss';
+@use "@/assets/styles";
+@use "@/assets/styles/recruitment.scss";
 
 .main {
   width: 100%;
@@ -81,16 +87,16 @@ const quickShowItems = ref([
   background-color: #fff;
   position: relative;
   display: grid;
-  grid-template-columns:150px calc(100% - 170px);
+  grid-template-columns: 150px calc(100% - 170px);
   gap: 30px;
   top: 20px;
   box-sizing: content-box;
   margin-bottom: 40px;
   @media screen and (min-width: 1300px) {
-    grid-template-columns:200px calc(100% - 220px);
+    grid-template-columns: 200px calc(100% - 220px);
   }
   @media screen and (max-width: 1100px) {
-    grid-template-columns:1fr;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -107,7 +113,7 @@ const quickShowItems = ref([
   @media screen and (max-width: 1100px) {
     display: none;
   }
-  .quick-control{
+  .quick-control {
     width: 100%;
     height: auto;
     position: relative;
@@ -115,39 +121,35 @@ const quickShowItems = ref([
     flex-direction: column;
     padding: 10px;
     top: 30px;
-    .quick-control-title{
-     font-size: 16px;
-     font-weight: 500;
-     margin-bottom: 10px;
-     margin-left: 10px;
-    }
-  .quick-control-content{
-    position: relative;
-    top: 20px;
-    width: 100%;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    .quick-control-item{
-      width: 100%;
-      min-height: 60px;
+    .quick-control-title {
+      font-size: 16px;
+      font-weight: 500;
       margin-bottom: 10px;
+      margin-left: 10px;
     }
+    .quick-control-content {
+      position: relative;
+      top: 20px;
+      width: 100%;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      .quick-control-item {
+        width: 100%;
+        min-height: 60px;
+        margin-bottom: 10px;
+      }
     }
-
   }
-
 }
-
-
 
 //.endregion
 
 //.region 中间内容区
 .content {
   width: 100%;
-  background-color:var(--background);
+  background-color: var(--background);
   position: relative;
   top: 20px;
   left: 20px;
@@ -162,10 +164,9 @@ const quickShowItems = ref([
     padding-left: 10px;
     display: flex;
     flex-direction: row;
-    justify-content:flex-start;
+    justify-content: flex-start;
     align-items: center;
   }
-
 }
 //.endregion
 </style>

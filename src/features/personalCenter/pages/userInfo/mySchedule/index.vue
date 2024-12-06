@@ -7,6 +7,8 @@
                 </Button>
             </DialogTrigger>
             <DialogContent class="sm:max-w-[425px] bg-white max-h-[500px] overflow-y-auto">
+                <DialogClose id="dialogClose"></DialogClose>
+
                 <DialogHeader>
                     <DialogTitle>添加课程</DialogTitle>
                     <DialogDescription>
@@ -36,25 +38,25 @@
                             </SelectTrigger>
                             <SelectContent class="bg-white">
                                 <SelectGroup>
-                                    <SelectItem value="1" class="cursor-pointer hover:bg-gray-100">
+                                    <SelectItem value="0" class="cursor-pointer hover:bg-gray-100">
                                         周一
                                     </SelectItem>
-                                    <SelectItem value="2" class="cursor-pointer hover:bg-gray-100">
+                                    <SelectItem value="1" class="cursor-pointer hover:bg-gray-100">
                                         周二
                                     </SelectItem>
-                                    <SelectItem value="3" class="cursor-pointer hover:bg-gray-100">
+                                    <SelectItem value="2" class="cursor-pointer hover:bg-gray-100">
                                         周三
                                     </SelectItem>
-                                    <SelectItem value="4" class="cursor-pointer hover:bg-gray-100">
+                                    <SelectItem value="3" class="cursor-pointer hover:bg-gray-100">
                                         周四
                                     </SelectItem>
-                                    <SelectItem value="5" class="cursor-pointer hover:bg-gray-100">
+                                    <SelectItem value="4" class="cursor-pointer hover:bg-gray-100">
                                         周五
                                     </SelectItem>
-                                    <SelectItem value="6" class="cursor-pointer hover:bg-gray-100">
+                                    <SelectItem value="5" class="cursor-pointer hover:bg-gray-100">
                                         周六
                                     </SelectItem>
-                                    <SelectItem value="7" class="cursor-pointer hover:bg-gray-100">
+                                    <SelectItem value="6" class="cursor-pointer hover:bg-gray-100">
                                         周日
                                     </SelectItem>
                                 </SelectGroup>
@@ -111,63 +113,11 @@
                 </TableRow>
             </TableHeader>
             <TableBody>
-                <TableRow>
+                <TableRow v-for="(day, index) in courseList" :key="index">
                     <TableCell>
-                        周一
+                        {{ dayTransformer(index) }}
                     </TableCell>
-                    <TableCell v-for="item in courseList.monday" :key="item.oneCourseId">
-                        <p>周数：{{ item.weeks }}</p>
-                        <p>课程：{{ item.courseName }}</p>
-                        <p>节数：{{ item.courseTime }}</p>
-                        <p>地点：{{ item.coursePlace }}</p>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger class="ellipsis">
-                                <Button class="bg-gray-200">操作</Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent class="p-0  bg-white">
-                                <DropdownMenuLabel>操作</DropdownMenuLabel>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn deletePost" :data-id="item.oneCourseId"
-                                        @click="deleteCourse">删除课程</Button>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn updatePost" @click="changeCourse(item)">修改课程</Button>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell>
-                        周二
-                    </TableCell>
-                    <TableCell v-for="item in courseList.tuesday" :key="item.oneCourseId">
-                        <p>周数：{{ item.weeks }}</p>
-                        <p>课程：{{ item.courseName }}</p>
-                        <p>节数：{{ item.courseTime }}</p>
-                        <p>地点：{{ item.coursePlace }}</p>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger class="ellipsis">
-                                <Button class="bg-gray-200">操作</Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent class="p-0  bg-white">
-                                <DropdownMenuLabel>操作</DropdownMenuLabel>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn deletePost" :data-id="item.oneCourseId"
-                                        @click="deleteCourse">删除课程</Button>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn updatePost">修改课程</Button>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell>
-                        周三
-                    </TableCell>
-                    <TableCell v-for="item in courseList.wednesday" :key="item.oneCourseId">
+                    <TableCell v-for="item in day" :key="item.oneCourseId">
                         <p>周数：{{ item.weeks }}</p>
                         <p>课程：{{ item.courseName }}</p>
                         <p>节数：{{ item.courseTime }}</p>
@@ -217,31 +167,31 @@
                                         <Label for="weekTime" class="text-right">
                                             课程日期
                                         </Label>
-                                        <Select default-value="3" id="weekTime">
+                                        <Select :default-value="index" id="weekTime">
                                             <SelectTrigger class="col-span-3">
                                                 <SelectValue placeholder="选择日期" />
                                             </SelectTrigger>
                                             <SelectContent class="bg-white">
                                                 <SelectGroup>
-                                                    <SelectItem value="1" class="cursor-pointer hover:bg-gray-100">
+                                                    <SelectItem value="0" class="cursor-pointer hover:bg-gray-100">
                                                         周一
                                                     </SelectItem>
-                                                    <SelectItem value="2" class="cursor-pointer hover:bg-gray-100">
+                                                    <SelectItem value="1" class="cursor-pointer hover:bg-gray-100">
                                                         周二
                                                     </SelectItem>
-                                                    <SelectItem value="3" class="cursor-pointer hover:bg-gray-100">
+                                                    <SelectItem value="2" class="cursor-pointer hover:bg-gray-100">
                                                         周三
                                                     </SelectItem>
-                                                    <SelectItem value="4" class="cursor-pointer hover:bg-gray-100">
+                                                    <SelectItem value="3" class="cursor-pointer hover:bg-gray-100">
                                                         周四
                                                     </SelectItem>
-                                                    <SelectItem value="5" class="cursor-pointer hover:bg-gray-100">
+                                                    <SelectItem value="4" class="cursor-pointer hover:bg-gray-100">
                                                         周五
                                                     </SelectItem>
-                                                    <SelectItem value="6" class="cursor-pointer hover:bg-gray-100">
+                                                    <SelectItem value="5" class="cursor-pointer hover:bg-gray-100">
                                                         周六
                                                     </SelectItem>
-                                                    <SelectItem value="7" class="cursor-pointer hover:bg-gray-100">
+                                                    <SelectItem value="6" class="cursor-pointer hover:bg-gray-100">
                                                         周日
                                                     </SelectItem>
                                                 </SelectGroup>
@@ -291,111 +241,6 @@
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
-                    </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell>
-                        周四
-                    </TableCell>
-                    <TableCell v-for="item in courseList.thursday" :key="item.oneCourseId">
-                        <p>周数：{{ item.weeks }}</p>
-                        <p>课程：{{ item.courseName }}</p>
-                        <p>节数：{{ item.courseTime }}</p>
-                        <p>地点：{{ item.coursePlace }}</p>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger class="ellipsis">
-                                <Button class="bg-gray-200">操作</Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent class="p-0  bg-white">
-                                <DropdownMenuLabel>操作</DropdownMenuLabel>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn deletePost" :data-id="item.oneCourseId"
-                                        @click="deleteCourse">删除课程</Button>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn updatePost">修改课程</Button>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell>
-                        周五
-                    </TableCell>
-                    <TableCell v-for="item in courseList.friday" :key="item.oneCourseId">
-                        <p>周数：{{ item.weeks }}</p>
-                        <p>课程：{{ item.courseName }}</p>
-                        <p>节数：{{ item.courseTime }}</p>
-                        <p>地点：{{ item.coursePlace }}</p>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger class="ellipsis">
-                                <Button class="bg-gray-200">操作</Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent class="p-0  bg-white">
-                                <DropdownMenuLabel>操作</DropdownMenuLabel>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn deletePost" :data-id="item.oneCourseId"
-                                        @click="deleteCourse">删除课程</Button>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn updatePost">修改课程</Button>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell>
-                        周六
-                    </TableCell>
-                    <TableCell v-for="item in courseList.saturday" :key="item.oneCourseId">
-                        <p>周数：{{ item.weeks }}</p>
-                        <p>课程：{{ item.courseName }}</p>
-                        <p>节数：{{ item.courseTime }}</p>
-                        <p>地点：{{ item.coursePlace }}</p>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger class="ellipsis">
-                                <Button class="bg-gray-200">操作</Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent class="p-0  bg-white">
-                                <DropdownMenuLabel>操作</DropdownMenuLabel>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn deletePost" :data-id="item.oneCourseId"
-                                        @click="deleteCourse">删除课程</Button>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn updatePost">修改课程</Button>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </TableCell>
-                </TableRow>
-
-                <TableRow>
-                    <TableCell>
-                        周日
-                    </TableCell>
-                    <TableCell v-for="item in courseList.sunday" :key="item.oneCourseId">
-                        <p>周数：{{ item.weeks }}</p>
-                        <p>课程：{{ item.courseName }}</p>
-                        <p>节数：{{ item.courseTime }}</p>
-                        <p>地点：{{ item.coursePlace }}</p>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger class="ellipsis">
-                                <Button class="bg-gray-200">操作</Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent class="p-0  bg-white">
-                                <DropdownMenuLabel>操作</DropdownMenuLabel>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn deletePost" :data-id="item.oneCourseId"
-                                        @click="deleteCourse">删除课程</Button>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn updatePost">修改课程</Button>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
                     </TableCell>
                 </TableRow>
             </TableBody>
@@ -458,19 +303,13 @@ import { reactive, watch, ref } from 'vue';
 const userId = getLocalStorageWithExpire('userId')
 
 let courseList = reactive({
-    monday: [],
-    tuesday: [],
-    wednesday: [],
-    thursday: [],
-    friday: [],
-    saturday: [],
-    sunday: []
+
 })
 
 async function getSchedule() {
     await executeRequest({ url: `/user/getUserCourse/${userId}` })
     if (data.value && data.value.code == 200) {
-        Object.assign(courseList, data.value.data);
+        Object.assign(courseList, data.value.data.allCourse);
         console.log('课表：', courseList);
     }
 }
@@ -502,6 +341,12 @@ async function submitAddForm() {
         coursePlace: coursePlace.value
     }
     await executeRequest({ url: '/user/addUserCourse', method: 'post', requestData: dataToSend })
+    weeks.value = '';
+    weekTime.value = '';
+    courseName.value = '';
+    courseTime.value = '';
+    coursePlace.value = '';
+    document.getElementById('dialogClose').click()
     if (data.value.code === 200) {
         console.log(data.value);
     }
@@ -515,12 +360,19 @@ let changeWeeks = ref('')
 let changeCoursePlace = ref('')
 let changeWeekTime = ref('')
 async function submitChangeForm(oneCourseId) {
-    console.log('修改表单提交',)
-    changeCourseName.value = document.getElementById('courseName').value
-    changeCourseTime.value = document.getElementById('courseTime').value
-    changeWeeks.value = document.getElementById('weeks').value
-    changeCoursePlace.value = document.getElementById('coursePlace').value
-    changeWeekTime.value = document.getElementById('weekTime').value
+    //获取输入框
+    const courseNameInput = document.getElementById('courseName')
+    const courseTimeInput = document.getElementById('courseTime')
+    const weeksInput = document.getElementById('weeks')
+    const coursePlaceInput = document.getElementById('coursePlace')
+    const weekTimeInput = document.getElementById('weekTime')
+    //获取输入框的值
+    changeCourseName.value = courseNameInput.value
+    changeCourseTime.value = courseTimeInput.value
+    changeWeeks.value = weeksInput.value
+    changeCoursePlace.value = coursePlaceInput.value
+    changeWeekTime.value = weekTimeInput.value
+    // 封装成对象
     const dataToSend = {
         courseName: changeCourseName.value,
         courseTime: changeCourseTime.value,
@@ -530,14 +382,39 @@ async function submitChangeForm(oneCourseId) {
         oneCourseId: oneCourseId
     }
     console.log(dataToSend);
+    // 发送请求
     await executeRequest({ url: '/user/updateUserCourse', method: 'put', requestData: dataToSend })
-    // if (data.value.code === 200) {
-    //     console.log(data.value);
-    // }
-    // console.log(error.value);
+
     console.log(data.value);
-    
+
     getSchedule()
+}
+
+function dayTransformer(day) {
+    
+    switch (day) {
+        case '0':
+            return '周一'
+            break;
+        case '1':
+            return '周二'
+            break;
+        case '2':
+            return '周三'
+            break;
+        case '3':
+            return '周四'
+            break;
+        case '4':
+            return '周五'
+            break;
+        case '5':
+            return '周六'
+            break;
+        case '6':
+            return '周日'
+            break;
+    }
 }
 </script>
 <style lang="scss" scoped>
@@ -561,7 +438,7 @@ async function submitChangeForm(oneCourseId) {
     background-color: white;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 5px 5px 5px #ccc;
+    // box-shadow: 5px 5px 5px #ccc;
 
 }
 </style>

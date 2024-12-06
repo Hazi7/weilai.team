@@ -22,4 +22,9 @@ import LoginAnimation from '@/components/login/LoginAnimation.vue';
     background-image: url('/public/post_background.png');
     background-size: cover;
 }
+@media screen and (max-width: 1024px) {
+    .login-container {
+        justify-content: flex-start;
+    }
+}
 </style>
