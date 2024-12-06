@@ -39,17 +39,17 @@ const variantClass = computed(() => {
 </script>
 
 <template>
-  <Alert variant="destructive" class="allAlert" :class="propsData.type">
-    <template v-if="icon">
-      <component :is="icon" class="w-4 h-4" />
-    </template>
-    <AlertDescription>
-      {{ message }}
-    </AlertDescription>
-  </Alert>
+    <Alert variant="destructive" class="allAlert" :class="propsData.type">
+        <template v-if="icon">
+            <component :is="icon" class="alertIcon w-4 h-4" />
+        </template>
+        <AlertDescription>
+            {{ message }}
+        </AlertDescription>
+    </Alert>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .allAlert {
   /* background-color: white; */
   position: fixed;
@@ -58,6 +58,7 @@ const variantClass = computed(() => {
   width: 500px;
   font-size: 16px;
   z-index: 9999;
+  height: 50px;
 }
 
 .error {
@@ -65,18 +66,27 @@ const variantClass = computed(() => {
   border: 0.5px #f87979 solid;
   color: rgb(249, 78, 78);
   background-color: #ffeeee;
+  .alertIcon{
+    color: #f87979;
+  }
 }
 
 .waring {
   border: 0.5px #ffa341 solid;
   color: #ffa004;
   background-color: #fcf8eb;
+  .alertIcon{
+    color: #ffa004;
+  }
 }
 
 .pass {
   border: 0.5px #68c331 solid;
   color: #49b407;
   background-color: #f2fceb;
+  .alertIcon{
+    color: #49b407;
+  }
 }
 
 /* 定义下滑和上滑动画 */
