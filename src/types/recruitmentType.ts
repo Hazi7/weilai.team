@@ -68,11 +68,27 @@ export interface IAllApplyUserVO{
 }
 
 
-//获取所有年级  数据传输对象
+//获取所有年级  数据传输对象 发送
 export interface IGetAllGradeDTO{
     pageNo?: number |1;
     pageSize?: number | 10;
 }
+
+
+
+export interface IGradeData{
+    id: number;
+    grade: string;
+    createTime: string;
+}
+//接收所有年级  数据传输对象 接收
+export interface IAllGradeDTO{
+  data: IGradeData[];
+}
+
+
+
+
 
 
 // 表格头部信息

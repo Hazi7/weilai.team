@@ -1,11 +1,13 @@
 
 <script setup lang="ts">
-import { FilterCondition,DataRangePicker,ToggleShow ,DataTable,Pagination,AutoLongerInput } from '@/components/recruitment';
-import { Icon, loadIcon } from '@iconify/vue';
+import { FilterCondition,DataRangePicker,ToggleShow ,DataTable,Pagination,AutoLongerInput,
+          UpdateStatus,
+} from '@/components/recruitment';
+import { Icon } from '@iconify/vue';
 import { Button } from '@/components/ui/button';
 import { ref, watch ,watchEffect} from 'vue';
-import {getAllApplyUser,getAllGrade} from "@/composables/useRecruitmentRequest";
-import type {IAllApplyUserVO,IGetAllApplyUserDTO ,IResponseDataApplyUser,IAllApplyUserDTO } from '@/types/recruitmentType';
+import {getAllApplyUser,getAllGrade,getResumeById,deleteApplyUserById} from "@/composables/useRecruitmentRequest";
+import type {IAllApplyUserVO,IGetAllApplyUserDTO ,IResponseDataApplyUser,IAllApplyUserDTO,IAllGradeDTO,IGradeData } from '@/types/recruitmentType';
 import {interviewStatusMap} from '@/types/recruitmentType';
 const searchValue = ref('');
 
@@ -20,17 +22,7 @@ const candidates_itemsObjArr = ref([
         title: '年级',
         label: "选择要筛选的年级",
         ref: "init",
-        arr: [
-            {
-                condition: "24级",
-            },
-            {
-                condition: "23级",
-            },
-            {
-                condition: "22级",
-            },
-        ]
+        arr: [ ]
     },
     {
         title: '性别',
@@ -63,10 +55,6 @@ const candidates_itemsObjArr = ref([
     }
 ]);
 
-    getAllGrade({pageNo:1,pageSize:100})
-        .then(({data,error,loading})=>{
-            console.log(data,error,loading);
-        })
 
 
 //获得子组件的过滤条件
@@ -191,9 +179,11 @@ const headers = ref([
 
 // 查看简历
 const viewResume = (id: string) => {
-    console.log(id,'查看简历');
+        getResumeById({id}).then(({data,error,loading})=>{
+            // console.log(data,error,loading);
+            window.open(data.value.data,'_blank')
+        })
 }
-
 // 编辑
 const tableEdit = (id: string) => {
     console.log(id,'编辑');
@@ -211,7 +201,10 @@ const eliminateCandidate = (id: string) => {
 
 // 删除候选人
 const DeleteCandidate = (id: string) => {
-    console.log(id,'删除候选人');
+  deleteApplyUserById({id}).then(({data,error,loading})=>{
+    updateParameter.value = !updateParameter.value;
+    })
+
 }
 
 
@@ -243,13 +236,33 @@ const actionItems = ref([
     },
 ]);
 
+
+getAllGrade({pageNo:1,pageSize:100})
+        .then(({data,error,loading})=>{
+            // console.log(data,error,loading,);
+            // console.log(data.value.data.data);
+
+            if(data.value){
+                //拿到数据后逆序渲染
+                candidates_itemsObjArr.value[0].arr = data.value.data.data.reverse().map((item:IGradeData)=>{
+                    return {
+                        condition:item.grade,
+                    }
+                })
+            }
+        })
+
+const updateParameter =ref<boolean>(false);
+
 watchEffect(()=>{
+    //引入一个状态变量，用来强制更新数组，只需要在需要重新获取数据的时候，改变状态变量的值
+    updateParameter.value;
     getAllApplyUser({ pageNo: pageNo.value, pageSize: 10, condition:searchValue.value, status: status.value  })
   .then(( {data,error,loading } ) => {
-        console.log(data,error,loading);
+        // console.log(data,error,loading);
         getApplyUserData.value = data.value as IResponseDataApplyUser;
         total.value = getApplyUserData.value.data.total;
-        console.log(getApplyUserData.value.data);
+        // console.log(getApplyUserData.value.data);
         if (getApplyUserData.value && getApplyUserData.value.data && getApplyUserData.value.data.data) {
             tableData.value = getApplyUserData.value.data.data.map((item: IAllApplyUserDTO) => {
                 return {
@@ -271,9 +284,20 @@ watchEffect(()=>{
 })
 })
 
+
+//dialog
+const updateStatus = ref(false);
+//修改状态、
+const handleEditStatus = () => {
+    //把修改状态的弹窗组件展示
+    updateStatus.value = true;
+}
 </script>
 
 <template>
+    <Teleport to="body">
+        <UpdateStatus :visible="updateStatus" @close="updateStatus = false"></UpdateStatus>
+    </Teleport>
     <div class="content">
         <div class="filter-items">
             <FilterCondition :items-obj-arr="candidates_itemsObjArr" @filter_condition="handleFilterCondition"></FilterCondition>
@@ -302,7 +326,7 @@ watchEffect(()=>{
 
             <div class="handle-btns">
                 <Button type="primary" class="btn-style">安排面试</Button>
-                <Button type="primary" class="btn-style">修改状态</Button>
+                <Button type="primary" class="btn-style" @click="handleEditStatus" >修改状态</Button>
                 <Button type="primary" class="btn-style">结果导出</Button>
             </div>
         </div>
