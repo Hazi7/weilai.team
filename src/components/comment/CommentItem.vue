@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
-import { Icon } from '@iconify/vue';
-import { useRequest } from '@/composables/useRequest';
-import CommentForm from './CommentForm.vue';
-import { createUserInfo, getUserInfo } from './index';
-import sonComment from './sonComment.vue';
+import { ref, reactive, computed, onMounted } from "vue";
+import { Icon } from "@iconify/vue";
+import { useRequest } from "@/composables/useRequest";
+import CommentForm from "./CommentForm.vue";
+import { createUserInfo, getUserInfo } from "./index";
+import sonComment from "./SonComment.vue";
 
 const props = defineProps({
   comment: {
     type: Object,
-    required: true
+    required: true,
   },
   isReply: {
     type: Boolean,
-    default: false
+    default: false,
   },
   getFirstComment: {
     type: Function,
     required: false,
-    default: () => () => {} 
-  }
+    default: () => () => {},
+  },
 });
 
 const { data, executeRequest } = useRequest();
@@ -28,16 +28,16 @@ const pageSize = ref(2);
 const pageNumber = ref(1);
 const sonComments = ref<any[]>([]);
 const userInfo = ref(createUserInfo());
-const total=ref(0)
+const total = ref(0);
 const showMore = ref(true);
 
 const formattedTime = computed(() => {
   const commentTime = new Date(props.comment.commentTime);
   const year = commentTime.getFullYear();
-  const month = (commentTime.getMonth() + 1).toString().padStart(2, '0');
-  const day = commentTime.getDate().toString().padStart(2, '0');
-  const hours = commentTime.getHours().toString().padStart(2, '0');
-  const minutes = commentTime.getMinutes().toString().padStart(2, '0');
+  const month = (commentTime.getMonth() + 1).toString().padStart(2, "0");
+  const day = commentTime.getDate().toString().padStart(2, "0");
+  const hours = commentTime.getHours().toString().padStart(2, "0");
+  const minutes = commentTime.getMinutes().toString().padStart(2, "0");
   return `${year}.${month}.${day} ${hours}:${minutes}`;
 });
 
@@ -49,7 +49,7 @@ const toggleForm = () => {
 const getSecondComment = async (commentId: number) => {
   await executeRequest({
     url: `/comment/getCommentTwo?commentId=${commentId}&pageSize=${pageSize.value}&pageNumber=${pageNumber.value}`,
-    method: 'get',
+    method: "get",
   });
 
   if (data.value?.data.postCommentAll) {
@@ -87,31 +87,31 @@ const loadMoreReplies = (commentId: number) => {
 const likeComment = async (commentId: number) => {
   await executeRequest({
     url: `/comment/likeOption/${commentId}`,
-    method: 'put',
+    method: "put",
   });
 
   if (data.value?.code === 200) {
-      props.getFirstComment();
-      if(props.comment.isLike){
-        alert('取消点赞成功');
-      } else {
-        alert('点赞成功');
-      }
+    props.getFirstComment();
+    if (props.comment.isLike) {
+      alert("取消点赞成功");
+    } else {
+      alert("点赞成功");
+    }
   } else {
-    alert('点赞失败');
+    alert("点赞失败");
   }
 };
 //删除一级评论
 const deleteComment = async (commentId: number) => {
   await executeRequest({
     url: `/comment/deleteComment/${commentId}`,
-    method: 'delete',
+    method: "delete",
   });
   if (data.value?.code === 200) {
     props.getFirstComment();
-    alert('删除成功');
+    alert("删除成功");
   } else {
-    alert('删除失败');
+    alert("删除失败");
   }
 };
 
@@ -119,13 +119,12 @@ onMounted(async () => {
   const currentUserId = props.comment.userId;
   getUserInfo(currentUserId, userInfo.value);
   await getSecondComment(props.comment.commentId);
-  
 });
 defineExpose({ userInfo });
 </script>
 
 <template>
-  <div class="comment-item" :class="{'is-reply': isReply}">
+  <div class="comment-item" :class="{ 'is-reply': isReply }">
     <div class="avatar">
       <img :src="userInfo.headPortrait || '../../../public/logo.png'" />
     </div>
@@ -135,7 +134,9 @@ defineExpose({ userInfo });
         <span class="time">{{ formattedTime }}</span>
       </div>
       <div class="comment-text">
-        <span v-if="isReply" :key="comment.pointUser" class="reply-to">{{ `@${comment.userInfo?.name}` }}</span>
+        <span v-if="isReply" :key="comment.pointUser" class="reply-to">{{
+          `@${comment.userInfo?.name}`
+        }}</span>
         {{ comment.commentTxt }}
       </div>
       <div v-if="comment.urls" class="image">
@@ -146,10 +147,18 @@ defineExpose({ userInfo });
           <span class="reply-btn" @click="toggleForm">
             <Icon icon="fontisto:comment" class="replyIcon" />回复
           </span>
-          <span v-if="comment.isMyComment" class="delete-btn" @click="deleteComment(comment.commentId)">
+          <span
+            v-if="comment.isMyComment"
+            class="delete-btn"
+            @click="deleteComment(comment.commentId)"
+          >
             <Icon icon="fluent:delete-24-regular" class="deleteIcon" />删除
           </span>
-          <span class="like-btn" :class="{'liked': comment.isLike}" @click="likeComment(comment.commentId)">
+          <span
+            class="like-btn"
+            :class="{ liked: comment.isLike }"
+            @click="likeComment(comment.commentId)"
+          >
             <Icon icon="uiw:like-o" class="likeIcon" />
             {{ comment.likeCount }}
           </span>
@@ -160,23 +169,31 @@ defineExpose({ userInfo });
       </transition>
       <!-- 子评论 -->
       <div class="son-comments">
-       <sonComment
-         v-for="son in sonComments"
-         :key="son.commentId"
-         :son="son"
-         :is-reply="true"
-         :parent-id="comment.commentId"
-         @liked="handleLike"
-         @deleted="handleLike"
-       />
+        <sonComment
+          v-for="son in sonComments"
+          :key="son.commentId"
+          :son="son"
+          :is-reply="true"
+          :parent-id="comment.commentId"
+          @liked="handleLike"
+          @deleted="handleLike"
+        />
       </div>
     </div>
     <!-- 展开更多评论 -->
     <div v-if="total > 2" class="more-comments">
-      <div class="lookComment" @click="loadMoreReplies(props.comment.commentId)">
-        {{ showMore ? '查看更多回复' : '收起' }}
+      <div
+        class="lookComment"
+        @click="loadMoreReplies(props.comment.commentId)"
+      >
+        {{ showMore ? "查看更多回复" : "收起" }}
         <Icon v-if="showMore" icon="weui:arrow-outlined" class="arrowIcon" />
-        <Icon v-else icon="iconamoon:arrow-up-2-light" class="arrowsIcon" style="color: #5db0da" />
+        <Icon
+          v-else
+          icon="iconamoon:arrow-up-2-light"
+          class="arrowsIcon"
+          style="color: #5db0da"
+        />
       </div>
     </div>
   </div>
@@ -187,15 +204,15 @@ defineExpose({ userInfo });
   margin: 0;
   padding: 0;
 }
-.son-comments{
+.son-comments {
   width: 100%;
   flex-shrink: 0;
 }
-.image{
+.image {
   width: 100%;
   height: auto;
   margin: 3px 0;
-  img{
+  img {
     width: 150px;
     height: auto;
     object-fit: cover;
@@ -212,7 +229,7 @@ defineExpose({ userInfo });
   min-height: 90px;
   overflow: hidden;
   border-bottom: 1px solid #e7e6e6;
-  
+
   .avatar {
     width: 45px;
     height: 45px;
@@ -224,7 +241,7 @@ defineExpose({ userInfo });
     justify-content: center;
     border: 1px solid #e2e2e2;
     overflow: hidden;
-    
+
     img {
       width: 100%;
       height: 100%;
@@ -295,11 +312,11 @@ defineExpose({ userInfo });
       .likeIcon.liked {
         color: #619fc9;
         filter: drop-shadow(0 0 10px rgba(0, 187, 255, 0.8));
-       }
-       .like-btn.liked{
+      }
+      .like-btn.liked {
         color: #619fc9;
-        text-shadow: 0 0 10px rgba(0, 187, 255, 0.8); 
-       }
+        text-shadow: 0 0 10px rgba(0, 187, 255, 0.8);
+      }
 
       .like-btn {
         display: flex;
@@ -315,13 +332,13 @@ defineExpose({ userInfo });
           margin-right: 5px;
         }
       }
-      .delete-btn{
+      .delete-btn {
         display: flex;
         font-size: 14px;
         color: gray;
         cursor: pointer;
         margin-right: 10px;
-        .deleteIcon{
+        .deleteIcon {
           color: gray;
           font-size: 18px;
           margin-top: 2px;
@@ -330,32 +347,32 @@ defineExpose({ userInfo });
       }
     }
   }
-  .more-comments{
+  .more-comments {
     width: 100%;
     display: flex;
   }
   .lookComment {
-        height: 30px;
-        margin-bottom: 5px;
-        border-radius: 3px;
-        padding: 5px 10px 0 10px;
-        background-color: #e7f3f9;
-        font-size: 14px;
-        color: #5db0da;
-        display: flex;
-        margin-left: 75px;
-        justify-content: flex-start;
-        cursor: pointer;
-        flex-grow: 0;
-        .arrowIcon {
-          margin-left: 7px;
-          font-size: 21px;
-          color: #5db0da;
-        }
-        .arrowsIcon{
-          font-size: 21px;
-        }
-      }
+    height: 30px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+    padding: 5px 10px 0 10px;
+    background-color: #e7f3f9;
+    font-size: 14px;
+    color: #5db0da;
+    display: flex;
+    margin-left: 75px;
+    justify-content: flex-start;
+    cursor: pointer;
+    flex-grow: 0;
+    .arrowIcon {
+      margin-left: 7px;
+      font-size: 21px;
+      color: #5db0da;
+    }
+    .arrowsIcon {
+      font-size: 21px;
+    }
+  }
 
   &.is-reply {
     width: 85%;
@@ -363,25 +380,25 @@ defineExpose({ userInfo });
     overflow: hidden;
     border-bottom: 1px solid #d9d7d7;
     .avatar {
-       width: 40px;
-       height: 40px;
-       margin-right: 10px;
-       border-radius: 50%;
-       padding: 2px;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       border: 1px solid #e2e2e2;
-       overflow: hidden;
-       img {
-         width: 100%;
-         height: 100%;
-         border-radius: 50%;
-         object-fit: cover;
-       }
-  }
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+      border-radius: 50%;
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #e2e2e2;
+      overflow: hidden;
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    }
     .content-box {
-      width: calc(100% - 60px); 
+      width: calc(100% - 60px);
 
       .comment-text {
         color: #777;
@@ -399,51 +416,50 @@ defineExpose({ userInfo });
         margin-bottom: 0px;
         height: 33px;
         .reply-btn {
-        display: flex;
-        margin-right: 10px;
-        font-size: 13px;
-        color: gray;
-        cursor: pointer;
+          display: flex;
+          margin-right: 10px;
+          font-size: 13px;
+          color: gray;
+          cursor: pointer;
 
-        .replyIcon {
+          .replyIcon {
+            color: gray;
+            margin-top: 3px;
+            margin-right: 5px;
+          }
+        }
+        .delete-btn {
+          display: flex;
+          font-size: 13.5px;
           color: gray;
-          margin-top: 3px;
-          margin-right: 5px;
+          cursor: pointer;
+          margin-right: 10px;
+          .deleteIcon {
+            color: gray;
+            font-size: 17px;
+            margin-top: 1px;
+            margin-right: 3px;
+          }
         }
-      }
-      .delete-btn{
-        display: flex;
-        font-size: 13.5px;
-        color: gray;
-        cursor: pointer;
-        margin-right: 10px;
-        .deleteIcon{
-          color: gray;
-          font-size: 17px;
-          margin-top: 1px;
-          margin-right: 3px;
+        .liked {
+          color: #619fc9;
+          filter: drop-shadow(0 0 15px rgba(0, 187, 255, 0.8));
         }
-      }
-      .liked {
-        color: #619fc9;
-        filter: drop-shadow(0 0 15px rgba(0, 187, 255, 0.8));
-       }
-       
-      .like-btn {
-        display: flex;
-        font-size: 13px;
-        cursor: pointer;
-        .likeIcon {
-          font-size: 16px;
-          margin-top: 1px;
-          margin-right: 4px;
+
+        .like-btn {
+          display: flex;
+          font-size: 13px;
+          cursor: pointer;
+          .likeIcon {
+            font-size: 16px;
+            margin-top: 1px;
+            margin-right: 4px;
+          }
         }
-      }
       }
     }
   }
 }
-@media screen and (max-width: 768px)  {
-  
+@media screen and (max-width: 768px) {
 }
 </style>
