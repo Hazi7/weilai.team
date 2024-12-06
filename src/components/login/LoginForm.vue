@@ -9,7 +9,10 @@ import UseLogin from '../../composables/UseLogin'
 import { debounce } from "@community/composables/search";
 import { ref } from 'vue'
 import { onMounted, onUnmounted } from 'vue'
+import { useAlert } from '../../composables/alert'
+// import { error } from 'node_modules/handsontable/helpers'
 
+const { showAlert } = useAlert();
 const account = ref<string>('')
 const password = ref<string>('')
 const { loading, getLogin } = UseLogin()
@@ -18,10 +21,12 @@ const { loading, getLogin } = UseLogin()
 const submitForm = debounce(() => {
     getLogin(account.value, password.value)
     // 在这里处理实际的表单提交逻辑，例如发送请求
-}, 1000); // 设置防抖时间为 1000ms
+}, 500); // 设置防抖时间为 500ms
 
 // 控制动画显示的状态
 const isVisible = ref(false)
+const noId = ref(false)
+const noPassWord = ref(false)
 // 监听点击事件，触发动画
 const handleClick = (event: MouseEvent) => {
     console.log('页面被点击了');
@@ -35,6 +40,18 @@ onMounted(() => {
 onUnmounted(() => {
     document.removeEventListener('click', handleClick);
 });
+
+function sendLogin() {
+    if (account.value && password.value) {
+        submitForm()
+    } else if (!account.value) {
+        showAlert('请输入账户！', 'waring')
+        noId.value = true
+    } else if (!password.value) {
+        showAlert('请输入密码！', 'waring')
+        noPassWord.value = true
+    }
+}
 </script>
 
 <template>
@@ -49,14 +66,15 @@ onUnmounted(() => {
                 <div class="grid gap-4">
                     <div class="grid gap-2">
                         <Label class="inputTitle" for="stuId">账号</Label>
-                        <Input class="formInput" id="stuId" placeholder="请输入学号或邮箱" required v-model="account" />
+                        <Input class="formInput" :class="{ 'noWrite': noId }" @click="noId = false" id="stuId"
+                            placeholder="请输入学号或邮箱" required v-model="account" />
                     </div>
                     <div class="grid gap-2">
                         <div class="flex items-center justify-between">
                             <Label class="inputTitle" for="password">密码</Label>
                         </div>
-                        <Input class="formInput" id="password" type="password" placeholder="请输入密码" required
-                            v-model="password" />
+                        <Input class="formInput" :class="{ 'noWrite': noPassWord }" @click="noPassWord = false"
+                            id="password" type="password" placeholder="请输入密码" required v-model="password" />
                     </div>
                     <div class="forgotPass grid gap-2">
                         <div class="flex items-center justify-end">
@@ -64,7 +82,7 @@ onUnmounted(() => {
                         </div>
                     </div>
 
-                    <Button type="submit" class="loginButton w-full" @click="submitForm" v-if="!loading">
+                    <Button type="submit" class="loginButton w-full" @click="sendLogin" v-if="!loading">
                         登录
                     </Button>
                     <Button class="loginButton" disabled v-if="loading">
@@ -118,12 +136,35 @@ onUnmounted(() => {
         border-radius: 20px;
         background-color: #e1f2fd;
     }
+
+    .noWrite {
+        animation: slideIn 0.4s ease-in-out 1;
+        border-color: rgb(255, 96, 96);
+        background-color: #fbeceb;
+    }
 }
 
-// .loginContent.animate-fadeIn {
-//     opacity: 1;
-//     height: 100%;
-// }
+@keyframes slideIn {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    50% {
+        transform: translateX(10px);
+    }
+
+    75% {
+        transform: translateX(-10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
 
 @keyframes fadeIn {
     0% {
@@ -146,38 +187,6 @@ onUnmounted(() => {
 
     100% {
         height: 100%;
-    }
-}
-
-@media screen and (max-width: 1400px) {
-    .loginOut {
-        width: 350px;
-    }
-
-    .loginContent {
-        margin-top: 80px;
-
-        .loginTitle {
-            text-align: center;
-            font-size: 32px;
-            margin: 12px 0 5px 0;
-        }
-
-        .inputTitle {
-            font-size: 15px;
-            margin: 10px 0 6px 0;
-        }
-
-        .formInput {
-            height: 36px;
-            font-size: 12px;
-        }
-
-        .loginButton {
-            height: 35px;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
     }
 }
 

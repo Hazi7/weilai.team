@@ -12,6 +12,7 @@ export const useTagStore = defineStore("tag", {
         };
     },
     actions: {
+
         addTag(data: TagData) {
             this.tagType = data;
         },
