@@ -2,7 +2,7 @@
   <div id="news">
     <div class="news-item" v-for="item in articleList" :id="`${item.id}` + ''">
       <div class="news-writer">
-        <div class="avatar">
+        <div class="avatar" @click="skipPersonCenter(item.id)">
           <img v-if="item.headPortrait" :src="`${item.headPortrait}`" alt="" />
           <div v-else class="flex items-center space-x-4">
             <Skeleton class="bg-[--muted] h-12 w-12 rounded-full" />
@@ -68,19 +68,29 @@ import {
   loading,
 } from "@community/composables/search";
 import { ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+
+import { useUserStore } from "@/store/userStore";
 import NewsFooter from "./NewsFooter.vue";
 const isTag = ref(false);
 console.log(loading.value);
-
+const userStore = useUserStore();
+const router = useRouter();
 const props = defineProps<{
-  type?: number;
+  type: number | 0;
   page?: number;
-  condition?: string;
+  condition?: string | "";
   tagPostList?: Array<ArticleList>;
-  isTag?: boolean;
+  isTag?: boolean | false;
 }>();
 const route = useRoute();
+//跳转个人中心;
+const skipPersonCenter = (id: number) => {
+  userStore.setUserId(id);
+  router.push({
+    path: `/personalCenter/userInfo`,
+  });
+};
 
 if (!props.isTag) {
   // 搜索数据要用的

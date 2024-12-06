@@ -20,7 +20,7 @@ import {
 import router from "@/router";
 import type { TeamInfo, TeamUserList } from "@/types/Contacts";
 import { Icon } from "@iconify/vue";
-import { Bot, ChevronRight, SquareTerminal } from "lucide-vue-next";
+import { ChevronRight } from "lucide-vue-next";
 import { ref } from "vue";
 import Search from "../../components/contacts/Search.vue";
 import { getMembers } from "../../composables/useContacts";
@@ -29,47 +29,6 @@ import Member from "./member/[member].vue";
 const userCount = ref(0);
 const teamUserList = ref<TeamUserList[]>([]);
 const teamAble = ref<TeamInfo[]>([]);
-const navMain = [
-  {
-    title: "2024未来软件工作室",
-    url: "#",
-    icon: SquareTerminal,
-    // isActive: true,
-    items: [
-      {
-        title: "一组",
-        url: "#",
-      },
-      {
-        title: "二组",
-        url: "#",
-      },
-      {
-        title: "三组",
-        url: "#",
-      },
-    ],
-  },
-  {
-    title: "2023 未来软件工作室",
-    url: "#",
-    icon: Bot,
-    items: [
-      {
-        title: "一组",
-        url: "#",
-      },
-      {
-        title: "二组",
-        url: "#",
-      },
-      {
-        title: "三组",
-        url: "#",
-      },
-    ],
-  },
-];
 const isVisible = ref(false);
 interface Item {
   name: string;
@@ -214,6 +173,7 @@ function getMembersOfGroup(str: string) {
                         <SidebarMenuSubItem v-for="subItem in item.group">
                           <SidebarMenuSubButton as-child>
                             <a
+                              class="group-item"
                               @click.prevent="
                                 router.push(
                                   `/admin/contacts/member/${item.grade + ',' + getMembersOfGroup(subItem).info} `,
@@ -269,6 +229,11 @@ td {
 }
 .group-leader {
   background-color: var(--secondary);
+}
+.group-item {
+  &:hover {
+    cursor: pointer;
+  }
 }
 .table-actions {
   height: 5vh;
