@@ -14,11 +14,15 @@ interface TagTypeData {
 }
 
 interface UsageTagData {
-    data: { [key: string]: number }[];
+    data: {
+        tagName: string;
+        count: number;
+    }[];
 }
 
 interface UseTagList {
-    [key: string]: number
+    tagName: string;
+    count: number;
 }
 
 const tagStore = useTagStore();

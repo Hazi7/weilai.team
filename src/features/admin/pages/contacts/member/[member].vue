@@ -20,13 +20,6 @@
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <!-- <DropdownMenuContent>
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem checked> Active </DropdownMenuItem>
-                <DropdownMenuItem>Draft</DropdownMenuItem>
-                <DropdownMenuItem> Archived </DropdownMenuItem>
-              </DropdownMenuContent> -->
           </DropdownMenu>
           <SelectLeader :grade="grade" :group="group" />
           <Button size="sm" variant="outline" class="h-7 gap-1 header-btn">
@@ -63,7 +56,7 @@
             </div>
           </CardHeader>
           <CardContent class="p-0">
-            <Table id="tb">
+            <Table id="tb" ref="tableRef">
               <TableHeader>
                 <TableRow>
                   <TableHead class="hidden w-[100px] md:table-cell text-left">
@@ -79,7 +72,7 @@
                   <TableHead class="hidden md:table-cell"> 操作 </TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody ref="tbodyRef">
                 <!-- 属性class=group-leader 为组长样式  -->
                 <TableRow v-if="userGroupList" class="group-leader">
                   <TableCell class="hidden sm:table-cell"
@@ -105,7 +98,11 @@
                     {{ userGroupList.studyId }}
                   </TableCell>
                   <TableCell>
-                    <MemberInfo>
+                    <MemberInfo
+                      :userId="userGroupList.id"
+                      :sendUpdateInfo="getUpdateInfo"
+                      :rowData="editRowData"
+                    >
                       <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                           <Button
@@ -120,21 +117,25 @@
                         </DropdownMenuTrigger>
                         <DropdownMenuContent class="bg-white">
                           <!-- <MemberInfo>编辑</MemberInfo> -->
-                          <DialogTrigger
+                          <DialogTrigger class="w-full"
                             ><DropdownMenuItem
+                              @click="sendOldData(userGroupList, 0)"
                               ><Icon
                                 icon="cuida:edit-outline"
                               />编辑</DropdownMenuItem
                             ></DialogTrigger
                           >
-
                           <DropdownMenuItem>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </MemberInfo>
                   </TableCell>
                 </TableRow>
-                <TableRow v-for="(user, index) in userList" :key="index">
+                <TableRow
+                  v-for="(user, index) in userList"
+                  :key="index"
+                  ref="rowRefs"
+                >
                   <TableCell class="hidden sm:table-cell"
                     ><input type="checkbox" name="" id=""
                   /></TableCell>
@@ -155,27 +156,11 @@
                     {{ user.studyId }}
                   </TableCell>
                   <TableCell>
-                    <!-- <DropdownMenu>
-                      <DropdownMenuTrigger as-child>
-                        <Button
-                          aria-haspopup="true"
-                          size="icon"
-                          variant="ghost"
-                          class="h-[3vh]"
-                        >
-                          <MoreHorizontal class="h-4 w-4" />
-                          <span class="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent class="bg-white">
-                        <DropdownMenuItem>
-                     
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu> -->
-                    <MemberInfo>
+                    <MemberInfo
+                      :userId="user.id"
+                      :rowData="editRowData"
+                      :sendUpdateInfo="getUpdateInfo"
+                    >
                       <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                           <Button
@@ -189,13 +174,15 @@
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent class="bg-white">
-                          <!-- <MemberInfo>编辑</MemberInfo> -->
-                          <DialogTrigger
-                            ><DropdownMenuItem
-                              >编辑</DropdownMenuItem
-                            ></DialogTrigger
-                          >
-
+                          <DialogTrigger class="w-full">
+                            <!-- @click="sendOldData(user)" -->
+                            <DropdownMenuItem
+                              @click="sendOldData(user, index + 1)"
+                            >
+                              <Icon icon="cuida:edit-outline" />
+                              编辑
+                            </DropdownMenuItem>
+                          </DialogTrigger>
                           <DropdownMenuItem>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -244,6 +231,58 @@ import { Icon } from "@iconify/vue";
 import { MoreHorizontal } from "lucide-vue-next";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
+const editRowData = ref<TeamUserList>();
+const tableRef = ref<InstanceType<typeof Table> | null>(null);
+const rowRefs = ref<InstanceType<typeof TableRow> | []>([]);
+const tbodyRef = ref<InstanceType<typeof TableBody> | null>(null);
+const trs = ref<HTMLTableRowElement[]>([]);
+// const logTableInfo = () => {
+// onMounted(() => {
+//   if (tableRef.value) {
+//     console.log(tableRef.value.$el.getElementsByTagName("tr"));
+//     const trCollection = tableRef.value.$el.getElementsByTagName("tr");
+//     console.log(trCollection.length);
+
+//     const trs = Array.from(trCollection);
+//     console.log(trs);
+//     console.log(trs.length);
+
+//     console.log(tableRef.value.$el.getElementsByTagName("tr").length);
+//     const length = Array.from(tableRef.value.$el.querySelectorAll("tr"));
+//     console.log(length);
+
+//     // console.log(tableRef.value.$refs.table);
+//     const table = tableRef.value.$refs.table as HTMLTableElement;
+//     console.log(table.rows.length);
+
+//     // 这里还可以进行更多对表格元素的操作，比如获取列数等
+//   }
+// });
+function gettrs(index?: number) {
+  if (tableRef.value) {
+    console.log(tableRef.value.$el.getElementsByTagName("tr"));
+    const trCollection = tableRef.value.$el.getElementsByTagName("tr");
+
+    const trs = Array.from(trCollection);
+    // 删除第一行
+    trs.splice(0, 1);
+    console.log(trCollection.length);
+    console.log(trs);
+
+    // 这里还可以进行更多对表格元素的操作，比如获取列数等
+  }
+}
+// };
+
+function sendOldData(oldData: TeamUserList, index: number) {
+  // 将旧数据赋值给editRowData 并传递给子组件（弹窗）以进行修改
+  editRowData.value = oldData;
+  gettrs();
+}
+function getUpdateInfo(updateObj: TeamUserList) {
+  // 更新数据(通过子组件接收回来新数据)
+  console.log("收到数据了", updateObj);
+}
 const route = useRoute();
 const member = ref("");
 console.log(route.params);
@@ -292,17 +331,6 @@ watch(route, (newVal) => {
     console.log(userList.value);
   });
 });
-// watch(
-//   () => member.value,
-//   (newValue, oldValue) => {
-//     console.log("监听到变化了");
-
-//     getMembersByGroupAndGrade(grade.value, group.value).then((res) => {
-//       userList.value = res.teamUserList;
-//       console.log(userList.value);
-//     });
-//   },
-// );
 </script>
 
 <style lang="scss" scoped>

@@ -53,7 +53,7 @@ getAllTagList()
 
     &:hover {
         transition: all .5s;
-        max-height: 220px;
+        max-height: 290px;
         -webkit-box-shadow: 0 4px 30px 0 rgba(223, 223, 229, 0.4);
         box-shadow: 0 4px 30px 0 rgba(223, 223, 229, 0.4);
         border-radius: 4px;

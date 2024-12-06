@@ -6,8 +6,10 @@ import { EditorContent } from "@tiptap/vue-3";
 import { useRoute } from "vue-router";
 import ArticleHeader from "../../components/article/ArticleHeader.vue";
 import { type AxiosResponse } from "axios";
-import { ref, watch, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import apiClient from "@/api/axios";
+import CommentForm from "@/components/comment/CommentForm.vue";
+import { formatPostTime } from "@/utils/formatPostTime";
 
 export interface PostDetailResponse {
   userId: number;
@@ -35,10 +37,16 @@ const getPost = () => {
 const { data, loading, run } =
   useRequest<AxiosResponse<PostDetailResponse>>(getPost);
 
+const formattedPostTime = computed(() => {
+  if (data.value?.data.postTime) {
+    return formatPostTime(data.value?.data.postTime);
+  }
+});
+
 const { editor } = useAppEditor(false);
 
 watch(
-  () => data.value?.data.postTxt,
+  () => data.value,
   () => {
     if (data.value?.data.postTxt) {
       editor.value?.commands.setContent(JSON.parse(data.value?.data.postTxt));
@@ -58,14 +66,15 @@ watch(
       :is-loading="loading"
       :author="data?.data.name"
       :avatar="data?.data.headPortrait"
-      :post-time="data?.data.postTime"
+      :post-time="formattedPostTime"
     ></ArticleHeader>
     <EditorContent
       class="article-detail__content"
       :editor="editor"
     ></EditorContent>
   </div>
-  <!-- <CommentList></CommentList> -->
+  <CommentForm :post-id="postId"></CommentForm>
+  <CommentList :post-id="postId"></CommentList>
 </template>
 
 <style lang="scss">
