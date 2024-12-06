@@ -229,7 +229,7 @@ function reset() {
                     <TableCell>
                       <Dialog>
                         <DialogTrigger as-child class="mb-4">
-                          <Button variant="outline" class="bg-blue-100 text-blue-600"
+                          <Button variant="outline" class="bg-blue-100 text-blue-600 m-auto"
                             @click="changeAuthorityList = [...item.authority]">
                             修改权限
                           </Button>
@@ -298,7 +298,7 @@ $font: #8c9296;
 tr {
   text-align: center;
   font-size: 14.5px;
-  height: 40px !important;
+  height: 50px ;
   box-sizing: border-box;
 
   &:nth-child(even) {
@@ -317,7 +317,8 @@ th {
 }
 
 td {
-  padding: 0.5em;
+  padding: 0;
+  height: 50px;
 }
 
 .group-leader {
