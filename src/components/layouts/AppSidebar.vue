@@ -23,10 +23,15 @@ import {
   LogOut,
 } from "lucide-vue-next";
 import { watch } from "vue";
-import { RouterLink, useRoute, useRouter } from "vue-router";
+import { onBeforeRouteLeave, RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
+
+onBeforeRouteLeave(() => {
+  // 离开路由时，清除所有定时器
+  console.log(111,"离开了")
+})
 const {  logout } = UserLogin()
 const route = useRoute();
 const router = useRouter();
@@ -97,6 +102,9 @@ interface SubItemInterface {
   path: string;
   redirect?:string;
 }
+
+
+
 </script>
 
 <template>
