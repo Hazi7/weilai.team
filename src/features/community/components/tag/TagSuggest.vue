@@ -40,42 +40,6 @@ getHotTagList()
 </template>
 
 <style scoped lang="scss">
-// .tag-suggest {
-//     width: 100%;
-//     background-color: white;
-//     // border-radius: 5px;
-//     border: 1.5px solid #efefef;
-
-//     .tag-suggest-like {
-//         background-image: linear-gradient(#cde9f1, #ffffff);
-//         padding: 10px 20px;
-//         font-size: 18px;
-//     }
-
-//     .suggestTagList {
-//         padding: 10px 20px;
-//         display: flex;
-//         flex-direction: row;
-//         flex-wrap: wrap;
-//         // flex-direction: column;
-
-//         .tag-suggest-item {
-//             display: flex;
-//             align-items: center;
-//             margin: 5px 15px;
-
-//             .tag-suggest-item-icon {
-//                 color: var(--primary-foreground);
-//             }
-
-//             .tag-suggest-item-name {
-//                 margin-left: 10px;
-//                 color: #767676;
-//             }
-//         }
-//     }
-// }
-
 .rightBarTag {
     border: 2px solid #ffffff;
     max-height: 168px;
@@ -159,6 +123,7 @@ getHotTagList()
 
 @media screen and (max-width: 1200px) {
     .rightBarTag {
+        max-height: 250px;
         .rightTagHead {
             font-size: 12px;
 
