@@ -11,8 +11,10 @@ import * as z from "zod";
 import { useRequest } from "@/composables/useRequest";
 import { toast } from "@/components/ui/toast";
 import Toaster from "@/components/ui/toast/Toaster.vue";
+import { useRoute } from "vue-router";
 
 const { editor } = useAppEditor();
+const route = useRoute();
 
 const postData = reactive({
   postTitle: "" as string | number | undefined,
