@@ -9,7 +9,7 @@
 
       <NewsContent :type="3" />
     </div>
-    <Rightbar />
+    <Rightbar :type="type" />
   </div>
 </template>
 
@@ -20,44 +20,55 @@ import { ref } from "vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
 import NewsContent from "../../components/NewsContent.vue";
 let isLike = ref(true);
+const type = 3;
 </script>
 <style scoped lang="scss">
-.content {
-  padding: 0 100px;
-  width: 100%;
-  height: auto;
-}
+@use "@community/styles/community";
+// .content {
+//   padding: 0 100px;
+//   width: 100%;
+//   height: auto;
+// }
 .already {
   color: red !important;
 }
+
 #news {
   width: 100%;
+
   .news-item {
     padding: 15px;
     border-radius: 10px;
     min-height: 100px;
     background-color: var(--background);
     margin-bottom: 25px;
+
     .news-writer {
       display: flex;
       align-items: center;
+
       .avatar {
         width: 50px;
         height: 50px;
+
         img {
           width: 100%;
           height: 100%;
           border-radius: 50%;
         }
+
         margin-right: 5px;
       }
+
       .time {
         font-size: 13px;
         color: #909ba6;
       }
     }
+
     .news-content {
       padding: 10px 55px;
+
       .news-details {
         font-size: 14.5px;
 
@@ -73,9 +84,11 @@ let isLike = ref(true);
           word-break: break-all;
         }
       }
+
       .news-label {
         margin-top: 10px;
         display: flex;
+
         .type {
           width: 50px;
           font-size: 14px;
@@ -91,16 +104,19 @@ let isLike = ref(true);
 
           color: #909ba6;
           font-size: 14px;
+
           .label-item {
             margin: 0 5px;
           }
         }
       }
     }
+
     .news-footer {
       display: flex;
       align-items: center;
       padding: 5px 55px;
+
       & > div {
         color: var(--secondary-foreground);
         display: flex;
@@ -108,6 +124,7 @@ let isLike = ref(true);
         font-size: 13px;
         margin-right: 10px;
       }
+
       &-icon {
         color: var(--secondary-foreground);
         font-size: 17px;
@@ -116,9 +133,11 @@ let isLike = ref(true);
     }
   }
 }
+
 @media screen and (max-width: 768px) {
   .content {
     padding: 0 0;
+
     .bg {
       position: fixed;
       top: 0;
@@ -126,6 +145,7 @@ let isLike = ref(true);
       width: 100%;
       height: 20%;
       background-color: #fafafa;
+
       &-top {
         background-image: linear-gradient(#dfe9f3, #ffffff00 100%);
         height: 30%;
@@ -135,26 +155,32 @@ let isLike = ref(true);
 
   #news {
     margin-top: 180px;
+
     .news-item {
       padding: 5px;
       margin-bottom: 8px;
+
       .news-writer {
         padding-left: 10px;
+
         .avatar {
           width: 40px;
           height: 40px;
         }
+
         .writer-info {
           .name {
             color: var(--secondary-foreground);
             font-size: 0.9em;
             margin-left: 5px;
           }
+
           .time {
             display: none;
           }
         }
       }
+
       .news-content {
         padding: 10px 55px;
 
@@ -173,9 +199,11 @@ let isLike = ref(true);
             word-break: break-all;
           }
         }
+
         .news-label {
           margin-top: 10px;
           display: flex;
+
           .type {
             width: 50px;
             font-size: 14px;
@@ -190,6 +218,7 @@ let isLike = ref(true);
             display: flex;
             color: #909ba6;
             font-size: 14px;
+
             .label-item {
               margin: 0 5px;
             }

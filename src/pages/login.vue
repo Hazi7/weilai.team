@@ -13,6 +13,7 @@ import LoginAnimation from '@/components/login/LoginAnimation.vue';
 <style scoped lang="scss">
 .login-container {
     min-height: 100vh;
+    padding: 50px 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -20,5 +21,10 @@ import LoginAnimation from '@/components/login/LoginAnimation.vue';
     overflow: hidden;
     background-image: url('/public/post_background.png');
     background-size: cover;
+}
+@media screen and (max-width: 1024px) {
+    .login-container {
+        justify-content: flex-start;
+    }
 }
 </style>

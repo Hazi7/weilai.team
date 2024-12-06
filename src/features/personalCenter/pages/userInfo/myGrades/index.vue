@@ -44,7 +44,7 @@
     background-color: white;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 5px 5px 5px #999;
+    // box-shadow: 5px 5px 5px #999;
 
     .postsData {
         display: flex;

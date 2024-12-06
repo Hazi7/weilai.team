@@ -1,23 +1,10 @@
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Command, CommandInput } from "@/components/ui/command";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -30,64 +17,18 @@ import {
   SidebarMenuSubItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
+import router from "@/router";
+import type { TeamInfo, TeamUserList } from "@/types/Contacts";
 import { Icon } from "@iconify/vue";
-import {
-  Bot,
-  ChevronRight,
-  MoreHorizontal,
-  SquareTerminal,
-} from "lucide-vue-next";
+import { ChevronRight } from "lucide-vue-next";
 import { ref } from "vue";
-const navMain = [
-  {
-    title: "2024未来软件工作室",
-    url: "#",
-    icon: SquareTerminal,
-    // isActive: true,
-    items: [
-      {
-        title: "一组",
-        url: "#",
-      },
-      {
-        title: "二组",
-        url: "#",
-      },
-      {
-        title: "三组",
-        url: "#",
-      },
-    ],
-  },
-  {
-    title: "2023 未来软件工作室",
-    url: "#",
-    icon: Bot,
-    items: [
-      {
-        title: "一组",
-        url: "#",
-      },
-      {
-        title: "二组",
-        url: "#",
-      },
-      {
-        title: "三组",
-        url: "#",
-      },
-    ],
-  },
-];
+import Search from "../../components/contacts/Search.vue";
+import { getMembers } from "../../composables/useContacts";
+import Member from "./member/[member].vue";
+
+const userCount = ref(0);
+const teamUserList = ref<TeamUserList[]>([]);
+const teamAble = ref<TeamInfo[]>([]);
 const isVisible = ref(false);
 interface Item {
   name: string;
@@ -100,11 +41,37 @@ const onInputFocus = () => {
 const onInputBlur = () => {
   isVisible.value = false;
 };
+getMembers().then((res) => {
+  userCount.value = res.userCount;
+  teamAble.value = res.teamAble;
+  teamUserList.value = res.teamUserList;
+});
 
 const items: Item[] = [
   { name: "Item 1", description: "This is item 1" },
   { name: "Item 1", description: "This is item 1" },
 ];
+
+function getMembersOfGroup(str: string) {
+  let parts = str.split("$");
+  const chineseNums = {
+    1: "一",
+    2: "二",
+    3: "三",
+    4: "四",
+    5: "五",
+    6: "六",
+    7: "七",
+    8: "八",
+    9: "九",
+  };
+  return {
+    title: `${chineseNums[parts[0] as unknown as keyof typeof chineseNums]}组（${parts[1]}人）`,
+    group: parts[0],
+    count: parts[1],
+    info: `${parts[0]},${parts[1]}`,
+  };
+}
 </script>
 
 <template>
@@ -117,7 +84,8 @@ const items: Item[] = [
           id="sidebar"
           style="padding: 0.9vw; width: 20vw"
         >
-          <div id="search">
+          <Search />
+          <!-- <div id="search">
             <Command class="h-full">
               <CommandInput
                 placeholder="请输入关键词"
@@ -130,9 +98,25 @@ const items: Item[] = [
                   }
                 "
               />
-             
+
+              <CommandList
+                class="search_list"
+                v-show="items.length && isVisible"
+              >
+                <CommandEmpty>未找到搜索结果</CommandEmpty>
+                <CommandGroup heading="" class="p-0">
+                  <CommandItem
+                    :value="item.description"
+                    v-for="item in items"
+                    class="search_item"
+                  >
+                    <span>{{ item.name }}</span>
+                  </CommandItem>
+                </CommandGroup>
+                <CommandSeparator />
+              </CommandList>
             </Command>
-          </div>
+          </div> -->
           <div class="sidebar-link">
             <RouterLink to="">
               <Button
@@ -165,21 +149,20 @@ const items: Item[] = [
               <SidebarMenu class="sidebar-menu">
                 <SidebarMenuButton>
                   <Icon icon="fluent:people-28-regular" />
-                  <span>小组全体成员</span><span>(61人)</span>
+                  <span>小组全体成员</span><span>({{ userCount }})</span>
                 </SidebarMenuButton>
                 <Collapsible
-                  v-for="item in navMain"
-                  :key="item.title"
+                  v-for="item in teamAble"
                   as-child
                   class="group/collapsible"
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger as-child>
-                      <SidebarMenuButton :tooltip="item.title">
+                      <SidebarMenuButton :tooltip="item.grade">
                         <Icon
                           icon="material-symbols-light:account-tree-outline-rounded"
                         />
-                        <span>{{ item.title }}</span>
+                        <span>{{ item.grade }}未来软件工作室</span>
                         <ChevronRight
                           class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
                         />
@@ -187,13 +170,19 @@ const items: Item[] = [
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                        <SidebarMenuSubItem
-                          v-for="subItem in item.items"
-                          :key="subItem.title"
-                        >
+                        <SidebarMenuSubItem v-for="subItem in item.group">
                           <SidebarMenuSubButton as-child>
-                            <a :href="subItem.url">
-                              <span>{{ subItem.title }}</span>
+                            <a
+                              class="group-item"
+                              @click.prevent="
+                                router.push(
+                                  `/admin/contacts/member/${item.grade + ',' + getMembersOfGroup(subItem).info} `,
+                                )
+                              "
+                            >
+                              <span>{{
+                                getMembersOfGroup(subItem).title
+                              }}</span>
                             </a>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -207,131 +196,7 @@ const items: Item[] = [
         </Sidebar>
       </SidebarProvider>
     </div>
-    <main class="flex-1 items-start gap-4 md:gap-8 main">
-      <Tabs default-value="all">
-        <div
-          class="flex items-center"
-          style="margin: 5px 0px; height: 5vh; width: 100%"
-        >
-          <TabsList>
-            <div class="top-title">
-              <span>2024未来软件工作室</span>
-            </div>
-          </TabsList>
-          <div class="ml-auto flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  class="h-7 gap-1 header-btn"
-                >
-                  <Icon icon="proicons:person-2" />
-                  <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    设置组长
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <!-- <DropdownMenuContent>
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem checked> Active </DropdownMenuItem>
-                <DropdownMenuItem>Draft</DropdownMenuItem>
-                <DropdownMenuItem> Archived </DropdownMenuItem>
-              </DropdownMenuContent> -->
-            </DropdownMenu>
-            <Button size="sm" variant="outline" class="h-7 gap-1 header-btn">
-              <Icon icon="proicons:person-2" />
-              <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                编辑组织
-              </span>
-            </Button>
-          </div>
-        </div>
-        <hr />
-        <TabsContent value="all" class="tc">
-          <Card class="border-none shadow-none card">
-            <CardHeader class="card-header">
-              <div class="header-link">
-                <button>
-                  <RouterLink
-                    to="/admin/recruitment/detail"
-                    class="addMember head"
-                  >
-                    <Icon icon="icon-park-outline:people-plus-one" />
-                    &nbsp;
-                    <span>添加成员</span>
-                  </RouterLink>
-                </button>
-                <button>
-                  <RouterLink
-                    to="/admin/recruitment/detail"
-                    class="addMember head"
-                  >
-                    <span>批量管理</span>
-                  </RouterLink>
-                </button>
-              </div>
-            </CardHeader>
-            <CardContent class="p-0">
-              <Table id="tb">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead class="hidden w-[100px] md:table-cell text-left">
-                      <input type="checkbox" name="" id="" />
-                    </TableHead>
-                    <TableHead class="hidden md:table-cell" id="th"
-                      >姓名</TableHead
-                    >
-                    <TableHead class="hidden md:table-cell">组织</TableHead>
-                    <TableHead class="hidden md:table-cell"> 年级 </TableHead>
-                    <TableHead class="hidden md:table-cell"> 班级 </TableHead>
-                    <TableHead class="hidden md:table-cell"> 学号 </TableHead>
-                    <TableHead class="hidden md:table-cell"> 操作 </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow class="group-leader">
-                    <TableCell class="hidden sm:table-cell"
-                      ><input type="checkbox" name="" id=""
-                    /></TableCell>
-                    <TableCell class="font-medium"> 爆米奇 </TableCell>
-                    <TableCell> 一组 </TableCell>
-                    <TableCell class="hidden md:table-cell"> 2023级 </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      计科235
-                    </TableCell>
-                    <TableCell class="hidden md:table-cell">
-                      20231514530
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger as-child>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                            class="h-[3vh]"
-                          >
-                            <MoreHorizontal class="h-4 w-4" />
-                            <span class="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent class="bg-white">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter> </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </main>
+    <Member :teamAble="teamAble" :teamUserList="teamUserList"></Member>
   </div>
 </template>
 
@@ -365,13 +230,20 @@ td {
 .group-leader {
   background-color: var(--secondary);
 }
+.group-item {
+  &:hover {
+    cursor: pointer;
+  }
+}
 .table-actions {
   height: 5vh;
 }
 .content {
   width: 100%;
-  height: 90vh;
-  overflow: hidden;
+
+  top: 0;
+  margin-bottom: 50px;
+
   background-color: white;
   #sidebar {
     color: var(--secondary-foreground);

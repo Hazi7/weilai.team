@@ -8,36 +8,35 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 
-import { defineProps,defineEmits} from 'vue';
+import { defineProps, defineEmits } from "vue";
 
-import { Icon } from '@iconify/vue'
+import { Icon } from "@iconify/vue";
 
-
-type ItemObj= {
-    title: string;
-    label:string;
-    ref:string;
-    arr:Array<{
-        condition:string;
-    }>;
-}
-const emit = defineEmits(['filter_condition']);
+type ItemObj = {
+  title: string;
+  label: string;
+  ref: string;
+  arr: Array<{
+    condition: string;
+  }>;
+};
+const emit = defineEmits(["filter_condition"]);
 const props = defineProps<{
-    itemsObjArr : ItemObj[]
-}>()
+  itemsObjArr: ItemObj[];
+}>();
 
-
-
-
-const filter_condition = (e:Event) => {
-    if(e){
-        emit('filter_condition',(e.target as HTMLInputElement).getAttribute("value"), (e.target as HTMLInputElement).getAttribute("title"));
-    }
-    return;
-}
-
+const filter_condition = (e: Event) => {
+  if (e) {
+    emit(
+      "filter_condition",
+      (e.target as HTMLInputElement).getAttribute("value"),
+      (e.target as HTMLInputElement).getAttribute("title"),
+    );
+  }
+  return;
+};
 </script>
 <template>
     <div class="filter-condition">
@@ -69,17 +68,15 @@ const filter_condition = (e:Event) => {
     </div>
 </template>
 <style lang="scss" scoped>
-@use '@/assets/styles';
 $undertone: #647499;
-.filter-condition{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-
+.filter-condition {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
-.filter-content{
-    width: 150px;
+.filter-content {
+  width: 150px;
 }
 .filter-title{
     width: 100px;
@@ -95,12 +92,10 @@ $undertone: #647499;
     letter-spacing: 0.1em;
 
 }
-.drap-menu-content{
-   background-color: var(--card);
-
+.drap-menu-content {
+  background-color: var(--card);
 }
-.filter-label{
-    font-weight: 500;
-
-   }
+.filter-label {
+  font-weight: 500;
+}
 </style>

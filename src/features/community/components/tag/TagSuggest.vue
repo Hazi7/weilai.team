@@ -2,19 +2,13 @@
 import { reactive } from 'vue';
 import { Icon } from "@iconify/vue";
 import CommunityTag from '../../composables/CommunityTag';
+import { useTagStore } from "@/store/tagTypeStore";
 
-const { likeTagList, getRecommendTag } = CommunityTag();
-const props = defineProps({
-    type: {
-        type: Number,
-        default: null
-    },
-    tagType: {
-        type: String,
-        default: "comprehensive"
-    }
-})
-getRecommendTag(props.type)
+const tagStore = useTagStore();
+const tagType = tagStore.tagType.tagType
+const { likeTagList, getHotTagList } = CommunityTag();
+
+getHotTagList()
 </script>
 
 <template>
@@ -39,49 +33,13 @@ getRecommendTag(props.type)
         </div>
         <div class="hotTagList" v-if="likeTagList">
             <span class="tag" v-for="(tag, index) in likeTagList" :key="index">
-                <router-link :to="`/community/discussion/label/${tag}`">#{{ tag }}</router-link>
+                <router-link :to="`/community/${tagType}/label/${tag}`">#{{ tag }}</router-link>
             </span>
         </div>
     </div>
 </template>
 
 <style scoped lang="scss">
-// .tag-suggest {
-//     width: 100%;
-//     background-color: white;
-//     // border-radius: 5px;
-//     border: 1.5px solid #efefef;
-
-//     .tag-suggest-like {
-//         background-image: linear-gradient(#cde9f1, #ffffff);
-//         padding: 10px 20px;
-//         font-size: 18px;
-//     }
-
-//     .suggestTagList {
-//         padding: 10px 20px;
-//         display: flex;
-//         flex-direction: row;
-//         flex-wrap: wrap;
-//         // flex-direction: column;
-
-//         .tag-suggest-item {
-//             display: flex;
-//             align-items: center;
-//             margin: 5px 15px;
-
-//             .tag-suggest-item-icon {
-//                 color: var(--primary-foreground);
-//             }
-
-//             .tag-suggest-item-name {
-//                 margin-left: 10px;
-//                 color: #767676;
-//             }
-//         }
-//     }
-// }
-
 .rightBarTag {
     border: 2px solid #ffffff;
     max-height: 168px;
@@ -165,6 +123,7 @@ getRecommendTag(props.type)
 
 @media screen and (max-width: 1200px) {
     .rightBarTag {
+        max-height: 250px;
         .rightTagHead {
             font-size: 12px;
 

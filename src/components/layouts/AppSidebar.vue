@@ -13,6 +13,7 @@ import SidebarMenu from "@/components/ui/sidebar/SidebarMenu.vue";
 import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
+import UserLogin from "@/composables/UseLogin";
 import { Icon } from "@iconify/vue";
 import {
   BadgeCheck,
@@ -22,10 +23,16 @@ import {
   LogOut,
 } from "lucide-vue-next";
 import { watch } from "vue";
-import { RouterLink, useRoute, useRouter } from "vue-router";
+import { onBeforeRouteLeave, RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
+
+onBeforeRouteLeave(() => {
+  // 离开路由时，清除所有定时器
+  console.log(111,"离开了")
+})
+const {  logout } = UserLogin()
 const route = useRoute();
 const router = useRouter();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
@@ -79,7 +86,7 @@ const items = [
     title: "社区",
     url: "community/",
     icon: "fluent:people-community-20-regular",
-    redirect: "community/comprehensive",
+    redirect: "community/comprehensive/hot",
   },
   {
     title: "控制台",
@@ -93,13 +100,17 @@ interface SubItemInterface {
   title: string;
   icon: string;
   path: string;
+  redirect?:string;
 }
+
+
+
 </script>
 
 <template>
   <div class="frame">
     <div class="sidebar">
-      <SidebarProvider id="sidebar-provider">
+      <SidebarProvider id="sidebar-provider" class=" ">
         <Sidebar id="sidebar" class="sidebar bg-white bg-white w-[17vw]  ">
           <SidebarHeader id="sidebar-header"
             ><div class="sidebar-logo">
@@ -120,7 +131,7 @@ interface SubItemInterface {
                         :to="`/${item.url}`"
                         active-class="sidebar__link--active"
                         class="sidebar__link"
-                        @click.prevent="() => {router.push(`/${item.redirect}`)}"
+                        @click="router.push(`/${item.redirect}`)"
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span >{{ item.title }}</span>
@@ -145,6 +156,8 @@ interface SubItemInterface {
                         :to="item.path"
                         active-class="sidebar__sub-link--active"
                         class="sidebar__sub-link"
+                        @click="router.push(item.redirect? item.redirect : item.path)"
+                        
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span>{{ item.title }}</span>
@@ -235,9 +248,9 @@ interface SubItemInterface {
                       Notifications
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem class="drop-menu-item">
+                    <DropdownMenuItem class="drop-menu-item" @click="logout()">
                       <LogOut />
-                      Log out
+                     退出
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -608,4 +621,146 @@ color :var(--secondary-foreground);
   }
 }
 }
+@media screen and (min-width:1700px) {
+
+   a{
+  height: 5vh !important;
+}
+
+
+
+.avatar {
+  width: calc(20% - 2px);
+  height: calc(100% - 2px);
+  border-radius: 50%;
+}
+.frame { 
+ 
+  color :var(--secondary-foreground);
+  #sub-nav{
+   border-top: 1px solid #e5e7eb; 
+   border-bottom: 1px solid #e5e7eb;
+  }
+  span{
+    font-size:0.9vw  !important ;
+  }
+ 
+
+  
+}
+
+
+.drop-menu-item {
+  background-color: white ;
+  width: 105%;
+  &:hover{
+    background-color: var(--secondary);
+  }
+}
+.publish-btn {
+  height: 5vh;
+  padding-left: 15px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.9vw;
+  background: linear-gradient(
+    to right,
+    #139bb8,
+    #739fcd,
+    #b2b3df,
+    #e7dcf3,
+    #fdfbfe00
+  );
+  svg {
+    font-weight: bold;
+    font-size: 60px;
+  }
+}
+.sidebar {
+  width: 17vw;
+
+
+  &__button {
+    padding: 0;
+    height: 100%;
+  }
+
+  &__link,
+  &__sub-link {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0.65rem 1rem;
+    border-radius: 2rem;
+    svg{
+      font-size: 1.5rem;
+    }
+  }
+  &-logo {
+    height: 8vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      height: 80%;
+      object-fit: cover;
+    }
+  }
+
+  &__link {
+    &:hover {
+      color: var(--primary-foreground);
+      background-color: var(--primary);
+    }
+
+    &--active {
+      color: var(--primary-foreground);
+      background-color: var(--primary);
+    }
+  }
+
+  &__sub-link {
+    &:hover {
+      color: var(--secondary-foreground);
+      background-color: var(--secondary);
+    }
+
+    &--active {
+      color: var(--secondary-foreground);
+      background-color: var(--secondary);
+    }
+  }
+}
+
+#sidebar{
+  width: 17vh;
+  &-provider{
+    height: 100vh;
+  }
+  &-content{
+    width: 17vw;
+  }
+  &-footer{
+    .footer-user{
+      height: 5.5vh;
+      box-sizing: border-box;
+      .truncate{
+        font-size: 0.9vw;
+      }
+      li{
+        box-sizing: border-box;
+        height: 100%;
+       button{
+        box-sizing: border-box;
+        height: 100%;
+        padding: 0 0.5vw;
+       }
+      }
+    }
+  }
+}
+}
+
 </style>
