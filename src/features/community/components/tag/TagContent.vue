@@ -5,6 +5,7 @@ import NewsContent from '@/features/community/components/NewsContent.vue';
 import CommunityTag from '@/features/community/composables/CommunityTag';
 import { ref, watch } from 'vue';
 import { useRoute } from "vue-router";
+
 const route = useRoute();
 
 const { tagPostList, getPostList } = CommunityTag();
@@ -12,13 +13,6 @@ const props = defineProps({
     tag: {
         type: String,
         default: '',
-    },
-    type: {
-        type: Number,
-        default: 0,
-    },
-    tagType: {
-        type: String
     }
 });
 function getTag() {
@@ -27,7 +21,7 @@ function getTag() {
     // } else {
     //     tag.value = "";
     // }
-    getPostList(props.tag, props.type);
+    getPostList(props.tag);
 }
 getTag();
 
@@ -44,12 +38,12 @@ watch(
         <!-- <div>标签</div> -->
         <!-- <tag-word-cloud></tag-word-cloud> -->
         <div class="all-article">
-            <NewsContent :tagPostList="tagPostList" />
+            <NewsContent :tagPostList="tagPostList" :isTag="true" />
         </div>
         <div class="right-bar">
-            <tag-suggest :type="props.type" :tagType="props.tagType" style="margin: 0 0 30px 0;"></tag-suggest>
+            <tag-suggest style="margin: 0 0 30px 0;"></tag-suggest>
             <!-- <HotTag style="width: 350px;"></HotTag> -->
-            <tag-right-bar :type="props.type" :tagType="props.tagType"></tag-right-bar>
+            <tag-right-bar></tag-right-bar>
         </div>
     </div>
 </template>

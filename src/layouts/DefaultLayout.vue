@@ -15,7 +15,7 @@ import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
         </main>
       </TheSidebar>
     </SidebarProvider>
-    <div class="container">
+    <div class="default-layout__container">
       <RouterView></RouterView>
     </div>
   </div>
@@ -25,27 +25,25 @@ import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
 .default-layout {
   display: flex;
   background-color: #fafafa;
-}
-.container {
-  padding-top: 8vh;
 
-  overflow: hidden;
+  &__container {
+    flex: 1;
+    padding: 1rem;
+    padding-top: 64px;
+  }
 }
 
 @media screen and (max-width: 768px) {
   .sidebar-provider {
     width: 0;
   }
-  .container {
+  .default-layout__container {
     padding: 0;
   }
 }
 @media screen and (min-width: 1800px) {
-  .container {
-    // width: 75% !important;
+  .default-layout__container {
     max-width: 80% !important;
-    // padding-right: 2vw;
-    // padding-left: 2vw;
   }
 }
 </style>

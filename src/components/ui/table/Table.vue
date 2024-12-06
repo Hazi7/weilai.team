@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue'
-import { cn } from '@/lib/utils'
-
+import { cn } from "@/lib/utils";
+import type { HTMLAttributes } from "vue";
+import { ref } from "vue";
 const props = defineProps<{
-  class?: HTMLAttributes['class']
-}>()
+  class?: HTMLAttributes["class"];
+}>();
+const table = ref<any>();
+defineExpose({ table });
 </script>
 
 <template>
   <div class="relative w-full overflow-auto">
-    <table :class="cn('w-full caption-bottom text-sm', props.class)">
+    <table
+      :class="cn('w-full caption-bottom text-sm', props.class)"
+      ref="table"
+    >
       <slot />
     </table>
   </div>

@@ -155,16 +155,16 @@ function skip(e: Event) {
   </div>
 </template>
 <style lang="scss" scoped>
-.command_box {
-  background-color: white;
-  border: 1px solid rgb(208, 217, 228);
-  position: relative;
-  overflow: visible;
-  width: 250px;
-  float: right;
-  height: 45px;
-  border-radius: 25px;
-}
+// .command_box {
+//   background-color: white;
+//   border: 1px solid rgb(208, 217, 228);
+//   position: relative;
+//   overflow: visible;
+//   width: 250px;
+//   float: right;
+//   height: 45px;
+//   border-radius: 25px;
+// }
 .search_container {
   margin-bottom: 10px;
   height: 45px;

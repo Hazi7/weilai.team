@@ -2,26 +2,12 @@
 import { reactive, ref } from 'vue'
 import { Icon } from "@iconify/vue";
 import CommunityTag from '@/features/community/composables/CommunityTag';
+import { useTagStore } from "@/store/tagTypeStore";
 
+const tagStore = useTagStore();
+const tagType = tagStore.tagType.tagType
 const { allTagList, getAllTagList } = CommunityTag()
-const props = defineProps<{ type: number }>()
-const tagType = ref('')
-switch (props.type) {
-    case 1:
-        tagType.value = 'blog'
-        break
-    case 2:
-        tagType.value = ''
-        break
-    case 3:
-        tagType.value = 'discussion'
-        break
-    case 4:
-        tagType.value = 'brainstorm'
-}
-// const tagLists: TagLists[] = reactive([])
 getAllTagList()
-// const tagList = reactive(['推荐', '前端', '后端', 'java', 'python', 'go', 'c', 'C++', 'php', 'html', 'css', 'scss', 'js', 'ts', '人工智能', 'AIGC', '大数据', '数据库'])
 </script>
 
 <template>
@@ -67,7 +53,7 @@ getAllTagList()
 
     &:hover {
         transition: all .5s;
-        max-height: 220px;
+        max-height: 290px;
         -webkit-box-shadow: 0 4px 30px 0 rgba(223, 223, 229, 0.4);
         box-shadow: 0 4px 30px 0 rgba(223, 223, 229, 0.4);
         border-radius: 4px;

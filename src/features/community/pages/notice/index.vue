@@ -3,7 +3,7 @@
     <div class="noticeCon">
       <div class="actionCon">
         <div class="allNotice">
-          全部({{111}})
+          全部({{total}})
           <div class="dot"></div>
         </div>
         <div class="noRead">
@@ -14,9 +14,9 @@
            <DropdownMenuTrigger> <Icon icon="carbon:settings-adjust" class="settingIcon"/></DropdownMenuTrigger>
            <DropdownMenuContent  class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
               side="bottom"
-              :side-offset="3">
-           <!-- <DropdownMenuLabel>My Account</DropdownMenuLabel> -->
-           <DropdownMenuSeparator />
+              :side-offset="3"
+              >
+           <DropdownMenuSeparator :style="{minWidth: '100px'}" />
            <DropdownMenuItem class="drop-menu-item">全部已读</DropdownMenuItem>
            <DropdownMenuItem class="drop-menu-item">发布公告</DropdownMenuItem>
            <DropdownMenuItem class="drop-menu-item">我的发布</DropdownMenuItem>
@@ -26,9 +26,13 @@
       
       </div>
       <div class="noticeItemCon">
-        <div v-for="notice in notices" :key="notice.noticeId">
-          <NoticeItem :notice="notice" />
+        <div v-for="notice in notices" :key="notice.noticeId" class="noticess" >
+          <NoticeItem 
+          :notice="notice"
+          :notice-list="noticeList"
+           />
         </div>
+        <!-- <div class="aaa"><CommentList :post-id="postId"/></div> -->
       </div>
     </div>
     <Rightbar/>
@@ -49,6 +53,8 @@ import type { SSENoticeData } from '../../../message/composables/types';
 const notices = ref<SSENoticeData[]>([]); 
 const pageNumber=ref(1);
 const pageSize=ref(10);
+let total=ref(0);
+// const postId = ref<number>(1);
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,7 +65,7 @@ import {
 
 
 onMounted(() => {
-      connect()
+      // connect()
       subscribe('message', (notice: SSENoticeData) => {
         notices.value.push(notice);
         console.log(notice);
@@ -75,6 +81,7 @@ const noticeList = async() => {
   if(data.value?.code==200){
     const allNotices = data.value?.data.AllMessages || [];
     notices.value = allNotices; 
+     total.value = data.value?.data.PageInfo.totalCount;
     console.log("获取的全部公告数据：", allNotices);
   }else if(data.value?.code==401){
     console.log("请先登录"); 
@@ -88,11 +95,17 @@ const noticeList = async() => {
 
 <style scoped lang="scss">
 .drop-menu-item {
-  width: 105%;
+  width: 100%;
   background-color: white ;
   &:hover{
     background-color: var(--secondary);
   }
+}
+.aaa{
+  width: 95%;
+}
+.noticess{
+  width: 95%;
 }
 .noticeItemCon{
   width: 100%;
