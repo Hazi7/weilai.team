@@ -365,13 +365,31 @@
 
 @media screen and (max-width: 1400px) {
     .box {
-        transform: scale(0.9);
+        transform: scale(0.91);
+        top: -7px;
     }
 }
 
 @media screen and (max-width: 1200px) {
     .box {
         transform: scale(0.8);
+        top: -15px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .box {
+        transform: scale(0.75);
+        top: 0px;
+        overflow: visible;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .box {
+        transform: scale(0.65);
+        top: 0px;
+        overflow: visible;
     }
 }
 </style>

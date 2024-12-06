@@ -76,11 +76,19 @@ const getCode = (email: string) => {
     background-color: #fff;
 }
 
-.fontPassBtn{
+.fontPassBtn {
     color: #529ee0;
     cursor: pointer;
-    &:hover{
+    background: none;
+
+    &:hover {
         color: #79bcf6;
+    }
+}
+
+@media screen and (max-width: 756px) {
+    .fontPassBtn {
+        font-size: 18px;
     }
 }
 </style>

@@ -10,57 +10,57 @@ import {interviewStatusMap} from '@/types/recruitmentType';
 const searchValue = ref('');
 
 const handleInput = (value: string) => {
-    searchValue.value = value;
-    console.log(searchValue);
+  searchValue.value = value;
+  console.log(searchValue);
 };
 
 //下拉过滤框
 const candidates_itemsObjArr = ref([
-    {
-        title: '年级',
-        label: "选择要筛选的年级",
-        ref: "init",
-        arr: [
-            {
-                condition: "24级",
-            },
-            {
-                condition: "23级",
-            },
-            {
-                condition: "22级",
-            },
-        ]
-    },
-    {
-        title: '性别',
-        label: "选择要筛选的性别",
-        ref: "init",
-        arr: [
-            {
-                condition: "男",
-            },
-            {
-                condition: "女",
-            },
-        ]
-    },
-    {
-        title: '班级',
-        label: "选择要筛选的班级",
-        ref: "init",
-        arr: [
-            {
-                condition: "计科233",
-            },
-            {
-                condition: "物联233",
-            },
-            {
-                condition: "数据233",
-            },
-        ]
-    }
+  {
+    title: "年级",
+    label: "选择要筛选的年级",
+    ref: "init",
+    arr: [
+      {
+        condition: "24级",
+      },
+      {
+        condition: "23级",
+      },
+      {
+        condition: "22级",
+      },
+    ],
+  },
+  {
+    title: "性别",
+    label: "选择要筛选的性别",
+    ref: "init",
+    arr: [
+      {
+        condition: "男",
+      },
+      {
+        condition: "女",
+      },
+    ],
+  },
+  {
+    title: "班级",
+    label: "选择要筛选的班级",
+    ref: "init",
+    arr: [
+      {
+        condition: "计科233",
+      },
+      {
+        condition: "物联233",
+      },
+      {
+        condition: "数据233",
+      },
+    ],
+  },
 ]);
 
     getAllGrade({pageNo:1,pageSize:100})
@@ -71,67 +71,65 @@ const candidates_itemsObjArr = ref([
 
 //获得子组件的过滤条件
 const handleFilterCondition = (value: string, title: string) => {
-    console.log(value, title);
+  console.log(value, title);
 };
 
 const dateRange = ref(null); // 初始化日期范围
 
 // 获得子组件的日期参数
 const handleDateRangeUpdate = (newDateRange: any) => {
-    dateRange.value = newDateRange;
-    // 在这里可以对日期范围进行处理，例如发送请求或更新其他组件的数据
-    handleDateRange();
+  dateRange.value = newDateRange;
+  // 在这里可以对日期范围进行处理，例如发送请求或更新其他组件的数据
+  handleDateRange();
 };
 //对dateRange进行处理
 const handleDateRange = () => {
-    // 在这里处理日期范围，例如将日期范围转换为字符串格式
-    if (!dateRange.value) {
-        return;
-    }
-    const startDate = Reflect.get(dateRange.value, 'start');
-    const endDate = Reflect.get(dateRange.value, 'end');
-    const formattedRange = `${startDate} - ${endDate}`;
-    console.log(formattedRange);
-
+  // 在这里处理日期范围，例如将日期范围转换为字符串格式
+  if (!dateRange.value) {
+    return;
+  }
+  const startDate = Reflect.get(dateRange.value, "start");
+  const endDate = Reflect.get(dateRange.value, "end");
+  const formattedRange = `${startDate} - ${endDate}`;
+  console.log(formattedRange);
 };
 
 const isReset = ref(false);
 //重置筛选条件
 const resetCondition = () => {
-    // 在这里处理重置条件的逻辑，例如清空输入框或其他组件的数据
-    candidates_itemsObjArr.value.forEach((item) => {
-        item.ref = 'init';
-    });
-    dateRange.value = null;
-    isReset.value = true;
-    setTimeout(() => {
-        isReset.value = false;
-    }, 500);
-}
-
+  // 在这里处理重置条件的逻辑，例如清空输入框或其他组件的数据
+  candidates_itemsObjArr.value.forEach((item) => {
+    item.ref = "init";
+  });
+  dateRange.value = null;
+  isReset.value = true;
+  setTimeout(() => {
+    isReset.value = false;
+  }, 500);
+};
 
 //切换框
 const toggleItems = ref([
-    {
-        index: 0,
-        title: '待安排',
-        isActive: true,
-    },
-    {
-        index: 1,
-        title: '待面试',
-        isActive: false,
-    },
-    {
-        index: 2,
-        title: '已录取',
-        isActive: false,
-    },
-    {
-        index: 3,
-        title: '已淘汰',
-        isActive: false,
-    }
+  {
+    index: 0,
+    title: "待安排",
+    isActive: true,
+  },
+  {
+    index: 1,
+    title: "待面试",
+    isActive: false,
+  },
+  {
+    index: 2,
+    title: "已录取",
+    isActive: false,
+  },
+  {
+    index: 3,
+    title: "已淘汰",
+    isActive: false,
+  },
 ]);
 
 
@@ -154,38 +152,38 @@ const handleToggleShowStatus = (newStatus: number) => {
 
 
 const headers = ref([
-    {
-        title: '姓名',
-        key: 'name',
-    },
-    {
-        title: '年级',
-        key: 'session',
-    },
-    {
-        title: '性别',
-        key: 'gender',
-    },
-    {
-        title: '班级',
-        key: 'clazz',
-    },
-    {
-        title: '学号',
-        key: 'studentId',
-    },
-    {
-        title: 'QQ',
-        key: 'QQ',
-    },
-    {
-        title: '邮箱',
-        key: 'email',
-    },
-    {
-        title: '状态',
-        key: 'state',
-    },
+  {
+    title: "姓名",
+    key: "name",
+  },
+  {
+    title: "年级",
+    key: "session",
+  },
+  {
+    title: "性别",
+    key: "gender",
+  },
+  {
+    title: "班级",
+    key: "clazz",
+  },
+  {
+    title: "学号",
+    key: "studentId",
+  },
+  {
+    title: "QQ",
+    key: "QQ",
+  },
+  {
+    title: "邮箱",
+    key: "email",
+  },
+  {
+    title: "状态",
+    key: "state",
+  },
 ]);
 //表格操作事件
 
@@ -213,7 +211,6 @@ const eliminateCandidate = (id: string) => {
 const DeleteCandidate = (id: string) => {
     console.log(id,'删除候选人');
 }
-
 
 const actionItems = ref([
     {
@@ -274,21 +271,24 @@ watchEffect(()=>{
 </script>
 
 <template>
-    <div class="content">
-        <div class="filter-items">
-            <FilterCondition :items-obj-arr="candidates_itemsObjArr" @filter_condition="handleFilterCondition"></FilterCondition>
-            <div class="date-picker">
-                <DataRangePicker
-                @updateDateRange="handleDateRangeUpdate"
-                :dateRange="dateRange"
-                :isReset="isReset"
-                />
-            </div>
+  <div class="content">
+    <div class="filter-items">
+      <FilterCondition
+        :items-obj-arr="candidates_itemsObjArr"
+        @filter_condition="handleFilterCondition"
+      ></FilterCondition>
+      <div class="date-picker">
+        <DataRangePicker
+          @updateDateRange="handleDateRangeUpdate"
+          :dateRange="dateRange"
+          :isReset="isReset"
+        />
+      </div>
 
-            <div class="reset" @click="resetCondition">
-                重置
-                <Icon icon="bitcoin-icons:cross-outline" />
-            </div>
+      <div class="reset" @click="resetCondition">
+        重置
+        <Icon icon="bitcoin-icons:cross-outline" />
+      </div>
 
             <div class="search-input">
                 <AutoLongerInput
@@ -320,6 +320,22 @@ watchEffect(()=>{
         </div>
     </div>
 
+    <div class="data-table">
+      <DataTable
+        :items="data"
+        :headers="headers"
+        :actionItems="actionItems"
+      ></DataTable>
+      <div class="pagination-container">
+        <Pagination
+          :totalItems="data.length"
+          :pageSize="pageSize"
+          @update:page="changePage"
+        >
+        </Pagination>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
