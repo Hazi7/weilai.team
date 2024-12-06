@@ -27,7 +27,7 @@
     background-color: white;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 5px 5px 5px #ccc;
+    // box-shadow: 5px 5px 5px #ccc;
 
     ul {
         display: flex;

@@ -8,20 +8,15 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose
+} from '@/components/ui/dialog'
 import {
   Table,
   TableBody,
@@ -30,315 +25,264 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import { useRequest } from "@/composables/useRequest";
 
 import type { ArticleList } from "@/types/Community";
 import { checkType, getArticle } from "@community/composables/search";
 import { Icon } from "@iconify/vue";
-import { MoreHorizontal } from "lucide-vue-next";
-import { ref, watch } from "vue";
+import { ref, computed, watch } from "vue";
 const { executeRequest, error, loading, data } = useRequest();
-const postList = ref<ArticleList[]>([]);
-const articleData = ref();
-const isAllSelected = ref(false);
-const selectType = ref("");
-let pages = ref(1);
+
+let pages = 0;
+let currentPage = 1;
 let total = ref<number>();
-let page = ref(1);
 let pageSize = ref(10);
-let startTime: string = "";
-let type = ref<number>(0);
-const condition = ref("");
-// 进行搜索
-const getArticleInAdmin = () => {
-  console.log(condition.value, 11111);
-  getArticle(undefined, condition.value).then((res) => {
-    postList.value = res.records;
-    total.value = res.total;
-    pageSize.value = res.size;
-  });
-};
-getArticleInAdmin();
-const changePage = (newPage: number) => {
-  page.value = newPage;
-  isAllSelected.value = false;
-};
 
-watch(page, (newPage) => {
-  getArticle(newPage).then((res) => {
-    postList.value = res.records;
-  });
-});
-function deleteArticle(id: number) {
-  console.log(id);
-  executeRequest({ url: `/post/delete/${id}`, method: "put" }).then(() => {
-    getArticle(page.value).then((res) => {
-      postList.value = res.records;
-    });
-  });
+let authorityList = ['admin_plus', 'team_admin', 'community_admin', 'recruit_admin', 'notice_admin']
+function handlePageChange(newPage: number) {
+  currentPage = newPage;
+  getUserList()
 }
 
-// 实现全选反选多选
-function handleSelectAll() {
-  if (postList.value.length === 0) return;
+let searchTypes = ref([]);
+let userList = ref([]);
+let content = ref("");
 
-  // 全选
-  postList.value.forEach((item: any) => {
-    item.selected = isAllSelected.value;
-  });
+async function getUserList() {
+  await executeRequest({ url: `/userManager/permission/searchUser?pageNumber=${currentPage}&pageSize=${pageSize.value}&authorities=${searchTypes.value}&content=${content.value}` })
+
+  console.log(data.value);
+
+  if (data.value.code == 200) {
+    userList.value = data.value.data.userList
+    total.value = data.value.data.pageInfo.total
+    currentPage = data.value.data.pageInfo.current
+  }
+  console.log('用户：', userList.value);
+  if (error.value) {
+    console.log('错误', error.value);
+  }
+}
+getUserList()
+function authorityTransformer(authority: string) {
+  if (authority == 'team_admin') {
+    return '用户管理员'
+  } else if (authority == 'community_admin') {
+    return '社区管理员'
+  } else if (authority == 'recruit_admin') {
+    return '招新管理员'
+  } else if (authority == 'admin_plus') {
+    return '权限管理员'
+  } else {
+    return '公告管理员'
+  }
 }
 
-const handleItemSelect = (item: any) => {
-  isAllSelected.value = true;
-  postList.value.forEach((item: any) => {
-    if (!item.selected) {
-      isAllSelected.value = false;
-    }
-  });
+const changeAuthorityList = ref([]);
+
+const isAllSelected = ref(false);
+const handleItemSelect = (authority: string) => {
+
+  const index = changeAuthorityList.value.indexOf(authority);
+
+  if (index === -1) {
+    // 如果没有选中，则添加权限
+    changeAuthorityList.value.push(authority);
+  } else {
+    // 如果已经选中，则移除权限
+    changeAuthorityList.value.splice(index, 1);
+  }
+  if (changeAuthorityList.value.length == authorityList.length) {
+    isAllSelected.value = true
+  } else {
+    isAllSelected.value = false
+  }
+
+};
+const handleSelectAll = () => {
+  if (isAllSelected.value) {
+    changeAuthorityList.value = authorityList
+  } else {
+    changeAuthorityList.value = []
+  }
+};
+async function submitChangeForm(id: number) {
+
+  console.log('提交', changeAuthorityList.value);
+  console.log('用户名', id);
+  const dataToSend = {
+    userId: id,
+    authority: changeAuthorityList.value
+  }
+  await executeRequest({ url: `/userManager/permission/resetUserAuthorities`, method: 'put', requestData: dataToSend })
+  document.getElementById('dialogClose').click()
+  getUserList()
 };
 
-import { Calendar } from "@/components/ui/calendar";
+const isTypeAllSelected = ref(false)
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { getLocalTimeZone, type DateValue } from "@internationalized/date";
-import { Calendar as CalendarIcon } from "lucide-vue-next";
+function handleTypeSelectAll() {
 
-// const df = new DateFormatter("en-US", {
-//   dateStyle: "long",
-// });
-function df(date: any, format = "yyyy - MM - dd HH:mm") {
-  // 获取日期的各个部分，包括分钟
-  let year = date.getFullYear();
-  let month = date.getMonth() + 1;
-  let day = date.getDate();
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
-  // 根据format字符串进行格式化，包含分钟部分
-  let formattedDate = format
-    .replace("yyyy", year)
-    .replace("MM", month.toString().padStart(2, "0"))
-    .replace("dd", day.toString().padStart(2, "0"))
-    .replace("HH", hours.toString().padStart(2, "0"))
-    .replace("mm", minutes.toString().padStart(2, "0"));
-  return formattedDate;
+  if (isTypeAllSelected.value) {
+    searchTypes.value = [...authorityList]
+
+  } else {
+    searchTypes.value = []
+  }
+  getUserList()
 }
-const value = ref<DateValue>();
+function handleTypeSelect(item) {
+  const index = searchTypes.value.indexOf(item);
+
+  if (index === -1) {
+    // 如果没有选中，则添加权限
+    searchTypes.value.push(item);
+  } else {
+    // 如果已经选中，则移除权限
+    searchTypes.value.splice(index, 1);
+  }
+  if (searchTypes.value.length == authorityList.length) {
+    isTypeAllSelected.value = true
+  } else {
+    isTypeAllSelected.value = false
+  }
+
+  getUserList()
+}
+function reset() {
+  isTypeAllSelected.value = false
+  searchTypes.value = []
+  content.value = ''
+  getUserList()
+}
 </script>
 
 <template>
   <div class="content" style="display: flex; flex-wrap: wrap">
-    <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+    <main class="grid flex-1 items-start gap-4 p-0 sm:px-6 sm:py-0 md:gap-8">
       <Tabs default-value="all">
         <TabsContent value="all" class="tc">
           <Card class="border-none shadow-none">
-            <CardHeader class="card_header">
+            <CardHeader class="card_header p-0 ">
               <div class="header-link">
                 <div class="select-type">
-                  <span>类型:</span>
-                  <Select v-model="selectType">
-                    <SelectTrigger class="w-[180px]">
-                      <SelectValue placeholder="请选择" />
-                    </SelectTrigger>
-                    <SelectContent class="bg-white">
-                      <SelectGroup class="text-[0.9vw]">
-                        <SelectItem class="text-[0.9vw]" value="1">
-                          博客</SelectItem
-                        >
-                        <SelectItem class="text-[0.9vw]" value="3"
-                          >交流
-                        </SelectItem>
-                        <SelectItem class="text-[0.9vw]" value="4">
-                          头脑风暴
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div class="select-time">
-                  <span>发布时间:</span>
-                  <Popover class="select-time-container">
-                    <PopoverTrigger as-child>
-                      <Button
-                        variant="outline"
-                        :class="
-                          cn(
-                            'w-[280px] justify-start text-left font-normal',
-                            !value && 'text-muted-foreground',
-                          )
-                        "
-                        class="select-time-btn"
-                      >
-                        <CalendarIcon class="mr-2 h-4 w-4" />
-                        {{
-                          value
-                            ? df(value.toDate(getLocalTimeZone()), "yyyy-MM-dd")
-                            : "选择日期"
-                        }}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      class="w-full p-0 select-time-content bg-white"
-                    >
-                      <Calendar v-model="value" initial-focus locale="zh-CN" />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div class="header-search">
-                  <span>作者/标题:</span>
-                  <div class="search_input_box">
-                    <!-- <span class="search-icon"
-                      ><Icon
-                        icon="bitcoin-icons:search-filled"
-                        color="#b9c2d0"
-                        font-size="26px"
-                      />
-                    </span> -->
-                    <input
-                      placeholder="请输入关键词"
-                      class="search_input"
-                      ref="inputRef"
-                      v-model="condition"
-                      @keydown.enter="getArticleInAdmin"
-                    />
+                  <span>筛选：</span>
+                  <div class="ml-2 mr-2 flex ">
+                    <input type="checkbox" v-model="isTypeAllSelected" @change="handleTypeSelectAll">
+                    &nbsp;全选
+                  </div>
+                  <div class="ml-2 mr-2 flex " v-for="item in authorityList" :key="item">
+                    <input type="checkbox" :checked="searchTypes.includes(item)" @change="handleTypeSelect(item)">
+                    &nbsp;{{ authorityTransformer(item) }}
                   </div>
                 </div>
-                <button class="search-btn">搜索</button>
-                <div class="reset">
-                  <Icon icon="grommet-icons:power-reset" />
-                </div>
-                <br />
-              </div>
-              <div class="header-operation">
-                <div class="operation">
-                  <button>
-                    <RouterLink
-                      to="/admin/recruitment/detail"
-                      class="addMember operation-btn"
-                    >
-                      <Icon icon="icon-park-outline:people-plus-one" />
-                      &nbsp;
-                      <span>添加成员</span>
-                    </RouterLink>
-                  </button>
-                  <button>
-                    <button class="addMember operation-btn">
-                      <span>批量管理</span>
-                    </button>
-                  </button>
+                <div class="flex items-center">
+                  <div class="header-search">
+                    <span>姓名
+                    </span>
+                    <div class="search_input_box">
+                      <input placeholder="请输入姓名" class="search_input" v-model="content"
+                        @keydown.enter="getUserList()" />
+                    </div>
+                  </div>
+                  <button class="search-btn" @click="getUserList()">搜索</button>
+                  <div class="reset cursor-pointer">
+                    <Icon icon="grommet-icons:power-reset" @click="reset()" />
+                  </div>
                 </div>
               </div>
             </CardHeader>
-            <CardContent class="card_content">
+            <CardContent class="card_content p-0">
               <Table id="tb">
                 <TableHeader>
                   <TableRow>
-                    <TableHead class="hidden w-[100px] md:table-cell text-left">
-                      <input
-                        type="checkbox"
-                        name=""
-                        id=""
-                        v-model="isAllSelected"
-                        @change="handleSelectAll"
-                      />
-                    </TableHead>
-                    <TableHead class="hidden md:table-cell" id="th"
-                      >文章标题</TableHead
-                    >
-                    <TableHead class="hidden md:table-cell"> 作者 </TableHead>
-                    <TableHead class="hidden md:table-cell">发布时间</TableHead>
-                    <TableHead class="hidden md:table-cell">
-                      所属分类
-                    </TableHead>
-                    <!-- <TableHead class="hidden md:table-cell"> 状态 </TableHead> -->
-
-                    <TableHead class="hidden md:table-cell"> 操作 </TableHead>
+                    <TableHead class="hidden md:table-cell" id="th">学号</TableHead>
+                    <TableHead class="hidden md:table-cell">姓名</TableHead>
+                    <TableHead class="hidden md:table-cell">性别</TableHead>
+                    <TableHead class="hidden md:table-cell">权限</TableHead>
+                    <TableHead class="hidden md:table-cell">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow
-                    v-for="(item, index) in postList"
-                    :key="index"
-                    class=""
-                  >
-                    <TableCell class="hidden sm:table-cell"
-                      ><input
-                        type="checkbox"
-                        name=""
-                        id=""
-                        v-model="(item as any).selected"
-                        @change="handleItemSelect"
-                    /></TableCell>
+                  <TableRow v-for="item in userList" :key="item.username" class="">
                     <TableCell class="font-medium table_title">
-                      {{ item.title }}
+                      {{ item.username }}
                     </TableCell>
                     <TableCell class="table_writer">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger class="tooltip_trigger">{{
-                            item.name
-                          }}</TooltipTrigger>
-                          <TooltipContent class="bg-white">
-                            <p>
-                              {{ item.name }}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      {{ item.name }}
                     </TableCell>
-
-                    <TableCell class="hidden md:table-cell">
-                      {{ item.postTime }}
-                    </TableCell>
-
                     <TableCell class="font-medium table_type">
-                      {{ checkType(item.type) }}
+                      {{ item.sex }}
+                    </TableCell>
+                    <TableCell class="hidden md:table-cell">
+                      <Badge v-for="authority in item.authority" :key="authority" variant="outline">{{
+                        authorityTransformer(authority) }}
+                      </Badge>
+                      <Badge v-if="item.authority.length == 0" variant="outline">暂无权限</Badge>
                     </TableCell>
 
-                    <!-- <TableCell class="hidden md:table-cell"> 删除 </TableCell> -->
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger as-child>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                          >
-                            <MoreHorizontal class="h-4 w-4" />
-                            <span class="sr-only">Toggle menu</span>
+                      <Dialog>
+                        <DialogTrigger as-child class="mb-4">
+                          <Button variant="outline" class="bg-blue-100 text-blue-600"
+                            @click="changeAuthorityList = [...item.authority]">
+                            修改权限
                           </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent class="bg-white">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem @click="deleteArticle(item.id)"
-                            >Delete</DropdownMenuItem
-                          >
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                        </DialogTrigger>
+                        <DialogContent class="sm:max-w-[425px] bg-white max-h-[500px] overflow-y-auto">
+                          <DialogClose id="dialogClose"></DialogClose>
+
+                          <DialogHeader>
+                            <DialogTitle>修改权限</DialogTitle>
+                            <DialogDescription>
+                              在这里修改权限，完成之后点击保存即可
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div class="grid gap-4 py-4">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>
+                                    <input type="checkbox" v-model="isAllSelected" @change="handleSelectAll" />
+                                  </TableHead>
+                                  <TableHead>权限</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                <TableRow v-for="authority in authorityList" :key="authority">
+                                  <TableCell class="font-medium">
+                                    <input type="checkbox" :checked="changeAuthorityList.includes(authority)"
+                                      @change="handleItemSelect(authority)" />
+                                  </TableCell>
+                                  <TableCell>
+                                    {{ authorityTransformer(authority) }}
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit" @click="submitChangeForm(item.id)">
+                              保存
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </CardContent>
-            <CardFooter class="justify-center">
-              <div class="pagination-container">
-                <Pagination
-                  :totalItems="total"
-                  :pageSize="pageSize"
-                  @update:page="changePage"
-                >
+            <CardFooter class="justify-end p-0">
+              <div class="pageBox pagination-container">
+                <Pagination :totalItems="total" :pageSize="pageSize" @update:page="handlePageChange">
                 </Pagination>
+                <span class="postsNum">共 {{ total }} 个用户</span>
               </div>
             </CardFooter>
           </Card>
@@ -350,27 +294,32 @@ const value = ref<DateValue>();
 
 <style lang="scss" scoped>
 $font: #8c9296;
+
 tr {
   text-align: center;
-  // border-bottom: 1.5px solid var(--border);
   font-size: 14.5px;
   height: 40px !important;
   box-sizing: border-box;
+
   &:nth-child(even) {
     background-color: #f8f8fa;
   }
 }
+
 #tb {
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
 }
+
 th {
   text-align: center;
   color: var(--secondary-foreground);
 }
+
 td {
   padding: 0.5em;
 }
+
 .group-leader {
   background-color: var(--secondary);
 }
@@ -382,21 +331,26 @@ td {
     flex-direction: row;
     justify-content: space-between;
   }
+
   &_content {
     min-height: 600px;
   }
 }
+
 .content {
   height: max-content;
   margin-bottom: 50px;
   background-color: white;
+
   #sidebar {
     color: var(--secondary-foreground);
     width: 20rem;
+
     .sidebar-link {
       display: flex;
       justify-content: space-around;
       align-items: center;
+
       &-item {
         display: flex;
         align-items: center;
@@ -409,11 +363,13 @@ td {
       }
     }
   }
+
   #sidebar-container {
     width: 20rem;
     overflow: hidden;
   }
 }
+
 .sidebar-menu {
   color: var(--secondary-foreground);
 }
@@ -424,20 +380,23 @@ td {
   flex-wrap: wrap;
   margin-bottom: 5px;
   width: 100%;
+
   .select-type {
-    // button {
-    //   padding: 0.5vw 0.8vw;
-    //   height: 6vh;
-    //   width: 13vw;
-    // }
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+
     select {
       font-size: 0.9vw;
     }
   }
+
   .select {
+
     &-type,
     &-time {
       margin-right: 5px;
+
       // button {
       //   padding: 0.5vw 0.8vw;
       //   height: 6vh;
@@ -446,19 +405,21 @@ td {
       span {
         width: max-content;
         padding: 0.2vw;
-        font-size: 0.9vw;
         margin-right: 5px;
       }
+
       display: flex;
       font-size: 14px;
       color: var(--secondary-foreground);
       align-items: center;
     }
+
     &-time {
       &-btn {
         width: 15vw;
       }
     }
+
     &-type {
       button {
         outline: none;
@@ -466,11 +427,14 @@ td {
     }
   }
 }
+
 .header-operation {
   width: 100%;
+
   .operation {
     display: flex;
     align-items: center;
+
     .operation-btn {
       display: flex;
       justify-content: center;
@@ -484,6 +448,7 @@ td {
       font-size: 13px;
       border: 1.5px solid var(--border);
       border-radius: var(--radius);
+
       &:hover {
         color: var(--primary-foreground);
         background-color: var(--primary);
@@ -501,12 +466,14 @@ td {
 .header-search {
   display: flex;
   align-items: center;
+
   span {
     font-size: 0.9vw;
     width: max-content;
     color: var(--secondary-foreground);
     margin-right: 5px;
   }
+
   .search_input_box {
     float: right;
     position: relative;
@@ -514,6 +481,7 @@ td {
     &_input_box {
       position: relative;
     }
+
     input {
       text-decoration: none;
       list-style: none;
@@ -526,12 +494,14 @@ td {
       padding: 5px 10px;
       padding-left: 10px;
     }
+
     .search-icon {
       position: absolute;
       top: 50%;
       left: 2%;
       transform: translateY(-50%);
     }
+
     &_list {
       border-radius: var(--radius);
       background-color: white;
@@ -544,15 +514,18 @@ td {
       padding: 5px 6px;
       font-size: 15px;
       color: var(--secondary-foreground);
+
       a {
         width: 100%;
       }
+
       &:hover {
         background-color: #f8f8fa;
       }
     }
   }
 }
+
 .search-btn {
   margin: 0 10px;
   width: max-content;
@@ -563,10 +536,12 @@ td {
   background-color: var(--primary);
   color: var(--primary-foreground);
 }
+
 .reset {
   color: var(--secondary-foreground);
   font-size: 0.9vw;
 }
+
 .top-title {
   text-align: center;
   height: 30px;
@@ -578,15 +553,18 @@ td {
   font-size: 12px;
   display: flex;
   align-items: center;
+
   span {
     display: inline-block;
     margin: 0 8px;
   }
 }
+
 .table {
   &_title {
     max-width: 250px;
   }
+
   &_writer {
     max-width: 150px;
     overflow: hidden;
@@ -594,12 +572,31 @@ td {
     text-overflow: ellipsis;
   }
 }
+
 .tooltip {
   &_trigger {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 150px;
+  }
+}
+
+.pageBox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+
+  .postsNum {
+    margin-right: 20px;
+    line-height: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    margin-top: 70px;
+    padding: 0px;
   }
 }
 </style>

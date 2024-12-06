@@ -14,18 +14,10 @@
         </CarouselItem>
       </CarouselContent>
     </Carousel>
-    <Skeleton v-if="!userInfo.lifePhoto" class="w-[100%] h-[200px] bg-gray-100" />
-    <div class="myInfo">
+    <Skeleton v-if="!userInfo.lifePhoto || userInfo.lifePhoto.length == 0" class="w-[100%] h-[200px] bg-gray-100" />
+    <div class="myInfo"> 
       <div class="container-left">
-        <Avatar style="
-            width: 100px;
-            height: 100px;
-            margin-top: -50px;
-            margin-right: 20px;
-            margin-left: 40px;
-            background-color: white;
-            z-index: 50;
-          ">
+        <Avatar class="w-[100px] h-[100px] -mt-[50px] mr-[20px] ml-[20px] z-20 bg-white">
           <AvatarImage :src="userInfo.headPortrait ? userInfo.headPortrait : '/logo.png'" alt="@radix-vue" />
           <AvatarFallback>头像</AvatarFallback>
         </Avatar>
@@ -130,7 +122,7 @@
       </div>
     </div>
 
-    <div class="lastLoginTime">
+    <div class="lastLoginTime" v-if="userInfo.lastLoginTime">
 
       <p>
         <Icon style="display: inline-block;" icon="mdi:calendar-outline" />
@@ -172,6 +164,7 @@ const { data, error, loading, executeRequest } = useRequest()
 import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire()
 import { useDateFormatter } from '@/composables/useDateFormatter'
+import type { RefSymbol } from '@vue/reactivity';
 const { formatDateToYYYYMMDD } = useDateFormatter()
 
 const plugin = Autoplay({
@@ -243,6 +236,9 @@ async function getUserInfo() {
     userDestination.value = userInfo.userDestination
     graduationDestination.value = userInfo.graduationDestination
   }
+  console.log('请求结果',data.value);
+  
+  
 }
 // 打开页面立刻调用一次函数
 getUserInfo()
@@ -283,7 +279,7 @@ async function submitForm() {
   background-color: white;
   padding: 10px;
   border-radius: 10px;
-  box-shadow: 5px 5px 5px #ccc;
+  // box-shadow: 5px 5px 5px #ccc;
 
   .bagdImg {
     width: 100%;

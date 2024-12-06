@@ -9,7 +9,6 @@ import useAppEditor from "@/features/post/composables/useAppEditor";
 import type { JSONContent } from "@tiptap/core";
 import * as z from "zod";
 import { useRequest } from "@/composables/useRequest";
-import { data } from "autoprefixer";
 import { toast } from "@/components/ui/toast";
 import Toaster from "@/components/ui/toast/Toaster.vue";
 

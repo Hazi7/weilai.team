@@ -13,6 +13,7 @@ import SidebarMenu from "@/components/ui/sidebar/SidebarMenu.vue";
 import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
+import UserLogin from "@/composables/UseLogin";
 import { Icon } from "@iconify/vue";
 import {
   BadgeCheck,
@@ -96,7 +97,6 @@ interface SubItemInterface {
   icon: string;
   path: string;
 }
-
 </script>
 
 <template>
@@ -183,7 +183,6 @@ interface SubItemInterface {
                       >
                         <Icon icon="mage:box-3d-notification" />&nbsp;
                         <span>消息</span>
-                        <span  v-if="messageStore.hasNewMessage" class="dot" ></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -294,16 +293,6 @@ interface SubItemInterface {
 .main-menu {
   display: none;
 }
-.dot{
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #f74c30;
-  position: absolute;  
-  right: 20px;       
-  top: 50%;         
-  transform: translateY(-50%); 
-}
 
 .avatar {
   width: 40px;
@@ -367,7 +356,6 @@ interface SubItemInterface {
     box-sizing: border-box;
     padding: 0.65rem 1rem;
     border-radius: 2rem;
-    position: relative; 
   }
   &-logo {
     height: 80px;
