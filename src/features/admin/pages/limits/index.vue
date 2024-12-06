@@ -51,7 +51,7 @@ function handlePageChange(newPage: number) {
 
 let searchTypes = ref([]);
 let userList = ref([]);
-let content=ref("");
+let content = ref("");
 
 async function getUserList() {
   await executeRequest({ url: `/userManager/permission/searchUser?pageNumber=${currentPage}&pageSize=${pageSize.value}&authorities=${searchTypes.value}&content=${content.value}` })
@@ -174,25 +174,25 @@ function reset() {
                   <span>筛选：</span>
                   <div class="ml-2 mr-2 flex ">
                     <input type="checkbox" v-model="isTypeAllSelected" @change="handleTypeSelectAll">
-                    全选
+                    &nbsp;全选
                   </div>
                   <div class="ml-2 mr-2 flex " v-for="item in authorityList" :key="item">
                     <input type="checkbox" :checked="searchTypes.includes(item)" @change="handleTypeSelect(item)">
-                    {{ authorityTransformer(item) }}
+                    &nbsp;{{ authorityTransformer(item) }}
                   </div>
                 </div>
                 <div class="flex items-center">
                   <div class="header-search">
-                    <span>姓名/学号
+                    <span>姓名
                     </span>
                     <div class="search_input_box">
-                      <input placeholder="请输入关键词" class="search_input" v-model="content"
+                      <input placeholder="请输入姓名" class="search_input" v-model="content"
                         @keydown.enter="getUserList()" />
                     </div>
                   </div>
                   <button class="search-btn" @click="getUserList()">搜索</button>
-                  <div class="reset">
-                    <Icon icon="grommet-icons:power-reset" @click="reset()"/>
+                  <div class="reset cursor-pointer">
+                    <Icon icon="grommet-icons:power-reset" @click="reset()" />
                   </div>
                 </div>
               </div>
@@ -278,7 +278,7 @@ function reset() {
                 </TableBody>
               </Table>
             </CardContent>
-            <CardFooter class="justify-center">
+            <CardFooter class="justify-end p-0">
               <div class="pageBox pagination-container">
                 <Pagination :totalItems="total" :pageSize="pageSize" @update:page="handlePageChange">
                 </Pagination>
@@ -579,6 +579,17 @@ td {
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 150px;
+  }
+}
+
+.pageBox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+
+  .postsNum {
+    margin-right: 20px;
+    line-height: 40px;
   }
 }
 

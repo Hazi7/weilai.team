@@ -16,7 +16,7 @@ apiClient.interceptors.request.use(
     const token = getLocalStorageWithExpire('token');
     if (token && config.headers) {
       setLocalStorageWithExpire('token',token,1000*60*60)
-      config.headers.token = token;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
