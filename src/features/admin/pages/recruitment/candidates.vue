@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FilterCondition,DataRangePicker,ToggleShow ,DataTable,Pagination,AutoLongerInput,
-          UpdateStatus,
+          UpdateStatus,ModalDialog,
 } from '@/components/recruitment';
 import { Icon } from '@iconify/vue';
 import { Button } from '@/components/ui/button';
@@ -120,7 +120,6 @@ const toggleItems = ref([
 ]);
 
 const tableData = ref(<IAllApplyUserVO[]>[]);
-//分页
 const pageSize = ref(10);
 const pageNo = ref(1);
 const total = ref(0);
@@ -192,16 +191,26 @@ const arrangeInterview = (id: string) => {
 const eliminateCandidate = (id: string) => {
   console.log(id, "淘汰");
 };
+// 模态框
+const isModalOpen = ref(false);
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 
+const currentDeleteId = ref("");
 // 删除候选人
 const DeleteCandidate = (id: string) => {
-  deleteApplyUserById({id}).then(({data,error,loading})=>{
-    updateParameter.value = !updateParameter.value;
-    })
+  isModalOpen.value = true;
+  currentDeleteId.value = id;
 
 }
-
-
+const confirmDeleteCandidate = (id: string) => {
+  isModalOpen.value = false;
+    deleteApplyUserById({id}).then(({data,error,loading})=>{
+    updateParameter.value = !updateParameter.value;
+    })
+}
+//为表格传递操作项和图标
 const actionItems = ref([
   {
     title: "查看简历",
@@ -230,7 +239,7 @@ const actionItems = ref([
   },
 ]);
 
-
+//拿到后端的所有年级数据
 getAllGrade({pageNo:1,pageSize:100})
         .then(({data,error,loading})=>{
             // console.log(data,error,loading,);
@@ -245,7 +254,7 @@ getAllGrade({pageNo:1,pageSize:100})
                 })
             }
         })
-
+//设置一个状态变量，用来强制更新
 const updateParameter =ref<boolean>(false);
 
 watchEffect(()=>{
@@ -274,7 +283,6 @@ watchEffect(()=>{
         } else {
             tableData.value = [];
         }
-
 })
 })
 
@@ -286,13 +294,27 @@ const handleEditStatus = () => {
     //把修改状态的弹窗组件展示
     updateStatus.value = true;
 }
+
 </script>
 
 <template>
-    <Teleport to="body">
-        <UpdateStatus :visible="updateStatus" @close="updateStatus = false"></UpdateStatus>
-    </Teleport>
+
+
     <div class="content">
+      <!-- dialog-start -->
+    <UpdateStatus :visible="updateStatus" @close="updateStatus = false"></UpdateStatus>
+    <ModalDialog :isOpen="isModalOpen" @close="closeModal">
+      <template #header>
+        <h2> 删除候选人</h2>
+      </template>
+      <p>你确定要删除该条候选人的数据吗？</p>
+      <p style="color: red;font-size: 0.5em;">（此项操作无法撤销，请慎重操作！！！）</p>
+      <template #footer>
+        <Button class="btn-style" @click="confirmDeleteCandidate(currentDeleteId)" >确定</Button>
+        <Button class="btn-style" @click="closeModal">关闭</Button>
+      </template>
+    </ModalDialog>
+    <!-- dialog-end -->
         <div class="filter-items">
             <FilterCondition :items-obj-arr="candidates_itemsObjArr" @filter_condition="handleFilterCondition"></FilterCondition>
             <div class="date-picker">

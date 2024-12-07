@@ -57,6 +57,8 @@ const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.
 watch(() => props.items, () => {
   selectedIds.value = [];
 });
+
+
 </script>
 
 <template>
@@ -111,17 +113,18 @@ watch(() => props.items, () => {
         </TableCell>
         <!-- 操作框 -->
         <TableCell class="font-medium">
-          <Popover>
+          <Popover  >
             <PopoverTrigger>
-              <Icon icon="tabler:dots" style="display: inline-block;font-size: 18px; cursor: pointer;"/>
+              <Icon icon="tabler:dots" style="display: inline-block;font-size: 18px; cursor: pointer;"
+              />
             </PopoverTrigger>
-            <PopoverContent class="popover-content"   >
+            <PopoverContent class="popover-content" >
               <div>
                 <div
                   class="pop-content-item"
                   v-for="(i,index) in actionItems"
                   :key="index"
-                  @click="i.onclick(item.id)"
+                  @click=" i.onclick(item.id);"
                   >
                   <Icon :icon=i.icon
                   :key="index"
@@ -140,7 +143,7 @@ watch(() => props.items, () => {
   </Table>
 
 </template>
-<style lang="scss">
+<style lang="scss" >
 @use "@/assets/styles/recruitment.scss" ;
 .adaptive table{
   width: 100%;
@@ -170,9 +173,9 @@ watch(() => props.items, () => {
   padding: 10px;
   box-shadow: 0 0 10px #ccc;
   position: relative;
-  left: -80px;
+  left: -40px;
   top: 0;
-  z-index: 100;
+  z-index: 39;
  .pop-content-item{
     width: 100%;
     height: 40px;
