@@ -1,24 +1,78 @@
 <script setup lang="ts">
 import { Button } from '../ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-vue-next'
 import ForgotPassword from './ForgotPassword.vue'
-import UseLogin from '../../composables/UseLogin'
-import { debounce } from "@community/composables/search";
-import { ref } from 'vue'
+import useLogin from '../../composables/useLogin'
+// import { Icon } from "@iconify/vue";
+import { useAlert } from '@/composables/alert'
+// import { debounce } from "@community/composables/search";
+import { ref, watch } from 'vue'
+import * as z from "zod";
 import { onMounted, onUnmounted } from 'vue'
+// import ErrorHead from './ErrorHead.vue'
+
+const { showAlert } = useAlert();
+interface LoginError {
+    account: string;
+    password: string;
+}
+// const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const filedErrors = ref<z.ZodFormattedError<LoginError> | undefined>();
+const loginSchema = z.object({
+    account: z
+        .string()
+        .min(1, { message: '请输入账号' }),
+    password: z.string().min(1, { message: '请输入密码' })
+})
+
+const validateLogin = () => {
+    const loginResult = loginSchema.safeParse({
+        account: account.value,
+        password: password.value
+    })
+    console.log(loginResult.success);
+    if (!loginResult.success) {
+        console.log(loginResult.error.issues[0].message)
+        return false
+    }
+    return loginResult.success
+}
 
 const account = ref<string>('')
 const password = ref<string>('')
-const { loading, getLogin } = UseLogin()
+const { loading, getLogin } = useLogin()
 
-// 防抖处理的提交方法
-const submitForm = debounce(() => {
-    getLogin(account.value, password.value)
-    // 在这里处理实际的表单提交逻辑，例如发送请求
-}, 1000); // 设置防抖时间为 1000ms
+function sendLogin() {
+    if (account.value === '') {
+        showAlert("账号不能为空", "waring");
+    } else if (password.value === '') {
+        showAlert("密码不能为空", "waring");
+    } else {
+        getLogin(account.value, password.value)
+        loading.value = true
+    }
+}
+
+// const handleLogin = async () => {
+//     if (!validateLogin()) {
+//         return;
+//     }
+//     watch(
+//         () => loading,
+//         () => {
+//             console.log(loading);
+//         },
+//     );
+//     getLogin(account.value, password.value)
+//     loading.value = true
+// };
+
+// defineEmits<{
+//     (e: 'login', user: User)
+// }>()
 
 // 控制动画显示的状态
 const isVisible = ref(false)
@@ -49,6 +103,7 @@ onUnmounted(() => {
                 <div class="grid gap-4">
                     <div class="grid gap-2">
                         <Label class="inputTitle" for="stuId">账号</Label>
+                        <!-- <ErrorHead v-if="loginResult.error" :message="loginResult.error.issues[0].message"/ErrorHead> -->
                         <Input class="formInput" id="stuId" placeholder="请输入学号或邮箱" required v-model="account" />
                     </div>
                     <div class="grid gap-2">
@@ -63,8 +118,7 @@ onUnmounted(() => {
                             <ForgotPassword></ForgotPassword>
                         </div>
                     </div>
-
-                    <Button type="submit" class="loginButton w-full" @click="submitForm" v-if="!loading">
+                    <Button type="submit" class="loginButton w-full" @click="sendLogin" v-if="!loading">
                         登录
                     </Button>
                     <Button class="loginButton" disabled v-if="loading">
@@ -117,6 +171,12 @@ onUnmounted(() => {
         box-shadow: none;
         border-radius: 20px;
         background-color: #e1f2fd;
+    }
+
+    .errorHead {
+        display: flex;
+        align-items: center;
+        color: var(--destructive-foreground);
     }
 }
 

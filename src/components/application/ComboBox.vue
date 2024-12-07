@@ -17,7 +17,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Check, ChevronsUpDown } from 'lucide-vue-next'
 import { ref } from 'vue'
-import UseApplication from '@/composables/UseApplication'
+import UseApplication from '@/composables/useApplication'
 
 interface Framework {
     value: string,
