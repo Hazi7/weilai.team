@@ -1,32 +1,81 @@
 <script setup lang="ts">
 import { Button } from '../ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-vue-next'
 import ForgotPassword from './ForgotPassword.vue'
-import UseLogin from '../../composables/UseLogin'
-import { debounce } from "@community/composables/search";
-import { ref } from 'vue'
+import useLogin from '../../composables/useLogin'
+// import { Icon } from "@iconify/vue";
+import { useAlert } from '@/composables/alert'
+// import { debounce } from "@community/composables/search";
+import { ref, watch } from 'vue'
+import * as z from "zod";
 import { onMounted, onUnmounted } from 'vue'
-import { useAlert } from '../../composables/alert'
-// import { error } from 'node_modules/handsontable/helpers'
+// import ErrorHead from './ErrorHead.vue'
 
 const { showAlert } = useAlert();
+interface LoginError {
+    account: string;
+    password: string;
+}
+// const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const filedErrors = ref<z.ZodFormattedError<LoginError> | undefined>();
+const loginSchema = z.object({
+    account: z
+        .string()
+        .min(1, { message: '请输入账号' }),
+    password: z.string().min(1, { message: '请输入密码' })
+})
+
+const validateLogin = () => {
+    const loginResult = loginSchema.safeParse({
+        account: account.value,
+        password: password.value
+    })
+    console.log(loginResult.success);
+    if (!loginResult.success) {
+        console.log(loginResult.error.issues[0].message)
+        return false
+    }
+    return loginResult.success
+}
+
 const account = ref<string>('')
 const password = ref<string>('')
-const { loading, getLogin } = UseLogin()
+const { loading, getLogin } = useLogin()
 
-// 防抖处理的提交方法
-const submitForm = debounce(() => {
-    getLogin(account.value, password.value)
-    // 在这里处理实际的表单提交逻辑，例如发送请求
-}, 500); // 设置防抖时间为 500ms
+function sendLogin() {
+    if (account.value === '') {
+        showAlert("账号不能为空", "waring");
+    } else if (password.value === '') {
+        showAlert("密码不能为空", "waring");
+    } else {
+        getLogin(account.value, password.value)
+        loading.value = true
+    }
+}
+
+// const handleLogin = async () => {
+//     if (!validateLogin()) {
+//         return;
+//     }
+//     watch(
+//         () => loading,
+//         () => {
+//             console.log(loading);
+//         },
+//     );
+//     getLogin(account.value, password.value)
+//     loading.value = true
+// };
+
+// defineEmits<{
+//     (e: 'login', user: User)
+// }>()
 
 // 控制动画显示的状态
 const isVisible = ref(false)
-const noId = ref(false)
-const noPassWord = ref(false)
 // 监听点击事件，触发动画
 const handleClick = (event: MouseEvent) => {
     console.log('页面被点击了');
@@ -40,18 +89,6 @@ onMounted(() => {
 onUnmounted(() => {
     document.removeEventListener('click', handleClick);
 });
-
-function sendLogin() {
-    if (account.value && password.value) {
-        submitForm()
-    } else if (!account.value) {
-        showAlert('请输入账户！', 'waring')
-        noId.value = true
-    } else if (!password.value) {
-        showAlert('请输入密码！', 'waring')
-        noPassWord.value = true
-    }
-}
 </script>
 
 <template>
@@ -66,22 +103,21 @@ function sendLogin() {
                 <div class="grid gap-4">
                     <div class="grid gap-2">
                         <Label class="inputTitle" for="stuId">账号</Label>
-                        <Input class="formInput" :class="{ 'noWrite': noId }" @click="noId = false" id="stuId"
-                            placeholder="请输入学号或邮箱" required v-model="account" />
+                        <!-- <ErrorHead v-if="loginResult.error" :message="loginResult.error.issues[0].message"/ErrorHead> -->
+                        <Input class="formInput" id="stuId" placeholder="请输入学号或邮箱" required v-model="account" />
                     </div>
                     <div class="grid gap-2">
                         <div class="flex items-center justify-between">
                             <Label class="inputTitle" for="password">密码</Label>
                         </div>
-                        <Input class="formInput" :class="{ 'noWrite': noPassWord }" @click="noPassWord = false"
-                            id="password" type="password" placeholder="请输入密码" required v-model="password" />
+                        <Input class="formInput" id="password" type="password" placeholder="请输入密码" required
+                            v-model="password" />
                     </div>
                     <div class="forgotPass grid gap-2">
                         <div class="flex items-center justify-end">
                             <ForgotPassword></ForgotPassword>
                         </div>
                     </div>
-
                     <Button type="submit" class="loginButton w-full" @click="sendLogin" v-if="!loading">
                         登录
                     </Button>
@@ -137,34 +173,17 @@ function sendLogin() {
         background-color: #e1f2fd;
     }
 
-    .noWrite {
-        animation: slideIn 0.4s ease-in-out 1;
-        border-color: rgb(255, 96, 96);
-        background-color: #fbeceb;
+    .errorHead {
+        display: flex;
+        align-items: center;
+        color: var(--destructive-foreground);
     }
 }
 
-@keyframes slideIn {
-    0% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-10px);
-    }
-
-    50% {
-        transform: translateX(10px);
-    }
-
-    75% {
-        transform: translateX(-10px);
-    }
-
-    100% {
-        transform: translateX(0);
-    }
-}
+// .loginContent.animate-fadeIn {
+//     opacity: 1;
+//     height: 100%;
+// }
 
 @keyframes fadeIn {
     0% {
@@ -187,6 +206,38 @@ function sendLogin() {
 
     100% {
         height: 100%;
+    }
+}
+
+@media screen and (max-width: 1400px) {
+    .loginOut {
+        width: 350px;
+    }
+
+    .loginContent {
+        margin-top: 80px;
+
+        .loginTitle {
+            text-align: center;
+            font-size: 32px;
+            margin: 12px 0 5px 0;
+        }
+
+        .inputTitle {
+            font-size: 15px;
+            margin: 10px 0 6px 0;
+        }
+
+        .formInput {
+            height: 36px;
+            font-size: 12px;
+        }
+
+        .loginButton {
+            height: 35px;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
     }
 }
 

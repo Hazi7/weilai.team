@@ -38,9 +38,12 @@
 <script setup lang="ts">
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRequest } from "@/composables/useRequest";
+import { useUserStore } from "@/store/userStore";
 import type { UserData, UserInfo } from "@/types/Community";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
+const userStore = useUserStore();
+console.log(userStore.userId);
 
 const props = defineProps({
   content: {

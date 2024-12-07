@@ -11,7 +11,7 @@ export async function getMembers(pageNumber = 1, pageSize = 10) {
     method: "get",
   });
   const res = data.value as ContactData;
-  console.log(res);
+  console.log(data.value);
 
   return res.data;
 }
@@ -25,9 +25,7 @@ export async function getMembersByGroupAndGrade(
     url: `/userManager/teamInfo/getUserListByGroup?grade=${grade}&group=${group}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
     method: "get",
   });
-
   const res = data.value as ContactData;
-
   return res.data;
 }
 export async function searchMember(content = "") {
@@ -52,6 +50,14 @@ export async function setLeader(leaderInfo: {}) {
     requestData: leaderInfo,
   });
   console.log(data.value);
+  return data.value;
+}
+export async function updateInfo(updateTeamUserInfoDTO: {}) {
+  await executeRequest({
+    url: "/userManager/teamInfo/modifyTeamUserInfo",
+    method: "put",
+    requestData: updateTeamUserInfoDTO,
+  });
   return data.value;
 }
 export { loading };

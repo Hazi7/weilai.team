@@ -13,11 +13,7 @@
           placeholder="请输入关键词"
           class="search_input"
           ref="inputRef"
-          @keydown.enter="
-            () => {
-              skip(searchValue);
-            }
-          "
+          @keydown.enter="() => {}"
           v-model="searchValue"
           @focus="isVisible = true"
         />
@@ -26,18 +22,13 @@
       <div class="search_list" v-show="searchValue && isVisible">
         <div class="search_empty" v-if="!searchList.length">未找到搜索结果</div>
         <div class="search_item" v-for="item in searchList">
-          <!-- <a @click.prevent=""> -->
-          <!-- <span>{{ item.name }}</span> -->
-
           <MemberInfo :userId="item.id">
             <DialogTrigger as-child>
-              <!-- <Button variant="outline"> Edit Profile </Button> -->
               <span class="search-item"
                 ><Icon icon="bi:person-fill" />{{ item.name }}</span
               >
             </DialogTrigger>
           </MemberInfo>
-          <!-- </a> -->
         </div>
       </div>
     </div>
@@ -149,13 +140,13 @@ function handleClick(e: Event) {
     isVisible.value = false;
   }
 }
-function skip(e: Event) {
-  if (searchValue.value) {
-    router.push(`${path}/${searchValue.value}`);
-  } else {
-    router.push(`${path}`);
-  }
-}
+// function skip(e: Event) {
+//   if (searchValue.value) {
+//     router.push(`${path}/${searchValue.value}`);
+//   } else {
+//     router.push(`${path}`);
+//   }
+// }
 </script>
 
 <style scoped lang="scss">

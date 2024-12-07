@@ -1,74 +1,32 @@
 <template>
-    <div class="myPosts">
-        <div class="postsData">
-            <div class="postsNum">
-                <p>{{ userPostAllInfo.allPostCount }}</p>
-                <p>文章</p>
-            </div>
-            <div class="likeNum">
-                <p>{{ userPostAllInfo.allLikeCount }}</p>
-                <p>点赞</p>
-            </div>
-            <div class="starNum">
-                <p>{{ userPostAllInfo.allCollectCount }}</p>
-                <p>收藏</p>
-            </div>
-            <div class="commentNum">
-                <p>{{ userPostAllInfo.allCommentCount }}</p>
-                <p>评论</p>
-            </div>
-        </div>
-        <div class="postsListBox">
-            <ul>
-                <li v-for="item in userPost" :key="item.id">
-                    <div class="postInfo">
-                        <h1 class="postTitle">{{ item.title }}</h1>
-                        <p class="postDesc">{{ item.postAbstract }}</p>
-                        <p class="postFooter">
-                            <span class="postTime">{{ formatDateToYYYYMMDD(item.putTime) }} 发布</span>
-                            ·
-                            <span class="likesNum">{{ item.postLikeCount }} 点赞</span>
-                            ·
-                            <span class="commentsNum">{{ item.commentCount }} 评论</span>
-                            ·
-                            <span class="collectNum">{{ item.collectCount }} 收藏</span>
-                            ·
-                            <span class="viewNum">{{ item.viewCount }} 阅读</span>
-                        </p>
-                    </div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger class="ellipsis">
-                            <Icon icon="lucide:ellipsis" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent class="p-0  bg-white">
-                            <DropdownMenuLabel>操作</DropdownMenuLabel>
-                            <DropdownMenuItem>
-                                <Button class="operationsBtn deletePost" @click="deletePost(item.id)">删除文章</Button>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Button class="operationsBtn updatePost">修改文章</Button>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </li>
-            </ul>
-        </div>
-        <div class="pageBox pagination-container">
-            <Pagination :totalItems="total" :pageSize="pageSize" @update:page="handlePageChange">
-            </Pagination>
-            <span class="postsNum">共 {{ total }} 篇文章</span>
-        </div>
+  <div class="myPosts">
+    <div class="postsData">
+      <div class="postsNum">
+        <p>{{ userPostAllInfo.allPostCount }}</p>
+        <p>文章</p>
+      </div>
+      <div class="likeNum">
+        <p>{{ userPostAllInfo.allLikeCount }}</p>
+        <p>点赞</p>
+      </div>
+      <div class="starNum">
+        <p>{{ userPostAllInfo.allCollectCount }}</p>
+        <p>收藏</p>
+      </div>
+      <div class="commentNum">
+        <p>{{ userPostAllInfo.allCommentCount }}</p>
+        <p>评论</p>
+      </div>
     </div>
     <div class="postsListBox">
+      <h1 class="text-center text-[24px] font-bold" v-if="userPost.length == 0">尚未发布过帖子</h1>
       <ul>
         <li v-for="item in userPost" :key="item.id">
           <div class="postInfo">
             <h1 class="postTitle">{{ item.title }}</h1>
             <p class="postDesc">{{ item.postAbstract }}</p>
             <p class="postFooter">
-              <span class="postTime"
-                >{{ formatDateToYYYYMMDD(item.putTime) }} 发布</span
-              >
+              <span class="postTime">{{ formatDateToYYYYMMDD(item.putTime) }} 发布</span>
               ·
               <span class="likesNum">{{ item.postLikeCount }} 点赞</span>
               ·
@@ -83,10 +41,10 @@
             <DropdownMenuTrigger class="ellipsis">
               <Icon icon="lucide:ellipsis" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent class="p-0 bg-white">
+            <DropdownMenuContent class="p-0  bg-white">
               <DropdownMenuLabel>操作</DropdownMenuLabel>
               <DropdownMenuItem>
-                <Button class="operationsBtn deletePost">删除文章</Button>
+                <Button class="operationsBtn deletePost" @click="deletePost(item.id)">删除文章</Button>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Button class="operationsBtn updatePost">修改文章</Button>
@@ -95,17 +53,15 @@
           </DropdownMenu>
         </li>
       </ul>
-    </div>
-    <div class="pageBox pagination-container">
-      <Pagination
-        :totalItems="total"
-        :pageSize="pageSize"
-        @update:page="handlePageChange"
-      >
-      </Pagination>
-      <span class="postsNum">共 {{ total }} 篇文章</span>
+      <div class="pageBox pagination-container">
+        <Pagination :totalItems="total" :pageSize="pageSize" @update:page="handlePageChange">
+        </Pagination>
+        <span class="postsNum">共 {{ total }} 篇文章</span>
+      </div>
     </div>
   </div>
+
+
 </template>
 <script lang="ts" setup>
 //引入组件
@@ -141,7 +97,7 @@ let userPostAllInfo = ref({
   allCollectCount: 0,
   allCommentCount: 0,
   allLikeCount: 0,
-  allPostCount: 0,
+  allPostCount: 0
 });
 
 //定义页码信息
@@ -161,26 +117,31 @@ function handlePageChange(newPage: number) {
 
 //获取文章函数
 async function getPosts() {
-    await executeRequest({ url: `/user/getUserPost?userId=${userId}&pageNumber=${currentPage}&pageSize=${pageSize.value}` })
-    if (data.value && data.value.code == 200) {
-        let postData = data.value.data
-        // 将数据赋值给userPostAllInfo及userPost、pages
-        Object.assign(userPostAllInfo.value, postData.userPostAllInfo);
-        userPost.value = postData.userPost
-        console.log('我的文章',userPost.value);
-        
-        pages = postData.pageInfo.pages
-        total = postData.pageInfo.total
-    }
+  await executeRequest({ url: `/user/getUserPost?userId=${userId}&pageNumber=${currentPage}&pageSize=${pageSize.value}` })
+  if (data.value && data.value.code == 200) {
+    let postData = data.value.data
+    // 将数据赋值给userPostAllInfo及userPost、pages
+    Object.assign(userPostAllInfo.value, postData.userPostAllInfo);
+    userPost.value = postData.userPost
+    console.log('我的文章', userPost.value);
+
+    pages = postData.pageInfo.pages
+    total = postData.pageInfo.total
+  }
+  if (data.value && data.value.code == 6001) {
+    console.log('未发表过帖子');
+    
+  }
+  
 }
 //打开页面立刻调用一次获取文章
 getPosts()
 
-async function deletePost(id:number) {
-    
-    await executeRequest({ url: `/post/delete/${id}`,method:'put'})
-    console.log(data.value);
-    getPosts()
+async function deletePost(id: number) {
+
+  await executeRequest({ url: `/post/delete/${id}`, method: 'put' })
+  console.log(data.value);
+  getPosts()
 }
 </script>
 <style lang="scss" scoped>
@@ -256,74 +217,75 @@ async function deletePost(id:number) {
           }
         }
 
-    .postsListBox {
-        width: 100%;
+        .postsListBox {
+          width: 100%;
 
-        ul {
+          ul {
             li {
-                margin-top: 20px;
-                display: flex;
-                border-radius: 10px;
-                background-color: white;
-                padding: 10px;
-                // box-shadow: 5px 5px 5px #d9d9d9;
-                border: 1px solid #d9d9d9;
+              margin-top: 20px;
+              display: flex;
+              border-radius: 10px;
+              background-color: white;
+              padding: 10px;
+              // box-shadow: 5px 5px 5px #d9d9d9;
+              border: 1px solid #d9d9d9;
 
-                .postInfo {
-                    margin-left: 20px;
-                    width: 100%;
-                    color: #666;
+              .postInfo {
+                margin-left: 20px;
+                width: 100%;
+                color: #666;
 
-                    .postTitle {
-                        color: black;
-                        font-size: larger;
-                    }
-
-                    .postDesc {
-                        font-size: small;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                        width: 100%;
-                    }
-
-                    .postFooter {
-                        font-size: xx-small;
-                    }
+                .postTitle {
+                  color: black;
+                  font-size: larger;
                 }
 
-                .ellipsis {
-                    margin-right: 20px;
-                    margin-left: 20px;
+                .postDesc {
+                  font-size: small;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  width: 100%;
                 }
 
-                &:hover {
-                    background-color: #f5f5f5;
+                .postFooter {
+                  font-size: xx-small;
                 }
+              }
+
+              .ellipsis {
+                margin-right: 20px;
+                margin-left: 20px;
+              }
+
+              &:hover {
+                background-color: #f5f5f5;
+              }
             }
-        }
+          }
 
-        &:hover {
-          background-color: #f5f5f5;
+          &:hover {
+            background-color: #f5f5f5;
+          }
         }
       }
     }
-  }
 
-  .pageBox {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    .pageBox {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
 
-    .postsNum {
-      margin-right: 20px;
-      line-height: 40px;
+      .postsNum {
+        margin-right: 20px;
+        line-height: 40px;
+      }
     }
   }
 }
 
 @media (max-width: 768px) {
-    .myPosts .postsListBox ul li .postInfo .postFooter {
-        font-size: 9px;
-    }
+  .myPosts .postsListBox ul li .postInfo .postFooter {
+    font-size: 9px;
+  }
 }
 </style>

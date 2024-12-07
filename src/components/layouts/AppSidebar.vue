@@ -13,7 +13,7 @@ import SidebarMenu from "@/components/ui/sidebar/SidebarMenu.vue";
 import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
-import UserLogin from "@/composables/UseLogin";
+import useLogin from "@/composables/useLogin";
 import { Icon } from "@iconify/vue";
 import {
   BadgeCheck,
@@ -23,11 +23,16 @@ import {
   LogOut,
 } from "lucide-vue-next";
 import { watch } from "vue";
-import { RouterLink, useRoute, useRouter } from "vue-router";
+import { onBeforeRouteLeave, RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
-const {  logout } = UserLogin()
+
+onBeforeRouteLeave(() => {
+  // 离开路由时，清除所有定时器
+  console.log(111,"离开了")
+})
+const { logout } = useLogin()
 const route = useRoute();
 const router = useRouter();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
@@ -97,6 +102,9 @@ interface SubItemInterface {
   path: string;
   redirect?:string;
 }
+
+
+
 </script>
 
 <template>
@@ -133,7 +141,7 @@ interface SubItemInterface {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-        
+
             <!-- 二级导航 -->
             <SidebarGroup  id="sub-nav" v-show="subNavItems?.length" >
               <SidebarGroupContent>
@@ -149,7 +157,7 @@ interface SubItemInterface {
                         active-class="sidebar__sub-link--active"
                         class="sidebar__sub-link"
                         @click="router.push(item.redirect? item.redirect : item.path)"
-                        
+
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span>{{ item.title }}</span>
@@ -159,12 +167,12 @@ interface SubItemInterface {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-          
+
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem
-                
+
                     class="sidebar__item"
                   >
                     <SidebarMenuButton class="sidebar__button">
@@ -229,12 +237,12 @@ interface SubItemInterface {
                       <BadgeCheck />
                     个人资料
                     </DropdownMenuItem class="drop-menu-item">
-                  </router-link> 
+                  </router-link>
                     <DropdownMenuItem class="drop-menu-item">
                       <CreditCard />
                       Billing
                     </DropdownMenuItem class="drop-menu-item">
-            
+
                     <DropdownMenuItem class="drop-menu-item">
                       <Bell />
                       Notifications
@@ -304,7 +312,7 @@ interface SubItemInterface {
 .frame {
   color: var(--secondary-foreground);
   #sub-nav {
-   
+
     border-top: 1px solid #e5e7eb;
     border-bottom: 1px solid #e5e7eb;
   }
@@ -410,10 +418,10 @@ interface SubItemInterface {
     width: 45px;
     height: 45px;
     display: flex;
-  
- 
-   
-  
+
+
+
+
     #main-menu_dropdown {
       width: max-content;
     }
@@ -444,7 +452,7 @@ interface SubItemInterface {
         background-color: var(--secondary);
       }
     }
- 
+
   &-publish {
       border-radius: 50%;
       padding: 12px;
@@ -489,18 +497,18 @@ interface SubItemInterface {
   border-radius: 50%;
 }
 .frame {
- 
+
 color :var(--secondary-foreground);
   #sub-nav{
-   border-top: 1px solid #e5e7eb; 
+   border-top: 1px solid #e5e7eb;
    border-bottom: 1px solid #e5e7eb;
   }
   span{
     font-size:0.9vw  !important ;
   }
- 
 
-  
+
+
 }
 
 
@@ -626,19 +634,19 @@ color :var(--secondary-foreground);
   height: calc(100% - 2px);
   border-radius: 50%;
 }
-.frame { 
- 
+.frame {
+
   color :var(--secondary-foreground);
   #sub-nav{
-   border-top: 1px solid #e5e7eb; 
+   border-top: 1px solid #e5e7eb;
    border-bottom: 1px solid #e5e7eb;
   }
   span{
     font-size:0.9vw  !important ;
   }
- 
 
-  
+
+
 }
 
 

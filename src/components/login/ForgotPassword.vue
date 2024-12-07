@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import UseLogin from "@/composables/UseLogin";
+import useLogin from "@/composables/useLogin";
 import { ref } from "vue";
 import { useLoginStore } from "@/store/useLoginStore";
 import { useAlert } from '../../composables/alert'
@@ -21,7 +21,7 @@ const email = ref("");
 const code = ref("");
 const password = ref("");
 const passwordAgin = ref("");
-const { useGetCode, useResetPassword } = UseLogin();
+const { useGetCode, useResetPassword } = useLogin();
 const loginStore = useLoginStore();
 const noEmail = ref(false);
 const noCode = ref(false);
