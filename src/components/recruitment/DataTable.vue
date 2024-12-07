@@ -15,10 +15,6 @@ import {
 } from '@/components/ui/popover'
 import {  defineProps,ref,computed,watch } from 'vue';
 import { Icon } from '@iconify/vue';
-
-import type { IAllApplyUserVO,tableActionsVO,tableHeadersVO } from '@/types/recruitmentType';
-
-
 import type {
   IAllApplyUserVO,
   tableActionsVO,
