@@ -6,8 +6,8 @@ import {
   TableCell,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Checkbox } from "@/components/ui/checkbox"
+} from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
@@ -19,29 +19,31 @@ import { Icon } from '@iconify/vue';
 import type { IAllApplyUserVO,tableActionsVO,tableHeadersVO } from '@/types/recruitmentType';
 
 
+import type {
+  IAllApplyUserVO,
+  tableActionsVO,
+  tableHeadersVO,
+} from "@/types/recruitmentType";
 
 const props = defineProps<{
-    items: IAllApplyUserVO[];
-    headers: tableHeadersVO[];
-    actionItems: tableActionsVO[];
-}>()
-
+  items: IAllApplyUserVO[];
+  headers: tableHeadersVO[];
+  actionItems: tableActionsVO[];
+}>();
 
 // 用于存储选中的 id
 const selectedIds = ref<string[]>([]);
 // 用于处理选中的 id
 const handleSelect = (id: string) => {
   if (selectedIds.value.includes(id)) {
-    selectedIds.value = selectedIds.value.filter((item) => item!== id);
+    selectedIds.value = selectedIds.value.filter((item) => item !== id);
   } else {
     selectedIds.value.push(id);
   }
 };
 
-
 // 用于处理全选的 id
 const handleSelectAll = () => {
-
   if (selectedIds.value.length === props.items.length) {
     selectedIds.value = [];
   } else {
@@ -62,87 +64,89 @@ watch(() => props.items, () => {
 <template>
   <Table class="adaptive">
     <TableCaption></TableCaption>
-    <TableHeader >
+    <TableHeader>
       <TableRow>
         <TableCell class="font-medium text-center min-w-120">
-          <Checkbox @click="handleSelectAll"
-          class="checkbox"
-          :checked="isAllSelected"
-          :checked-not-all="isNotAllSelected"
+          <Checkbox
+            @click="handleSelectAll"
+            class="checkbox"
+            :checked="isAllSelected"
+            :checked-not-all="isNotAllSelected"
           />
         </TableCell>
         <TableCell
-        class="font-medium  text-center  min-w-120"
-        v-for="header in headers"
-        :key="header.key"
-
+          class="font-medium text-center min-w-120"
+          v-for="header in headers"
+          :key="header.key"
         >
-        {{ header.title }}
-      </TableCell>
-
+          {{ header.title }}
+        </TableCell>
       </TableRow>
     </TableHeader>
     <TableBody>
-
-      <TableRow v-show="items.length === 0" style="font-size: large;height: 40px;text-align: center;">
-        <TableCell colspan="100%">
-          暂无数据
-        </TableCell>
+      <TableRow
+        v-show="items.length === 0"
+        style="font-size: large; height: 40px; text-align: center"
+      >
+        <TableCell colspan="100%"> 暂无数据 </TableCell>
       </TableRow>
-      <TableRow  v-for="item in items" :key="item.id" class="hover-tr"  >
-
+      <TableRow v-for="item in items" :key="item.id" class="hover-tr">
         <TableCell
-        class="font-medium text-center"
-        v-for="(obj,theKey) in item"
-        :key="theKey"
+          class="font-medium text-center"
+          v-for="(obj, theKey) in item"
+          :key="theKey"
         >
-        <template v-if="theKey === 'id'">
-          <Checkbox
-            class="checkbox"
-            @click="handleSelect(item.id)"
-            :checked="selectedIds.includes(item.id)"
-            :value="theKey"
-          />
-        </template>
-        <template v-else>
-          {{ obj }}
-        </template>
-
+          <template v-if="theKey === 'id'">
+            <Checkbox
+              class="checkbox"
+              @click="handleSelect(item.id)"
+              :checked="selectedIds.includes(item.id)"
+              :value="theKey"
+            />
+          </template>
+          <template v-else>
+            {{ obj }}
+          </template>
         </TableCell>
         <!-- 操作框 -->
         <TableCell class="font-medium">
           <Popover>
             <PopoverTrigger>
-              <Icon icon="tabler:dots" style="display: inline-block;font-size: 18px; cursor: pointer;"/>
+              <Icon
+                icon="tabler:dots"
+                style="display: inline-block; font-size: 18px; cursor: pointer"
+              />
             </PopoverTrigger>
-            <PopoverContent class="popover-content"   >
+            <PopoverContent class="popover-content">
               <div>
                 <div
                   class="pop-content-item"
-                  v-for="(i,index) in actionItems"
+                  v-for="(i, index) in actionItems"
                   :key="index"
                   @click="i.onclick(item.id)"
-                  >
-                  <Icon :icon=i.icon
-                  :key="index"
-                  style="display: inline-block;font-size: 18px; cursor: pointer;"/>
+                >
+                  <Icon
+                    :icon="i.icon"
+                    :key="index"
+                    style="
+                      display: inline-block;
+                      font-size: 18px;
+                      cursor: pointer;
+                    "
+                  />
                   <span class="pop-content-item-text">{{ i.title }}</span>
                 </div>
               </div>
-
             </PopoverContent>
           </Popover>
-
         </TableCell>
-
       </TableRow>
     </TableBody>
   </Table>
-
 </template>
 <style lang="scss">
-@use "@/assets/styles/recruitment.scss" ;
-.adaptive table{
+@use "@/assets/styles/recruitment.scss";
+.adaptive table {
   width: 100%;
   height: auto;
   background-color: #fff;
@@ -152,16 +156,16 @@ watch(() => props.items, () => {
   box-shadow: 0 0 10px #ccc;
   overflow: auto;
 }
-.hover-tr{
-  &:hover{
+.hover-tr {
+  &:hover {
     background-color: var(--accent);
     cursor: pointer;
   }
 }
-.min-w-120{
+.min-w-120 {
   min-width: 120px;
 }
-.popover-content{
+.popover-content {
   width: 200px;
   height: auto;
   background-color: #fff;
@@ -173,7 +177,7 @@ watch(() => props.items, () => {
   left: -80px;
   top: 0;
   z-index: 100;
- .pop-content-item{
+  .pop-content-item {
     width: 100%;
     height: 40px;
     display: flex;
@@ -183,12 +187,11 @@ watch(() => props.items, () => {
     gap: 10px;
     cursor: pointer;
 
-    &:hover{
-      background-color:var(--accent);
+    &:hover {
+      background-color: var(--accent);
     }
 
-    .pop-content-item-text{
-
+    .pop-content-item-text {
       font-size: 14px;
       margin-left: 10px;
     }
