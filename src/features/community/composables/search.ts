@@ -1,4 +1,4 @@
-import { useAlert } from "@/composables/alert";
+import { useAlert } from "@/composables/useAlert";
 import { useRequest } from "@/composables/useRequest";
 import type { ArticleList, Data } from "@/types/Community";
 import { ref } from "vue";
@@ -58,7 +58,7 @@ export function checkType(type: any) {
   if (type == 1) {
     return "博客";
   } else if (type == 3) {
-    return "交流";  
+    return "交流";
   } else if (type == 4) {
     return "头脑风暴";
   }
