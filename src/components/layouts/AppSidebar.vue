@@ -13,7 +13,7 @@ import SidebarMenu from "@/components/ui/sidebar/SidebarMenu.vue";
 import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
-import useLogin from "@/composables/useLogin";
+import useLogin from "@/composables/useLoginAll";
 import { Icon } from "@iconify/vue";
 import {
   BadgeCheck,

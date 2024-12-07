@@ -15,7 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { useAlert } from '@/composables/alert'
+import { useAlert } from '@/composables/useAlert'
 
 const useApplicationStore = applicationStore()
 useApplicationStore.isGetCode()

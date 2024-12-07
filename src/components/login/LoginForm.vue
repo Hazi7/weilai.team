@@ -5,9 +5,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-vue-next'
 import ForgotPassword from './ForgotPassword.vue'
-import useLogin from '../../composables/useLogin'
-// import { Icon } from "@iconify/vue";
-import { useAlert } from '@/composables/alert'
+import useLogin from '../../composables/useLoginAll'
+import { Icon } from "@iconify/vue";
+import { useAlert } from '@/composables/useAlert'
 // import { debounce } from "@community/composables/search";
 import { ref, watch } from 'vue'
 import * as z from "zod";
@@ -103,7 +103,8 @@ onUnmounted(() => {
                 <div class="grid gap-4">
                     <div class="grid gap-2">
                         <Label class="inputTitle" for="stuId">账号</Label>
-                        <!-- <ErrorHead v-if="loginResult.error" :message="loginResult.error.issues[0].message"/ErrorHead> -->
+                        <!-- <ErrorHead v-if="loginResult.error" :message="loginResult.error.issues[0].message"> -->
+                        <!-- </ErrorHead> -->
                         <Input class="formInput" id="stuId" placeholder="请输入学号或邮箱" required v-model="account" />
                     </div>
                     <div class="grid gap-2">

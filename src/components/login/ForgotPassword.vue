@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import useLogin from "@/composables/useLogin";
+import useLogin from "@/composables/useLoginAll";
 import { ref } from "vue";
 import { useLoginStore } from "@/store/useLoginStore";
-import { useAlert } from '../../composables/alert'
+import { useAlert } from '../../composables/useAlert'
 
 const { showAlert } = useAlert();
 const email = ref("");

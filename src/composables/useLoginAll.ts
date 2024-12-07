@@ -2,7 +2,7 @@ import { useLocalStorageWithExpire } from "@/composables/useLocalStorage";
 import { useRequest } from "@/composables/useRequest";
 import { useLoginStore } from "@/store/useLoginStore";
 import { useRouter } from "vue-router";
-import { useAlert } from "./alert";
+import { useAlert } from "./useAlert";
 
 const loginStore = useLoginStore();
 const { setLocalStorageWithExpire, getLocalStorageWithExpire } =

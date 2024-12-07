@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { ref, reactive } from 'vue'
 import { useRequest } from '@/composables/useRequest';
-import { useAlert } from './alert';
+import { useAlert } from './useAlert';
 import { applicationStore } from '@/store/applicationStore';
 
 const useApplicationStore = applicationStore()
