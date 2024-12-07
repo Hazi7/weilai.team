@@ -4,7 +4,6 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -13,9 +12,12 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { defineProps, ref, computed } from "vue";
-import { Icon } from "@iconify/vue";
+} from '@/components/ui/popover'
+import {  defineProps,ref,computed,watch } from 'vue';
+import { Icon } from '@iconify/vue';
+
+import type { IAllApplyUserVO,tableActionsVO,tableHeadersVO } from '@/types/recruitmentType';
+
 
 import type {
   IAllApplyUserVO,
@@ -49,14 +51,14 @@ const handleSelectAll = () => {
   }
 };
 
-const isAllSelected = computed(
-  () => selectedIds.value.length === props.items.length,
-);
-const isNotAllSelected = computed(
-  () =>
-    selectedIds.value.length !== props.items.length &&
-    selectedIds.value.length !== 0,
-);
+
+const isAllSelected = computed(() => selectedIds.value.length === props.items.length);
+const isNotAllSelected = computed(() => selectedIds.value.length!== props.items.length&&selectedIds.value.length!== 0);
+
+// 清空选中当数据发生变化时
+watch(() => props.items, () => {
+  selectedIds.value = [];
+});
 </script>
 
 <template>
