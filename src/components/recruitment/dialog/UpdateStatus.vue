@@ -44,8 +44,8 @@ const close = (event: Event) => {
 </script>
 
 <template>
+  <Teleport to="body">
   <div class="outer" v-if="props.visible"  @click="close($event)">
-
     <Form  class="form-container">
       <FormField name="status" control="selectStatus" class="bg-white">
         <div class="form-label">修改状态框</div>
@@ -68,21 +68,20 @@ const close = (event: Event) => {
           <FormMessage />
         </FormItem>
       <Button type="submit" class="button btn-style w-[80%]">提交</Button>
-
     </FormField>
   </Form>
-
   </div>
+</Teleport>
 </template>
 
 
 <style lang="scss" scoped>
-
+@use "@/assets/styles";
 @use "@/assets/styles/recruitment.scss";
 
 .form-container{
   position: relative;
-  background-color: aliceblue;
+  background-color:var(--popover);
   width: 400px;
   height: 300px;
   padding: 20px;

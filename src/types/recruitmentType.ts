@@ -1,7 +1,7 @@
 type OnClickFunction = (id:string) => void;
 
-
- const enum interviewStatus{  //面试状态
+ //面试状态
+ const enum interviewStatus{
     待安排=0,
     待面试=1,
     已录取=2,

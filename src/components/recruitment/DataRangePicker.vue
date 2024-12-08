@@ -56,14 +56,14 @@ const resetCondition = () => {
         variant="outline"
         :class="
           cn(
-            'w-[280px] justify-start text-left font-normal',
+            'justify-start text-left font-normal',
             !value && 'text-muted-foreground',
           )
         "
-        style="position: relative"
+        style="position: relative; font-size: 0.8em"
       >
         <CalendarIcon class="mr-2 h-4 w-4" />
-        <template v-if="value.start">
+        <!-- <template v-if="value.start">
           <template v-if="value.end">
             {{ df.format(value.start.toDate(getLocalTimeZone())) }} -
             {{ df.format(value.end.toDate(getLocalTimeZone())) }}
@@ -73,11 +73,9 @@ const resetCondition = () => {
             {{ df.format(value.start.toDate(getLocalTimeZone())) }}
           </template>
         </template>
-        <template v-else> 请选择时间段 </template>
-        <Icon
-          icon="pepicons-pencil:triangle-down"
-          style="position: absolute; right: 13%"
-        />
+        <template v-else> 请选择时间段 </template> -->
+        选择日期
+        <Icon icon="pepicons-pencil:triangle-down" style="position: relative" />
       </Button>
     </PopoverTrigger>
     <PopoverContent

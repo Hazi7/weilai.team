@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import ComboBox from './ComboBox.vue'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import UseApplication from '@/composables/UseApplication'
+import UseApplication from '@/composables/useApplication'
 import { applicationStore } from '@/store/applicationStore'
 import { reactive, ref } from 'vue'
 import {
@@ -15,7 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { useAlert } from '@/composables/alert'
+import { useAlert } from '@/composables/useAlert'
 
 const useApplicationStore = applicationStore()
 useApplicationStore.isGetCode()

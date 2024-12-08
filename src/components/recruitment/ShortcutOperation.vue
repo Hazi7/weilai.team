@@ -25,6 +25,7 @@ import { Icon } from '@iconify/vue';
 </template>
 
 <style lang="scss" scoped>
+@use "@/assets/styles";
 @use "@/assets/styles/recruitment.scss";
 .shortcut-operation{
     border: none;
@@ -40,11 +41,12 @@ import { Icon } from '@iconify/vue';
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
+    width: 40px;
+    height: 40px;
     background-color:#CDD9FC;
     color: white;
-    border-radius: 5px;
+    border-radius: var(--radius);
+    margin-top: 10px;
 }
 .shortcut-operation-text{
     min-width: 70px;

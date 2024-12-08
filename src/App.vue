@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Alert from "@/components/login/Alert.vue";
-import { useAlert } from "./composables/alert";
+import Alert from "@/pages/Alert.vue";
+import { useAlert } from "./composables/useAlert";
 
 const { alertState } = useAlert();
 </script>
