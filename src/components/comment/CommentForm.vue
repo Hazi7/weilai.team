@@ -6,17 +6,20 @@ import { marked } from "marked";
 import dompurify from "dompurify";
 import EmojiPicker from "vue3-emoji-picker";
 import "vue3-emoji-picker/css";
+import { useAlert } from '@/composables/alert';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+
 const props = defineProps<{
   postId: string | number;
 }>();
 
 const { data, error, executeRequest } = useRequest();
+const { showAlert } = useAlert();
 const commentText = ref<string>("");
 const maxLength = 1000;
 const remaining = computed(() => maxLength - commentText.value.length);
@@ -25,6 +28,7 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const imageTags = ref<string[]>([]);
 const photoUrls = ref<string[]>([]);
 const emojiVisible = ref<boolean>(false);
+const emit=defineEmits(["handleComment"])
 
 const onSelectEmoji = (emoji: string) => {
   commentText.value += emoji.i;
@@ -54,7 +58,7 @@ const handleFileSelect = (event: Event) => {
   if (files && files.length > 0) {
     const file = files[0];
     if (photoUrls.value.length >= 1) {
-      console.log("只能上传一张图片");
+      showAlert("只能上传一张图片","waring");
       return;
     }
     const reader = new FileReader();
@@ -87,7 +91,7 @@ onUnmounted(() => {
 // 写一级评论
 const submitComment = async () => {
   if (!commentText.value.trim()) {
-    console.log("评论内容不能为空");
+    showAlert("评论内容不能为空","error");
     return;
   }
   const requestData = {
@@ -103,12 +107,13 @@ const submitComment = async () => {
 
   console.log(data.value, error);
   if (data.value?.code == 200) {
-    console.log("评论成功");
+    showAlert("评论成功","pass");
+    emit("handleComment")
     commentText.value = "";
     photoUrls.value = [];
     imageTags.value = [];
   } else {
-    console.log("评论失败", error.value);
+    showAlert("评论失败", "error");
   }
 };
 //多级评论
@@ -120,7 +125,6 @@ const submitReply = async (commentId: number, userId: number) => {
   const requestData = {
     commentId: commentId,
     commentText: commentText.value,
-    photoUrls: photoUrls.value,
     parentCommentId: commentId,
     userId: userId,
   };
@@ -128,11 +132,13 @@ const submitReply = async (commentId: number, userId: number) => {
   await executeRequest({
     url: `/comment/writeComment`,
     method: "post",
-    requestData,
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+    requestData
   });
+  if(data.value?.code==200){
+    showAlert("评论成功","pass");
+  }else{
+    showAlert("评论失败","error");
+  }
 };
 </script>
 

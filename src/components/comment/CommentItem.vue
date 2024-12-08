@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, onMounted,computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import { useRequest } from '@/composables/useRequest';
 import CommentForm from './CommentForm.vue';
 import { createUserInfo, getUserInfo } from './index';
-import sonComment from './sonComment.vue';
+import sonComment from './SonComment.vue';
+import { formatPostTime } from '@/utils/formatPostTime';
+import { useAlert } from '@/composables/alert';
 
 const props = defineProps({
   comment: {
@@ -20,8 +22,12 @@ const props = defineProps({
     required: false,
     default: () => () => {},
   },
+  postId: {
+    type: [String, Number],
+    required: true,
+  },
 });
-
+const { showAlert } = useAlert();
 const { data, executeRequest } = useRequest();
 const isFormVisible = ref(false);
 const pageSize = ref(2);
@@ -93,12 +99,12 @@ const likeComment = async (commentId: number) => {
   if (data.value?.code === 200) {
     props.getFirstComment();
     if (props.comment.isLike) {
-      alert("取消点赞成功");
+      showAlert("取消点赞成功","pass");
     } else {
-      alert("点赞成功");
+      showAlert("点赞成功","pass");
     }
   } else {
-    alert("点赞失败");
+    showAlert("点赞失败","error");
   }
 };
 //删除一级评论
@@ -109,10 +115,13 @@ const deleteComment = async (commentId: number) => {
   });
   if (data.value?.code === 200) {
     props.getFirstComment();
-    alert("删除成功");
+    showAlert("删除成功","pass");
   } else {
-    alert("删除失败");
+    showAlert("删除失败","error");
   }
+};
+const handleComment = () => {
+  props.getFirstComment();
 };
 
 onMounted(async () => {
@@ -164,9 +173,11 @@ defineExpose({ userInfo });
           </span>
         </div>
       </div>
-      <transition name="slide">
-        <CommentForm v-show="isFormVisible" />
-      </transition>
+        <CommentForm 
+        :post-id="props.postId"
+        @handle-comment="handleComment"
+        v-show="isFormVisible"
+         />
       <!-- 子评论 -->
       <div class="son-comments">
         <sonComment

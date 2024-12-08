@@ -2,22 +2,15 @@
 import { Icon } from "@iconify/vue";
 import { computed, defineProps,defineEmits } from 'vue';
 import { useRequest } from '@/composables/useRequest';
+import { formatPostTime } from "@/utils/formatPostTime";
 const { data, loading, error, executeRequest } = useRequest();
-import type { SSEMessageData } from '../composables/types';
+import type { SSEMessageData } from '../../../types/sseType';
 
 const props = defineProps<{
   message: SSEMessageData;
 }>();
 const emit = defineEmits(['like','comment','system']);
-const formattedTime = computed(() => {
-  const commentTime = new Date(props.message.createdAt);
-  const year = commentTime.getFullYear();
-  const month = (commentTime.getMonth() + 1).toString().padStart(2, '0');
-  const day = commentTime.getDate().toString().padStart(2, '0');
-  const hours = commentTime.getHours().toString().padStart(2, '0');
-  const minutes = commentTime.getMinutes().toString().padStart(2, '0');
-  return `${year}.${month}.${day} ${hours}:${minutes}`;
-});
+const formattedTime = computed(() => formatPostTime(props.message.createdAt));
 //删除单个信息
 const deleteMessage = async (messageId: number,messageType: number) =>  {
   await executeRequest({

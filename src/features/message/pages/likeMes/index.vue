@@ -6,10 +6,13 @@
         <div class="clearAll">清空所有({{ totalCount }})</div>
        </div>
       <div class="messageCon">
+        <NoData v-if="messages.length === 0" />
+        <div v-else class="messageList">
         <div v-for="message in messages" :key="message.messageId" class="mess">
           <MesItem :message="message" 
           @like="messageList"
           />
+        </div>
         </div>
       </div>
     </div>
@@ -18,30 +21,29 @@
 </template>
 
 <script setup lang="ts">
+import NoData from '../../../../components/loading/NoData.vue';
 import Rightbar from '@/components/community/Rightbar.vue';
 import { Icon } from "@iconify/vue";
 import MesItem from '../../compontent/MesItem.vue';
-import useSSE, { type SSEMessageData } from '../../composables/sse';
 import { onMounted,ref} from 'vue';
+import { useAlert } from "../../../../composables/alert";
 import { useRequest } from '@/composables/useRequest';
-import { useMessageStore } from '@/store/messageStore';
+import type { SSEMessageData } from '../../../../types/sseType';
+import { useSseStore } from '../../../../store/useSseStore';
+const sseStore = useSseStore();
 const { data, loading, error, executeRequest } = useRequest();
-const { connect, disconnect, subscribe, unsubscribe, isConnected } = useSSE();
-const messageStore = useMessageStore();
-
 const messages = ref<SSEMessageData[]>([]); 
 const messageType = 1
 const pageSize = 10
 const pageNumber=1
 const totalCount = ref(0)
+const { showAlert } = useAlert();
 
 onMounted(() => {
-      connect()
-      subscribe('message', (message: SSEMessageData) => {
+  sseStore.subscribe('message', (message: SSEMessageData) => {
         if(message.messageType==messageType){
           messages.value.unshift(message);
-          console.log(message);
-          messageStore.setHasNewMessage(true);
+          console.log(message);   
         }
      });
       messageList()
@@ -54,13 +56,13 @@ const messageList=async () => {
   if(data.value?.code==200){
     totalCount.value=data.value?.data.PageInfo.totalCount
     const allMessages = data.value?.data.AllMessages || [];
-    messages.value = allMessages; 
-    hasNewMessage.value = false;
-    console.log("获取的全部消息数据：", allMessages);
+    messages.value = allMessages;  
+    console.log(allMessages);
+     
   }else if(data.value?.code==401){
-    console.log("请先登录"); 
+    showAlert("请先登录","waring"); 
   }else{
-    console.log("获取失败");
+    showAlert("获取失败","error");
     console.log(data.value);
   }
 }
@@ -71,6 +73,12 @@ const messageList=async () => {
   width: 100%;
   .mess{
     width: 95%;
+  }
+  .messageList{
+    width: 95%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
    .mesCon{

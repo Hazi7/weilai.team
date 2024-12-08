@@ -40,6 +40,7 @@ onMounted(() => {
       :key="comment.commentId"
       :comment="comment"
       :get-first-comment="getFirstComment"
+      :post-id="props.postId"
     />
   </div>
 </template>

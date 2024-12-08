@@ -6,11 +6,14 @@
         <div class="clearAll">清空所有({{ totalCount }})</div>
       </div>
       <div class="messageCon">
+        <NoData v-if="messages.length === 0"/>
+        <div v-else class="messageList">
         <div v-for="message in messages" :key="message.messageId" class="mess">
           <MesItem
            :message="message"
            @comment="messageList"
            />
+        </div>
         </div>
       </div>
     </div>
@@ -20,15 +23,17 @@
 </template>
 
 <script setup lang="ts">
+import NoData from '../../../../components/loading/NoData.vue';
 import Rightbar from '@/components/community/Rightbar.vue';
 import { Icon } from "@iconify/vue";
 import MesItem from '../../compontent/MesItem.vue';
-import useSSE, { type SSEMessageData } from '../../composables/sse';
+import type { SSEMessageData } from '../../../../types/sseType';
+import { useSseStore } from '../../../../store/useSseStore';
 import { onMounted,ref} from 'vue';
 import { useRequest } from '@/composables/useRequest';
-const { data, loading, error, executeRequest } = useRequest();
-const { connect, disconnect, subscribe, unsubscribe, isConnected } = useSSE();
 import { useMessageStore } from '@/store/messageStore';
+const { data, loading, error, executeRequest } = useRequest();
+const sseStore = useSseStore();
 const messageStore = useMessageStore();
 const messages = ref<SSEMessageData[]>([]); 
 const messageType = 3
@@ -36,7 +41,7 @@ const pageSize = 10
 const pageNumber=1
 const totalCount = ref(0)
 onMounted(() => {
-      subscribe('message', (message: SSEMessageData) => {
+  sseStore.subscribe('message', (message: SSEMessageData) => {
         if(message.messageType==messageType){
           messages.value.unshift(message);
           console.log(message);
@@ -54,7 +59,7 @@ const messageList=async () => {
     totalCount.value=data.value?.data.PageInfo.totalCount;
     const allMessages = data.value?.data.AllMessages || [];
     messages.value = allMessages; 
-    console.log("获取的全部消息数据：", allMessages);
+  
   }else if(data.value?.code==401){
     console.log("请先登录"); 
   }else{
@@ -83,6 +88,12 @@ const deleteAll = async () => {
 .comments{
   width: 690px;
 }
+.messageList{
+    width: 95%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 .mess{
     width: 95%;
   }

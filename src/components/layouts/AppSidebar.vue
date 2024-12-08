@@ -23,8 +23,6 @@ import {
   LogOut,
 } from "lucide-vue-next";
 import { watch,computed } from "vue";
-import { RouterLink, useRoute, useRouter } from "vue-router";
-import { watch } from "vue";
 import { onBeforeRouteLeave, RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
@@ -99,6 +97,10 @@ const items = [
     redirect: "admin/profile",
   },
 ];
+
+const handleMessageClick = () => {
+  messageStore.setHasNewMessage(false)
+}
 
 interface SubItemInterface {
   title: string;
@@ -194,9 +196,14 @@ interface SubItemInterface {
                         :to="`/message/likeMes`"
                         active-class="sidebar__link--active"
                         class="sidebar__link"
+                        @click="handleMessageClick"
                       >
                         <Icon icon="mage:box-3d-notification" />&nbsp;
                         <span>消息</span>
+                        <span 
+                         v-if="messageStore.hasNewMessage"
+                        class="dot"
+                        ></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -304,6 +311,15 @@ interface SubItemInterface {
 </template>
 
 <style lang="scss" scoped>
+.dot{
+  position: absolute;
+  top: 40%;
+  right: 20px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ff0000;;
+}
 .main-menu {
   display: none;
 }
@@ -370,6 +386,7 @@ interface SubItemInterface {
     box-sizing: border-box;
     padding: 0.65rem 1rem;
     border-radius: 2rem;
+    position: relative;
   }
   &-logo {
     height: 80px;

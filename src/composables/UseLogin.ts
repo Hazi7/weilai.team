@@ -3,6 +3,8 @@ import { useRequest } from "@/composables/useRequest";
 import { useLoginStore } from "@/store/useLoginStore";
 import { useRouter } from "vue-router";
 import { useAlert } from "./alert";
+import { useSseStore} from "../store/useSseStore";
+const sseStore = useSseStore();
 
 const loginStore = useLoginStore();
 const { setLocalStorageWithExpire, getLocalStorageWithExpire } =
@@ -48,6 +50,7 @@ export default function () {
                     setLocalStorageWithExpire('token', resData.token, 1000 * 60 * 60);
                     setLocalStorageWithExpire('userId', resData.userId, 1000 * 60 * 60);
                     router.push('/');
+                    sseStore.connect()
                 }
                 else {
                     showAlert('服务器返回数据异常', 'error');
