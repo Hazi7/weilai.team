@@ -24,7 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useAlert } from "@/composables/alert";
+import { useAlert } from "@/composables/useAlert";
 import { useRequest } from "@/composables/useRequest";
 import { cn } from "@/lib/utils";
 import type { TeamUserList } from "@/types/Contacts";
