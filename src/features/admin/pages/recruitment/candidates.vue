@@ -1,11 +1,12 @@
-
 <script setup lang="ts">
-import { FilterCondition,DataRangePicker,ToggleShow ,DataTable,Pagination,AutoLongerInput } from '@/components/recruitment';
-import { Icon, loadIcon } from '@iconify/vue';
+import { FilterCondition,DataRangePicker,ToggleShow ,DataTable,Pagination,AutoLongerInput,
+          UpdateStatus,ModalDialog,
+} from '@/components/recruitment';
+import { Icon } from '@iconify/vue';
 import { Button } from '@/components/ui/button';
 import { ref, watch ,watchEffect} from 'vue';
-import {getAllApplyUser,getAllGrade} from "@/composables/useRecruitmentRequest";
-import type {IAllApplyUserVO,IGetAllApplyUserDTO ,IResponseDataApplyUser,IAllApplyUserDTO } from '@/types/recruitmentType';
+import {getAllApplyUser,getAllGrade,getResumeById,deleteApplyUserById} from "@/composables/useRecruitmentRequest";
+import type {IAllApplyUserVO,IGetAllApplyUserDTO ,IResponseDataApplyUser,IAllApplyUserDTO,IAllGradeDTO,IGradeData } from '@/types/recruitmentType';
 import {interviewStatusMap} from '@/types/recruitmentType';
 const searchValue = ref('');
 
@@ -16,57 +17,43 @@ const handleInput = (value: string) => {
 
 //下拉过滤框
 const candidates_itemsObjArr = ref([
-  {
-    title: "年级",
-    label: "选择要筛选的年级",
-    ref: "init",
-    arr: [
-      {
-        condition: "24级",
-      },
-      {
-        condition: "23级",
-      },
-      {
-        condition: "22级",
-      },
-    ],
-  },
-  {
-    title: "性别",
-    label: "选择要筛选的性别",
-    ref: "init",
-    arr: [
-      {
-        condition: "男",
-      },
-      {
-        condition: "女",
-      },
-    ],
-  },
-  {
-    title: "班级",
-    label: "选择要筛选的班级",
-    ref: "init",
-    arr: [
-      {
-        condition: "计科233",
-      },
-      {
-        condition: "物联233",
-      },
-      {
-        condition: "数据233",
-      },
-    ],
-  },
+    {
+        title: '年级',
+        label: "选择要筛选的年级",
+        ref: "init",
+        arr: [ ]
+    },
+    {
+        title: '性别',
+        label: "选择要筛选的性别",
+        ref: "init",
+        arr: [
+            {
+                condition: "男",
+            },
+            {
+                condition: "女",
+            },
+        ]
+    },
+    {
+        title: '班级',
+        label: "选择要筛选的班级",
+        ref: "init",
+        arr: [
+            {
+                condition: "计科233",
+            },
+            {
+                condition: "物联233",
+            },
+            {
+                condition: "数据233",
+            },
+        ]
+    }
 ]);
 
-    getAllGrade({pageNo:1,pageSize:100})
-        .then(({data,error,loading})=>{
-            console.log(data,error,loading);
-        })
 
 
 //获得子组件的过滤条件
@@ -132,24 +119,20 @@ const toggleItems = ref([
   },
 ]);
 
-
 const tableData = ref(<IAllApplyUserVO[]>[]);
-//分页
 const pageSize = ref(10);
 const pageNo = ref(1);
 const total = ref(0);
-const getApplyUserData=ref<IResponseDataApplyUser|null>(null);
+const getApplyUserData = ref<IResponseDataApplyUser | null>(null);
 const status = ref(0);
 //从分页组件拿到页码信息并更新
 const changePage = (newPage: number) => {
-    pageNo.value = newPage;
+  pageNo.value = newPage;
 };
 //筛选状态
 const handleToggleShowStatus = (newStatus: number) => {
-    status.value = newStatus;
+  status.value = newStatus;
 };
-
-
 
 const headers = ref([
   {
@@ -189,64 +172,100 @@ const headers = ref([
 
 // 查看简历
 const viewResume = (id: string) => {
-    console.log(id,'查看简历');
+        getResumeById({id}).then(({data,error,loading})=>{
+            // console.log(data,error,loading);
+            window.open(data.value.data,'_blank')
+        })
 }
-
 // 编辑
 const tableEdit = (id: string) => {
-    console.log(id,'编辑');
-}
+  console.log(id, "编辑");
+};
 
 // 安排面试
 const arrangeInterview = (id: string) => {
-    console.log(id,'安排面试');
-}
+  console.log(id, "安排面试");
+};
 
 // 淘汰
 const eliminateCandidate = (id: string) => {
-    console.log(id,'淘汰');
-}
+  console.log(id, "淘汰");
+};
+// 模态框
+const isModalOpen = ref(false);
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 
+const currentDeleteId = ref("");
 // 删除候选人
 const DeleteCandidate = (id: string) => {
-    console.log(id,'删除候选人');
-}
+  isModalOpen.value = true;
+  currentDeleteId.value = id;
 
+}
+const confirmDeleteCandidate = (id: string) => {
+  isModalOpen.value = false;
+    deleteApplyUserById({id}).then(({data,error,loading})=>{
+    updateParameter.value = !updateParameter.value;
+    })
+}
+//为表格传递操作项和图标
 const actionItems = ref([
-    {
-        title: '查看简历',
-        icon: 'tabler:eye',
-        onclick: viewResume,
-    },
-    {
-        title: '编辑',
-        icon: 'tabler:pencil',
-        onclick: tableEdit,
-    },
-    {
-        title: '安排面试',
-        icon: 'tabler:calendar-check',
-        onclick: arrangeInterview,
-    },
-    {
-        title: '淘汰',
-        icon: 'tabler:cross',
-        onclick: eliminateCandidate,
-    },
-    {
-        title: '删除候选人',
-        icon: 'tabler:trash',
-        onclick: DeleteCandidate,
-    },
+  {
+    title: "查看简历",
+    icon: "tabler:eye",
+    onclick: viewResume,
+  },
+  {
+    title: "编辑",
+    icon: "tabler:pencil",
+    onclick: tableEdit,
+  },
+  {
+    title: "安排面试",
+    icon: "tabler:calendar-check",
+    onclick: arrangeInterview,
+  },
+  {
+    title: "淘汰",
+    icon: "tabler:cross",
+    onclick: eliminateCandidate,
+  },
+  {
+    title: "删除候选人",
+    icon: "tabler:trash",
+    onclick: DeleteCandidate,
+  },
 ]);
 
+//拿到后端的所有年级数据
+getAllGrade({pageNo:1,pageSize:100})
+        .then(({data,error,loading})=>{
+            // console.log(data,error,loading,);
+            // console.log(data.value.data.data);
+
+            if(data.value){
+                //拿到数据后逆序渲染
+                candidates_itemsObjArr.value[0].arr = data.value.data.data.reverse().map((item:IGradeData)=>{
+                    return {
+                        condition:item.grade,
+                    }
+                })
+            }
+        })
+//设置一个状态变量，用来强制更新
+const updateParameter =ref<boolean>(false);
+
 watchEffect(()=>{
+    //引入一个状态变量，用来强制更新数组，只需要在需要重新获取数据的时候，改变状态变量的值
+    updateParameter.value;
     getAllApplyUser({ pageNo: pageNo.value, pageSize: 10, condition:searchValue.value, status: status.value  })
   .then(( {data,error,loading } ) => {
-        console.log(data,error,loading);
+        // console.log(data,error,loading);
         getApplyUserData.value = data.value as IResponseDataApplyUser;
         total.value = getApplyUserData.value.data.total;
-        console.log(getApplyUserData.value.data);
+        // console.log(getApplyUserData.value.data);
         if (getApplyUserData.value && getApplyUserData.value.data && getApplyUserData.value.data.data) {
             tableData.value = getApplyUserData.value.data.data.map((item: IAllApplyUserDTO) => {
                 return {
@@ -264,71 +283,82 @@ watchEffect(()=>{
         } else {
             tableData.value = [];
         }
+})
+})
 
-})
-})
+
+//dialog
+const updateStatus = ref(false);
+//修改状态、
+const handleEditStatus = () => {
+    //把修改状态的弹窗组件展示
+    updateStatus.value = true;
+}
 
 </script>
 
 <template>
-  <div class="content">
-    <div class="filter-items">
-      <FilterCondition
-        :items-obj-arr="candidates_itemsObjArr"
-        @filter_condition="handleFilterCondition"
-      ></FilterCondition>
-      <div class="date-picker">
-        <DataRangePicker
-          @updateDateRange="handleDateRangeUpdate"
-          :dateRange="dateRange"
-          :isReset="isReset"
-        />
-      </div>
+
+
+    <div class="content">
+      <!-- dialog-start -->
+    <UpdateStatus :visible="updateStatus" @close="updateStatus = false"></UpdateStatus>
+    <ModalDialog :isOpen="isModalOpen" @close="closeModal">
+      <template #header>
+        <h2> 删除候选人</h2>
+      </template>
+      <p>你确定要删除该条候选人的数据吗？</p>
+      <p style="color: red;font-size: 0.5em;">（此项操作无法撤销，请慎重操作！！！）</p>
+      <template #footer>
+        <Button class="btn-style" @click="confirmDeleteCandidate(currentDeleteId)" >确定</Button>
+        <Button class="btn-style" @click="closeModal">关闭</Button>
+      </template>
+    </ModalDialog>
+    <!-- dialog-end -->
+        <div class="filter-items">
+            <FilterCondition :items-obj-arr="candidates_itemsObjArr" @filter_condition="handleFilterCondition"></FilterCondition>
+            <div class="date-picker">
+                <DataRangePicker
+                @updateDateRange="handleDateRangeUpdate"
+                :dateRange="dateRange"
+                :isReset="isReset"
+                />
+            </div>
 
       <div class="reset" @click="resetCondition">
         重置
         <Icon icon="bitcoin-icons:cross-outline" />
       </div>
 
-            <div class="search-input">
-                <AutoLongerInput
-                @input_src="handleInput"
-                placeholderText ="搜索候选人："
-                />
-            </div>
-        </div>
-        <div class="toggle-handle">
-            <ToggleShow :toggleItems="toggleItems" @transferToggleShowStatus="handleToggleShowStatus"></ToggleShow>
+      <div class="search-input">
+        <AutoLongerInput
+          @input_src="handleInput"
+          placeholderText="搜索候选人："
+        />
+      </div>
+    </div>
+    <div class="toggle-handle">
+      <ToggleShow
+        :toggleItems="toggleItems"
+        @transferToggleShowStatus="handleToggleShowStatus"
+      ></ToggleShow>
 
             <div class="handle-btns">
                 <Button type="primary" class="btn-style">安排面试</Button>
-                <Button type="primary" class="btn-style">修改状态</Button>
+                <Button type="primary" class="btn-style" @click="handleEditStatus" >修改状态</Button>
                 <Button type="primary" class="btn-style">结果导出</Button>
             </div>
         </div>
 
-        <div class="data-table">
-            <DataTable :items="tableData" :headers="headers" :actionItems="actionItems"></DataTable>
-            <div class="pagination-container">
-                <Pagination
-                :totalItems="total"
-                :pageSize="pageSize"
-                @update:page="changePage"
-                >
-            </Pagination>
-            </div>
-        </div>
-    </div>
-
     <div class="data-table">
       <DataTable
-        :items="data"
+        :items="tableData"
         :headers="headers"
         :actionItems="actionItems"
       ></DataTable>
       <div class="pagination-container">
         <Pagination
-          :totalItems="data.length"
+          :totalItems="total"
           :pageSize="pageSize"
           @update:page="changePage"
         >
@@ -336,6 +366,7 @@ watchEffect(()=>{
       </div>
     </div>
   </div>
+
 </template>
 
 <style lang="scss" scoped>

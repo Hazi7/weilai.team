@@ -40,7 +40,7 @@ watch(status, (newValue) => {
 </script>
 
 <template>
-        <Menubar class="toggle-show border-b p-3 ">
+        <Menubar class="toggle-show p-3 ">
         <MenubarMenu>
                 <MenubarTrigger
                 v-for="item  in toggleItems"

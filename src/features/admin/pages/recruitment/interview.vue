@@ -106,7 +106,7 @@ const handleFilterCondition = (value: string, title: string) => {
   console.log(value, title);
 };
 
-const filterMoreSeletedItem = ref([
+const filterMoreSeletedItem = ref(
   {
     title: "面试官",
     label: "选择面试官",
@@ -120,7 +120,7 @@ const filterMoreSeletedItem = ref([
         isSeleted: false,
       },
       {
-        condition: "贝利亚大王",
+        condition: "贝利亚",
         isSeleted: false,
       },
       {
@@ -141,7 +141,7 @@ const filterMoreSeletedItem = ref([
       },
     ],
   },
-]);
+);
 
 const isReset = ref(false);
 //重置筛选条件
@@ -150,10 +150,8 @@ const resetCondition = () => {
   filterOneSeletedItems.value.forEach((item) => {
     item.ref = "init";
   });
-  filterMoreSeletedItem.value.forEach((item) => {
-    item.drapdownItems.forEach((item) => {
-      item.isSeleted = false;
-    });
+  filterMoreSeletedItem.value.drapdownItems.forEach((item) => {
+    item.isSeleted = false;
   });
   dateRange.value = null;
   isReset.value = true;
@@ -171,8 +169,8 @@ const resetCondition = () => {
         @filter_condition="handleFilterCondition"
       />
       <FilterConditionMoreSelect
-        class="mr-4"
-        :filterMoreSeletedItem="filterMoreSeletedItem[0]"
+        class="mr-4 min-w-[300px]"
+        :filterMoreSeletedItem="filterMoreSeletedItem"
       />
 
       <div class="date-picker">

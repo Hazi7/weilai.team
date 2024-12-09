@@ -4,7 +4,7 @@ import App from "./App.vue";
 import "@/assets/styles/index.scss";
 import router from "./router";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
-import Alert from "@/components/login/Alert.vue";
+import Alert from "@/pages/Alert.vue";
 
 const pinia = createPinia();
 const app = createApp(App);

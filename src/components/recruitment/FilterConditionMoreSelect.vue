@@ -51,7 +51,7 @@ const handleCheckboxChange = (item: { condition: string, isSeleted: boolean }) =
 
 </script>
 <template>
-  <div class="checkbox-group">
+  <div class="checkbox-group long-dashed-border">
     <DropdownMenu  >
         <DropdownMenuTrigger as-child>
       <Button variant="outline" class="drapdown-btn">
@@ -70,19 +70,20 @@ const handleCheckboxChange = (item: { condition: string, isSeleted: boolean }) =
         v-model:checked="drapdownItem.isSeleted"
        >
         {{ drapdownItem.condition }}
-
       </DropdownMenuCheckboxItem>
     </DropdownMenuContent>
   </DropdownMenu>
-  <div class="selected-items"
+  <div class="inline-flex"
    v-for="(selectedItem, index) in selectedItems" :key="index">
-    {{ selectedItem }}
+    <span class="selected-items">{{ selectedItem }}</span>
   </div>
 </div>
 </template>
 <style lang="scss" scoped>
 @use "@/assets/styles";
+@use "@/assets/styles/recruitment.scss";
       .drapdown-btn{
+        width: 100px;
         height: 100%;
         display: flex;
         flex-direction: row;
@@ -91,7 +92,7 @@ const handleCheckboxChange = (item: { condition: string, isSeleted: boolean }) =
         gap: 10px;
         padding: 5px;
         border: 0;
-        font-size: 14px;
+        font-size: 0.8em;
       }
 
 

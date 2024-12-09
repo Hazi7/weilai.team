@@ -42,7 +42,7 @@ const filter_condition = (e: Event) => {
     <div class="filter-condition">
         <DropdownMenu v-for="i in itemsObjArr " :key="i.title">
             <DropdownMenuTrigger>
-               <div class="filter-title">
+               <div class="filter-title long-dashed-border">
                 {{ i.title }} <Icon icon="pepicons-pencil:triangle-down" class="ml-2" />
                </div>
             </DropdownMenuTrigger>
@@ -68,7 +68,9 @@ const filter_condition = (e: Event) => {
     </div>
 </template>
 <style lang="scss" scoped>
+@use "@/assets/styles/recruitment.scss";
 $undertone: #647499;
+
 .filter-condition {
   display: flex;
   flex-direction: row;
@@ -86,11 +88,9 @@ $undertone: #647499;
     align-items: center;
     border-radius: var(--radius);
     padding: 10px;
-    border: 1px dashed var(--border);
     font-size: 0.8em;
     margin-right: 10px;
     letter-spacing: 0.1em;
-
 }
 .drap-menu-content {
   background-color: var(--card);

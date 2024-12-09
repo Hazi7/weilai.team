@@ -1,4 +1,4 @@
-import { useAlert } from "@/composables/alert";
+import { useAlert } from "@/composables/useAlert";
 import { useRequest } from "@/composables/useRequest";
 import type { ContactData, MemeberData } from "@/types/Contacts";
 import { ref } from "vue";
