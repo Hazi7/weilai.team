@@ -11,17 +11,12 @@
           </div>
         </TabsList>
         <div class="ml-auto flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger as-child>
-              <Button variant="outline" size="sm" class="h-7 gap-1 header-btn">
-                <Icon icon="proicons:person-2" />
-                <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  设置组长
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-          </DropdownMenu>
-          <SelectLeader :grade="grade" :group="group" />
+          <SelectLeader
+            :grade="grade"
+            :group="group"
+            :updateData="updateData"
+            :havaLeader="haveLeader"
+          />
           <Button size="sm" variant="outline" class="h-7 gap-1 header-btn">
             <Icon icon="proicons:person-2" />
             <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -35,24 +30,22 @@
         <Card class="border-none shadow-none card">
           <CardHeader class="card-header">
             <div class="header-link">
-              <button>
-                <RouterLink
-                  to="/admin/recruitment/detail"
-                  class="addMember head"
-                >
-                  <Icon icon="icon-park-outline:people-plus-one" />
-                  &nbsp;
-                  <span>添加成员</span>
-                </RouterLink>
+              <button class="head">
+                <Icon icon="icon-park-outline:people-plus-one" />
+                &nbsp;
+                <span>添加成员</span>
               </button>
-              <button>
-                <RouterLink
-                  to="/admin/recruitment/detail"
-                  class="addMember head"
-                >
-                  <span>批量管理</span>
-                </RouterLink>
-              </button>
+              <DropdownMenu>
+                <DropdownMenuTrigger class="head">批量管理</DropdownMenuTrigger>
+                <!-- <button >
+                <span></span>
+              </button> -->
+                <DropdownMenuContent>
+                  <DropdownMenuItem>批量删除</DropdownMenuItem>
+                  <DropdownMenuItem>批量导入</DropdownMenuItem>
+                  <DropdownMenuItem>批量修改</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </CardHeader>
           <CardContent class="p-0">
@@ -60,7 +53,13 @@
               <TableHeader>
                 <TableRow>
                   <TableHead class="hidden w-[100px] md:table-cell text-left">
-                    <input type="checkbox" name="" id="" />
+                    <input
+                      type="checkbox"
+                      name=""
+                      id=""
+                      v-model="isAllSelected"
+                      @change="handleSelectAll"
+                    />
                   </TableHead>
                   <TableHead class="hidden md:table-cell" id="th"
                     >姓名</TableHead
@@ -72,72 +71,22 @@
                   <TableHead class="hidden md:table-cell"> 操作 </TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody ref="tbodyRef">
+              <TableBody ref="tbodyRef" v-model="userList">
                 <!-- 属性class=group-leader 为组长样式  -->
-                <TableRow v-if="userGroupList" class="group-leader">
-                  <TableCell class="hidden sm:table-cell"
-                    ><input type="checkbox" name="" id=""
-                  /></TableCell>
-                  <TableCell class="font-medium">
-                    {{ userGroupList.name }}</TableCell
-                  >
-                  <TableCell>
-                    {{
-                      chineseNums[
-                        userGroupList.group as keyof typeof chineseNums
-                      ] + "组" || "未知"
-                    }}
-                  </TableCell>
-                  <TableCell class="hidden md:table-cell">
-                    {{ userGroupList.grade }}级
-                  </TableCell>
-                  <TableCell class="hidden md:table-cell">
-                    {{ userGroupList.clazz }}
-                  </TableCell>
-                  <TableCell class="hidden md:table-cell">
-                    {{ userGroupList.studyId }}
-                  </TableCell>
-                  <TableCell>
-                    <MemberInfo
-                      :userId="userGroupList.id"
-                      :sendUpdateInfo="getUpdateInfo"
-                      :rowData="editRowData"
-                    >
-                      <DropdownMenu>
-                        <DropdownMenuTrigger as-child>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                            class="h-[3vh]"
-                          >
-                            <MoreHorizontal class="h-4 w-4" />
-                            <span class="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent class="bg-white">
-                          <!-- <MemberInfo>编辑</MemberInfo> -->
-                          <DialogTrigger class="w-full"
-                            ><DropdownMenuItem
-                              @click="sendOldData(userGroupList, 0)"
-                              ><Icon
-                                icon="cuida:edit-outline"
-                              />编辑</DropdownMenuItem
-                            ></DialogTrigger
-                          >
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </MemberInfo>
-                  </TableCell>
-                </TableRow>
+
                 <TableRow
                   v-for="(user, index) in userList"
                   :key="index"
                   ref="rowRefs"
+                  :class="user.isLeader ? 'group-leader' : ''"
                 >
                   <TableCell class="hidden sm:table-cell"
-                    ><input type="checkbox" name="" id=""
+                    ><input
+                      type="checkbox"
+                      name=""
+                      id=""
+                      v-model="(user as any).selected"
+                      @change="handleItemSelect"
                   /></TableCell>
                   <TableCell class="font-medium"> {{ user.name }}</TableCell>
                   <TableCell>
@@ -176,9 +125,7 @@
                         <DropdownMenuContent class="bg-white">
                           <DialogTrigger class="w-full">
                             <!-- @click="sendOldData(user)" -->
-                            <DropdownMenuItem
-                              @click="sendOldData(user, index + 1)"
-                            >
+                            <DropdownMenuItem @click="sendOldData(user, index)">
                               <Icon icon="cuida:edit-outline" />
                               编辑
                             </DropdownMenuItem>
@@ -201,6 +148,7 @@
 
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -235,54 +183,13 @@ const editRowData = ref<TeamUserList>();
 const tableRef = ref<InstanceType<typeof Table> | null>(null);
 const rowRefs = ref<InstanceType<typeof TableRow> | []>([]);
 const tbodyRef = ref<InstanceType<typeof TableBody> | null>(null);
-const trs = ref<HTMLTableRowElement[]>([]);
-// const logTableInfo = () => {
-// onMounted(() => {
-//   if (tableRef.value) {
-//     console.log(tableRef.value.$el.getElementsByTagName("tr"));
-//     const trCollection = tableRef.value.$el.getElementsByTagName("tr");
-//     console.log(trCollection.length);
-
-//     const trs = Array.from(trCollection);
-//     console.log(trs);
-//     console.log(trs.length);
-
-//     console.log(tableRef.value.$el.getElementsByTagName("tr").length);
-//     const length = Array.from(tableRef.value.$el.querySelectorAll("tr"));
-//     console.log(length);
-
-//     // console.log(tableRef.value.$refs.table);
-//     const table = tableRef.value.$refs.table as HTMLTableElement;
-//     console.log(table.rows.length);
-
-//     // 这里还可以进行更多对表格元素的操作，比如获取列数等
-//   }
-// });
-function gettrs(index?: number) {
-  if (tableRef.value) {
-    console.log(tableRef.value.$el.getElementsByTagName("tr"));
-    const trCollection = tableRef.value.$el.getElementsByTagName("tr");
-
-    const trs = Array.from(trCollection);
-    // 删除第一行
-    trs.splice(0, 1);
-    console.log(trCollection.length);
-    console.log(trs);
-
-    // 这里还可以进行更多对表格元素的操作，比如获取列数等
-  }
-}
-// };
-
-function sendOldData(oldData: TeamUserList, index: number) {
-  // 将旧数据赋值给editRowData 并传递给子组件（弹窗）以进行修改
-  editRowData.value = oldData;
-  gettrs();
-}
-function getUpdateInfo(updateObj: TeamUserList) {
-  // 更新数据(通过子组件接收回来新数据)
-  console.log("收到数据了", updateObj);
-}
+const trs = ref<Array<InstanceType<typeof TableRow>>>([]);
+let trArr: any[] = [];
+const tableData = ref<TeamUserList[]>([]);
+const haveLeader = ref(false);
+const isAllSelected = ref(false);
+// 记录当前数据的索引
+const trIndex = ref<number>();
 const route = useRoute();
 const member = ref("");
 console.log(route.params);
@@ -297,8 +204,7 @@ const chineseNums = {
   "8": "八",
   "9": "九",
 };
-
-const userList = ref<TeamUserList[]>();
+const userList = ref<TeamUserList[]>([]);
 const userGroupList = ref<TeamUserList>();
 const grade = ref("");
 const group = ref("");
@@ -310,27 +216,65 @@ if (route.params && "member" in route.params) {
   grade.value = "";
   group.value = "";
 }
-
 getMembersByGroupAndGrade(grade.value, group.value).then((res) => {
-  console.log(res);
-  userGroupList.value = res.userGroupLeader;
   userList.value = res.teamUserList;
   console.log(userList.value);
+  if (userList.value[0].isLeader) {
+    haveLeader.value = true;
+  }
 });
+
+function updateData(grade: string, group: string) {
+  getMembersByGroupAndGrade(grade, group).then((res) => {
+    userList.value = res.teamUserList;
+  });
+}
 watch(route, (newVal) => {
-  console.log("路由变了");
   member.value = (route.params as any).member as string;
-  console.log(member.value);
+
   grade.value = member.value.split(",")[0];
   group.value = member.value.split(",")[1];
-  console.log(grade.value, group.value);
 
   getMembersByGroupAndGrade(grade.value, group.value).then((res) => {
-    userGroupList.value = res.userGroupLeader;
-    userList.value = res.teamUserList;
-    console.log(userList.value);
+    tableData.value = userList.value = res.teamUserList;
   });
 });
+function sendOldData(oldData: TeamUserList, index: number) {
+  // 将旧数据赋值给editRowData 并传递给子组件（弹窗）以进行修改
+  editRowData.value = oldData;
+  trIndex.value = index;
+}
+
+function getUpdateInfo(updateObj: TeamUserList) {
+  // 更新数据(通过子组件接收回来新数据)
+  console.log("收到数据了", updateObj);
+  if (trIndex.value !== undefined) {
+    if (userList.value) {
+      userList.value[trIndex.value] = { ...updateObj };
+    }
+  } else {
+    console.log("trIndex.value is undefined");
+  }
+}
+
+// 实现全选反选多选
+function handleSelectAll() {
+  if (userList.value.length === 0) return;
+  // 全选
+  userList.value.forEach((item: any) => {
+    item.selected = isAllSelected.value;
+  });
+}
+const handleItemSelect = (item: any) => {
+  console.log(userList);
+
+  isAllSelected.value = true;
+  userList.value.forEach((item: any) => {
+    if (!item.selected) {
+      isAllSelected.value = false;
+    }
+  });
+};
 </script>
 
 <style lang="scss" scoped>

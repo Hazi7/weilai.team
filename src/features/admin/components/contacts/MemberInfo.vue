@@ -20,6 +20,7 @@ import type { TeamUserList } from "@/types/Contacts";
 import { ref, watch } from "vue";
 import { getMemberInfo, updateInfo } from "../../composables/useContacts";
 const group = ref("");
+
 const groupNums = {
   "1": "一组",
   "2": "二组",
@@ -51,7 +52,8 @@ const userInfo = ref<TeamUserList>({
   ladleName: "",
   ladleGrade: "",
 });
-watch(group, (newVal) => {});
+let name = "";
+
 const props = defineProps<{ userId?: number; sendUpdateInfo?: Function }>();
 
 watch(
@@ -59,9 +61,9 @@ watch(
   (newVal) => {
     if (newVal) {
       getMemberInfo(newVal).then((res) => {
-        console.log(res);
-
         userInfo.value = (res as TeamUserList) || "";
+
+        name = userInfo.value.name;
       });
     }
   },
@@ -78,7 +80,7 @@ function updateMemberInfo() {
     studyId: userInfo.value.studyId,
   };
 }
-const showDialog = ref(false);
+
 // 定义 EmitType 为 DialogRootEmits 类型，方便后续使用
 
 const dialogVisible = ref(false); // 创建响应式变量控制 Dialog 组件的显示，初始化为打开状态，可按需调整
@@ -120,7 +122,7 @@ const handleConfirm = () => {
     <DialogContent class="sm:max-w-[425px] bg-white">
       <DialogHeader>
         <span class="memberInfo-header"
-          >{{ userInfo?.name }}
+          >{{ name }}
           <span class="info-id">( 组长:{{ userInfo.ladleName }})</span>
         </span>
       </DialogHeader>

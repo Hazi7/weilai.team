@@ -39,6 +39,7 @@ export interface TeamUserList {
   ladleName?: string;
   ladleGrade?: string;
   allGroup?: Array<number>;
+  isLeader?: boolean;
 }
 
 export interface ContactData {

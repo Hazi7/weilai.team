@@ -2,7 +2,6 @@
 import Avatar from "@/components/ui/avatar/Avatar.vue";
 import AvatarImage from "@/components/ui/avatar/AvatarImage.vue";
 import { Skeleton } from "@/components/ui/skeleton";
-import NewsFooter from "../NewsFooter.vue";
 import { Icon } from "@iconify/vue/dist/iconify.js";
 import TagItem from "../tag/TagItem.vue";
 

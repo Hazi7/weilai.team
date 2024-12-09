@@ -60,4 +60,12 @@ export async function updateInfo(updateTeamUserInfoDTO: {}) {
   });
   return data.value;
 }
+export async function getMembersByGrade(grade: string) {
+  await executeRequest({
+    url: `/userManager/teamInfo/getUsersByGrade?grade=${grade}`,
+    method: "get",
+  });
+  return data.value;
+}
+
 export { loading };
