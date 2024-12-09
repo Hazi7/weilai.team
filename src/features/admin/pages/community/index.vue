@@ -99,6 +99,8 @@ const changePage = (newPage: number) => {
 
 watch(page, (newPage) => {
   getArticle(undefined, undefined, newPage).then((res) => {
+    console.log(res);
+
     postList.value = res.records;
   });
 });
@@ -118,13 +120,12 @@ async function searchArticle() {
     page.value || 1,
     selectTime.value || "",
   );
-  console.log(res);
+
   postList.value = res.records;
   total.value = res.total;
   pageSize.value = res.size;
 }
 function deleteArticle(id: number) {
-  console.log(id);
   executeRequest({ url: `/post/delete/${id}`, method: "put" }).then(() => {
     getArticle(page.value).then((res) => {
       postList.value = res.records;
@@ -155,6 +156,8 @@ function reset() {
 }
 
 const handleItemSelect = (item: any) => {
+  console.log(postList.value);
+
   isAllSelected.value = true;
   postList.value.forEach((item: any) => {
     if (!item.selected) {

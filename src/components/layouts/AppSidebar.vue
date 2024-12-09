@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Avatar from "@/components/avatar/UserAvatar.vue";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +14,9 @@ import SidebarMenu from "@/components/ui/sidebar/SidebarMenu.vue";
 import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
-import useLogin from "@/composables/useLoginAll";
+
+import UserLogin from "@/composables/useLoginAll";
+import { useUserStore } from '@/store/userStore';
 import { Icon } from "@iconify/vue";
 import {
   BadgeCheck,
@@ -22,19 +25,16 @@ import {
   CreditCard,
   LogOut,
 } from "lucide-vue-next";
-import { watch,computed } from "vue";
-import { onBeforeRouteLeave, RouterLink, useRoute, useRouter } from "vue-router";
+import { watch } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 import { useMessageStore } from '@/store/messageStore';
 const messageStore = useMessageStore();
 
-onBeforeRouteLeave(() => {
-  // 离开路由时，清除所有定时器
-  console.log(111,"离开了")
-})
-const { logout } = useLogin()
+
+const {  logout } = UserLogin()
 const route = useRoute();
 const router = useRouter();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
@@ -108,15 +108,20 @@ interface SubItemInterface {
   path: string;
   redirect?:string;
 }
+const userStore=useUserStore()
 
+function skipToPersonalCenter(){
+console.log("点击了");
 
-
+  userStore.reset();
+  router.push('/personalCenter/userInfo/myPosts')
+}
 </script>
 
 <template>
   <div class="frame">
     <div class="sidebar">
-      <SidebarProvider id="sidebar-provider">
+      <SidebarProvider id="sidebar-provider" class=" ">
         <Sidebar id="sidebar" class="sidebar bg-white bg-white w-[17vw]  ">
           <SidebarHeader id="sidebar-header"
             ><div class="sidebar-logo">
@@ -135,9 +140,11 @@ interface SubItemInterface {
                     <SidebarMenuButton class="sidebar__button "  >
                       <RouterLink
                         :to="`/${item.url}`"
+
                         active-class="sidebar__link--active"
                         class="sidebar__link"
-                        @click.prevent="() => {router.push(`/${item.redirect}`)}"
+                        @click="router.push(`/${item.redirect}`)"
+
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span >{{ item.title }}</span>
@@ -183,9 +190,11 @@ interface SubItemInterface {
                   >
                     <SidebarMenuButton class="sidebar__button">
                       <RouterLink
+
                         :to="`/personalCenter/userInfo/myPosts`"
                         active-class="sidebar__link--active"
                         class="sidebar__link mb-1 "
+                        @click="skipToPersonalCenter"
                       >
                         <Icon icon="bi:person" />&nbsp;
                         <span>个人资料</span>
@@ -200,7 +209,7 @@ interface SubItemInterface {
                       >
                         <Icon icon="mage:box-3d-notification" />&nbsp;
                         <span>消息</span>
-                        <span 
+                        <span
                          v-if="messageStore.hasNewMessage"
                         class="dot"
                         ></span>
@@ -232,7 +241,9 @@ interface SubItemInterface {
                       size="lg"
                       class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     >
-                      <img src="@/assets/img/headImg.jpg" alt="" class="avatar" />
+                      <!-- <img src="@/assets/img/headImg.jpg" alt="" class="avatar" /> -->
+                       <div class="avatar"> <Avatar    /></div>
+
                       <div class="grid flex-1 text-left text-sm leading-tight">
                         <span class="truncate">爆米奇</span>
                       </div>
@@ -259,9 +270,9 @@ interface SubItemInterface {
                       Notifications
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem class="drop-menu-item">
+                    <DropdownMenuItem class="drop-menu-item" @click="logout()">
                       <LogOut />
-                      Log out
+                     退出
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

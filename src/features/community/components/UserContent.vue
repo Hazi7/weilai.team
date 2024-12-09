@@ -2,10 +2,15 @@
   <a class="news-item" v-for="item in userList">
     <div class="news-writer">
       <div class="avatar">
-        <img v-if="item.headPortrait" :src="`${item.headPortrait}`" alt="" />
+        <!-- <img v-if="item.headPortrait" :src="`${item.headPortrait}`" alt="" />
         <div v-else class="flex items-center space-x-4">
           <Skeleton class="bg-[--muted] h-12 w-12 rounded-full" />
-        </div>
+        </div> -->
+
+        <Avatar
+          :avatar="item.headPortrait"
+          :customClass="`w-[50px] h-[50px]`"
+        />
       </div>
       <div class="writer-info">
         <h3 class="name">{{ item.name }}</h3>
@@ -36,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { Skeleton } from "@/components/ui/skeleton";
+import Avatar from "@/components/avatar/UserAvatar.vue";
 import { useRequest } from "@/composables/useRequest";
 import { useUserStore } from "@/store/userStore";
 import type { UserData, UserInfo } from "@/types/Community";
