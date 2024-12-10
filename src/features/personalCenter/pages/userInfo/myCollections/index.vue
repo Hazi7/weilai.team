@@ -1,50 +1,48 @@
 <template>
   <div class="myCollections">
-    <div class="postsListBox">
-      <ul>
-        <li v-for="item in userCollect" :key="item.id">
-          <div class="postInfo">
-            <h1 class="postTitle">{{ item.title }}</h1>
-            <p class="postDesc">{{ item.postAbstract }}</p>
-            <p class="postFooter">
-              <span class="postTime"
-                >{{ formatDateToYYYYMMDD(item.putTime) }} 发布</span
-              >
-              ·
-              <span class="likesNum">{{ item.postLikeCount }} 点赞</span>
-              ·
-              <span class="commentsNum">{{ item.commentCount }} 评论</span>
-              ·
-              <span class="collectNum">{{ item.collectCount }} 收藏</span>
-              ·
-              <span class="viewNum">{{ item.viewCount }} 阅读</span>
-            </p>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger class="ellipsis">
-              <Icon icon="lucide:ellipsis" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent class="p-0 bg-white">
-              <DropdownMenuLabel>操作</DropdownMenuLabel>
-              <DropdownMenuItem>
-                <Button class="operationsBtn cancelCollect">取消收藏</Button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </li>
-      </ul>
-    </div>
-    <div class="pageBox">
-      <div class="pageBox pagination-container">
-        <Pagination
-          :totalItems="total"
-          :pageSize="pageSize"
-          @update:page="handlePageChange"
-        >
-        </Pagination>
-        <span class="collectionsNum">共 {{ total }} 收藏</span>
+    <h1 class="text-center text-[24px] font-bold my-[20px]" v-if="userCollect.length == 0">尚未收藏帖子</h1>
+
+    <template v-if="userCollect.length != 0">
+      <div class="postsListBox">
+        <ul>
+          <li v-for="item in userCollect" :key="item.id">
+            <div class="postInfo">
+              <h1 class="postTitle">{{ item.title }}</h1>
+              <p class="postDesc">{{ item.postAbstract }}</p>
+              <p class="postFooter">
+                <span class="postTime">{{ formatDateToYYYYMMDD(item.putTime) }} 发布</span>
+                ·
+                <span class="likesNum">{{ item.postLikeCount }} 点赞</span>
+                ·
+                <span class="commentsNum">{{ item.commentCount }} 评论</span>
+                ·
+                <span class="collectNum">{{ item.collectCount }} 收藏</span>
+                ·
+                <span class="viewNum">{{ item.viewCount }} 阅读</span>
+              </p>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger class="ellipsis">
+                <Icon icon="lucide:ellipsis" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent class="p-0 bg-white">
+                <DropdownMenuLabel>操作</DropdownMenuLabel>
+                <DropdownMenuItem>
+                  <Button class="operationsBtn cancelCollect">取消收藏</Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </li>
+        </ul>
       </div>
-    </div>
+      <div class="pageBox">
+        <div class="pageBox pagination-container">
+          <Pagination :totalItems="total" :pageSize="pageSize" @update:page="handlePageChange">
+          </Pagination>
+          <span class="collectionsNum">共 {{ total }} 收藏</span>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 <script lang="ts" setup>

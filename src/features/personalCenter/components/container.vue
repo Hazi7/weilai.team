@@ -18,7 +18,7 @@ import navBox from "./navBox.vue";
 }
 /* 使用媒体查询为手机端修改padding */
 @media (max-width: 768px) {
-  .container {
+  .default-layout__container {
     padding: 80px 0 60px 0;
   }
 }

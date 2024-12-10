@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import 'iconify-icon';
+// import 'iconify-icon';
+import { Icon } from "@iconify/vue";
 import CommunityTag from '@/features/community/composables/CommunityTag';
-import { reactive } from 'vue';
 import { useTagStore } from "@/store/tagTypeStore";
+import NoData from '@/components/loading/NoData.vue';
 
 const tagStore = useTagStore();
 const tagType = tagStore.tagType.tagType
@@ -14,13 +15,13 @@ getRecommendTag()
     <div class="rightBarTag">
         <div class="rightTagHead">
             <div class="tagHeadTitle">
-                <iconify-icon icon="tabler:tag" class="tagIcon"></iconify-icon>
+                <Icon icon="tabler:tag" class="tagIcon"></Icon>
                 <span>热门标签</span>
             </div>
-            <iconify-icon icon="icon-park-outline:right" class="moreTag"></iconify-icon>
+            <Icon icon="icon-park-outline:right" class="moreTag"></Icon>
         </div>
         <div class="hotTagList">
-
+            <NoData v-if="hotTagList.length === 0" />
             <span class="tag" v-for="(tag, index) in hotTagList" :key="index">
                 <router-link active-class="active" :to="`/community/${tagType}/label/${tag}`">#{{ tag }}</router-link>
             </span>
@@ -32,7 +33,7 @@ getRecommendTag()
 .rightBarTag {
     background-color: #fff;
     border: 2px solid #ffffff;
-    max-height: 168px;
+    max-height: 300px;
     overflow: hidden;
     box-shadow: 0 4px 30px 0 rgba(232, 232, 237, .3);
 
