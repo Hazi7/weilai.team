@@ -1,10 +1,25 @@
 <script setup lang="ts">
-
+import { onMounted, onUnmounted, ref } from 'vue'
+// 控制动画显示的状态
+const isVisible = ref(false)
+// 监听点击事件，触发动画
+const handleClick = (event: MouseEvent) => {
+    console.log('页面被点击了', event);
+    if (!isVisible.value) {
+        isVisible.value = true
+    }
+};
+onMounted(() => {
+    document.addEventListener('click', handleClick);
+});
+onUnmounted(() => {
+    document.removeEventListener('click', handleClick);
+});
 </script>
 
 <template>
     <div>
-        <div class="box">
+        <div class="box" :class="{ 'clickLoginTitle': isVisible }">
             <div class="chars">未</div>
             <div class="chars">来</div>
             <div class="chars">软</div>
@@ -62,6 +77,44 @@
         font-style: italic;
         margin: 0 10px;
         opacity: 0;
+    }
+
+    /* 为每个字符添加动画 */
+    div:nth-child(1) {
+        animation: show12 1.2s linear forwards;
+        animation-iteration-count: 2;
+        animation-delay: 0.2s;
+    }
+
+    div:nth-child(2) {
+        animation: show12 1.2s linear forwards;
+        animation-iteration-count: 2;
+        animation-delay: 0.4s;
+    }
+
+    div:nth-child(3) {
+        animation: show3 1s linear 1 forwards;
+        animation-delay: 0.7s;
+    }
+
+    div:nth-child(4) {
+        animation: show3 1s linear 1 forwards;
+        animation-delay: 0.9s;
+    }
+
+    div:nth-child(5) {
+        animation: show3 1s linear 1 forwards;
+        animation-delay: 1.1s;
+    }
+
+    div:nth-child(6) {
+        animation: show3 1.2s linear 1 forwards;
+        animation-delay: 1.3s;
+    }
+
+    div:nth-child(7) {
+        animation: show3 1.2s linear 1 forwards;
+        animation-delay: 1.6s;
     }
 
     /* 字符外的方框 */
@@ -129,6 +182,83 @@
         animation-delay: 2.3s;
     }
 }
+
+.clickLoginTitle {
+    animation: none;
+    animation-play-state: paused;
+    opacity: 1;
+    height: 150px;
+
+    .x {
+        animation: none;
+        opacity: 1;
+        transform: translate(484px) rotateY(0deg) scale(1, 1);
+    }
+
+    .e {
+        animation: none;
+        opacity: 1;
+        transform: translate(402px) rotateY(103deg) scale(1.2, 1.2);
+    }
+
+    .l {
+        animation: none;
+        opacity: 1;
+        transform: translate(320px) rotateY(103deg) scale(1.3, 1.3);
+    }
+
+    .p {
+        animation: none;
+        opacity: 1;
+        transform: translate(240px) rotateY(90deg) scale(1.6, 1.6);
+    }
+
+    .i {
+        animation: none;
+        opacity: 1;
+        transform: translate(164px) rotateY(77deg) scale(1.3, 1.3);
+    }
+
+    .n {
+        animation: none;
+        opacity: 1;
+        z-index: -99;
+        transform: translate(80px) rotateY(77deg) scale(1.2, 1.2);
+    }
+
+    .a {
+        animation: none;
+        opacity: 1;
+        transform: rotateY(360deg);
+    }
+
+    /* 正中间的一条线 */
+    .pcov {
+        animation: none;
+        transform: scale(1, 2);
+        opacity: 1;
+    }
+
+    /* 为每个字符添加动画 */
+    div:nth-child(1),
+    div:nth-child(2) {
+        animation: none;
+        opacity: 1;
+        // transform: rotateY(360deg);
+    }
+
+    div:nth-child(3),
+    div:nth-child(4),
+    div:nth-child(5),
+    div:nth-child(6),
+    div:nth-child(7) {
+        animation: none;
+        opacity: 1;
+        // transform: rotateY(360deg);
+    }
+}
+
+
 
 /* 定义动画 */
 /* 显示正中间的那条线 */
@@ -323,44 +453,6 @@
         opacity: 1;
         height: 150px;
     }
-}
-
-/* 为每个字符添加动画 */
-.box div:nth-child(1) {
-    animation: show12 1.2s linear forwards;
-    animation-iteration-count: 2;
-    animation-delay: 0.2s;
-}
-
-.box div:nth-child(2) {
-    animation: show12 1.2s linear forwards;
-    animation-iteration-count: 2;
-    animation-delay: 0.4s;
-}
-
-.box div:nth-child(3) {
-    animation: show3 1s linear 1 forwards;
-    animation-delay: 0.7s;
-}
-
-.box div:nth-child(4) {
-    animation: show3 1s linear 1 forwards;
-    animation-delay: 0.9s;
-}
-
-.box div:nth-child(5) {
-    animation: show3 1s linear 1 forwards;
-    animation-delay: 1.1s;
-}
-
-.box div:nth-child(6) {
-    animation: show3 1.2s linear 1 forwards;
-    animation-delay: 1.3s;
-}
-
-.box div:nth-child(7) {
-    animation: show3 1.2s linear 1 forwards;
-    animation-delay: 1.6s;
 }
 
 @media screen and (max-width: 1400px) {
