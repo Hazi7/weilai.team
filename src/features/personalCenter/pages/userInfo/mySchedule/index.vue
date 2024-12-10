@@ -1,6 +1,6 @@
 <template>
     <div class="mySchedule">
-        <Dialog>
+        <Dialog v-if="userStore.isSelf">
             <DialogTrigger as-child class="mb-4">
                 <Button variant="outline" class="bg-green-100 text-green-600">
                     添加课程
@@ -122,10 +122,10 @@
                         <p>课程：{{ item.courseName }}</p>
                         <p>节数：{{ item.courseTime }}</p>
                         <p>地点：{{ item.coursePlace }}</p>
-                        <Dialog>
+                        <Dialog v-if="userStore.isSelf">
                             <DropdownMenu>
                                 <DropdownMenuTrigger class="ellipsis">
-                                    <Button class="bg-gray-200">操作</Button>
+                                    <Button class="bg-gray-200 invisible">操作</Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent class="p-0  bg-white">
                                     <DropdownMenuLabel>操作</DropdownMenuLabel>
@@ -144,6 +144,8 @@
                                 </DropdownMenuContent>
                             </DropdownMenu>
                             <DialogContent class="sm:max-w-[425px] bg-white max-h-[500px] overflow-y-auto">
+                                <DialogClose id="dialogClose"></DialogClose>
+
                                 <DialogHeader>
                                     <DialogTitle>修改课程</DialogTitle>
                                     <DialogDescription>
@@ -298,7 +300,9 @@ import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire()
 
 import { reactive, watch, ref } from 'vue';
-
+import { useUserStore } from '@/store/userStore'
+const userStore=useUserStore()
+console.log('pinia///',userStore);
 // 获取userId
 const userId = getLocalStorageWithExpire('userId')
 
@@ -381,6 +385,8 @@ async function submitChangeForm(oneCourseId) {
         weekTime: Number(changeWeekTime.value),
         oneCourseId: oneCourseId
     }
+    document.getElementById('dialogClose').click()
+
     console.log(dataToSend);
     // 发送请求
     await executeRequest({ url: '/user/updateUserCourse', method: 'put', requestData: dataToSend })
@@ -439,6 +445,18 @@ function dayTransformer(day) {
     padding: 10px;
     border-radius: 10px;
     // box-shadow: 5px 5px 5px #ccc;
-
+    tr{ 
+        box-sizing: content-box;
+        border: 1px solid black;
+        td{
+            max-width: 150px;
+            &:hover {
+            background-color: #f5f5f5;
+            button{
+                visibility: visible;
+            }
+          } 
+        }
+    }
 }
 </style>
