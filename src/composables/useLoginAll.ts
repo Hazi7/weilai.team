@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import { useAlert } from "./useAlert";
 
 const loginStore = useLoginStore();
-const { setLocalStorageWithExpire, getLocalStorageWithExpire } =
+const { setLocalStorageWithExpire } =
     useLocalStorageWithExpire();
 const { showAlert } = useAlert();
 interface EmailResponse {
@@ -25,7 +25,7 @@ export default function () {
     const router = useRouter();
     const { data, error, loading, executeRequest } = useRequest();
 
-    async function getLogin(account: string, password: string) {
+    async function getLogin(account: string | number | undefined, password: string | number | undefined) {
         // loginError.value = ''
         await executeRequest({
             url: `/index/login`,
@@ -70,67 +70,58 @@ export default function () {
         }
     }
 
-    async function useGetCode(email: string) {
-        if (!email) {
-            // loginError.value = "邮箱不能为空"
-            showAlert("邮箱不能为空", "waring");
-        } else if (
-            !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)
-        ) {
-            // loginError.value = "请输入正确的邮箱"
-            showAlert("请输入正确的邮箱", "waring");
-        } else {
-            // loginError.value = ''
-            await executeRequest({
-                url: `/index/sendEmailCode/${email}`,
-                method: "get",
-            });
-            const res = data.value as EmailResponse;
-            if (res.code == 1007) {
-                showAlert("验证码发送成功", "pass");
-                loginStore.startCountdown();
-                // alert("验证码发送成功!");
-            } else if (res.code == 1005) {
-                showAlert("验证码未过期", "waring");
-                // alert("验证码未过期")
-            } else if (res.code == 1004) {
-                showAlert("邮箱格式错误", "waring");
-                // alert("邮箱格式错误")
-            } else if (res.code == 1002) {
-                showAlert("该用户不存在", "error");
-                // alert("该用户不存在")
-            }
+    async function useGetCode(email: string | number | undefined) {
+        // loginError.value = ''
+        await executeRequest({
+            url: `/index/sendEmailCode/${email}`,
+            method: "get",
+        });
+        const res = data.value as EmailResponse;
+        if (res.code == 1007) {
+            showAlert("验证码发送成功", "pass");
+            loginStore.startCountdown();
+            // alert("验证码发送成功!");
+        } else if (res.code == 1005) {
+            showAlert("验证码未过期", "waring");
+            // alert("验证码未过期")
+        } else if (res.code == 1004) {
+            showAlert("邮箱格式错误", "waring");
+            // alert("邮箱格式错误")
+        } else if (res.code == 1002) {
+            showAlert("该用户不存在", "error");
+            // alert("该用户不存在")
         }
     }
 
     async function useResetPassword(
-        email: string,
-        code: string,
-        password: string,
-        passwordAgin: string,
+        email: string | number | undefined,
+        code: string | number | undefined,
+        newPassword: string | number | undefined,
     ) {
-        if (password == passwordAgin) {
-            await executeRequest({
-                url: `/index/findPassword?email=${email}&code=${code}&newPassword=${password}`,
-                method: "put",
-            });
-            const res = data.value as Data;
-            if (res.code == 1006) {
-                showAlert("验证码已过期", "error");
-                // alert("验证码已过期")
-            } else if (res.code == 1009) {
-                showAlert("密码重置成功", "pass");
-                // alert("密码修改成功")
+        console.log(email, code, newPassword)
+        await executeRequest({
+            method: "put",
+            url: `/index/findPassword`,
+            requestData: {
+                email,
+                code,
+                newPassword,
             }
-        } else {
-            showAlert("两次密码不一致", "waring");
-            // alert("两次密码不一致")
+        });
+        const res = data.value as Data;
+        console.log(data, error);
+        if (res.code == 1006) {
+            showAlert("验证码已过期", "error");
+            // alert("验证码已过期")
+        } else if (res.code == 1009) {
+            showAlert("密码重置成功", "pass");
+            // alert("密码修改成功")
         }
     }
 
     async function logout() {
         await executeRequest({ url: `/index/logout`, method: "delete" });
-        console.log("退出成功");
+        router.push('/login');
     }
 
     return {
