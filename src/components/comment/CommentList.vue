@@ -2,6 +2,7 @@
 import { ref, onMounted, reactive, defineProps } from "vue";
 import { useRequest } from "@/composables/useRequest";
 import CommentItem from "./CommentItem.vue";
+import CommentForm from "./CommentForm.vue";
 
 const { data, error, executeRequest } = useRequest();
 const pageSize = ref<number>(10);
@@ -35,6 +36,12 @@ onMounted(() => {
 
 <template>
   <div class="comment-list">
+    <CommentForm
+      :post-id="props.postId"
+      class="comment-list__comment"
+      :is-comment="true"
+      :get-first-comment="getFirstComment"
+    ></CommentForm>
     <CommentItem
       v-for="comment in comments"
       :key="comment.commentId"
@@ -48,6 +55,11 @@ onMounted(() => {
 <style scoped lang="scss">
 .comment-list {
   width: 100%;
+  padding: 10px 18px 10px 18px;
   background-color: white;
+  border-radius: 5px;
+  &__comment {
+    margin-bottom: 10px;
+  }
 }
 </style>

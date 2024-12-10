@@ -6,10 +6,10 @@ import { EditorContent } from "@tiptap/vue-3";
 import { useRoute } from "vue-router";
 import ArticleHeader from "../../components/article/ArticleHeader.vue";
 import { type AxiosResponse } from "axios";
-import { computed, ref, watch, watchEffect } from "vue";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import apiClient from "@/api/axios";
-import CommentForm from "@/components/comment/CommentForm.vue";
 import { formatPostTime } from "@/utils/formatPostTime";
+import { useAlert } from "@/composables/useAlert";
 
 export interface PostDetailResponse {
   userId: number;
@@ -30,13 +30,13 @@ export interface PostDetailResponse {
 // 从路由获取参数
 const route = useRoute<"/community/post/[id]">();
 const postId = route.params.id;
+const { showAlert } = useAlert();
 
 const getPost = () => {
   return apiClient.get(`/post/selectOne/${postId}`);
 };
 const { data, loading, run } =
   useRequest<AxiosResponse<PostDetailResponse>>(getPost);
-
 const formattedPostTime = computed(() => {
   if (data.value?.data.postTime) {
     return formatPostTime(data.value?.data.postTime);
@@ -53,6 +53,36 @@ watch(
     }
   },
 );
+const {
+  data: likeData,
+  run: likeRun,
+  loading: likeLoading,
+} = useRequest(() => likeArticle(), {
+  manual: true,
+});
+const likeArticle = () => {
+  return apiClient.put(`/post/like/${postId}`);
+};
+console.log(likeData);
+
+watch(
+  () => likeData.value,
+  (newLikeData) => {
+    console.log("点赞请求的响应数据:", newLikeData);
+    run();
+    if (newLikeData.code === 2009) {
+      showAlert("点赞成功", "pass");
+    } else if (newLikeData.code === 2011) {
+      showAlert("取消点赞成功", "pass");
+    } else {
+      showAlert("点赞失败", "error");
+    }
+  },
+);
+
+const handleLikeClick = () => {
+  likeRun();
+};
 </script>
 
 <template>
@@ -67,24 +97,25 @@ watch(
       :author="data?.data.name"
       :avatar="data?.data.headPortrait"
       :post-time="formattedPostTime"
+      :is-like="data?.data.isLike"
+      :handle-like-click="handleLikeClick"
     ></ArticleHeader>
     <EditorContent
       class="article-detail__content"
       :editor="editor"
     ></EditorContent>
   </div>
-  <CommentForm :post-id="postId"></CommentForm>
-  <CommentList :post-id="postId"></CommentList>
+  <div class="article-Form">
+    <CommentList :post-id="postId"></CommentList>
+  </div>
 </template>
 
 <style lang="scss">
 @use "/src/assets/styles/markdown.scss";
 .article-detail {
   background-color: #fff;
-  min-height: 100%;
   box-sizing: border-box;
   padding: 1rem 3rem;
-
   &__content {
     margin-top: 2rem;
   }
@@ -108,5 +139,10 @@ watch(
   .already {
     color: red;
   }
+}
+.article-Form {
+  width: 100%;
+  background-color: white;
+  margin-top: 20px;
 }
 </style>

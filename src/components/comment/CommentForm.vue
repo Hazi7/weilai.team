@@ -6,19 +6,25 @@ import { marked } from "marked";
 import dompurify from "dompurify";
 import EmojiPicker from "vue3-emoji-picker";
 import "vue3-emoji-picker/css";
-import { useAlert } from '@/composables/alert';
+import { useAlert } from "@/composables/useAlert";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-
 const props = defineProps<{
   postId: string | number;
+  getFirstComment: () => void;
+  isComment: {
+    type: boolean;
+    default: false;
+  };
+  userId: number;
+  parentId: number;
 }>();
 
-const { data, error, executeRequest } = useRequest();
+const { data, executeRequest } = useRequest();
 const { showAlert } = useAlert();
 const commentText = ref<string>("");
 const maxLength = 1000;
@@ -28,12 +34,10 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const imageTags = ref<string[]>([]);
 const photoUrls = ref<string[]>([]);
 const emojiVisible = ref<boolean>(false);
-const emit=defineEmits(["handleComment"])
-
+const emit = defineEmits(["reply"]);
 const onSelectEmoji = (emoji: string) => {
   commentText.value += emoji.i;
   console.log(emoji);
-
   emojiVisible.value = false;
 };
 
@@ -58,7 +62,7 @@ const handleFileSelect = (event: Event) => {
   if (files && files.length > 0) {
     const file = files[0];
     if (photoUrls.value.length >= 1) {
-      showAlert("只能上传一张图片","waring");
+      showAlert("只能上传一张图片", "waring");
       return;
     }
     const reader = new FileReader();
@@ -91,7 +95,7 @@ onUnmounted(() => {
 // 写一级评论
 const submitComment = async () => {
   if (!commentText.value.trim()) {
-    showAlert("评论内容不能为空","error");
+    showAlert("评论内容不能为空", "error");
     return;
   }
   const requestData = {
@@ -104,11 +108,9 @@ const submitComment = async () => {
     method: "post",
     requestData,
   });
-
-  console.log(data.value, error);
   if (data.value?.code == 200) {
-    showAlert("评论成功","pass");
-    emit("handleComment")
+    showAlert("评论成功", "pass");
+    props.getFirstComment();
     commentText.value = "";
     photoUrls.value = [];
     imageTags.value = [];
@@ -119,25 +121,38 @@ const submitComment = async () => {
 //多级评论
 const submitReply = async (commentId: number, userId: number) => {
   if (!commentText.value.trim()) {
-    console.log("评论内容不能为空");
+    showAlert("评论内容不能为空", "error");
     return;
   }
-  const requestData = {
+  const replyCommentDTO = {
     commentId: commentId,
-    commentText: commentText.value,
-    parentCommentId: commentId,
+    commentTxt: commentText.value,
     userId: userId,
   };
-  console.log("提交的请求数据:", requestData);
+  console.log("提交的请求数据:", replyCommentDTO);
   await executeRequest({
-    url: `/comment/writeComment`,
+    url: `/comment/replyComment`,
     method: "post",
-    requestData
+    requestData: replyCommentDTO,
   });
-  if(data.value?.code==200){
-    showAlert("评论成功","pass");
-  }else{
-    showAlert("评论失败","error");
+  console.log(data.value);
+
+  if (data.value?.code == 200) {
+    showAlert("评论成功", "pass");
+    commentText.value = "";
+    photoUrls.value = [];
+    imageTags.value = [];
+    emit("reply", commentId);
+  } else {
+    showAlert("评论失败", "error");
+  }
+};
+
+const handleButtonClick = () => {
+  if (props.isComment) {
+    submitComment();
+  } else {
+    submitReply(props.parentId, props.userId);
   }
 };
 </script>
@@ -193,7 +208,7 @@ const submitReply = async (commentId: number, userId: number) => {
           />
         </div>
         <!-- 提交按钮 -->
-        <button class="submit-btn" @click="submitComment">评论</button>
+        <button class="submit-btn" @click="handleButtonClick">评论</button>
       </div>
     </div>
   </div>
@@ -208,9 +223,10 @@ const submitReply = async (commentId: number, userId: number) => {
   border: 1px solid var(--border);
   border-radius: 10px;
   width: 100%;
-  max-width: 650px;
+  // max-width: 650px;
   border-radius: 5px;
   margin-bottom: 5px;
+  background-color: white;
   textarea {
     width: 95%;
     height: 54px;

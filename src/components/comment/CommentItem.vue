@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted,computed } from 'vue';
-import { Icon } from '@iconify/vue';
-import { useRequest } from '@/composables/useRequest';
-import CommentForm from './CommentForm.vue';
-import { createUserInfo, getUserInfo } from './index';
-import sonComment from './SonComment.vue';
-import { formatPostTime } from '@/utils/formatPostTime';
-import { useAlert } from '@/composables/alert';
+import { ref, onMounted, computed } from "vue";
+import { Icon } from "@iconify/vue";
+import { useRequest } from "@/composables/useRequest";
+import CommentForm from "./CommentForm.vue";
+import { createUserInfo, getUserInfo } from "./index";
+import sonComment from "./SonComment.vue";
+import { formatPostTime } from "@/utils/formatPostTime";
+import { useAlert } from "@/composables/useAlert";
+import UserAvatar from "../avatar/UserAvatar.vue";
 
 const props = defineProps({
   comment: {
@@ -59,6 +60,7 @@ const getSecondComment = async (commentId: number) => {
   });
 
   if (data.value?.data.postCommentAll) {
+    console.log(11);
     total.value = data.value.data.pageInfo.total;
     sonComments.value = data.value.data.postCommentAll.map((comment: any) => {
       const replyInfo = createUserInfo();
@@ -99,12 +101,12 @@ const likeComment = async (commentId: number) => {
   if (data.value?.code === 200) {
     props.getFirstComment();
     if (props.comment.isLike) {
-      showAlert("取消点赞成功","pass");
+      showAlert("取消点赞成功", "pass");
     } else {
-      showAlert("点赞成功","pass");
+      showAlert("点赞成功", "pass");
     }
   } else {
-    showAlert("点赞失败","error");
+    showAlert("点赞失败", "error");
   }
 };
 //删除一级评论
@@ -115,13 +117,10 @@ const deleteComment = async (commentId: number) => {
   });
   if (data.value?.code === 200) {
     props.getFirstComment();
-    showAlert("删除成功","pass");
+    showAlert("删除成功", "pass");
   } else {
-    showAlert("删除失败","error");
+    showAlert("删除失败", "error");
   }
-};
-const handleComment = () => {
-  props.getFirstComment();
 };
 
 onMounted(async () => {
@@ -134,9 +133,7 @@ defineExpose({ userInfo });
 
 <template>
   <div class="comment-item" :class="{ 'is-reply': isReply }">
-    <div class="avatar">
-      <img :src="userInfo.headPortrait || '../../../public/logo.png'" />
-    </div>
+    <UserAvatar class="avatar" :avatar="userInfo.headPortrait" />
     <div class="content-box">
       <div class="user-info">
         <span class="nickname">{{ userInfo.name }}</span>
@@ -168,16 +165,23 @@ defineExpose({ userInfo });
             :class="{ liked: comment.isLike }"
             @click="likeComment(comment.commentId)"
           >
-            <Icon icon="uiw:like-o" class="likeIcon" />
+            <Icon
+              icon="uiw:like-o"
+              class="likeIcon"
+              :class="{ liked: comment.isLike }"
+            />
             {{ comment.likeCount }}
           </span>
         </div>
       </div>
-        <CommentForm 
-        :post-id="props.postId"
-        @handle-comment="handleComment"
+      <CommentForm
         v-show="isFormVisible"
-         />
+        :post-id="props.postId"
+        :is-comment="false"
+        :parent-id="comment.commentId"
+        :user-id="comment.userId"
+        @reply="handleLike"
+      />
       <!-- 子评论 -->
       <div class="son-comments">
         <sonComment
@@ -239,7 +243,7 @@ defineExpose({ userInfo });
   margin-bottom: 5px;
   min-height: 90px;
   overflow: hidden;
-  border-bottom: 1px solid #e7e6e6;
+  border-bottom: 1px solid #dddcdc;
 
   .avatar {
     width: 45px;
@@ -263,7 +267,7 @@ defineExpose({ userInfo });
 
   .content-box {
     width: calc(100% - 70px);
-    margin-top: 12px;
+    margin-top: 10px;
 
     .user-info {
       display: flex;
@@ -272,12 +276,12 @@ defineExpose({ userInfo });
       .nickname {
         color: #585858;
         font-weight: bold;
-        margin-right: 15px;
+        margin-right: 14px;
       }
       .time {
         margin-top: 3px;
         color: #999;
-        font-size: 13px;
+        font-size: 12px;
       }
     }
 
@@ -310,14 +314,15 @@ defineExpose({ userInfo });
       .reply-btn {
         display: flex;
         margin-right: 10px;
-        font-size: 14px;
+        font-size: 13.5px;
         color: gray;
         cursor: pointer;
 
         .replyIcon {
           color: gray;
-          margin-top: 3px;
-          margin-right: 5px;
+          margin-top: 4px;
+          margin-right: 4px;
+          font-size: 13px;
         }
       }
       .likeIcon.liked {
@@ -331,29 +336,29 @@ defineExpose({ userInfo });
 
       .like-btn {
         display: flex;
-        font-size: 14px;
+        font-size: 13.5px;
         color: gray;
         cursor: pointer;
 
         .likeIcon {
           display: inline-block;
           transition: box-shadow 0.3s ease-in-out;
-          font-size: 17px;
+          font-size: 16px;
           margin-top: 2px;
           margin-right: 5px;
         }
       }
       .delete-btn {
         display: flex;
-        font-size: 14px;
+        font-size: 13.5px;
         color: gray;
         cursor: pointer;
-        margin-right: 10px;
+        margin-right: 11px;
         .deleteIcon {
           color: gray;
-          font-size: 18px;
+          font-size: 17px;
           margin-top: 2px;
-          margin-right: 3px;
+          margin-right: 2px;
         }
       }
     }
@@ -413,14 +418,14 @@ defineExpose({ userInfo });
 
       .comment-text {
         color: #777;
-        font-size: 14px;
+        font-size: 13.5px;
         margin-bottom: 2px;
       }
 
       .nickname {
         color: #141414;
         font-weight: 500;
-        font-size: 14px;
+        font-size: 13.5px;
         margin-right: 13px;
       }
       .action-box {
