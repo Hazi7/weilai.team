@@ -166,6 +166,7 @@ function getMembersOfGroup(str: string) {
     </div>
     <Member :teamAble="teamAble" :teamUserList="teamUserList"></Member>
   </div>
+  <Confirm />
 </template>
 
 <style lang="scss" scoped>

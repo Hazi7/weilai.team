@@ -10,18 +10,19 @@ import DefaultLayout from "@/layouts/DefaultLayout.vue";
 
 <route lang="json">
 {
-  "redirect": "/admin/profile",
   "meta": {
     "subNavItems": [
       {
         "title": "概况",
         "icon": "material-symbols-light:overview-key-outline",
-        "path": "/admin/profile"
+        "path": "/admin/profile",
+        "redirect": "/admin/profile"
       },
       {
         "title": "通讯录",
         "icon": "ph:address-book-tabs-light",
-        "path": "/admin/contacts"
+        "path": "/admin/contacts",
+        "redirect": "/admin/contacts/member"
       },
       {
         "title": "社区管理",

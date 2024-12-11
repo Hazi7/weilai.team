@@ -136,7 +136,7 @@ function skip(e: Event) {
       <div class="search_list" v-show="searchValue && isVisible && !isUser">
         <div class="search_empty" v-if="!filterList.length">未找到搜索结果</div>
         <div class="search_item" v-for="item in filterList">
-          <a @click="router.push(`/community/comprehensive/${item.title}`)">
+          <a @click="router.push(`/community/comprehensive/hot/${item.title}`)">
             <span>{{ item.title }}</span>
           </a>
         </div>

@@ -2,9 +2,11 @@ import { useAlert } from "@/composables/useAlert";
 import { useRequest } from "@/composables/useRequest";
 import type { ContactData, MemeberData } from "@/types/Contacts";
 import { ref } from "vue";
+import AddMember from "../components/contacts/AddMember.vue";
 const { showAlert } = useAlert();
 const { executeRequest, error, loading, data } = useRequest();
 const contactsData = ref<ContactData>();
+import apiClient from "@/api/axios";
 export async function getMembers(pageNumber = 1, pageSize = 10) {
   await executeRequest({
     url: `/userManager/teamInfo/getTeamUserList/${pageNumber}/${pageSize}`,
@@ -68,4 +70,16 @@ export async function getMembersByGrade(grade: string) {
   return data.value;
 }
 
+export async function addMember(addUserDTO: {}) {
+  return apiClient.post("/userManager/teamInfo/assUser", addUserDTO);
+}
+export async function deletes(id: number[]) {
+  return apiClient.delete(`/userManager/teamInfo/deleteTeamUserInfo?id=${id} `);
+}
+export async function changeInfosForMembers(modifyManyUserDTO: {}) {
+  return apiClient.put(
+    `/userManager/teamInfo/modifyManyUser `,
+    modifyManyUserDTO,
+  );
+}
 export { loading };
