@@ -35,7 +35,7 @@ const dialogVisible = ref(true);
         <AlertDialogDescription class="info flex">
           <Icon icon="pajamas:status-alert" />
           <span class="content">{{
-            content ? content : "你确定执行该操作吗"
+            content ? content : "你确定执行该操作吗？"
           }}</span>
           <span class="description">
             {{ description ? `(${description})` : "" }}</span
