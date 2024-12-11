@@ -6,7 +6,7 @@ import { EditorContent } from "@tiptap/vue-3";
 import { useRoute } from "vue-router";
 import ArticleHeader from "../../components/article/ArticleHeader.vue";
 import { type AxiosResponse } from "axios";
-import { computed, onMounted, ref, watch, watchEffect } from "vue";
+import { computed, watch } from "vue";
 import apiClient from "@/api/axios";
 import { formatPostTime } from "@/utils/formatPostTime";
 import { useAlert } from "@/composables/useAlert";
@@ -53,18 +53,13 @@ watch(
     }
   },
 );
-const {
-  data: likeData,
-  run: likeRun,
-  loading: likeLoading,
-} = useRequest(() => likeArticle(), {
-  manual: true,
-});
+//点赞
 const likeArticle = () => {
   return apiClient.put(`/post/like/${postId}`);
 };
-console.log(likeData);
-
+const { data: likeData, run: likeRun } = useRequest(() => likeArticle(), {
+  manual: true,
+});
 watch(
   () => likeData.value,
   (newLikeData) => {
@@ -79,9 +74,36 @@ watch(
     }
   },
 );
-
 const handleLikeClick = () => {
   likeRun();
+};
+
+// 收藏
+const { run: collectRun } = useRequest(
+  () => {
+    return apiClient.post(`/post/collect/${postId}`);
+  },
+  {
+    manual: true,
+    onSuccess: (newCollectData) => {
+      console.log("收藏请求的响应数据:", newCollectData);
+      run();
+      if (newCollectData.code === 2013) {
+        showAlert("收藏成功", "pass");
+      } else if (newCollectData.code === 2016) {
+        showAlert("取消收藏成功", "pass");
+      } else {
+        showAlert("收藏失败", "error");
+      }
+    },
+    onError: (error) => {
+      console.log("收藏请求出错:", error);
+      showAlert("收藏失败", "error");
+    },
+  },
+);
+const handleCollect = () => {
+  collectRun();
 };
 </script>
 
@@ -98,7 +120,9 @@ const handleLikeClick = () => {
       :avatar="data?.data.headPortrait"
       :post-time="formattedPostTime"
       :is-like="data?.data.isLike"
+      :is-collect="data?.data.isCollect"
       :handle-like-click="handleLikeClick"
+      :handle-collect="handleCollect"
     ></ArticleHeader>
     <EditorContent
       class="article-detail__content"

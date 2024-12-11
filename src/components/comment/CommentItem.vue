@@ -38,14 +38,8 @@ const userInfo = ref(createUserInfo());
 const total = ref(0);
 const showMore = ref(true);
 
-const formattedTime = computed(() => {
-  const commentTime = new Date(props.comment.commentTime);
-  const year = commentTime.getFullYear();
-  const month = (commentTime.getMonth() + 1).toString().padStart(2, "0");
-  const day = commentTime.getDate().toString().padStart(2, "0");
-  const hours = commentTime.getHours().toString().padStart(2, "0");
-  const minutes = commentTime.getMinutes().toString().padStart(2, "0");
-  return `${year}.${month}.${day} ${hours}:${minutes}`;
+const commentTime = computed(() => {
+  return formatPostTime(props.comment.commentTime);
 });
 
 // 展开回复输入框
@@ -137,7 +131,7 @@ defineExpose({ userInfo });
     <div class="content-box">
       <div class="user-info">
         <span class="nickname">{{ userInfo.name }}</span>
-        <span class="time">{{ formattedTime }}</span>
+        <span class="time">{{ commentTime }}</span>
       </div>
       <div class="comment-text">
         <span v-if="isReply" :key="comment.pointUser" class="reply-to">{{

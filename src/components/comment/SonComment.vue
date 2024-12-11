@@ -6,6 +6,7 @@ import CommentForm from "./CommentForm.vue";
 import { createUserInfo, getUserInfo } from "./index";
 import { useAlert } from "@/composables/useAlert";
 import UserAvatar from "../avatar/UserAvatar.vue";
+import { formatPostTime } from "@/utils/formatPostTime";
 
 const props = defineProps({
   son: {
@@ -27,16 +28,9 @@ const userInfos = ref(createUserInfo());
 const emit = defineEmits(["liked", "deleted"]);
 const { showAlert } = useAlert();
 
-const formattedTime = computed(() => {
-  const commentTime = new Date(props.son.commentTime);
-  const year = commentTime.getFullYear();
-  const month = (commentTime.getMonth() + 1).toString().padStart(2, "0");
-  const day = commentTime.getDate().toString().padStart(2, "0");
-  const hours = commentTime.getHours().toString().padStart(2, "0");
-  const minutes = commentTime.getMinutes().toString().padStart(2, "0");
-  return `${year}.${month}.${day} ${hours}:${minutes}`;
+const commentTime = computed(() => {
+  return formatPostTime(props.son.commentTime);
 });
-
 // 展开回复输入框
 const toggleForm = () => {
   isFormVisible.value = !isFormVisible.value;
@@ -93,7 +87,7 @@ const handleReply = () => {
     <div class="content-box">
       <div class="user-info">
         <span class="nickname">{{ userInfos.name }}</span>
-        <span class="time">{{ formattedTime }}</span>
+        <span class="time">{{ commentTime }}</span>
       </div>
       <div class="comment-text">
         <span v-if="isReply" :key="son.pointUser" class="reply-to">{{

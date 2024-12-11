@@ -4,9 +4,9 @@ import { computed, defineProps, defineEmits } from "vue";
 import { useRequest } from "@/composables/useRequest";
 import { formatPostTime } from "@/utils/formatPostTime";
 import UserAvatar from "@/components/avatar/UserAvatar.vue";
-const { data, loading, error, executeRequest } = useRequest();
 import type { SSEMessageData } from "../../../types/sseType";
 
+const { data, executeRequest } = useRequest();
 const props = defineProps<{
   message: SSEMessageData;
 }>();
@@ -57,7 +57,11 @@ const deleteMessage = async (messageId: number, messageType: number) => {
         {{ props.message.content }}
       </div>
       <!-- <div class="imgCon"><img src="../../../assets/img/headImg.jpg"/></div> -->
-      <div class="postLink"># {{ props.message.postTitle }}</div>
+      <div class="postLink">
+        <a :href="`/community/post/${props.message.postId}`"
+          ># {{ props.message.postTitle }}</a
+        >
+      </div>
       <Icon
         icon="fluent:delete-24-regular"
         class="deleteIcon"
