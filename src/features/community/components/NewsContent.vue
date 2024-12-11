@@ -75,14 +75,26 @@ import {
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
+import { showConfirm } from "@/composables/useConfirm";
 import { useUserStore } from "@/store/userStore";
 import NewsFooter from "./NewsFooter.vue";
+
+showConfirm({
+  title: "提示",
+})
+  .then(() => {
+    console.log("确定");
+  })
+  .catch(() => {
+    console.log("取消");
+  });
+
 const isTag = ref(false);
-console.log(loading.value);
+
 const userStore = useUserStore();
 const router = useRouter();
 const props = defineProps<{
-  type: number | 0;
+  type?: number | 0;
   page?: number;
   condition?: string | "";
   tagPostList?: Array<ArticleList>;

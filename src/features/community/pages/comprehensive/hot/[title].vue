@@ -17,8 +17,8 @@
 import Rightbar from "@/components/community/Rightbar.vue";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
-import NewsContent from "../../components/NewsContent.vue";
-import Search from "../../components/Search.vue";
+import NewsContent from "@community/components/NewsContent.vue";
+import Search from "@community/components/Search.vue";
 const route = useRoute();
 const title = ref("");
 if ("title" in route.params) {

@@ -30,22 +30,39 @@
         <Card class="border-none shadow-none card">
           <CardHeader class="card-header">
             <div class="header-link">
-              <button class="head">
-                <Icon icon="icon-park-outline:people-plus-one" />
-                &nbsp;
-                <span>添加成员</span>
-              </button>
-              <DropdownMenu>
-                <DropdownMenuTrigger class="head">批量管理</DropdownMenuTrigger>
-                <!-- <button >
+              <AddMember :group="group" :grade="grade" :updateData="updateData">
+                <DialogTrigger as-child>
+                  <button class="head">
+                    <Icon icon="icon-park-outline:people-plus-one" />
+                    &nbsp;
+                    <span>添加成员</span>
+                  </button>
+                </DialogTrigger>
+              </AddMember>
+              <EditMembers
+                :grade="grade"
+                :group="group"
+                :selectIds="selectIds"
+                :updateData="updateData"
+              >
+                <DropdownMenu>
+                  <DropdownMenuTrigger class="head"
+                    >批量管理</DropdownMenuTrigger
+                  >
+                  <!-- <button >
                 <span></span>
               </button> -->
-                <DropdownMenuContent>
-                  <DropdownMenuItem>批量删除</DropdownMenuItem>
-                  <DropdownMenuItem>批量导入</DropdownMenuItem>
-                  <DropdownMenuItem>批量修改</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem @click="deleteMembers"
+                      >批量删除</DropdownMenuItem
+                    >
+                    <DropdownMenuItem>批量导入</DropdownMenuItem>
+                    <DialogTrigger>
+                      <DropdownMenuItem>批量修改</DropdownMenuItem>
+                    </DialogTrigger>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </EditMembers>
             </div>
           </CardHeader>
           <CardContent class="p-0">
@@ -88,7 +105,11 @@
                       v-model="(user as any).selected"
                       @change="handleItemSelect"
                   /></TableCell>
-                  <TableCell class="font-medium"> {{ user.name }}</TableCell>
+                  <TableCell class="font-medium">
+                    {{ user.name }}
+                    <!-- <Icon v-if="user.isLeader" icon="fluent-mdl2:party-leader"
+                  /> -->
+                  </TableCell>
                   <TableCell>
                     {{
                       chineseNums[user.group as keyof typeof chineseNums] +
@@ -110,7 +131,7 @@
                       :rowData="editRowData"
                       :sendUpdateInfo="getUpdateInfo"
                     >
-                      <DropdownMenu>
+                      <DropdownMenu class="">
                         <DropdownMenuTrigger as-child>
                           <Button
                             aria-haspopup="true"
@@ -122,7 +143,9 @@
                             <span class="sr-only">Toggle menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent class="bg-white">
+                        <DropdownMenuContent
+                          class="bg-white text-[--secondary-foreground]"
+                        >
                           <DialogTrigger class="w-full">
                             <!-- @click="sendOldData(user)" -->
                             <DropdownMenuItem @click="sendOldData(user, index)">
@@ -130,7 +153,11 @@
                               编辑
                             </DropdownMenuItem>
                           </DialogTrigger>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                          <DropdownMenuItem @click="deleteOne(user.id)"
+                            ><Icon
+                              icon="uiw:user-delete"
+                            />删除</DropdownMenuItem
+                          >
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </MemberInfo>
@@ -148,7 +175,6 @@
 
 <script setup lang="ts">
 import { Button } from "@/components/ui/button";
-
 import {
   Card,
   CardContent,
@@ -171,28 +197,35 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
+import { useAlert } from "@/composables/useAlert";
+import AddMember from "@/features/admin/components/contacts/AddMember.vue";
 import MemberInfo from "@/features/admin/components/contacts/MemberInfo.vue";
 import SelectLeader from "@/features/admin/components/contacts/SelectLeader.vue";
-import { getMembersByGroupAndGrade } from "@/features/admin/composables/useContacts";
+import {
+  deletes,
+  getMembersByGroupAndGrade,
+} from "@/features/admin/composables/useContacts";
 import type { TeamUserList } from "@/types/Contacts";
+import EditMembers from "@admin/components/contacts/EditMembers.vue";
 import { Icon } from "@iconify/vue";
 import { MoreHorizontal } from "lucide-vue-next";
 import { ref, watch } from "vue";
+import { useRequest } from "vue-request";
 import { useRoute } from "vue-router";
+const { showAlert } = useAlert();
 const editRowData = ref<TeamUserList>();
 const tableRef = ref<InstanceType<typeof Table> | null>(null);
 const rowRefs = ref<InstanceType<typeof TableRow> | []>([]);
 const tbodyRef = ref<InstanceType<typeof TableBody> | null>(null);
-const trs = ref<Array<InstanceType<typeof TableRow>>>([]);
-let trArr: any[] = [];
+const selectIds = ref<number[]>([]);
 const tableData = ref<TeamUserList[]>([]);
 const haveLeader = ref(false);
 const isAllSelected = ref(false);
+const deleteOneArr = ref<number[]>([]);
 // 记录当前数据的索引
 const trIndex = ref<number>();
 const route = useRoute();
 const member = ref("");
-console.log(route.params);
 const chineseNums = {
   "1": "一",
   "2": "二",
@@ -205,11 +238,10 @@ const chineseNums = {
   "9": "九",
 };
 const userList = ref<TeamUserList[]>([]);
-const userGroupList = ref<TeamUserList>();
+
 const grade = ref("");
 const group = ref("");
 if (route.params && "member" in route.params) {
-  const memberValue = route.params.member as string;
   grade.value = member.value.split(",")[0] || route.params.member.split(",")[0];
   group.value = member.value.split(",")[1] || route.params.member.split(",")[1];
 } else {
@@ -231,7 +263,6 @@ function updateData(grade: string, group: string) {
 }
 watch(route, (newVal) => {
   member.value = (route.params as any).member as string;
-
   grade.value = member.value.split(",")[0];
   group.value = member.value.split(",")[1];
 
@@ -244,10 +275,8 @@ function sendOldData(oldData: TeamUserList, index: number) {
   editRowData.value = oldData;
   trIndex.value = index;
 }
-
 function getUpdateInfo(updateObj: TeamUserList) {
   // 更新数据(通过子组件接收回来新数据)
-  console.log("收到数据了", updateObj);
   if (trIndex.value !== undefined) {
     if (userList.value) {
       userList.value[trIndex.value] = { ...updateObj };
@@ -263,18 +292,49 @@ function handleSelectAll() {
   // 全选
   userList.value.forEach((item: any) => {
     item.selected = isAllSelected.value;
+    selectIds.value = userList.value.map((item) => item.id);
   });
 }
 const handleItemSelect = (item: any) => {
-  console.log(userList);
-
   isAllSelected.value = true;
   userList.value.forEach((item: any) => {
     if (!item.selected) {
       isAllSelected.value = false;
+      if (selectIds.value.includes(item.id)) {
+        selectIds.value = selectIds.value.filter((id) => id !== item.id);
+      }
+    } else {
+      if (!selectIds.value.includes(item.id)) {
+        selectIds.value.push(item.id);
+      }
     }
   });
 };
+const { data, run, loading } = useRequest(deletes, { manual: true });
+// 批量删除功能
+function deleteMembers() {
+  if (selectIds.value.length > 0) {
+    run(selectIds.value);
+  } else {
+    return showAlert("请选择后再进行删除", "waring");
+  }
+}
+// 删除一个
+function deleteOne(id: number) {
+  selectIds.value.push(id);
+  run(selectIds.value);
+}
+watch(
+  () => data.value,
+  () => {
+    console.log(data.value);
+    if ((data.value as any).code == 200) {
+      showAlert("删除成功", "pass");
+      updateData(grade.value, group.value);
+    }
+    selectIds.value = [];
+  },
+);
 </script>
 
 <style lang="scss" scoped>
