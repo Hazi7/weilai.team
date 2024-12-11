@@ -32,8 +32,6 @@ const props = defineProps<
     cardMessage:IProp,
 }>()
 
-//以空格为分隔符把传来的时间分为日期和具体时间
-console.log();
 
 const dateTime = ref({
   date: props.cardMessage.InterviewTime.split(' ')[0],
