@@ -168,6 +168,7 @@ import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire()
 import { useDateFormatter } from '@/composables/useDateFormatter'
 import type { RefSymbol } from '@vue/reactivity';
+import { Store } from 'lucide-vue-next';
 const { formatDateToYYYYMMDD } = useDateFormatter()
 
 const userStore=useUserStore()
@@ -186,7 +187,12 @@ function changeIsShow() {
 }
 
 // 获取userId
-const userId = getLocalStorageWithExpire('userId')
+let userId=0
+if (userStore.isSelf) {
+  userId = getLocalStorageWithExpire('userId')
+}else{
+  userId = userStore.userId
+}
 
 // 定义userInfo储存用户信息
 let userInfo = reactive<UserInfo>({
@@ -287,7 +293,6 @@ async function submitForm() {
   background-color: white;
   padding: 10px;
   border-radius: 10px;
-  // box-shadow: 5px 5px 5px #ccc;
 
   .bagdImg {
     width: 100%;
