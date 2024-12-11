@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
@@ -85,39 +84,8 @@ function getMembersOfGroup(str: string) {
           style="padding: 0.9vw; width: 20vw"
         >
           <Search />
-          <!-- <div id="search">
-            <Command class="h-full">
-              <CommandInput
-                placeholder="请输入关键词"
-                id="search_input"
-                class="p-0 h-full border-none outline-none"
-                ref="inputRef"
-                @keydown.enter="
-                  () => {
-                    console.log('enter');
-                  }
-                "
-              />
 
-              <CommandList
-                class="search_list"
-                v-show="items.length && isVisible"
-              >
-                <CommandEmpty>未找到搜索结果</CommandEmpty>
-                <CommandGroup heading="" class="p-0">
-                  <CommandItem
-                    :value="item.description"
-                    v-for="item in items"
-                    class="search_item"
-                  >
-                    <span>{{ item.name }}</span>
-                  </CommandItem>
-                </CommandGroup>
-                <CommandSeparator />
-              </CommandList>
-            </Command>
-          </div> -->
-          <div class="sidebar-link">
+          <!-- <div class="sidebar-link">
             <RouterLink to="">
               <Button
                 variant="outline"
@@ -143,7 +111,7 @@ function getMembersOfGroup(str: string) {
                 </span>
               </Button>
             </RouterLink>
-          </div>
+          </div> -->
           <SidebarContent>
             <SidebarGroup>
               <SidebarMenu class="sidebar-menu">
@@ -198,6 +166,7 @@ function getMembersOfGroup(str: string) {
     </div>
     <Member :teamAble="teamAble" :teamUserList="teamUserList"></Member>
   </div>
+  <Confirm />
 </template>
 
 <style lang="scss" scoped>

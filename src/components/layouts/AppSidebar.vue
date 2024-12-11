@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Avatar from "@/components/avatar/UserAvatar.vue";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,26 +14,25 @@ import SidebarMenu from "@/components/ui/sidebar/SidebarMenu.vue";
 import SidebarMenuButton from "@/components/ui/sidebar/SidebarMenuButton.vue";
 import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
-import useLogin from "@/composables/useLoginAll";
+
+import UserLogin from "@/composables/useLoginAll";
+import { useMessageStore } from '@/store/messageStore';
+import { useUserStore } from '@/store/userStore';
 import { Icon } from "@iconify/vue";
 import {
   BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
-  LogOut,
+  LogOut
 } from "lucide-vue-next";
 import { watch } from "vue";
-import { onBeforeRouteLeave, RouterLink, useRoute, useRouter } from "vue-router";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
+const messageStore = useMessageStore();
 
-onBeforeRouteLeave(() => {
-  // 离开路由时，清除所有定时器
-  console.log(111,"离开了")
-})
-const { logout } = useLogin()
+
+const {  logout } = UserLogin()
 const route = useRoute();
 const router = useRouter();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
@@ -96,15 +96,24 @@ const items = [
   },
 ];
 
+const handleMessageClick = () => {
+  messageStore.setHasNewMessage(false)
+}
+
 interface SubItemInterface {
   title: string;
   icon: string;
   path: string;
   redirect?:string;
 }
+const userStore=useUserStore()
 
+function skipToPersonalCenter(){
+console.log("点击了");
 
-
+  userStore.reset();
+  router.push('/personalCenter/userInfo')
+}
 </script>
 
 <template>
@@ -129,9 +138,11 @@ interface SubItemInterface {
                     <SidebarMenuButton class="sidebar__button "  >
                       <RouterLink
                         :to="`/${item.url}`"
+
                         active-class="sidebar__link--active"
                         class="sidebar__link"
                         @click="router.push(`/${item.redirect}`)"
+
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span >{{ item.title }}</span>
@@ -177,9 +188,11 @@ interface SubItemInterface {
                   >
                     <SidebarMenuButton class="sidebar__button">
                       <RouterLink
+
                         :to="`/personalCenter/userInfo/myPosts`"
                         active-class="sidebar__link--active"
                         class="sidebar__link mb-1 "
+                        @click="skipToPersonalCenter"
                       >
                         <Icon icon="bi:person" />&nbsp;
                         <span>个人资料</span>
@@ -190,9 +203,14 @@ interface SubItemInterface {
                         :to="`/message/likeMes`"
                         active-class="sidebar__link--active"
                         class="sidebar__link"
+                        @click="handleMessageClick"
                       >
                         <Icon icon="mage:box-3d-notification" />&nbsp;
                         <span>消息</span>
+                        <span
+                         v-if="messageStore.hasNewMessage"
+                        class="dot"
+                        ></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -221,7 +239,9 @@ interface SubItemInterface {
                       size="lg"
                       class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     >
-                      <img src="@/assets/img/headImg.jpg" alt="" class="avatar" />
+                      <!-- <img src="@/assets/img/headImg.jpg" alt="" class="avatar" /> -->
+                       <div class="avatar"> <Avatar    /></div>
+
                       <div class="grid flex-1 text-left text-sm leading-tight">
                         <span class="truncate">爆米奇</span>
                       </div>
@@ -232,21 +252,13 @@ interface SubItemInterface {
                     class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
                     side="bottom"
                     :side-offset="4"
-                  ><router-link to="/personalCenter/userInfo/myPosts">
+                  ><router-link to="/personalCenter/userInfo">
                     <DropdownMenuItem class="drop-menu-item">
                       <BadgeCheck />
                     个人资料
                     </DropdownMenuItem class="drop-menu-item">
                   </router-link>
-                    <DropdownMenuItem class="drop-menu-item">
-                      <CreditCard />
-                      Billing
-                    </DropdownMenuItem class="drop-menu-item">
-
-                    <DropdownMenuItem class="drop-menu-item">
-                      <Bell />
-                      Notifications
-                    </DropdownMenuItem>
+        
 
                     <DropdownMenuItem class="drop-menu-item" @click="logout()">
                       <LogOut />
@@ -300,6 +312,15 @@ interface SubItemInterface {
 </template>
 
 <style lang="scss" scoped>
+.dot{
+  position: absolute;
+  top: 40%;
+  right: 20px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ff0000;;
+}
 .main-menu {
   display: none;
 }
@@ -366,6 +387,7 @@ interface SubItemInterface {
     box-sizing: border-box;
     padding: 0.65rem 1rem;
     border-radius: 2rem;
+    position: relative;
   }
   &-logo {
     height: 80px;

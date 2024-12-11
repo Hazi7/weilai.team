@@ -16,6 +16,9 @@ const searchUserList = ref<UserInfo[]>([]);
 const filterUserList = ref<UserInfo[]>([]);
 const route = useRoute();
 const path = route.path;
+console.log(route);
+
+const pathArr = path.split("/").slice(1);
 // 接受父组件传来的函数
 const props = defineProps({
   typeId: {
@@ -101,9 +104,11 @@ function handleClick(e: Event) {
 }
 function skip(e: Event) {
   if (searchValue.value) {
-    router.push(`${path}/${searchValue.value}`);
+    router.push(
+      `/${pathArr[0]}/${pathArr[1]}/${pathArr[2]}/${searchValue.value}`,
+    );
   } else {
-    router.push(`${path}`);
+    router.push(`/${pathArr[0]}/${pathArr[1]}/${pathArr[2]}`);
   }
 }
 </script>
@@ -136,7 +141,7 @@ function skip(e: Event) {
       <div class="search_list" v-show="searchValue && isVisible && !isUser">
         <div class="search_empty" v-if="!filterList.length">未找到搜索结果</div>
         <div class="search_item" v-for="item in filterList">
-          <a @click="router.push(`/community/comprehensive/${item.title}`)">
+          <a @click="router.push(`/community/comprehensive/hot/${item.title}`)">
             <span>{{ item.title }}</span>
           </a>
         </div>

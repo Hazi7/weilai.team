@@ -3,11 +3,17 @@
       <div class="commentCon">
         <div class="titleOptions">
           <Icon icon="ant-design:clear-outlined" class="clearIcon"/>
-          <div class="clearAll">清空所有</div>
+          <div class="clearAll">清空所有({{ totalCount }})</div>
         </div>
         <div class="messageCon">
+          <NoData v-if="messages.length === 0" />
+          <div v-else class="messageList">
           <div v-for="message in messages" :key="message.messageId" class="mess">
-            <MesItem :message="message" />
+            <MesItem 
+            :message="message" 
+            @system="messageList"
+            />
+          </div>
           </div>
         </div>
       </div>
@@ -17,24 +23,30 @@
   </template>
   
   <script setup lang="ts">
+  import NoData from '../../../../components/loading/NoData.vue';
   import Rightbar from '@/components/community/Rightbar.vue';
   import { Icon } from "@iconify/vue";
   import MesItem from '../../compontent/MesItem.vue';
-  import useSSE from '../../composables/sse';
   import { onMounted,ref} from 'vue';
   import { useRequest } from '@/composables/useRequest';
   const { data, loading, error, executeRequest } = useRequest();
-  const { connect, disconnect, subscribe, unsubscribe, isConnected } = useSSE();
-  import type { SSEMessageData } from '../../composables/types';
+  import { useSseStore } from '../../../../store/useSseStore';
+  import { useMessageStore } from '@/store/messageStore';
+  import type { SSEMessageData } from '../../../../types/sseType';
+  const messageStore = useMessageStore();
+  const sseStore = useSseStore();
   const messages = ref<SSEMessageData[]>([]); 
-  const messageType = 3
+  const messageType = 4
   const pageSize = 10
   const pageNumber=1
+  const totalCount = ref(0)
   onMounted(() => {
-        connect()
-        subscribe('message', (message: SSEMessageData) => {
-          messages.value.push(message);
+    sseStore.subscribe('message', (message: SSEMessageData) => {
+          if(message.messageType==messageType){
+          messages.value.unshift(message);
           console.log(message);
+          messageStore.setHasNewMessage(true); 
+        }
       });
         messageList()
   });
@@ -44,9 +56,10 @@
     messages.value = [];
     await executeRequest({url:`/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,method:'get'});
     if(data.value?.code==200){
+      totalCount.value=data.value?.data.PageInfo.totalCount
       const allMessages = data.value?.data.AllMessages || [];
       messages.value = allMessages; 
-      console.log("获取的全部消息数据：", allMessages);
+      messageStore.setHasNewMessage(false);     
     }else if(data.value?.code==401){
       console.log("请先登录"); 
     }else{
@@ -77,6 +90,12 @@
   }
   .mess{
     width: 95%;
+  }
+  .messageList{
+    width: 95%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
   }
      .commentCon{
         width: 100%;

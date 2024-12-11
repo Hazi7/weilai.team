@@ -1,17 +1,18 @@
 <template>
   <div id="news">
-    <div class="news-item" v-for="item in articleList">
+    <div
+      class="news-item"
+      v-for="item in articleList"
+      v-if="articleList.length > 0"
+    >
       <div class="news-writer">
         <div class="avatar" @click="skipPersonCenter(item.id)">
-          <img v-if="item.headPortrait" :src="`${item.headPortrait}`" alt="" />
-          <div v-else class="flex items-center space-x-4">
-            <Skeleton class="bg-[--muted] h-12 w-12 rounded-full" />
-          </div>
+          <UserAvatar :avatar="item.headPortrait" />
         </div>
         <div class="writer-info">
           <div class="name">{{ item.name }}</div>
           <div class="time">
-            发布于 <span>{{ item.postTime }}</span>
+            <span>{{ formatPostTime(item.postTime) }}</span>
           </div>
         </div>
       </div>
@@ -26,21 +27,20 @@
             {{ item.postAbstract }}
           </p>
         </div>
-        <div class="news-label">
-          <div class="type">{{ checkType(item.type) }}</div>
-          <ul class="labels">
-            <li class="label-item" v-for="tags in item.postTags">
-              #{{ tags }}
-            </li>
-          </ul>
-        </div>
       </RouterLink>
+      <div class="news-label">
+        <div class="type">{{ checkType(item.type) }}</div>
+        <ul class="labels">
+          <li class="label-item" v-for="tags in item.postTags">#{{ tags }}</li>
+        </ul>
+      </div>
       <NewsFooter
         :viewCount="item.viewCount"
         :likeCount="item.likeCount"
         :commentCount="item.commentCount"
       />
     </div>
+    <div v-if="articleList.length == 0"><NoData /></div>
   </div>
 
   <!-- <div v-if="loading">加载中</div> -->
@@ -63,8 +63,12 @@
 </template>
 
 <script setup lang="ts">
+import UserAvatar from "@/components/avatar/UserAvatar.vue";
+import NoData from "@/components/loading/NoData.vue";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useUserStore } from "@/store/userStore";
 import type { ArticleList } from "@/types/Community";
+import { formatPostTime } from "@/utils/formatPostTime";
 import {
   articleList,
   checkType,
@@ -73,15 +77,14 @@ import {
 } from "@community/composables/search";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
-import { useUserStore } from "@/store/userStore";
 import NewsFooter from "./NewsFooter.vue";
+
 const isTag = ref(false);
-console.log(loading.value);
+
 const userStore = useUserStore();
 const router = useRouter();
 const props = defineProps<{
-  type: number | 0;
+  type?: number | 0;
   page?: number;
   condition?: string | "";
   tagPostList?: Array<ArticleList>;
@@ -89,13 +92,15 @@ const props = defineProps<{
 }>();
 const route = useRoute();
 //跳转个人中心;
-const skipPersonCenter = (id: number) => {
+function skipPersonCenter(id: number) {
+  console.log("点击头像了");
+
   userStore.setUserId(id);
   userStore.setIsSelf(false);
   router.push({
     path: `/personalCenter/userInfo`,
   });
-};
+}
 
 if (!props.isTag) {
   // 搜索数据要用的
@@ -193,29 +198,30 @@ if (!props.isTag) {
           word-break: break-all;
         }
       }
-      .news-label {
-        margin-top: 10px;
+    }
+    .news-label {
+      padding: 5px 55px;
+
+      display: flex;
+      .type {
+        min-width: 50px;
+        width: max-content;
+        padding: 0 8px;
+        font-size: 14px;
+        color: #909ba6;
+        text-align: center;
+        border-radius: 15px;
+        border: 2px solid #e1edf8;
+        margin-right: 8px;
+      }
+
+      .labels {
         display: flex;
-        .type {
-          min-width: 50px;
-          width: max-content;
-          padding: 0 8px;
-          font-size: 14px;
-          color: #909ba6;
-          text-align: center;
-          border-radius: 15px;
-          border: 2px solid #e1edf8;
-          margin-right: 8px;
-        }
 
-        .labels {
-          display: flex;
-
-          color: #909ba6;
-          font-size: 14px;
-          .label-item {
-            margin: 0 5px;
-          }
+        color: #909ba6;
+        font-size: 14px;
+        .label-item {
+          margin: 0 5px;
         }
       }
     }

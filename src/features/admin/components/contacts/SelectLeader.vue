@@ -24,36 +24,36 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useAlert } from "@/composables/useAlert";
 import { useRequest } from "@/composables/useRequest";
 import { cn } from "@/lib/utils";
 import type { TeamUserList } from "@/types/Contacts";
 import { Check, ChevronsUpDown } from "lucide-vue-next";
 import { ref, watch } from "vue";
-import {
-  getMembersByGroupAndGrade,
-  setLeader,
-} from "../../composables/useContacts";
+import { getMembersByGrade, setLeader } from "../../composables/useContacts";
 const leader = ref<TeamUserList>();
 const { executeRequest, error, loading, data } = useRequest();
 const frameworks = ref<TeamUserList[]>([]);
 const open = ref(false);
 const value = ref("");
-const props = defineProps(["group", "grade"]);
+const props = defineProps(["group", "grade", "updateData"]);
 const grade = ref(props.grade);
 const group = ref(props.group);
-
+const updateData = props.updateData;
+const { showAlert } = useAlert();
+// 控制弹窗显示
+const isVisible = ref<boolean>(false);
+const dialogRef = ref<InstanceType<typeof Dialog> | null>(null);
 watch(
   () => props,
   (newVal) => {
-    console.log("传过来的数据变了", 1111);
-    console.log(newVal);
-    console.log(grade.value, group.value);
     grade.value = newVal.grade;
     group.value = newVal.group;
-    getMembersByGroupAndGrade(grade.value, group.value).then((res) => {
+    let leaderGrade = parseInt(grade.value) - 1;
+    getMembersByGrade(leaderGrade + "").then((res) => {
       console.log(res);
-      leader.value = res.userGroupLeader;
-      frameworks.value = res.teamUserList;
+
+      frameworks.value = res.data;
     });
     value.value = "";
   },
@@ -68,14 +68,33 @@ function setGroupLeader() {
     group: `${grade.value}` + "$" + `${group.value}`,
     userId: parseInt(value.value),
   };
+
+  if (Number.isNaN(info.userId)) {
+    return showAlert("请选择组长", "waring");
+  }
   setLeader(info).then((res) => {
     console.log(res);
+    if (res.code == 6020) {
+      return showAlert(res.message, "error");
+    } else {
+      showAlert("设置成功", "pass");
+      updateData(grade.value, group.value);
+    }
+
+    // 关闭对话框
+    isVisible.value = false;
+    if (dialogRef.value) {
+      dialogRef.value.$emit("update:open", false); // 触发 'update:open' 事件通知 Dialog 组件更新状态
+    }
   });
 }
+const handleDialogOpen = (newValue: boolean) => {
+  isVisible.value = newValue;
+};
 </script>
 
 <template>
-  <Dialog>
+  <Dialog :open="isVisible" @update:open="handleDialogOpen">
     <DialogTrigger as-child>
       <Button variant="outline" size="sm" class="h-7 gap-1 header-btn">
         <Icon icon="proicons:person-2" />

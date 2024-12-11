@@ -7,14 +7,14 @@
           <div class="p-1">
             <Card>
               <CardContent class="flex items-center justify-center">
-                <img :src="item ? item : '/logo.png'" alt="生活照片" class="w-[100%] h-[200px] object-cover" />
+                <img :src="item ? item : '/logo.png'" alt="生活照片" class="w-[100%] h-[300px] object-cover" />
               </CardContent>
             </Card>
           </div>
         </CarouselItem>
       </CarouselContent>
     </Carousel>
-    <Skeleton v-if="!userInfo.lifePhoto || userInfo.lifePhoto.length == 0" class="w-[100%] h-[200px] bg-gray-100" />
+    <Skeleton v-if="!userInfo.lifePhoto || userInfo.lifePhoto.length == 0" class="w-[100%] h-[300px] bg-gray-100" />
     <div class="myInfo"> 
       <div class="container-left">
         <Avatar class="w-[100px] h-[100px] -mt-[50px] mr-[20px] ml-[20px] z-20 bg-white">
@@ -30,7 +30,7 @@
           <p class="job">{{ userInfo.direction }}</p>
         </div>
       </div>
-      <div class="container-right">
+      <div class="container-right" v-if="userStore.isSelf">
         <Dialog>
           <DialogTrigger as-child>
             <Button variant="outline" class="bg-green-100 text-green-600">
@@ -38,6 +38,7 @@
             </Button>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px] bg-white max-h-[500px] overflow-y-auto">
+            <DialogClose id="dialogClose"></DialogClose>
             <DialogHeader>
               <DialogTitle>修改信息</DialogTitle>
               <DialogDescription>
@@ -122,7 +123,7 @@
       </div>
     </div>
 
-    <div class="lastLoginTime" v-if="userInfo.lastLoginTime">
+    <div class="lastLoginTime" v-if="userInfo.lastLoginTime&&userStore.isSelf">
 
       <p>
         <Icon style="display: inline-block;" icon="mdi:calendar-outline" />
@@ -157,6 +158,8 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import { Skeleton } from '@/components/ui/skeleton'
 import Autoplay from 'embla-carousel-autoplay'
 
+//引入pinia 
+import { useUserStore } from '@/store/userStore'
 
 // 引入hooks并调用
 import { useRequest } from '@/composables/useRequest';
@@ -165,7 +168,11 @@ import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorageWithExpire()
 import { useDateFormatter } from '@/composables/useDateFormatter'
 import type { RefSymbol } from '@vue/reactivity';
+import { Store } from 'lucide-vue-next';
 const { formatDateToYYYYMMDD } = useDateFormatter()
+
+const userStore=useUserStore()
+console.log('pinia///',userStore);
 
 const plugin = Autoplay({
   delay: 2000,
@@ -180,7 +187,12 @@ function changeIsShow() {
 }
 
 // 获取userId
-const userId = getLocalStorageWithExpire('userId')
+let userId=0
+if (userStore.isSelf) {
+  userId = getLocalStorageWithExpire('userId')
+}else{
+  userId = userStore.userId
+}
 
 // 定义userInfo储存用户信息
 let userInfo = reactive<UserInfo>({
@@ -264,6 +276,8 @@ async function submitForm() {
     graduationDestination: graduationDestination.value,
     qq: qq.value,
   }
+  document.getElementById('dialogClose').click()
+
   console.log(dataToSend);
 
   await executeRequest({ url: '/user/updateUserInfo', method: 'put', requestData: dataToSend })
@@ -279,7 +293,6 @@ async function submitForm() {
   background-color: white;
   padding: 10px;
   border-radius: 10px;
-  // box-shadow: 5px 5px 5px #ccc;
 
   .bagdImg {
     width: 100%;

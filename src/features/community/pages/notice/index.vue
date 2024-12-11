@@ -4,7 +4,7 @@
       <div class="actionCon">
         <div class="allNotice">
           全部({{total}})
-          <div class="dot"></div>
+          <div v-if="total=0" class="dot"></div>
         </div>
         <div class="noRead">
           <!-- 未读({{ 444 }}) -->
@@ -26,11 +26,14 @@
       
       </div>
       <div class="noticeItemCon">
+        <NoData v-if="notices.length === 0"/>
+        <div  v-else class="noticeList">
         <div v-for="notice in notices" :key="notice.noticeId" class="noticess" >
           <NoticeItem 
           :notice="notice"
           :notice-list="noticeList"
            />
+        </div>
         </div>
         <!-- <div class="aaa"><CommentList :post-id="postId"/></div> -->
       </div>
@@ -40,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import NoData from '../../../../components/loading/NoData.vue';
 import { Icon } from "@iconify/vue";
 import Rightbar from "../../../../components/community/Rightbar.vue";
 import NoticeItem from "./NoticeItem.vue";
@@ -65,9 +69,9 @@ import {
 
 
 onMounted(() => {
-      // connect()
-      subscribe('message', (notice: SSENoticeData) => {
-        notices.value.push(notice);
+      connect()
+      subscribe('notice', (notice: SSENoticeData) => {
+        notices.value.unshift(notice);
         console.log(notice);
     });
     noticeList()
@@ -106,6 +110,12 @@ const noticeList = async() => {
 }
 .noticess{
   width: 95%;
+}
+.noticeList{
+  width: 95%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 .noticeItemCon{
   width: 100%;

@@ -45,7 +45,7 @@ import { checkType, getArticle } from "@community/composables/search";
 import { Icon } from "@iconify/vue";
 import { MoreHorizontal } from "lucide-vue-next";
 import { ref, watch } from "vue";
-
+import NoData from "@/components/loading/NoData.vue";
 import {
   Popover,
   PopoverContent,
@@ -111,20 +111,17 @@ async function searchArticle() {
   } else {
     selectTime.value = "";
   }
-
   let res = await getArticle(
     selectType.value,
     condition.value || undefined,
     page.value || 1,
     selectTime.value || "",
   );
-  console.log(res);
   postList.value = res.records;
   total.value = res.total;
   pageSize.value = res.size;
 }
 function deleteArticle(id: number) {
-  console.log(id);
   executeRequest({ url: `/post/delete/${id}`, method: "put" }).then(() => {
     getArticle(page.value).then((res) => {
       postList.value = res.records;
@@ -138,7 +135,6 @@ function deleteArticles() {
     });
   });
 }
-
 // 实现全选反选多选
 function handleSelectAll() {
   if (postList.value.length === 0) return;
@@ -153,8 +149,9 @@ function reset() {
   condition.value = "";
   getArticleInAdmin();
 }
-
 const handleItemSelect = (item: any) => {
+  console.log(postList.value);
+
   isAllSelected.value = true;
   postList.value.forEach((item: any) => {
     if (!item.selected) {
@@ -162,7 +159,6 @@ const handleItemSelect = (item: any) => {
     }
   });
 };
-
 function df(date: any, format = "yyyy - MM - dd HH:mm") {
   // 获取日期的各个部分，包括分钟
   let year = date.getFullYear();
@@ -285,7 +281,7 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
               </div>
             </CardHeader>
             <CardContent class="card_content">
-              <Table id="tb">
+              <Table id="tb" v-if="postList.length">
                 <TableHeader>
                   <TableRow>
                     <TableHead class="hidden w-[100px] md:table-cell text-left">
@@ -374,6 +370,9 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
                   </TableRow>
                 </TableBody>
               </Table>
+              <div v-else>
+                <NoData />
+              </div>
             </CardContent>
             <CardFooter class="justify-center">
               <div class="pagination-container">

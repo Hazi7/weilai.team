@@ -1,74 +1,59 @@
 <script setup lang="ts">
 import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-vue-next'
-import ForgotPassword from './ForgotPassword.vue'
 import useLogin from '../../composables/useLoginAll'
-import { Icon } from "@iconify/vue";
-import { useAlert } from '@/composables/useAlert'
-// import { debounce } from "@community/composables/search";
-import { ref, watch } from 'vue'
+import LoginContent from './LoginContent.vue'
+import { ref, watch, reactive } from 'vue'
 import * as z from "zod";
 import { onMounted, onUnmounted } from 'vue'
-// import ErrorHead from './ErrorHead.vue'
 
-const { showAlert } = useAlert();
+const loginData = reactive({
+    account: '' as string | number | undefined,
+    password: '' as string | number | undefined,
+})
 interface LoginError {
     account: string;
     password: string;
 }
-// const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 const filedErrors = ref<z.ZodFormattedError<LoginError> | undefined>();
 const loginSchema = z.object({
     account: z
         .string()
         .min(1, { message: '请输入账号' }),
-    password: z.string().min(1, { message: '请输入密码' })
+    password: z
+        .string()
+        .min(1, { message: '请输入密码' })
 })
+
+
 
 const validateLogin = () => {
     const loginResult = loginSchema.safeParse({
-        account: account.value,
-        password: password.value
+        account: loginData.account,
+        password: loginData.password
     })
-    console.log(loginResult.success);
     if (!loginResult.success) {
-        console.log(loginResult.error.issues[0].message)
-        return false
+        filedErrors.value = loginResult.error.format();
     }
     return loginResult.success
 }
 
-const account = ref<string>('')
-const password = ref<string>('')
 const { loading, getLogin } = useLogin()
 
-function sendLogin() {
-    if (account.value === '') {
-        showAlert("账号不能为空", "waring");
-    } else if (password.value === '') {
-        showAlert("密码不能为空", "waring");
-    } else {
-        getLogin(account.value, password.value)
-        loading.value = true
+const handleLogin = async () => {
+    if (!validateLogin()) {
+        return;
     }
-}
-
-// const handleLogin = async () => {
-//     if (!validateLogin()) {
-//         return;
-//     }
-//     watch(
-//         () => loading,
-//         () => {
-//             console.log(loading);
-//         },
-//     );
-//     getLogin(account.value, password.value)
-//     loading.value = true
-// };
+    watch(
+        () => loading,
+        () => {
+            console.log(loading);
+        },
+    );
+    getLogin(loginData.account, loginData.password)
+};
 
 // defineEmits<{
 //     (e: 'login', user: User)
@@ -78,7 +63,7 @@ function sendLogin() {
 const isVisible = ref(false)
 // 监听点击事件，触发动画
 const handleClick = (event: MouseEvent) => {
-    console.log('页面被点击了');
+    console.log('页面被点击了', event);
     if (!isVisible.value) {
         isVisible.value = true
     }
@@ -92,8 +77,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="loginOut" :class="{ 'animate-fadeIn': isVisible }">
-        <Card class="loginContent mx-auto max-w-sm">
+    <div class="loginOut">
+        <!-- :class="{ 'animate-fadeIn': isVisible }" -->
+        <Card class="loginContent mx-auto max-w-sm" :class="{ 'clickContent': isVisible }">
             <CardHeader>
                 <CardTitle class="loginTitle text-2xl">
                     登录
@@ -101,28 +87,50 @@ onUnmounted(() => {
             </CardHeader>
             <CardContent>
                 <div class="grid gap-4">
-                    <div class="grid gap-2">
+                    <!-- <div class="grid gap-2">
                         <Label class="inputTitle" for="stuId">账号</Label>
-                        <!-- <ErrorHead v-if="loginResult.error" :message="loginResult.error.issues[0].message"> -->
-                        <!-- </ErrorHead> -->
-                        <Input class="formInput" id="stuId" placeholder="请输入学号或邮箱" required v-model="account" />
+                        <ErrorHead v-if="noAccount" :message="'请输入账号'"></ErrorHead>
+                        <Input class="formInput" :class="{ 'noWrite': noAccount }" @input="noAccount = false" id="stuId"
+                            placeholder="请输入学号或邮箱" required :model-value="account" />
                     </div>
                     <div class="grid gap-2">
                         <div class="flex items-center justify-between">
                             <Label class="inputTitle" for="password">密码</Label>
                         </div>
-                        <Input class="formInput" id="password" type="password" placeholder="请输入密码" required
-                            v-model="password" />
-                    </div>
-                    <div class="forgotPass grid gap-2">
-                        <div class="flex items-center justify-end">
+                        <ErrorHead v-if="noPassword" :message="'请输入密码'">
+                        </ErrorHead>
+                        <Input class="formInput" :class="{ 'noWrite': noPassword }" @input="noPassword = false"
+                            id="password" type="password" placeholder="请输入密码" required v-model="password" />
+                        <div class="forgotPass flex items-center justify-end">
                             <ForgotPassword></ForgotPassword>
                         </div>
-                    </div>
-                    <Button type="submit" class="loginButton w-full" @click="sendLogin" v-if="!loading">
+                    </div> -->
+                    <LoginContent :errors="filedErrors" :account="loginData.account" :password="loginData.password"
+                        @update:login-account="(val) => {
+                            loginData.account = val;
+                            const result = loginSchema
+                                .pick({ account: true })
+                                .safeParse({
+                                    account: val,
+                                });
+                            if (filedErrors) {
+                                filedErrors.account = result.error?.format().account;
+                            }
+                        }" @update:login-password="(val) => {
+                            loginData.password = val;
+                            const result = loginSchema
+                                .pick({ password: true })
+                                .safeParse({
+                                    password: val,
+                                });
+                            if (filedErrors) {
+                                filedErrors.password = result.error?.format().password;
+                            }
+                        }"></LoginContent>
+                    <Button v-if="!loading" type="submit" class="loginButton w-full" @click="handleLogin">
                         登录
                     </Button>
-                    <Button class="loginButton" disabled v-if="loading">
+                    <Button v-if="loading" class="loginButton" disabled>
                         <Loader2 class="w-4 h-4 mr-2 animate-spin" />
                         登录中...
                     </Button>
@@ -145,23 +153,23 @@ onUnmounted(() => {
     opacity: 0;
     height: 0;
     overflow: hidden;
-    animation: fadeIn 2s linear forwards;
+    animation: fadeIn 0.5s linear forwards;
     animation-delay: 2.4s;
 
     .loginTitle {
         text-align: center;
         font-size: 34px;
-        margin: 15px 0 10px 0;
+        margin: 7px 0 0px 0;
     }
 
     .inputTitle {
         font-size: 16px;
-        margin: 15px 0 8px 0;
+        margin: 7px 0 6px 0;
     }
 
     .forgotPass {
         position: relative;
-        top: -15px;
+        top: -12px;
     }
 
     .loginButton {
@@ -179,6 +187,18 @@ onUnmounted(() => {
         align-items: center;
         color: var(--destructive-foreground);
     }
+
+    .noWrite {
+        border: 1px solid var(--destructive-foreground);
+        // color: var(--destructive-foreground);
+    }
+}
+
+.clickContent {
+    animation: none;
+    animation-play-state: paused;
+    opacity: 1;
+    height: 100%;
 }
 
 // .loginContent.animate-fadeIn {
@@ -220,13 +240,13 @@ onUnmounted(() => {
 
         .loginTitle {
             text-align: center;
-            font-size: 32px;
-            margin: 12px 0 5px 0;
+            font-size: 30px;
+            margin: 5px 0 0px 0;
         }
 
         .inputTitle {
-            font-size: 15px;
-            margin: 10px 0 6px 0;
+            font-size: 14px;
+            margin: 3px 0 1px 0;
         }
 
         .formInput {
@@ -237,39 +257,7 @@ onUnmounted(() => {
         .loginButton {
             height: 35px;
             font-size: 14px;
-            margin-bottom: 30px;
-        }
-    }
-}
-
-@media screen and (max-width: 1400px) {
-    .loginOut {
-        width: 350px;
-    }
-
-    .loginContent {
-        margin-top: 80px;
-
-        .loginTitle {
-            text-align: center;
-            font-size: 32px;
-            margin: 12px 0 5px 0;
-        }
-
-        .inputTitle {
-            font-size: 15px;
-            margin: 10px 0 6px 0;
-        }
-
-        .formInput {
-            height: 36px;
-            font-size: 12px;
-        }
-
-        .loginButton {
-            height: 35px;
-            font-size: 14px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
     }
 }
@@ -285,21 +273,21 @@ onUnmounted(() => {
         .loginTitle {
             text-align: center;
             font-size: 28px;
-            margin: 8px 0 5px 0;
+            margin: 0;
         }
 
         .inputTitle {
-            font-size: 13px;
-            margin: 2px 0 5px 0;
+            font-size: 12px;
+            margin: 0;
         }
 
         .formInput {
-            height: 32px;
+            height: 28px;
             font-size: 10px;
         }
 
         .loginButton {
-            height: 30px;
+            height: 28px;
             font-size: 13px;
             margin-bottom: 15px;
         }

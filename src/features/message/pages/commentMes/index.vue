@@ -1,123 +1,149 @@
 <template>
-  <div class="" style="display: flex;">
+  <div class="" style="display: flex">
     <div class="commentCon">
       <div class="titleOptions">
-        <Icon icon="ant-design:clear-outlined" class="clearIcon"/>
-        <div class="clearAll">清空所有</div>
+        <Icon icon="ant-design:clear-outlined" class="clearIcon" />
+        <div class="clearAll" @click="deleteAll">
+          清空所有({{ totalCount }})
+        </div>
       </div>
       <div class="messageCon">
-        <div v-for="message in messages" :key="message.messageId" class="mess">
-          <MesItem :message="message" />
+        <NoData v-if="messages.length === 0" />
+        <div v-else class="messageList">
+          <div
+            v-for="message in messages"
+            :key="message.messageId"
+            class="mess"
+          >
+            <MesItem :message="message" @comment="messageList" />
+          </div>
         </div>
       </div>
     </div>
-    <Rightbar/>
+    <Rightbar />
   </div>
-  
 </template>
 
 <script setup lang="ts">
-import Rightbar from '@/components/community/Rightbar.vue';
+import NoData from "../../../../components/loading/NoData.vue";
+import Rightbar from "@/components/community/Rightbar.vue";
 import { Icon } from "@iconify/vue";
-import MesItem from '../../compontent/MesItem.vue';
-import useSSE from '../../composables/sse';
-import { onMounted,ref} from 'vue';
-import { useRequest } from '@/composables/useRequest';
-const { data, loading, error, executeRequest } = useRequest();
-const { connect, disconnect, subscribe, unsubscribe, isConnected } = useSSE();
-import type { SSEMessageData } from '../../composables/types';
-const messages = ref<SSEMessageData[]>([]); 
-const messageType = 3
-const pageSize = 10
-const pageNumber=1
+import MesItem from "../../compontent/MesItem.vue";
+import type { SSEMessageData } from "../../../../types/sseType";
+import { useSseStore } from "../../../../store/useSseStore";
+import { onMounted, ref } from "vue";
+import { useRequest } from "@/composables/useRequest";
+import { useMessageStore } from "@/store/messageStore";
+import { useAlert } from "@/composables/useAlert";
+const { data, executeRequest } = useRequest();
+const { showAlert } = useAlert();
+const sseStore = useSseStore();
+const messageStore = useMessageStore();
+const messages = ref<SSEMessageData[]>([]);
+const messageType = 3;
+const pageSize = 10;
+const pageNumber = 1;
+const totalCount = ref(0);
 onMounted(() => {
-      connect()
-      subscribe('message', (message: SSEMessageData) => {
-        messages.value.push(message);
-        console.log(message);
-    });
-      messageList()
+  sseStore.subscribe("message", (message: SSEMessageData) => {
+    if (message.messageType == messageType) {
+      messages.value.unshift(message);
+      console.log(message);
+      messageStore.setHasNewMessage(true);
+    }
+  });
+  messageList();
 });
 
 //渲染消息列表
-const messageList=async () => {
+const messageList = async () => {
   messages.value = [];
-  await executeRequest({url:`/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,method:'get'});
-  if(data.value?.code==200){
+  await executeRequest({
+    url: `/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,
+    method: "get",
+  });
+  if (data.value?.code == 200) {
+    console.log(data.value);
+
+    totalCount.value = data.value?.data.PageInfo.totalCount;
     const allMessages = data.value?.data.AllMessages || [];
-    messages.value = allMessages; 
-    console.log("获取的全部消息数据：", allMessages);
-  }else if(data.value?.code==401){
-    console.log("请先登录"); 
-  }else{
-    console.log("获取失败");
+    messages.value = allMessages;
+  } else if (data.value?.code == 401) {
+    showAlert("请先登录", "waring");
+  } else {
     console.log(data.value);
   }
-}
+};
 
-//删除所有点赞/收藏消息
+//删除所有评论消息
 const deleteAll = async () => {
   await executeRequest({
-      url: `/message/deleteAllMessage`,
-      method: 'delete',
-      requestData: { messageType },
-    });
-    if (data.value?.data.code === 200) {
-      alert('删除成功');
-    } else {
-      alert('删除失败');
-    }
-}
-
+    url: `/message/deleteAllMessages`,
+    method: "delete",
+    requestData: { messageType },
+  });
+  if (data.value.code === 200) {
+    showAlert("删除成功", "pass");
+    messageList();
+  } else {
+    showAlert("删除失败", "error");
+    console.log(data.value);
+  }
+};
 </script>
 
 <style scoped lang="scss">
-.comments{
+.comments {
   width: 690px;
 }
-.mess{
-    width: 95%;
+.messageList {
+  width: 95%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mess {
+  width: 95%;
+}
+.commentCon {
+  width: 100%;
+  .titleOptions {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    cursor: pointer;
+    .clearAll {
+      width: 130px;
+      font-size: 15px;
+    }
+    .clearIcon {
+      margin: 2px 4px 0 0px;
+      font-size: 19px;
+    }
   }
-   .commentCon{
-      width: 100%;
-      .titleOptions{
-        width: 100%;
-        height: 50px;
-        display: flex;
-        cursor: pointer;
-        .clearAll{
-          width: 130px;
-          font-size: 15px;
-        }
-        .clearIcon{
-          margin:2px 4px 0 0px;
-          font-size: 19px;
-        } 
-      }
-      .messageCon{
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        
-      }
-   }
+  .messageCon {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
 @media screen and (max-width: 768px) {
-  .commentCon{
+  .commentCon {
     margin-top: 100px;
     width: 100%;
-    .titleOptions{
+    .titleOptions {
       width: 100%;
       margin-top: 15px;
       height: 30px;
-      .clearIcon{
-          margin:2px 4px 0 5px;
-          font-size: 19px;
-      } 
+      .clearIcon {
+        margin: 2px 4px 0 5px;
+        font-size: 19px;
+      }
     }
-    .messageCon{
+    .messageCon {
       width: 100%;
-      .mesItem{
+      .mesItem {
         width: 98%;
         margin-right: 0;
       }

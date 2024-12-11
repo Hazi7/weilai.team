@@ -3,7 +3,7 @@ import { useRequest } from "@/composables/useRequest";
 import type { ArticleList, Data } from "@/types/Community";
 import { ref } from "vue";
 const { showAlert } = useAlert();
-
+import apiClient from "@/api/axios";
 const { executeRequest, error, loading, data } = useRequest();
 let articleList = ref<ArticleList[]>([]);
 let searchResult = ref<ArticleList[]>([]);

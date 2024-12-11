@@ -1,16 +1,54 @@
 <script setup lang="ts">
+
+
+
 import TheTopNav from "../../../components/layouts/AppThirdNav.vue";
+import { useTagStore } from "@/store/tagTypeStore";
+import { ref } from "vue";
+interface TagData {
+  type: number;
+  tagType: string;
+}
+// const tagType = ref('blog')
+const typeData = ref<TagData>({ type: 0, tagType: "comprehensive" });
+
+const addTagType = useTagStore();
+addTagType.addTag(typeData.value);
+
+
+import MyHeader from '../components/MyHeader.vue';
+import MyTabs from '../components/MyTabs.vue';
+import Rightbar from '../../../components/community/Rightbar.vue'
 </script>
 
 <template>
   <TheTopNav></TheTopNav>
-  <RouterView></RouterView>
+  <div style="display: flex;">
+    <div class="content">
+      <MyHeader></MyHeader>
+      <MyTabs></MyTabs>
+    </div>
+    <Rightbar></Rightbar>
+
+  </div>
+
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.content {
+  width: 100%;
+  padding: 0px 100px 10px 100px;
+}
 
-<route lang="json">
-{
+/* 使用媒体查询为手机端修改padding */
+@media (max-width: 768px) {
+  .content {
+    padding: 80px 0 60px 0;
+  }
+}
+</style>
+
+<route lang="json">{
   "meta": {
     "title": "资料",
     "thirdNavItems": [
@@ -21,5 +59,4 @@ import TheTopNav from "../../../components/layouts/AppThirdNav.vue";
       }
     ]
   }
-}
-</route>
+}</route>

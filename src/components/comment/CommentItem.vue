@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { Icon } from "@iconify/vue";
 import { useRequest } from "@/composables/useRequest";
 import CommentForm from "./CommentForm.vue";
 import { createUserInfo, getUserInfo } from "./index";
 import sonComment from "./SonComment.vue";
+import { formatPostTime } from "@/utils/formatPostTime";
+import { useAlert } from "@/composables/useAlert";
+import UserAvatar from "../avatar/UserAvatar.vue";
 
 const props = defineProps({
   comment: {
@@ -20,8 +23,12 @@ const props = defineProps({
     required: false,
     default: () => () => {},
   },
+  postId: {
+    type: [String, Number],
+    required: true,
+  },
 });
-
+const { showAlert } = useAlert();
 const { data, executeRequest } = useRequest();
 const isFormVisible = ref(false);
 const pageSize = ref(2);
@@ -31,14 +38,8 @@ const userInfo = ref(createUserInfo());
 const total = ref(0);
 const showMore = ref(true);
 
-const formattedTime = computed(() => {
-  const commentTime = new Date(props.comment.commentTime);
-  const year = commentTime.getFullYear();
-  const month = (commentTime.getMonth() + 1).toString().padStart(2, "0");
-  const day = commentTime.getDate().toString().padStart(2, "0");
-  const hours = commentTime.getHours().toString().padStart(2, "0");
-  const minutes = commentTime.getMinutes().toString().padStart(2, "0");
-  return `${year}.${month}.${day} ${hours}:${minutes}`;
+const commentTime = computed(() => {
+  return formatPostTime(props.comment.commentTime);
 });
 
 // 展开回复输入框
@@ -53,6 +54,7 @@ const getSecondComment = async (commentId: number) => {
   });
 
   if (data.value?.data.postCommentAll) {
+    console.log(11);
     total.value = data.value.data.pageInfo.total;
     sonComments.value = data.value.data.postCommentAll.map((comment: any) => {
       const replyInfo = createUserInfo();
@@ -93,12 +95,12 @@ const likeComment = async (commentId: number) => {
   if (data.value?.code === 200) {
     props.getFirstComment();
     if (props.comment.isLike) {
-      alert("取消点赞成功");
+      showAlert("取消点赞成功", "pass");
     } else {
-      alert("点赞成功");
+      showAlert("点赞成功", "pass");
     }
   } else {
-    alert("点赞失败");
+    showAlert("点赞失败", "error");
   }
 };
 //删除一级评论
@@ -109,9 +111,9 @@ const deleteComment = async (commentId: number) => {
   });
   if (data.value?.code === 200) {
     props.getFirstComment();
-    alert("删除成功");
+    showAlert("删除成功", "pass");
   } else {
-    alert("删除失败");
+    showAlert("删除失败", "error");
   }
 };
 
@@ -125,13 +127,11 @@ defineExpose({ userInfo });
 
 <template>
   <div class="comment-item" :class="{ 'is-reply': isReply }">
-    <div class="avatar">
-      <img :src="userInfo.headPortrait || '../../../public/logo.png'" />
-    </div>
+    <UserAvatar class="avatar" :avatar="userInfo.headPortrait" />
     <div class="content-box">
       <div class="user-info">
         <span class="nickname">{{ userInfo.name }}</span>
-        <span class="time">{{ formattedTime }}</span>
+        <span class="time">{{ commentTime }}</span>
       </div>
       <div class="comment-text">
         <span v-if="isReply" :key="comment.pointUser" class="reply-to">{{
@@ -159,14 +159,23 @@ defineExpose({ userInfo });
             :class="{ liked: comment.isLike }"
             @click="likeComment(comment.commentId)"
           >
-            <Icon icon="uiw:like-o" class="likeIcon" />
+            <Icon
+              icon="uiw:like-o"
+              class="likeIcon"
+              :class="{ liked: comment.isLike }"
+            />
             {{ comment.likeCount }}
           </span>
         </div>
       </div>
-      <transition name="slide">
-        <CommentForm v-show="isFormVisible" />
-      </transition>
+      <CommentForm
+        v-show="isFormVisible"
+        :post-id="props.postId"
+        :is-comment="false"
+        :parent-id="comment.commentId"
+        :user-id="comment.userId"
+        @reply="handleLike"
+      />
       <!-- 子评论 -->
       <div class="son-comments">
         <sonComment
@@ -228,7 +237,7 @@ defineExpose({ userInfo });
   margin-bottom: 5px;
   min-height: 90px;
   overflow: hidden;
-  border-bottom: 1px solid #e7e6e6;
+  border-bottom: 1px solid #dddcdc;
 
   .avatar {
     width: 45px;
@@ -252,7 +261,7 @@ defineExpose({ userInfo });
 
   .content-box {
     width: calc(100% - 70px);
-    margin-top: 12px;
+    margin-top: 10px;
 
     .user-info {
       display: flex;
@@ -261,12 +270,12 @@ defineExpose({ userInfo });
       .nickname {
         color: #585858;
         font-weight: bold;
-        margin-right: 15px;
+        margin-right: 14px;
       }
       .time {
         margin-top: 3px;
         color: #999;
-        font-size: 13px;
+        font-size: 12px;
       }
     }
 
@@ -299,14 +308,15 @@ defineExpose({ userInfo });
       .reply-btn {
         display: flex;
         margin-right: 10px;
-        font-size: 14px;
+        font-size: 13.5px;
         color: gray;
         cursor: pointer;
 
         .replyIcon {
           color: gray;
-          margin-top: 3px;
-          margin-right: 5px;
+          margin-top: 4px;
+          margin-right: 4px;
+          font-size: 13px;
         }
       }
       .likeIcon.liked {
@@ -320,29 +330,29 @@ defineExpose({ userInfo });
 
       .like-btn {
         display: flex;
-        font-size: 14px;
+        font-size: 13.5px;
         color: gray;
         cursor: pointer;
 
         .likeIcon {
           display: inline-block;
           transition: box-shadow 0.3s ease-in-out;
-          font-size: 17px;
+          font-size: 16px;
           margin-top: 2px;
           margin-right: 5px;
         }
       }
       .delete-btn {
         display: flex;
-        font-size: 14px;
+        font-size: 13.5px;
         color: gray;
         cursor: pointer;
-        margin-right: 10px;
+        margin-right: 11px;
         .deleteIcon {
           color: gray;
-          font-size: 18px;
+          font-size: 17px;
           margin-top: 2px;
-          margin-right: 3px;
+          margin-right: 2px;
         }
       }
     }
@@ -402,14 +412,14 @@ defineExpose({ userInfo });
 
       .comment-text {
         color: #777;
-        font-size: 14px;
+        font-size: 13.5px;
         margin-bottom: 2px;
       }
 
       .nickname {
         color: #141414;
         font-weight: 500;
-        font-size: 14px;
+        font-size: 13.5px;
         margin-right: 13px;
       }
       .action-box {

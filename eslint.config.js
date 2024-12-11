@@ -18,6 +18,9 @@ export default [
   },
   eslintConfigPrettier,
   {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
     ignores: ["dist/**/*/", "src/components/ui/**/*/"],
   },
 ];

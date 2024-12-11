@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import EditorMenuBar from "@post/components/editor-menu-bar/index.vue";
 import { EditorContent } from "@tiptap/vue-3";
-import type { Editor, JSONContent } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/vue-3";
 import { watch } from "vue";
 
 const props = defineProps<{
   editor: Editor | undefined;
-  postContent: JSONContent | undefined;
+  postContent: string | undefined;
 }>();
 
 watch(
   () => props.editor?.getJSON(),
   () => {
-    emits("update:postContent", props.editor?.getJSON());
+    emits("update:postContent", JSON.stringify(props.editor?.getJSON()));
   },
 );
 const emits = defineEmits<{
-  (e: "update:postContent", value: JSONContent | undefined): void;
+  (e: "update:postContent", value: string | undefined): void;
 }>();
 </script>
 
@@ -30,7 +30,7 @@ const emits = defineEmits<{
 </template>
 
 <style lang="scss">
-@use "../styles/markdown.scss";
+@use "/src/assets/styles/editor/index.scss";
 
 .app-editor {
   flex: 1 1 70%;

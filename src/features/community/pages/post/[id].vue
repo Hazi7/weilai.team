@@ -6,10 +6,10 @@ import { EditorContent } from "@tiptap/vue-3";
 import { useRoute } from "vue-router";
 import ArticleHeader from "../../components/article/ArticleHeader.vue";
 import { type AxiosResponse } from "axios";
-import { computed, ref, watch, watchEffect } from "vue";
+import { computed, watch } from "vue";
 import apiClient from "@/api/axios";
-import CommentForm from "@/components/comment/CommentForm.vue";
 import { formatPostTime } from "@/utils/formatPostTime";
+import { useAlert } from "@/composables/useAlert";
 
 export interface PostDetailResponse {
   userId: number;
@@ -30,13 +30,13 @@ export interface PostDetailResponse {
 // 从路由获取参数
 const route = useRoute<"/community/post/[id]">();
 const postId = route.params.id;
+const { showAlert } = useAlert();
 
 const getPost = () => {
   return apiClient.get(`/post/selectOne/${postId}`);
 };
 const { data, loading, run } =
   useRequest<AxiosResponse<PostDetailResponse>>(getPost);
-
 const formattedPostTime = computed(() => {
   if (data.value?.data.postTime) {
     return formatPostTime(data.value?.data.postTime);
@@ -53,6 +53,58 @@ watch(
     }
   },
 );
+//点赞
+const likeArticle = () => {
+  return apiClient.put(`/post/like/${postId}`);
+};
+const { data: likeData, run: likeRun } = useRequest(() => likeArticle(), {
+  manual: true,
+});
+watch(
+  () => likeData.value,
+  (newLikeData) => {
+    console.log("点赞请求的响应数据:", newLikeData);
+    run();
+    if (newLikeData.code === 2009) {
+      showAlert("点赞成功", "pass");
+    } else if (newLikeData.code === 2011) {
+      showAlert("取消点赞成功", "pass");
+    } else {
+      showAlert("点赞失败", "error");
+    }
+  },
+);
+const handleLikeClick = () => {
+  likeRun();
+};
+
+// 收藏
+const { run: collectRun } = useRequest(
+  () => {
+    return apiClient.post(`/post/collect/${postId}`);
+  },
+  {
+    manual: true,
+    onSuccess: (newCollectData) => {
+      console.log("收藏请求的响应数据:", newCollectData);
+      run();
+      if (newCollectData.code === 2013) {
+        showAlert("收藏成功", "pass");
+      } else if (newCollectData.code === 2016) {
+        showAlert("取消收藏成功", "pass");
+      } else {
+        showAlert("收藏失败", "error");
+      }
+    },
+    onError: (error) => {
+      console.log("收藏请求出错:", error);
+      showAlert("收藏失败", "error");
+    },
+  },
+);
+const handleCollect = () => {
+  collectRun();
+};
 </script>
 
 <template>
@@ -67,24 +119,27 @@ watch(
       :author="data?.data.name"
       :avatar="data?.data.headPortrait"
       :post-time="formattedPostTime"
+      :is-like="data?.data.isLike"
+      :is-collect="data?.data.isCollect"
+      :handle-like-click="handleLikeClick"
+      :handle-collect="handleCollect"
     ></ArticleHeader>
     <EditorContent
       class="article-detail__content"
       :editor="editor"
     ></EditorContent>
   </div>
-  <CommentForm :post-id="postId"></CommentForm>
-  <CommentList :post-id="postId"></CommentList>
+  <div class="article-Form">
+    <CommentList :post-id="postId"></CommentList>
+  </div>
 </template>
 
 <style lang="scss">
-@use "/src/assets/styles/markdown.scss";
+@use "/src/assets/styles/editor/index.scss";
 .article-detail {
   background-color: #fff;
-  min-height: 100%;
   box-sizing: border-box;
   padding: 1rem 3rem;
-
   &__content {
     margin-top: 2rem;
   }
@@ -108,5 +163,10 @@ watch(
   .already {
     color: red;
   }
+}
+.article-Form {
+  width: 100%;
+  background-color: white;
+  margin-top: 20px;
 }
 </style>

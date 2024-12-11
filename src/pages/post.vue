@@ -3,40 +3,38 @@ import PrimarySidebar from "@/features/post/components/sidebar/PrimarySidebar.vu
 import SecondarySidebar from "@/features/post/components/sidebar/SecondarySidebar.vue";
 import AppEditor from "@post/components/AppEditor.vue";
 import PostHeader from "@post/components/header/index.vue";
-import { onBeforeUnmount, reactive, ref, watch, type Ref } from "vue";
+import { onBeforeUnmount, reactive, ref, toRaw, watch } from "vue";
 import type { AcceptableInputValue } from "node_modules/radix-vue/dist/TagsInput/TagsInputRoot";
 import useAppEditor from "@/features/post/composables/useAppEditor";
-import type { JSONContent } from "@tiptap/core";
 import * as z from "zod";
-import { useRequest } from "@/composables/useRequest";
 import { toast } from "@/components/ui/toast";
 import Toaster from "@/components/ui/toast/Toaster.vue";
-import { useRoute } from "vue-router";
-
-const { editor } = useAppEditor();
-const route = useRoute();
-
-const postData = reactive({
-  postTitle: "" as string | number | undefined,
-  postTags: [] as AcceptableInputValue[],
-  postCategories: "",
-  postSummary: "" as string | number | undefined,
-  postContent: undefined as JSONContent | undefined,
-});
+import { useRequest } from "vue-request";
+import apiClient from "@/api/axios";
+import type { ApiResponseData } from "@/types/api-response";
+import router from "@/router";
 
 interface PostErrors {
-  postTitle: string;
-  postContent: string;
-  postTags: string[];
-  postCategories: string;
-  postSummary: string;
+  title: string;
+  postTxt: string;
+  tags: string[];
+  type: string;
+  postAbstract: string;
 }
 
-const filedErrors = ref<z.ZodFormattedError<PostErrors> | undefined>();
+interface PostResponse {
+  postId: number | string;
+}
 
-onBeforeUnmount(() => {
-  editor.value?.destroy();
+const { editor } = useAppEditor();
+const postData = reactive({
+  title: "" as string | number | undefined,
+  tags: [] as AcceptableInputValue[],
+  type: "",
+  postAbstract: "" as string | number | undefined,
+  postTxt: undefined as string | undefined,
 });
+const filedErrors = ref<z.ZodFormattedError<PostErrors> | undefined>();
 
 const postSchema = z.object({
   postTitle: z
@@ -54,11 +52,11 @@ const postSchema = z.object({
 
 const validatePost = () => {
   const parseResult = postSchema.safeParse({
-    postTitle: postData.postTitle,
-    postContent: JSON.stringify(postData.postContent),
-    postTags: postData.postTags,
-    postCategories: postData.postCategories,
-    postSummary: postData.postSummary,
+    postTitle: postData.title,
+    postContent: JSON.stringify(postData.postTxt),
+    postTags: postData.tags,
+    postCategories: postData.type,
+    postSummary: postData.postAbstract,
   });
 
   if (!parseResult.success) {
@@ -68,39 +66,47 @@ const validatePost = () => {
   return parseResult.success;
 };
 
-const { executeRequest, loading, data } = useRequest();
+const putPost = (data: typeof postData) => {
+  return apiClient.post("/post/put", data);
+};
+
+const { run, loading, data } = useRequest<ApiResponseData<PostResponse>>(
+  putPost,
+  {
+    manual: true,
+  },
+);
 
 const handlePost = async () => {
   if (!validatePost()) {
     return;
   }
 
-  watch(
-    () => loading,
-    () => {
-      console.log(loading);
-    },
-  );
+  run(toRaw(postData));
+};
 
-  await executeRequest({
-    url: "/post/put",
-    method: "post",
-    requestData: {
-      postAbstract: postData.postSummary,
-      postTxt: JSON.stringify(postData.postContent),
-      tags: postData.postTags,
-      title: postData.postTitle,
-      type: postData.postCategories,
-    },
-  });
-
-  if (data.value.code === 2000) {
+watch(data, (newValue) => {
+  if (newValue?.code == 2000) {
     toast({
       title: "发布成功",
       description: "您的文章已成功发布",
+      duration: 1000,
     });
+
+    if (newValue.data) {
+      setTimeout(() => {
+        router.push({
+          name: "/community/post/[id]",
+          params: { id: newValue?.data.postId },
+        });
+      });
+    }
   }
-};
+});
+
+onBeforeUnmount(() => {
+  editor.value?.destroy();
+});
 </script>
 
 <template>
@@ -111,17 +117,17 @@ const handlePost = async () => {
         :is-title-tooltip="true"
         :errors="filedErrors"
         :is-publishing="loading"
-        :post-title="postData.postTitle"
+        :post-title="postData.title"
         @published:post="handlePost"
         @update:post-title="
           (val) => {
-            postData.postTitle = val;
+            postData.title = val;
             const parseResult = postSchema.pick({ postTitle: true }).safeParse({
               postTitle: val,
             });
 
             if (filedErrors) {
-              filedErrors.postTitle = parseResult.error?.format().postTitle;
+              filedErrors.title = parseResult.error?.format().postTitle;
             }
           }
         "
@@ -130,22 +136,22 @@ const handlePost = async () => {
         <PrimarySidebar></PrimarySidebar>
         <AppEditor
           :editor="editor"
-          :post-content="postData.postContent"
+          :post-content="postData.postTxt"
           @update:post-content="
             (val) => {
-              postData.postContent = val;
+              postData.postTxt = val;
             }
           "
         />
         <SecondarySidebar
           :editor="editor"
           :errors="filedErrors"
-          :post-tags="postData.postTags"
-          :post-categories="postData.postCategories"
-          :post-summary="postData.postSummary"
+          :post-tags="postData.tags"
+          :post-categories="postData.type"
+          :post-summary="postData.postAbstract"
           @update:post-tags="
             (val) => {
-              postData.postTags = val;
+              postData.tags = val;
               const parseResult = postSchema
                 .pick({ postTags: true })
                 .safeParse({
@@ -153,13 +159,13 @@ const handlePost = async () => {
                 });
 
               if (filedErrors) {
-                filedErrors.postTags = parseResult.error?.format().postTags;
+                filedErrors.tags = parseResult.error?.format().postTags;
               }
             }
           "
           @update:post-categories="
             (val) => {
-              postData.postCategories = val;
+              postData.type = val;
               const parseResult = postSchema
                 .pick({ postCategories: true })
                 .safeParse({
@@ -167,14 +173,13 @@ const handlePost = async () => {
                 });
 
               if (filedErrors) {
-                filedErrors.postCategories =
-                  parseResult.error?.format().postCategories;
+                filedErrors.type = parseResult.error?.format().postCategories;
               }
             }
           "
           @update:post-summary="
             (val) => {
-              postData.postSummary = val;
+              postData.postAbstract = val;
               const parseResult = postSchema
                 .pick({ postSummary: true })
                 .safeParse({
@@ -182,7 +187,7 @@ const handlePost = async () => {
                 });
 
               if (filedErrors) {
-                filedErrors.postSummary =
+                filedErrors.postAbstract =
                   parseResult.error?.format().postSummary;
               }
             }
