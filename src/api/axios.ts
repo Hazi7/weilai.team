@@ -1,7 +1,6 @@
 import axios, {
   type AxiosInstance,
   type InternalAxiosRequestConfig,
-  type AxiosResponse,
 } from "axios";
 import { useLocalStorageWithExpire } from "../composables/useLocalStorage";
 import router from "@/router";
@@ -33,7 +32,7 @@ apiClient.interceptors.request.use(
 
 // 添加响应拦截器
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => {
+  (response) => {
     if (response.data.code === 401) {
       console.log("token过期或未登录");
       router.push("/login");
