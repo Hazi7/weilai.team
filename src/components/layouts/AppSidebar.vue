@@ -16,6 +16,7 @@ import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
 
 import UserLogin from "@/composables/useLoginAll";
+import { useMessageStore } from '@/store/messageStore';
 import { useUserStore } from '@/store/userStore';
 import { Icon } from "@iconify/vue";
 import {
@@ -28,7 +29,6 @@ import { RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
-import { useMessageStore } from '@/store/messageStore';
 const messageStore = useMessageStore();
 
 
@@ -112,7 +112,7 @@ function skipToPersonalCenter(){
 console.log("点击了");
 
   userStore.reset();
-  router.push('/personalCenter/userInfo/myPosts')
+  router.push('/personalCenter/userInfo')
 }
 </script>
 
