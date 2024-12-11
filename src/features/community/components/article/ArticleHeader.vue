@@ -4,7 +4,8 @@ import AvatarImage from "@/components/ui/avatar/AvatarImage.vue";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Icon } from "@iconify/vue/dist/iconify.js";
 import TagItem from "../tag/TagItem.vue";
-
+import ArticleLike from "./ArticleLike.vue";
+import ArticleCollect from "./ArticleCollect.vue";
 defineProps<{
   isLoading: boolean;
   avatar: string | undefined;
@@ -15,6 +16,10 @@ defineProps<{
   commentCount: number | undefined;
   title: string | undefined;
   tags: string[] | undefined;
+  isLike: boolean | undefined;
+  isCollect: boolean | undefined;
+  handleLikeClick: () => void;
+  handleCollect: () => void;
 }>();
 </script>
 
@@ -47,10 +52,19 @@ defineProps<{
             >{{ viewCount }}</span
           >
         </div>
-        <div class="news-like">
-          <Icon icon="iconamoon:like-light" class="news-footer-icon" />{{
-            likeCount
-          }}
+        <div
+          class="news-like"
+          :class="{ 'like-text-color': isLike }"
+          @click="handleLikeClick"
+        >
+          <ArticleLike class="news-icon" :is-like="isLike"></ArticleLike>
+          {{ likeCount }}
+        </div>
+        <div class="news-collect">
+          <ArticleCollect
+            :is-collect="isCollect"
+            @click="handleCollect"
+          ></ArticleCollect>
         </div>
         <div class="news-comment">
           <Icon
@@ -128,6 +142,9 @@ defineProps<{
       font-weight: 500;
       border: 1px solid transparent;
     }
+  }
+  .like-text-color {
+    color: #079fd7;
   }
 }
 </style>

@@ -28,6 +28,8 @@ import { RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
+import { useMessageStore } from '@/store/messageStore';
+const messageStore = useMessageStore();
 
 
 const {  logout } = UserLogin()
@@ -94,6 +96,10 @@ const items = [
   },
 ];
 
+const handleMessageClick = () => {
+  messageStore.setHasNewMessage(false)
+}
+
 interface SubItemInterface {
   title: string;
   icon: string;
@@ -107,7 +113,7 @@ console.log("点击了");
 
   userStore.reset();
   router.push('/personalCenter/userInfo/myPosts')
-} 
+}
 </script>
 
 <template>
@@ -132,11 +138,11 @@ console.log("点击了");
                     <SidebarMenuButton class="sidebar__button "  >
                       <RouterLink
                         :to="`/${item.url}`"
-                   
+
                         active-class="sidebar__link--active"
                         class="sidebar__link"
                         @click="router.push(`/${item.redirect}`)"
-                      
+
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span >{{ item.title }}</span>
@@ -182,7 +188,7 @@ console.log("点击了");
                   >
                     <SidebarMenuButton class="sidebar__button">
                       <RouterLink
-                     
+
                         :to="`/personalCenter/userInfo/myPosts`"
                         active-class="sidebar__link--active"
                         class="sidebar__link mb-1 "
@@ -197,9 +203,14 @@ console.log("点击了");
                         :to="`/message/likeMes`"
                         active-class="sidebar__link--active"
                         class="sidebar__link"
+                        @click="handleMessageClick"
                       >
                         <Icon icon="mage:box-3d-notification" />&nbsp;
                         <span>消息</span>
+                        <span
+                         v-if="messageStore.hasNewMessage"
+                        class="dot"
+                        ></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -230,7 +241,7 @@ console.log("点击了");
                     >
                       <!-- <img src="@/assets/img/headImg.jpg" alt="" class="avatar" /> -->
                        <div class="avatar"> <Avatar    /></div>
-                       
+
                       <div class="grid flex-1 text-left text-sm leading-tight">
                         <span class="truncate">爆米奇</span>
                       </div>
@@ -301,7 +312,15 @@ console.log("点击了");
 </template>
 
 <style lang="scss" scoped>
-
+.dot{
+  position: absolute;
+  top: 40%;
+  right: 20px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ff0000;;
+}
 .main-menu {
   display: none;
 }
@@ -368,6 +387,7 @@ console.log("点击了");
     box-sizing: border-box;
     padding: 0.65rem 1rem;
     border-radius: 2rem;
+    position: relative;
   }
   &-logo {
     height: 80px;

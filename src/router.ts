@@ -15,6 +15,4 @@ routes.push({
   redirect: "/community/comprehensive",
 });
 
-console.log(routes);
-
 export default router;

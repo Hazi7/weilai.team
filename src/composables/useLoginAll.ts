@@ -3,6 +3,8 @@ import { useRequest } from "@/composables/useRequest";
 import { useLoginStore } from "@/store/useLoginStore";
 import { useRouter } from "vue-router";
 import { useAlert } from "./useAlert";
+import { useSseStore } from "../store/useSseStore";
+const sseStore = useSseStore();
 
 const loginStore = useLoginStore();
 const { setLocalStorageWithExpire } =
@@ -41,6 +43,7 @@ export default function () {
                 setLocalStorageWithExpire('token', resData.token, 1000 * 60 * 60);
                 setLocalStorageWithExpire('userId', resData.userId, 1000 * 60 * 60);
                 router.push('/');
+                sseStore.connect();
             }
             else {
                 showAlert('服务器返回数据异常', 'error');
@@ -98,7 +101,6 @@ export default function () {
         code: string | number | undefined,
         newPassword: string | number | undefined,
     ) {
-        console.log(email, code, newPassword)
         await executeRequest({
             method: "put",
             url: `/index/findPassword`,
@@ -113,6 +115,8 @@ export default function () {
         if (res.code == 1006) {
             showAlert("验证码已过期", "error");
             // alert("验证码已过期")
+        } else if (res.code == 1008) {
+            showAlert("验证码错误", "error");
         } else if (res.code == 1009) {
             showAlert("密码重置成功", "pass");
             // alert("密码修改成功")
