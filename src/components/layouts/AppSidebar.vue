@@ -20,10 +20,8 @@ import { useUserStore } from '@/store/userStore';
 import { Icon } from "@iconify/vue";
 import {
   BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
-  LogOut,
+  LogOut
 } from "lucide-vue-next";
 import { watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
@@ -243,21 +241,13 @@ console.log("点击了");
                     class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
                     side="bottom"
                     :side-offset="4"
-                  ><router-link to="/personalCenter/userInfo/myPosts">
+                  ><router-link to="/personalCenter/userInfo">
                     <DropdownMenuItem class="drop-menu-item">
                       <BadgeCheck />
                     个人资料
                     </DropdownMenuItem class="drop-menu-item">
                   </router-link>
-                    <DropdownMenuItem class="drop-menu-item">
-                      <CreditCard />
-                      Billing
-                    </DropdownMenuItem class="drop-menu-item">
-
-                    <DropdownMenuItem class="drop-menu-item">
-                      <Bell />
-                      Notifications
-                    </DropdownMenuItem>
+        
 
                     <DropdownMenuItem class="drop-menu-item" @click="logout()">
                       <LogOut />
