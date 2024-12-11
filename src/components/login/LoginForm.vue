@@ -17,9 +17,6 @@ interface LoginError {
     password: string;
 }
 
-// const noAccount = ref(false)
-// const noPassword = ref(false)
-// const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const filedErrors = ref<z.ZodFormattedError<LoginError> | undefined>();
 const loginSchema = z.object({
     account: z
@@ -37,42 +34,13 @@ const validateLogin = () => {
         account: loginData.account,
         password: loginData.password
     })
-    // console.log(loginResult.success);
-    // if (!loginResult.success) {
-    //     showAlert('请输入账号或密码', 'waring')
-    //     loginResult.error.issues.forEach(item => {
-    //         console.log(item);
-    //         if (item.path[0] == 'account') {
-    //             noAccount.value = true
-    //             message.value = item.message
-    //         }
-    //         if (item.path[0] == 'password') {
-    //             noPassword.value = true
-    //             message.value = item.message
-    //         }
-    //     })
-    //     return false
-    // }
     if (!loginResult.success) {
         filedErrors.value = loginResult.error.format();
     }
     return loginResult.success
 }
 
-// const account = ref<string>('')
-// const password = ref<string>('')
 const { loading, getLogin } = useLogin()
-
-// function sendLogin() {
-//     if (account.value === '') {
-//         showAlert("账号不能为空", "waring");
-//     } else if (password.value === '') {
-//         showAlert("密码不能为空", "waring");
-//     } else {
-//         getLogin(account.value, password.value)
-//         loading.value = true
-//     }
-// }
 
 const handleLogin = async () => {
     if (!validateLogin()) {
@@ -85,7 +53,6 @@ const handleLogin = async () => {
         },
     );
     getLogin(loginData.account, loginData.password)
-    // loading.value = true
 };
 
 // defineEmits<{
@@ -93,26 +60,26 @@ const handleLogin = async () => {
 // }>()
 
 // 控制动画显示的状态
-// const isVisible = ref(false)
-// // 监听点击事件，触发动画
-// const handleClick = (event: MouseEvent) => {
-//     console.log('页面被点击了');
-//     if (!isVisible.value) {
-//         isVisible.value = true
-//     }
-// };
-// onMounted(() => {
-//     document.addEventListener('click', handleClick);
-// });
-// onUnmounted(() => {
-//     document.removeEventListener('click', handleClick);
-// });
+const isVisible = ref(false)
+// 监听点击事件，触发动画
+const handleClick = (event: MouseEvent) => {
+    console.log('页面被点击了', event);
+    if (!isVisible.value) {
+        isVisible.value = true
+    }
+};
+onMounted(() => {
+    document.addEventListener('click', handleClick);
+});
+onUnmounted(() => {
+    document.removeEventListener('click', handleClick);
+});
 </script>
 
 <template>
     <div class="loginOut">
         <!-- :class="{ 'animate-fadeIn': isVisible }" -->
-        <Card class="loginContent mx-auto max-w-sm">
+        <Card class="loginContent mx-auto max-w-sm" :class="{ 'clickContent': isVisible }">
             <CardHeader>
                 <CardTitle class="loginTitle text-2xl">
                     登录
@@ -138,18 +105,18 @@ const handleLogin = async () => {
                             <ForgotPassword></ForgotPassword>
                         </div>
                     </div> -->
-                    <LoginContent :errors="filedErrors" :account="loginData.account"
-                        :password="loginData.password" @update:login-account="(val) => {
-                                loginData.account = val;
-                                const result = loginSchema
-                                    .pick({ account: true })
-                                    .safeParse({
-                                        account: val,
-                                    });
-                                if (filedErrors) {
-                                    filedErrors.account = result.error?.format().account;
-                                }
-                            }" @update:login-password="(val) => {
+                    <LoginContent :errors="filedErrors" :account="loginData.account" :password="loginData.password"
+                        @update:login-account="(val) => {
+                            loginData.account = val;
+                            const result = loginSchema
+                                .pick({ account: true })
+                                .safeParse({
+                                    account: val,
+                                });
+                            if (filedErrors) {
+                                filedErrors.account = result.error?.format().account;
+                            }
+                        }" @update:login-password="(val) => {
                             loginData.password = val;
                             const result = loginSchema
                                 .pick({ password: true })
@@ -160,10 +127,10 @@ const handleLogin = async () => {
                                 filedErrors.password = result.error?.format().password;
                             }
                         }"></LoginContent>
-                    <Button type="submit" class="loginButton w-full" @click="handleLogin" v-if="!loading">
+                    <Button v-if="!loading" type="submit" class="loginButton w-full" @click="handleLogin">
                         登录
                     </Button>
-                    <Button class="loginButton" disabled v-if="loading">
+                    <Button v-if="loading" class="loginButton" disabled>
                         <Loader2 class="w-4 h-4 mr-2 animate-spin" />
                         登录中...
                     </Button>
@@ -186,7 +153,7 @@ const handleLogin = async () => {
     opacity: 0;
     height: 0;
     overflow: hidden;
-    animation: fadeIn 2s linear forwards;
+    animation: fadeIn 0.5s linear forwards;
     animation-delay: 2.4s;
 
     .loginTitle {
@@ -225,6 +192,13 @@ const handleLogin = async () => {
         border: 1px solid var(--destructive-foreground);
         // color: var(--destructive-foreground);
     }
+}
+
+.clickContent {
+    animation: none;
+    animation-play-state: paused;
+    opacity: 1;
+    height: 100%;
 }
 
 // .loginContent.animate-fadeIn {

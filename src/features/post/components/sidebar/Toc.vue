@@ -5,7 +5,7 @@ import { onMounted, ref, type Ref } from "vue";
 interface TocItem {
   text: string;
   level: number;
-  id: string;
+  offset: number;
   children?: TocItem[];
 }
 
@@ -13,125 +13,133 @@ const props = defineProps<{
   editor: Editor | undefined;
 }>();
 
-const tocItem: Ref<TocItem[]> = ref([]);
+const tocList: Ref<TocItem[]> = ref([]);
+const scrollDOM = ref<HTMLElement | null>(null);
 
 const getToc = () => {
   if (!props.editor) return;
 
-  const headingsList: TocItem[] = [];
-  const stack: TocItem[] = [];
+  let baseIndex: number = 0;
+  let maxLevel: number | null = null;
+  let stack: TocItem[] = [];
 
-  props.editor?.state.doc.forEach((node, pos) => {
+  props.editor?.state.doc.forEach((node, offset) => {
     if (node.type.name === "heading") {
       const headingText = node.textContent;
       const headingLevel = node.attrs.level;
-      const headingId = `heading-${pos}`;
+
+      if (maxLevel === null || headingLevel > maxLevel) {
+        maxLevel = headingLevel;
+        baseIndex++;
+      }
 
       const newItem: TocItem = {
         text: headingText,
-        level: headingLevel,
-        id: headingId,
-        children: [],
+        level: baseIndex,
+        offset: offset,
       };
-
-      // 处理树形结构
-      while (
-        stack.length > 0 &&
-        stack[stack.length - 1].level >= headingLevel
-      ) {
-        stack.pop();
-      }
-
-      if (stack.length === 0) {
-        headingsList.push(newItem);
-      } else {
-        const parent = stack[stack.length - 1];
-        if (!parent.children) parent.children = [];
-        parent.children.push(newItem);
-      }
 
       stack.push(newItem);
     }
   });
 
-  tocItem.value = headingsList;
+  tocList.value = stack;
 };
 
 props.editor?.on("transaction", () => {
   getToc();
 });
 
-const scrollToHeading = (id: string) => {
-  const element = document.getElementById(id);
-  if (element) {
-    element.scrollIntoView({ behavior: "smooth" });
+const scrollToHeading = (top: number) => {
+  if (scrollDOM.value) {
+    scrollDOM.value.scrollTo({
+      top,
+      left: 0,
+      behavior: "smooth",
+    });
   }
-};
-
-const renderTocTree = (items: TocItem[]) => {
-  return items
-    .map(
-      (item) =>
-        `<li class="toc__item" style="padding-left: ${item.level * 12}px">
-      <a href="#${item.id}">${item.text}</a>
-      ${
-        item.children && item.children.length > 0
-          ? `<ul class="toc__sublist">${renderTocTree(item.children)}</ul>`
-          : ""
-      }
-    </li>`,
-    )
-    .join("");
 };
 
 onMounted(() => {
   getToc();
+  scrollDOM.value = document.querySelector(
+    ".app-editor__scroll",
+  ) as HTMLElement;
 });
 </script>
 
 <template>
-  <div v-if="tocItem.length" class="toc">
+  <div v-if="tocList.length" class="toc">
     <ul
       class="toc__list"
-      v-html="renderTocTree(tocItem)"
       @click="
         (event) => {
           const target = event.target as HTMLElement;
-          const link = target.closest('a');
+          const link = target.closest('li');
           if (link) {
-            const id = link.getAttribute('href')?.replace('#', '');
-            if (id) scrollToHeading(id);
+            const offset = link.dataset.offset;
+            if (offset) scrollToHeading(+offset);
           }
         }
       "
-    ></ul>
+    >
+      <li
+        v-for="item in tocList"
+        :key="item.offset"
+        class="toc__item"
+        :class="`toc__item--level${item.level}`"
+        :data-offset="item.offset"
+        :data-level="item.level"
+      >
+        {{ item.text }}
+      </li>
+    </ul>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .toc {
-  &__list,
-  &__sublist {
-    list-style-type: none;
-    padding-left: 0;
-  }
+  &__list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(70vh - 58px);
+    gap: 0.5rem;
 
-  &__sublist {
-    margin-left: 12px;
+    --main-color: #425aef;
+    --main-color-bg: #4259ef0d;
   }
 
   &__item {
     cursor: pointer;
-    padding: 4px 0;
+    padding-left: 0;
+    list-style: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    color: var(--secondary-foreground);
 
-    a {
-      text-decoration: none;
-      color: #333;
-      display: block;
+    &--level1 {
+      font-size: 1rem;
+    }
 
-      &:hover {
-        color: #0066cc;
-      }
+    &--level2 {
+      font-size: 1rem;
+      padding-left: 1.5rem;
+    }
+
+    &--level3 {
+      font-size: 0.8rem;
+      padding-left: 2rem;
+    }
+
+    &--level4 {
+      font-size: 0.75rem;
+      padding-left: 2.45rem;
+    }
+
+    &--active {
+      color: var(--main-color);
+      background-color: var(--main-color-bg);
     }
   }
 }

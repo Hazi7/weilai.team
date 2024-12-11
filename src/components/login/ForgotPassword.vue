@@ -74,7 +74,6 @@ const validateCode = () => {
     const result = emailOnlySchema.safeParse({
         email: fontData.email
     });
-    console.log(result.error);
     if (!result.success) {
         filedErrors.value = result.error.format();
     }
@@ -85,7 +84,6 @@ const handleCode = async () => {
     if (!validateCode()) {
         return;
     }
-
     watch(
         () => loading,
         () => {
@@ -110,34 +108,6 @@ const handleFont = async () => {
     useResetPassword(fontData.email, fontData.code, fontData.password)
 };
 
-// const getCode = () => {
-//     if (!email.value) {
-//         showAlert("请输入邮箱", "waring");
-//         noEmail.value = true;
-//     } else {
-//         useGetCode(email.value);
-//     }
-// };
-
-// function sendForm() {
-//     console.log(password.value);
-//     if (!email.value) {
-//         showAlert("请输入邮箱", "waring");
-//         noEmail.value = true;
-//     } else if (!code.value) {
-//         showAlert("请输入验证码", "waring");
-//         noCode.value = true;
-//     } else if (!password.value) {
-//         showAlert("请输入密码", "waring");
-//         noPassWord.value = true;
-//     } else if (!passwordAgin.value) {
-//         showAlert("请再次输入密码", "waring");
-//         noPassWordAgin.value = true;
-//     } else {
-//         useResetPassword(email.value, code.value, password.value, passwordAgin.value)
-//     }
-// }
-
 </script>
 
 <template>
@@ -150,35 +120,6 @@ const handleFont = async () => {
                 <DialogTitle class="fontPassTitle">找回密码</DialogTitle>
                 <DialogDescription> 忘记密码？输入邮箱找回密码吧 </DialogDescription>
             </DialogHeader>
-            <!-- <div class="fontPassConcent grid gap-4 py-4">
-                <div class="fontPassFormInp grid grid-cols-4 items-center gap-4">
-                    <Label for="name" class="inpTit text-right"> 邮箱 </Label>
-                    <Input id="name" type="email" placeholder="请输入邮箱" v-model="email" :class="{ 'noWrite': noEmail }"
-                        class="col-span-3" @click="noEmail = false" />
-                </div>
-                <div class="fontPassFormInp grid grid-cols-4 items-center gap-4">
-                    <Label for="username" class="inpTit text-right"> 验证码 </Label>
-                    <div class="flex w-full max-w-sm items-center gap-1.5">
-                        <Input id="code" placeholder="请输入验证码" :class="{ 'noWrite': noCode }" @click="noCode = false"
-                            style="width: 170px" v-model="code" />
-                        <Button class="fontBtn" v-if="!loginStore.isRequesting" @click="getCode()">
-                            获取验证码
-                        </Button>
-                        <Button v-if="loginStore.isRequesting" disabled>已发送({{ loginStore.countdown }}s)</Button>
-                    </div>
-                </div>
-                <div class="fontPassFormInp grid grid-cols-4 items-center gap-4">
-                    <Label for="username" class="inpTit text-right"> 密码 </Label>
-                    <Input id="password" type="password" :class="{ 'noWrite': noPassWord }" @click="noPassWord = false"
-                        placeholder="请输入密码" class="col-span-3" v-model="password" />
-                </div>
-                <div class="fontPassFormInp grid grid-cols-4 items-center gap-4">
-                    <Label for="username" class="inpTit text-right"> 确认密码 </Label>
-                    <Input id="password" type="password" :class="{ 'noWrite': noPassWordAgin }"
-                        @click="noPassWordAgin = false" placeholder="请再次输入密码" class="col-span-3"
-                        v-model="passwordAgin" />
-                </div>
-            </div> -->
             <FontFrom :editor="editor" :errors="filedErrors" :email="fontData.email" :code="fontData.code"
                 :password="fontData.password" :passwordAgin="fontData.passwordAgin" :handle-code="handleCode"
                 @update:font-email="(val: string | number | undefined) => {

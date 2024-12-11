@@ -1,5 +1,4 @@
-import axios from 'axios'
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useRequest } from '@/composables/useRequest';
 import { useAlert } from './useAlert';
 import { applicationStore } from '@/store/applicationStore';
@@ -20,7 +19,7 @@ interface EmailResponse {
     message?: string;
 }
 export default function () {
-    const { data, error, loading, executeRequest } = useRequest();
+    const { data, error, executeRequest } = useRequest();
     const { showAlert } = useAlert()
     const classListData = ref<string[]>([])
 
@@ -31,7 +30,7 @@ export default function () {
     }
 
 
-    async function getCode(email: string) {
+    async function getCode(email: string | number | undefined) {
         if (!email) {
             // loginError.value = "邮箱不能为空"
             showAlert('邮箱不能为空', 'waring')
@@ -83,7 +82,7 @@ export default function () {
             }
             else {
                 if (res.code == 200) {
-                    showAlert('注册成功！', 'pass')
+                    showAlert('报名成功，请及时关注邮箱等待面试通知！', 'pass')
                 } else if (res.code == 1008) {
                     showAlert('验证码错误', 'error')
                 } else if (res.code == 3102) {
