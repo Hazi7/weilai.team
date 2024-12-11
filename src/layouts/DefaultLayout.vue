@@ -29,7 +29,6 @@ import SidebarTrigger from "@/components/ui/sidebar/SidebarTrigger.vue";
   &__container {
     flex: 1;
     padding: 1rem;
-    padding-top: 64px;
   }
 }
 

@@ -1,4 +1,4 @@
-import { formatRelative, isValid, parseISO, subDays } from "date-fns";
+import { formatRelative, isValid, parseISO } from "date-fns";
 import { zhCN } from "date-fns/locale";
 
 export function formatPostTime(time: string): string {

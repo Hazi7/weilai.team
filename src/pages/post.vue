@@ -120,7 +120,7 @@ onBeforeUnmount(() => {
         :post-title="postData.title"
         @published:post="handlePost"
         @update:post-title="
-          (val) => {
+          (val: string) => {
             postData.title = val;
             const parseResult = postSchema.pick({ postTitle: true }).safeParse({
               postTitle: val,
@@ -138,7 +138,7 @@ onBeforeUnmount(() => {
           :editor="editor"
           :post-content="postData.postTxt"
           @update:post-content="
-            (val) => {
+            (val: string) => {
               postData.postTxt = val;
             }
           "
@@ -150,7 +150,7 @@ onBeforeUnmount(() => {
           :post-categories="postData.type"
           :post-summary="postData.postAbstract"
           @update:post-tags="
-            (val) => {
+            (val: string[]) => {
               postData.tags = val;
               const parseResult = postSchema
                 .pick({ postTags: true })
@@ -164,7 +164,7 @@ onBeforeUnmount(() => {
             }
           "
           @update:post-categories="
-            (val) => {
+            (val: string) => {
               postData.type = val;
               const parseResult = postSchema
                 .pick({ postCategories: true })
@@ -178,7 +178,7 @@ onBeforeUnmount(() => {
             }
           "
           @update:post-summary="
-            (val) => {
+            (val: string) => {
               postData.postAbstract = val;
               const parseResult = postSchema
                 .pick({ postSummary: true })

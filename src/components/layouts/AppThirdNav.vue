@@ -16,23 +16,25 @@ interface ThirdItemInterface {
 </script>
 
 <template>
-  <div class="topNav">
-    <Breadcrumb class="breadcrumb">
-      <div class="top-title">
-        <span>{{ route.meta.title }}</span>
-      </div>
-      <BreadcrumbList class="top-ol">
-        <BreadcrumbItem
-          v-for="(item, index) in thirdNavItems"
-          :key="index"
-          class="top-item"
-        >
-          <RouterLink :to="item.path" active-class="active" class="top-link">
-            {{ item.title }}
-          </RouterLink>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
+  <div class="h-[48px]">
+    <div class="topNav">
+      <Breadcrumb class="breadcrumb">
+        <div class="top-title">
+          <span>{{ route.meta.title }}</span>
+        </div>
+        <BreadcrumbList class="top-ol">
+          <BreadcrumbItem
+            v-for="(item, index) in thirdNavItems"
+            :key="index"
+            class="top-item"
+          >
+            <RouterLink :to="item.path" active-class="active" class="top-link">
+              {{ item.title }}
+            </RouterLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    </div>
   </div>
 </template>
 
@@ -50,7 +52,8 @@ $font: #8c9296;
   display: flex;
   align-content: center;
   flex-wrap: nowrap;
-  height: 50px;
+  height: 3rem;
+
   .breadcrumb {
     display: flex;
     align-items: center;
@@ -151,7 +154,7 @@ $font: #8c9296;
   .topNav {
     display: flex;
     box-sizing: border-box;
-    height: 35px;
+    // height: 35px;
     .top-link {
       font-size: 11px;
       // line-height: 50px;

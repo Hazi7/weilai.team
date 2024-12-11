@@ -1,5 +1,4 @@
 import Vue from "@vitejs/plugin-vue";
-import autoprefixer from "autoprefixer";
 import { resolve } from "node:path";
 import tailwind from "tailwindcss";
 import VueRouter from "unplugin-vue-router/vite";
@@ -39,12 +38,13 @@ export default defineConfig({
           path: "post/",
         },
       ],
+      dts: "./types/typed-router.d.ts",
     }),
     Vue(),
   ],
   css: {
     postcss: {
-      plugins: [tailwind(), autoprefixer()],
+      plugins: [tailwind()],
     },
     preprocessorOptions: {
       scss: {
