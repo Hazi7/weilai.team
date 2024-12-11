@@ -1,14 +1,36 @@
 <script setup lang="ts">
-import { FilterCondition,DataRangePicker,ToggleShow ,DataTable,Pagination,AutoLongerInput,
-          UpdateStatus,ModalDialog,
-} from '@/components/recruitment';
-import { Icon } from '@iconify/vue';
-import { Button } from '@/components/ui/button';
-import { ref, watch ,watchEffect} from 'vue';
-import {getAllApplyUser,getAllGrade,getResumeById,deleteApplyUserById} from "@/composables/useRecruitmentRequest";
-import type {IAllApplyUserVO,IGetAllApplyUserDTO ,IResponseDataApplyUser,IAllApplyUserDTO,IAllGradeDTO,IGradeData } from '@/types/recruitmentType';
-import {interviewStatusMap} from '@/types/recruitmentType';
-const searchValue = ref('');
+import {
+  FilterCondition,
+  DataRangePicker,
+  ToggleShow,
+  DataTable,
+  Pagination,
+  AutoLongerInput,
+  UpdateStatus,
+  ModalDialog,
+  UpdateApplyUserInfo,
+  ArrangeInterviewer,
+} from "@/components/recruitment";
+import { Icon } from "@iconify/vue";
+import { Button } from "@/components/ui/button";
+import { ref, watch, watchEffect, computed } from "vue";
+import {
+  getAllApplyUser,
+  getAllGrade,
+  getResumeById,
+  deleteApplyUserById,
+} from "@/composables/useRecruitmentRequest";
+import { useRequest } from "vue-request";
+import type {
+  IAllApplyUserVO,
+  IGetAllApplyUserDTO,
+  IResponseDataApplyUser,
+  IAllApplyUserDTO,
+  IAllGradeDTO,
+  IGradeData,
+} from "@/types/recruitmentType";
+import { interviewStatusMap } from "@/types/recruitmentType";
+const searchValue = ref("");
 
 const handleInput = (value: string) => {
   searchValue.value = value;
@@ -17,44 +39,42 @@ const handleInput = (value: string) => {
 
 //下拉过滤框
 const candidates_itemsObjArr = ref([
-    {
-        title: '年级',
-        label: "选择要筛选的年级",
-        ref: "init",
-        arr: [ ]
-    },
-    {
-        title: '性别',
-        label: "选择要筛选的性别",
-        ref: "init",
-        arr: [
-            {
-                condition: "男",
-            },
-            {
-                condition: "女",
-            },
-        ]
-    },
-    {
-        title: '班级',
-        label: "选择要筛选的班级",
-        ref: "init",
-        arr: [
-            {
-                condition: "计科233",
-            },
-            {
-                condition: "物联233",
-            },
-            {
-                condition: "数据233",
-            },
-        ]
-    }
+  {
+    title: "年级",
+    label: "选择要筛选的年级",
+    ref: "init",
+    arr: [],
+  },
+  {
+    title: "性别",
+    label: "选择要筛选的性别",
+    ref: "init",
+    arr: [
+      {
+        condition: "男",
+      },
+      {
+        condition: "女",
+      },
+    ],
+  },
+  {
+    title: "班级",
+    label: "选择要筛选的班级",
+    ref: "init",
+    arr: [
+      {
+        condition: "计科233",
+      },
+      {
+        condition: "物联233",
+      },
+      {
+        condition: "数据233",
+      },
+    ],
+  },
 ]);
-
-
 
 //获得子组件的过滤条件
 const handleFilterCondition = (value: string, title: string) => {
@@ -170,21 +190,39 @@ const headers = ref([
 ]);
 //表格操作事件
 
-// 查看简历
+// 查看简历 \/
 const viewResume = (id: string) => {
-        getResumeById({id}).then(({data,error,loading})=>{
-            // console.log(data,error,loading);
-            window.open(data.value.data,'_blank')
-        })
-}
+
+      const { data, error, loading } = useRequest(() =>
+    getResumeById({ id }),
+  );
+  watch(
+    [data, error],
+    ([newData, newError]) => {
+      if (newError) {
+        console.log("请求失败:", newError);
+        return;
+      }
+      if (newData) {
+        window.open(newData.data.data,'_blank')
+      }
+    },
+  );
+};
 // 编辑
+const currentUpdateApplyUserId = ref("");
 const tableEdit = (id: string) => {
-  console.log(id, "编辑");
+  updateApplyUserInfo.value = true;
+  currentUpdateApplyUserId.value = id;
 };
 
 // 安排面试
-const arrangeInterview = (id: string) => {
-  console.log(id, "安排面试");
+const currentArrangeInterviewId = ref("");
+const currentArrangeInterviewName = ref<string>("");
+const arrangeInterview = (id: string,name?:string) => {
+  arrangeInterviewerDialog.value = true;
+  currentArrangeInterviewId.value = id;
+  currentArrangeInterviewName.value= name || "";
 };
 
 // 淘汰
@@ -202,14 +240,28 @@ const currentDeleteId = ref("");
 const DeleteCandidate = (id: string) => {
   isModalOpen.value = true;
   currentDeleteId.value = id;
-
-}
+};
 const confirmDeleteCandidate = (id: string) => {
   isModalOpen.value = false;
-    deleteApplyUserById({id}).then(({data,error,loading})=>{
-    updateParameter.value = !updateParameter.value;
-    })
-}
+ const { data, error, loading } = useRequest(() =>
+    deleteApplyUserById({ id }),
+  );
+  watch(
+    [data, error],
+    ([newData, newError]) => {
+      if (newError) {
+        console.log("请求失败:", newError);
+        return;
+      }
+      if (newData) {
+        alert("删除成功");
+        // 刷新表格数据
+        updateParameter.value =!updateParameter.value;
+      }
+    },
+    { immediate: true },
+  );
+};
 //为表格传递操作项和图标
 const actionItems = ref([
   {
@@ -240,90 +292,148 @@ const actionItems = ref([
 ]);
 
 //拿到后端的所有年级数据
-getAllGrade({pageNo:1,pageSize:100})
-        .then(({data,error,loading})=>{
-            // console.log(data,error,loading,);
-            // console.log(data.value.data.data);
-
-            if(data.value){
-                //拿到数据后逆序渲染
-                candidates_itemsObjArr.value[0].arr = data.value.data.data.reverse().map((item:IGradeData)=>{
-                    return {
-                        condition:item.grade,
-                    }
-                })
+const fetchAllGrade=()=>{
+  const { data, error, loading } = useRequest(() =>
+  getAllGrade({ pageNo: 1, pageSize: 100 }),
+);
+        watch(
+          [data, error],
+          ([newData, newError]) => {
+            if (newError) {
+              console.log("请求失败:", newError);
+              return;
             }
-        })
+            if (newData) {
+              //拿到数据后逆序渲染
+              candidates_itemsObjArr.value[0].arr = newData.data.data.data.map(
+                (item: IGradeData) => {
+                  return {
+                    condition: item.grade,
+                  };
+                },
+              );
+            }
+          },
+          { immediate: true },
+        );
+}
+fetchAllGrade();
+
+const getAllApplyUserRequestParams = computed(() => ({
+  pageNo: pageNo.value,
+  pageSize: pageSize.value,
+  status: status.value,
+  condition: searchValue.value,
+}));
+
 //设置一个状态变量，用来强制更新
-const updateParameter =ref<boolean>(false);
+const updateParameter = ref<boolean>(false);
 
-watchEffect(()=>{
-    //引入一个状态变量，用来强制更新数组，只需要在需要重新获取数据的时候，改变状态变量的值
-    updateParameter.value;
-    getAllApplyUser({ pageNo: pageNo.value, pageSize: 10, condition:searchValue.value, status: status.value  })
-  .then(( {data,error,loading } ) => {
-        // console.log(data,error,loading);
-        getApplyUserData.value = data.value as IResponseDataApplyUser;
-        total.value = getApplyUserData.value.data.total;
-        // console.log(getApplyUserData.value.data);
-        if (getApplyUserData.value && getApplyUserData.value.data && getApplyUserData.value.data.data) {
-            tableData.value = getApplyUserData.value.data.data.map((item: IAllApplyUserDTO) => {
-                return {
-                    id: item.id.toString(),
-                    name: item.name,
-                    session: item.grade,
-                    gender: item.sex,
-                    clazz: item.clazz,
-                    studentId: item.studentId,
-                    QQ: item.qqNumber,
-                    email: item.email,
-                    state:interviewStatusMap[item.status],
-                };
-            });
-        } else {
-            tableData.value = [];
+watch(
+  [getAllApplyUserRequestParams, updateParameter],
+  ([newParams, _]) => {
+    const { data, error, loading } = useRequest(() =>
+      getAllApplyUser(newParams),
+    );
+
+    watch(
+      [data, error],
+      ([newData, newError]) => {
+        if (newError) {
+          console.error("请求失败:", newError);
+          return;
         }
-})
-})
-
+        if (newData) {
+          console.log("请求成功:", newData.data.data.data);
+          total.value = newData.data.data.total;
+          //拿到数据后逆序渲染
+          tableData.value = newData.data.data.data.map(
+            (item: IAllApplyUserDTO) => {
+              return {
+                id: item.id,
+                name: item.name,
+                session: item.grade,
+                gender: item.sex,
+                clazz: item.clazz,
+                studentId: item.studentId,
+                QQ: item.qqNumber,
+                email: item.email,
+                state: interviewStatusMap[item.status],
+              };
+            },
+          );
+        }
+      },
+      {
+        immediate: true,
+      },
+    );
+  },
+  {
+    immediate: true,
+  },
+);
 
 //dialog
 const updateStatus = ref(false);
 //修改状态、
 const handleEditStatus = () => {
-    //把修改状态的弹窗组件展示
-    updateStatus.value = true;
-}
-
+  //把修改状态的弹窗组件展示
+  updateStatus.value = true;
+};
+const updateApplyUserInfo=ref(false);
+const arrangeInterviewerDialog=ref(false);
 </script>
 
 <template>
-
-
-    <div class="content">
-      <!-- dialog-start -->
-    <UpdateStatus :visible="updateStatus" @close="updateStatus = false"></UpdateStatus>
+  <div class="content">
+    <ArrangeInterviewer
+    :isOpen="arrangeInterviewerDialog"
+    @close="arrangeInterviewerDialog = false"
+    :id="currentArrangeInterviewId"
+    :name="currentArrangeInterviewName"
+    />
+    <UpdateApplyUserInfo
+      :isOpen="updateApplyUserInfo"
+      @close="updateApplyUserInfo = false"
+      :id="currentUpdateApplyUserId"
+    />
+    <UpdateStatus
+      :isOpen="updateStatus"
+      @close="updateStatus = false"
+    />
     <ModalDialog :isOpen="isModalOpen" @close="closeModal">
       <template #header>
-        <h2> 删除候选人</h2>
+        <h2>删除候选人</h2>
       </template>
       <p>你确定要删除该条候选人的数据吗？</p>
-      <p style="color: red;font-size: 0.5em;">（此项操作无法撤销，请慎重操作！！！）</p>
+      <p style="color: red; font-size: 0.5em">
+        （此项操作无法撤销，请慎重操作！！！）
+      </p>
       <template #footer>
-        <Button class="btn-style" @click="confirmDeleteCandidate(currentDeleteId)" >确定</Button>
+        <Button
+          class="btn-style"
+          @click="confirmDeleteCandidate(currentDeleteId)"
+          >确定</Button
+        >
         <Button class="btn-style" @click="closeModal">关闭</Button>
       </template>
     </ModalDialog>
-    <!-- dialog-end -->
-        <div class="filter-items">
-            <FilterCondition :items-obj-arr="candidates_itemsObjArr" @filter_condition="handleFilterCondition"></FilterCondition>
-            <div class="date-picker">
-                <DataRangePicker
-                @updateDateRange="handleDateRangeUpdate"
-                :dateRange="dateRange"
-                :isReset="isReset"
-                />
-            </div>
+
+
+
+    <div class="filter-items">
+      <FilterCondition
+        :items-obj-arr="candidates_itemsObjArr"
+        @filter_condition="handleFilterCondition"
+      ></FilterCondition>
+      <div class="date-picker">
+        <DataRangePicker
+          @updateDateRange="handleDateRangeUpdate"
+          :dateRange="dateRange"
+          :isReset="isReset"
+        />
+      </div>
 
       <div class="reset" @click="resetCondition">
         重置
@@ -343,12 +453,14 @@ const handleEditStatus = () => {
         @transferToggleShowStatus="handleToggleShowStatus"
       ></ToggleShow>
 
-            <div class="handle-btns">
-                <Button type="primary" class="btn-style">安排面试</Button>
-                <Button type="primary" class="btn-style" @click="handleEditStatus" >修改状态</Button>
-                <Button type="primary" class="btn-style">结果导出</Button>
-            </div>
-        </div>
+      <div class="handle-btns">
+        <!-- <Button type="primary" class="btn-style">安排面试</Button> -->
+        <Button type="primary" class="btn-style" @click="handleEditStatus"
+          >修改状态</Button
+        >
+        <Button type="primary" class="btn-style">结果导出</Button>
+      </div>
+    </div>
 
     <div class="data-table">
       <DataTable
@@ -366,7 +478,6 @@ const handleEditStatus = () => {
       </div>
     </div>
   </div>
-
 </template>
 
 <style lang="scss" scoped>

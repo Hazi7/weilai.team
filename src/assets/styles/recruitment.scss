@@ -1,5 +1,5 @@
 //color
-
+@use "./index.scss";
 $undertone: #647499; //浅灰 设置为非强调色 常设置为字体颜色
 
 *{
@@ -46,9 +46,17 @@ $undertone: #647499; //浅灰 设置为非强调色 常设置为字体颜色
   &:active {
     color: var(--primary-foreground);
     border: var(--primary-foreground) 1px solid;
+    background-color: var(--accent);
   }
 }
-
+.btn-style[type="submit"]:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.btn-style[disabled="true"] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
 // 长虚线边框样式
 .long-dashed-border {
   border-radius: var(--radius);
