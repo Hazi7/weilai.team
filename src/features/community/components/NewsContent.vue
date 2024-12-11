@@ -74,20 +74,8 @@ import {
 } from "@community/composables/search";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
-import { showConfirm } from "@/composables/useConfirm";
 import { useUserStore } from "@/store/userStore";
 import NewsFooter from "./NewsFooter.vue";
-
-showConfirm({
-  title: "提示",
-})
-  .then(() => {
-    console.log("确定");
-  })
-  .catch(() => {
-    console.log("取消");
-  });
 
 const isTag = ref(false);
 
