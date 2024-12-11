@@ -1,24 +1,36 @@
 <template>
     <div class="navBox">
-        <ul>
-            <li>
-                <router-link to="/personalCenter/userInfo/myPosts" active-class="active">我的帖子</router-link>
-            </li>
-            <li>
-                <router-link to="/personalCenter/userInfo/mySchedule" active-class="active">我的课表
-                </router-link>
-            </li>
-            <li>
-                <router-link to="/personalCenter/userInfo/myCollections" active-class="active">我的收藏</router-link>
-            </li>
-            <li>
-                <router-link to="/personalCenter/userInfo/myGrades" active-class="active">我的成绩</router-link>
-            </li>
-        </ul>
+        <template v-if="userStore.isSelf">
+            <ul>
+                <li>
+                    <router-link to="/personalCenter/userInfo/myPosts" active-class="active">我的帖子</router-link>
+                </li>
+                <li>
+                    <router-link to="/personalCenter/userInfo/mySchedule" active-class="active">我的课表
+                    </router-link>
+                </li>
+                <li>
+                    <router-link to="/personalCenter/userInfo/myCollections" active-class="active">我的收藏</router-link>
+                </li>
+            </ul>
+        </template>
+        <template v-else>
+            <ul>
+                <li>
+                    <router-link to="/personalCenter/userInfo/myPosts" active-class="active">TA的帖子</router-link>
+                </li>
+                <li>
+                    <router-link to="/personalCenter/userInfo/mySchedule" active-class="active">TA的课表
+                    </router-link>
+                </li>
+            </ul>
+        </template>
     </div>
 </template>
-<script setup>
-
+<script lang="ts" setup>
+import { useUserStore } from '@/store/userStore'
+const userStore=useUserStore()
+console.log('pinia///',userStore);
 </script>
 <style lang="scss" scoped>
 .navBox {
