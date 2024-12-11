@@ -22,7 +22,7 @@ getRecommendTag()
         </div>
         <div class="hotTagList">
             <NoData v-if="hotTagList.length === 0" />
-            <span class="tag" v-for="(tag, index) in hotTagList" :key="index">
+            <span v-for="(tag, index) in hotTagList" :key="index" class="tag">
                 <router-link active-class="active" :to="`/community/${tagType}/label/${tag}`">#{{ tag }}</router-link>
             </span>
         </div>

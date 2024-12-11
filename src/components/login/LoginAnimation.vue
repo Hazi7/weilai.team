@@ -3,8 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 // 控制动画显示的状态
 const isVisible = ref(false)
 // 监听点击事件，触发动画
-const handleClick = (event: MouseEvent) => {
-    console.log('页面被点击了', event);
+const handleClick = () => {
     if (!isVisible.value) {
         isVisible.value = true
     }

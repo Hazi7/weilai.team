@@ -98,7 +98,6 @@ export default function () {
         code: string | number | undefined,
         newPassword: string | number | undefined,
     ) {
-        console.log(email, code, newPassword)
         await executeRequest({
             method: "put",
             url: `/index/findPassword`,
@@ -113,6 +112,8 @@ export default function () {
         if (res.code == 1006) {
             showAlert("验证码已过期", "error");
             // alert("验证码已过期")
+        } else if (res.code == 1008) {
+            showAlert("验证码错误", "error");
         } else if (res.code == 1009) {
             showAlert("密码重置成功", "pass");
             // alert("密码修改成功")
