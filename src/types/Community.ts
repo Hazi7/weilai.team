@@ -1,6 +1,6 @@
 export interface Data {
   data: ArticleInfo;
-  code: Number;
+  code: number;
 }
 export interface UserData {
   data: {
