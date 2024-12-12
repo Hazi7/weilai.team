@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { useLocalStorageWithExpire } from '@/composables/useLocalStorage';
 
 export const applicationStore = defineStore("application", {
     state: () => ({
