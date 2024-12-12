@@ -27,20 +27,5 @@ import HotTag from "@/features/community/components/tag/HotTag.vue";
     display: none;
   }
 }
-// @media screen and (max-width: 1280px) {
-//   .content {
-//     padding: 0 50px;
-//   }
-//   .rightbar {
-//     width: 30vw;
-//     .details {
-//       width: 20vw;
-//       position: fixed;
-//       margin-left: 0px;
-//       display: flex;
-//       flex-direction: column;
-//       gap: 50px; /* 设置上下间距为10px */
-//     }
-//   }
-// }
+
 </style>

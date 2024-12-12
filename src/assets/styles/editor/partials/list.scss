@@ -1,0 +1,48 @@
+.tiptap {
+
+  // 标点
+  ul {
+    list-style-type: none;
+    padding-left: 1rem;
+
+    li {
+      position: relative;
+      padding-left: 1.2rem;
+      margin: 0.6rem 0;
+      overflow: auto;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.7rem;
+        width: 0.6rem;
+        height: 0.6rem;
+        background-color: var(--main-color);
+        border-radius: 50%;
+      }
+
+      p {
+        &:first-child {
+          margin-top: 0;
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  ol {
+    padding-left: 2rem;
+    list-style-type: decimal;
+
+    li {
+      &::marker {
+        color: var(--main-color);
+        font-weight: bold;
+      }
+    }
+  }
+}

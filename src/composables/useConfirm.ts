@@ -1,10 +1,20 @@
 import Confirm from "@/components/confirm/Confirm.vue";
 import { createApp } from "vue";
-export function showConfirm({ title = "111" }) {
+export function showConfirm({
+  title = "",
+  content = "",
+
+  description = "",
+  confirmBtnTxt = "确定",
+  cancelBtnTxt = "取消",
+}) {
   return new Promise((resolve, reject) => {
     const app = createApp(Confirm, {
       title,
-
+      content,
+      description,
+      confirmBtnTxt,
+      cancelBtnTxt,
       onConfirm: () => {
         unmount();
         resolve(true);

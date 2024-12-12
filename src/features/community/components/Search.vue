@@ -16,6 +16,9 @@ const searchUserList = ref<UserInfo[]>([]);
 const filterUserList = ref<UserInfo[]>([]);
 const route = useRoute();
 const path = route.path;
+console.log(route);
+
+const pathArr = path.split("/").slice(1);
 // 接受父组件传来的函数
 const props = defineProps({
   typeId: {
@@ -101,9 +104,11 @@ function handleClick(e: Event) {
 }
 function skip(e: Event) {
   if (searchValue.value) {
-    router.push(`${path}/${searchValue.value}`);
+    router.push(
+      `/${pathArr[0]}/${pathArr[1]}/${pathArr[2]}/${searchValue.value}`,
+    );
   } else {
-    router.push(`${path}`);
+    router.push(`/${pathArr[0]}/${pathArr[1]}/${pathArr[2]}`);
   }
 }
 </script>

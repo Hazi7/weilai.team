@@ -27,7 +27,7 @@ const props = defineProps<{
 const group = ref(props.group);
 const grade = ref(props.grade);
 const userInfo = ref<addUser>({
-  clazz: "计科xxx",
+  clazz: "",
   grade: grade.value,
   group: group.value,
   name: "",
@@ -51,11 +51,11 @@ interface addUser {
 const dialogVisible = ref(false); // 创建响应式变量控制 Dialog 组件的显示，初始化为打开状态，可按需调整
 const dialogRef = ref<InstanceType<typeof Dialog> | null>(null); // 创建组件引用，初始化为 null
 
-const errors = ref<{ [key: string]: string }>({}); //存储错误信息
+const errors = ref<z.ZodFormattedError<addUser> | undefined>(); //存储错误信息
 const handleDialogOpen = (newValue: boolean) => {
   dialogVisible.value = newValue;
   if (newValue == false) {
-    errors.value = {};
+    // errors.value = {};
   }
 };
 const { data, run, loading } = useRequest(addMember, { manual: true });
@@ -67,46 +67,20 @@ const formSchema = z.object({
     .min(1, { message: "学号格式错误" })
     .max(5, { message: "学号格式错误" }),
   email: z.string().email({ message: "邮箱格式错误" }),
-  clazz: z.string().superRefine((value, ctx) => {
-    const match = value.match(/^[\u4e00-\u9fa5]{2}[a-zA-Z0-9]{3}$/);
-    if (!match) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "格式错误",
-        path: [],
-      });
-    }
+
+  clazz: z.string().regex(/^[\u4e00-\u9fa5]{2}\d{3}$/, {
+    message: "格式错误",
   }),
 });
-// 定义用于pick方法的类型别名
-
-// 存储验证错误信息的响应式对象
-
-// 实时验证单个字段的函数
-// const validateField = (field: string) => {
-//   const fieldValue = userInfo.value[field as keyof addUser];
-//   const pickObj = { field: true } as const; // 使用 as const 确保类型是确切的
-//   const result = formSchema.pick(pickObj).safeParse({ [field]: fieldValue });
-//   if (!result.success) {
-//     const validationErrors: { [key: string]: string } = {};
-//     result.error.issues.forEach((issue) => {
-//       validationErrors[issue.path[0]] = issue.message;
-//     });
-//     errors.value[field] = validationErrors[field];
-//   } else {
-//     delete errors.value[field];
-//   }
-// };
 
 const handleConfirm = () => {
   // 这里可以添加其他逻辑，比如保存输入框中的数据等操作
-  const result = formSchema.safeParse(userInfo.value);
-  if (!result.success) {
-    const validationErrors: { [key: string]: string } = {};
-    result.error.issues.forEach((issue) => {
-      validationErrors[issue.path[0]] = issue.message;
-    });
-    errors.value = validationErrors;
+  const parseResult = formSchema.safeParse(userInfo.value);
+  console.log(parseResult.error);
+
+  if (!parseResult.success) {
+    errors.value = parseResult.error.format();
+
     return;
   } else {
     let addInfoObj = { ...userInfo.value };
@@ -117,7 +91,6 @@ const handleConfirm = () => {
     if (dialogRef.value) {
       dialogRef.value.$emit("update:open", false); // 触发 'update:open' 事件通知 Dialog 组件更新状态
     }
-    errors.value = {};
   }
 };
 watch(
@@ -131,6 +104,12 @@ watch(
     }
   },
 );
+watch(
+  () => errors.value,
+  (newVal) => {
+    console.log(newVal);
+  },
+);
 </script>
 
 <template>
@@ -140,12 +119,12 @@ watch(
     <DialogContent class="sm:max-w-[425px] bg-white">
       <DialogHeader> 成员信息 </DialogHeader>
       <div class="grid gap-4 py-4">
-        <div :class="inputContainerStyle">
+        <div class="input-container">
           <Label for="name" class="text-center"> 姓名 :</Label>
           <Input
             id="name"
             class="col-span-4 focus:outline-none"
-            :error="errors.name ? true : false"
+            :error="errors?.name ? true : false"
             v-model="userInfo.name"
             placeholder="请输入姓名"
             @input="
@@ -153,31 +132,29 @@ watch(
                 const parseResult = formSchema.pick({ name: true }).safeParse({
                   name: userInfo.name,
                 });
-                if (parseResult.error) {
-                  errors.name = parseResult.error.format().name
-                    ? parseResult.error.format()._errors.join(', ')
-                    : '';
+
+                if (errors) {
+                  errors.name = parseResult.error?.format().name;
+                  console.log(errors.name, 22);
                 }
-                // else {
-                //   errors.name = '';
-                // }
               }
             "
           />
           <div class="grid grid-cols-subgrid gap-4 col-span-3">
-            <div class="col-start-2 error flex" v-if="errors.name">
-              <Icon icon="material-symbols:error-outline" /> {{ errors.name }}
+            <div class="col-start-2 error flex" v-if="errors?.name">
+              <Icon icon="material-symbols:error-outline" />
+              {{ errors.name?._errors[0] }}
             </div>
           </div>
         </div>
-        <div :class="inputContainerStyle">
+        <div class="input-container">
           <Label for="username" class="text-center"> 学号 : </Label>
           <Input
             id="username"
             class="col-span-4"
             v-model="userInfo.studyId"
             placeholder="请输入学号"
-            :error="errors.studyId ? true : false"
+            :error="errors?.studyId ? true : false"
             @input="
               () => {
                 const parseResult = formSchema
@@ -185,18 +162,16 @@ watch(
                   .safeParse({
                     studyId: userInfo.studyId,
                   });
-                if (parseResult.error) {
-                  errors.studyId = parseResult.error.format().studyId
-                    ? parseResult.error.format()._errors.join(', ')
-                    : '';
+                if (errors) {
+                  errors.studyId = parseResult.error?.format().studyId;
                 }
               }
             "
           />
           <div class="grid grid-cols-subgrid gap-4 col-span-3">
-            <div class="col-start-2 error flex" v-if="errors.studyId">
+            <div class="col-start-2 error flex" v-if="errors?.studyId">
               <Icon icon="material-symbols:error-outline" />
-              {{ errors.studyId }}
+              {{ errors.studyId._errors[0] }}
             </div>
           </div>
         </div>
@@ -213,55 +188,75 @@ watch(
             </div>
           </RadioGroup>
         </div>
-        <div :class="inputContainerStyle">
+        <div class="input-container">
           <Label for="username" class="text-center"> 邮箱 : </Label>
           <Input
-            default-value="@peduarte"
+            placeholder="请输入邮箱"
             class="col-span-4"
             v-model="userInfo.email"
-            :error="errors.email ? true : false"
+            :error="errors?.email ? true : false"
             @input="
               () => {
                 const parseResult = formSchema.pick({ email: true }).safeParse({
                   email: userInfo.email,
                 });
-                if (parseResult.error) {
-                  errors.email = parseResult.error.format().email
-                    ? parseResult.error.format()._errors.join(', ')
-                    : '';
+                if (errors) {
+                  errors.email = parseResult.error?.format().email;
                 }
               }
             "
           />
           <div class="grid grid-cols-subgrid gap-4 col-span-3">
-            <div class="col-start-2 error flex" v-if="errors.email">
-              <Icon icon="material-symbols:error-outline" /> {{ errors.email }}
+            <div class="col-start-2 error flex" v-if="errors?.email">
+              <Icon icon="material-symbols:error-outline" />
+              {{ errors.email._errors[0] }}
             </div>
           </div>
         </div>
-        <div :class="inputContainerStyle">
+        <div class="input-container">
           <Label for="username" class="text-center"> QQ : </Label>
           <Input
             default-value="@peduarte"
             class="col-span-4"
+            placeholder="请输入QQ"
             v-model="userInfo.qq"
           />
         </div>
-        <div :class="inputContainerStyle">
-          <Label for="username" class="text-right"> 电话 : </Label>
+        <div class="input-container">
+          <Label for="username" class="text-center"> 电话 : </Label>
           <Input
             default-value="@peduarte"
             class="col-span-4"
+            placeholder="请输入电话"
             v-model="userInfo.phone"
           />
         </div>
-        <div :class="inputContainerStyle">
-          <Label for="username" class="text-right"> 班级 : </Label>
+        <div class="input-container">
+          <Label for="username" class="text-center"> 班级 : </Label>
           <Input
-            default-value="计科XXX"
+            placeholder="请输入班级（格式：计科xxx）"
             class="col-span-4"
             v-model="userInfo.clazz"
+            :error="errors?.clazz ? true : false"
+            @input="
+              () => {
+                console.log(1111);
+
+                const parseResult = formSchema.pick({ clazz: true }).safeParse({
+                  clazz: userInfo.clazz,
+                });
+                if (errors) {
+                  errors.clazz = parseResult.error?.format().clazz;
+                }
+              }
+            "
           />
+          <div class="grid grid-cols-subgrid gap-4 col-span-3">
+            <div class="col-start-2 error flex" v-if="errors?.clazz">
+              <Icon icon="material-symbols:error-outline" />
+              {{ errors.clazz._errors[0] }}
+            </div>
+          </div>
         </div>
       </div>
       <DialogFooter>
@@ -272,6 +267,7 @@ watch(
 </template>
 
 <style lang="scss" scoped>
+@use "@admin/styles/form.scss";
 input,
 .select-text {
   color: var(--secondary-foreground);

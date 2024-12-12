@@ -1,0 +1,44 @@
+// 文章内容样式
+@use "./partials/code.scss";
+@use "./partials/list.scss";
+@use "./partials/typography.scss";
+@use "./partials/block.scss";
+
+.tiptap {
+  @font-face {
+    font-family: 'JetBrainsMono';
+    src: url('/src/assets/fonts/JetBrainsMono-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  --main-color: #425aef;
+  --main-color-bg: #4259ef0d;
+  --main-site-background: #f7f9fe;
+  --main-card-background: #fff;
+  --main-card-second-background: #f7f7f9;
+  --main-font-color: #363636;
+  --main-font-second-color: #3c3c43cc;
+  --main-card-border: #e3e8f7;
+  --main-border-shadow: #2c2d300c;
+  --main-scrollbar-bar: rgba(60, 60, 67, 0.4);
+  --main-mask-background: rgba(255, 255, 255, 0.95);
+  --main-mask-Inverse-background: rgba(0, 0, 0, 0.08);
+  --main-mask-second-background: rgba(0, 0, 0, 0.45);
+  --main-color-opacity: rgba(255, 255, 255, 0.15);
+  --main-dark-opacity: rgba(255, 255, 255, 0.15);
+  --main-dark-shadow: #0000006e;
+  --main-info-color: #50bfff;
+  --main-info-color-gray: #50bfff60;
+  --main-warning-color: #ffa500;
+  --main-warning-color-gray: #f7ba2a60;
+  --main-success-color: #13ce66;
+  --main-success-color-gray: #13ce6660;
+  --main-error-color: #ff3842;
+  --main-error-color-gray: #ff38423b;
+  --main-color-blue: #0084ff;
+  --main-color-white: #ffffff40;
+  --main-color-gray: #999;
+  --main-color-red: #ff3842;
+  --main-font-family: JetBrainsMono,
+}

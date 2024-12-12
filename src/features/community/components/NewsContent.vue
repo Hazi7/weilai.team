@@ -1,13 +1,13 @@
 <template>
   <div id="news">
-    <div class="news-item" v-for="item in articleList">
+    <div
+      class="news-item"
+      v-for="item in articleList"
+      v-if="articleList.length > 0"
+    >
       <div class="news-writer">
         <div class="avatar" @click="skipPersonCenter(item.id)">
           <UserAvatar :avatar="item.headPortrait" />
-          <!-- <img v-if="item.headPortrait" :src="`${item.headPortrait}`" alt="" />
-          <div v-else class="flex items-center space-x-4">
-            <Skeleton class="bg-[--muted] h-12 w-12 rounded-full" />
-          </div> -->
         </div>
         <div class="writer-info">
           <div class="name">{{ item.name }}</div>
@@ -40,6 +40,7 @@
         :commentCount="item.commentCount"
       />
     </div>
+    <div v-if="articleList.length == 0"><NoData /></div>
   </div>
 
   <!-- <div v-if="loading">加载中</div> -->
@@ -63,7 +64,9 @@
 
 <script setup lang="ts">
 import UserAvatar from "@/components/avatar/UserAvatar.vue";
+import NoData from "@/components/loading/NoData.vue";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useUserStore } from "@/store/userStore";
 import type { ArticleList } from "@/types/Community";
 import { formatPostTime } from "@/utils/formatPostTime";
 import {
@@ -74,7 +77,6 @@ import {
 } from "@community/composables/search";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useUserStore } from "@/store/userStore";
 import NewsFooter from "./NewsFooter.vue";
 
 const isTag = ref(false);

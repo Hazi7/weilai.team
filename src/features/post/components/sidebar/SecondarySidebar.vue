@@ -79,7 +79,7 @@ const isTocOpen = ref(true);
             v-if="errors?.postCategories?._errors"
             class="secondary-sidebar__error"
           >
-            <Icon icon="fluent:line-horizontal-5-error-20-regular"</Icon>
+            <Icon icon="fluent:line-horizontal-5-error-20-regular"></Icon>
             <span>{{ errors.postCategories?._errors[0] }}</span>
           </div>
           <SelectTrigger
@@ -100,10 +100,7 @@ const isTocOpen = ref(true);
             </SelectGroup>
           </SelectContent>
         </Select>
-        <div
-          v-if="errors?.postTags?._errors"
-          class="secondary-sidebar__error"
-        >
+        <div v-if="errors?.postTags?._errors" class="secondary-sidebar__error">
           <Icon icon="fluent:tag-error-16-regular"></Icon>
           <span>{{ errors.postTags?._errors[0] }}</span>
         </div>
@@ -132,7 +129,7 @@ const isTocOpen = ref(true);
           v-if="errors?.postSummary?._errors"
           class="secondary-sidebar__error"
         >
-          <Icon icon="fluent:document-error-16-regular"</Icon>
+          <Icon icon="fluent:document-error-16-regular"></Icon>
           <span>{{ errors.postSummary?._errors[0] }}</span>
         </div>
         <Textarea
@@ -213,7 +210,7 @@ const isTocOpen = ref(true);
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.25rem
+    margin-bottom: 0.25rem;
   }
 }
 

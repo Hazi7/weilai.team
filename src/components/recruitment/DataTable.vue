@@ -113,13 +113,13 @@ watch(() => props.items, () => {
               <Icon icon="tabler:dots" style="display: inline-block;font-size: 18px; cursor: pointer;"
               />
             </PopoverTrigger>
-            <PopoverContent class="popover-content" >
+            <PopoverContent class="popover-content" style="z-index: 10;" >
               <div>
                 <div
                   class="pop-content-item"
                   v-for="(i, index) in actionItems"
                   :key="index"
-                  @click=" i.onclick(item.id);"
+                  @click=" i.onclick(item.id,item.name);"
                   >
                   <Icon :icon=i.icon
                   :key="index"

@@ -91,7 +91,7 @@ const handleCollectClick = () => {
 </template>
 
 <style lang="scss">
-@use "/src/assets/styles/markdown.scss";
+@use "/src/assets/styles/editor/index.scss";
 .article-detail {
   background-color: #fff;
   box-sizing: border-box;

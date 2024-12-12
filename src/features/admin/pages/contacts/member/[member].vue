@@ -198,6 +198,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useAlert } from "@/composables/useAlert";
+import { showConfirm } from "@/composables/useConfirm";
 import AddMember from "@/features/admin/components/contacts/AddMember.vue";
 import MemberInfo from "@/features/admin/components/contacts/MemberInfo.vue";
 import SelectLeader from "@/features/admin/components/contacts/SelectLeader.vue";
@@ -314,7 +315,14 @@ const { data, run, loading } = useRequest(deletes, { manual: true });
 // 批量删除功能
 function deleteMembers() {
   if (selectIds.value.length > 0) {
-    run(selectIds.value);
+    showConfirm({
+      content: "你确定要删除该成员吗",
+      description: "一旦删除组织中将不存在该用户",
+    })
+      .then(() => {
+        run(selectIds.value);
+      })
+      .catch(() => {});
   } else {
     return showAlert("请选择后再进行删除", "waring");
   }
@@ -322,7 +330,14 @@ function deleteMembers() {
 // 删除一个
 function deleteOne(id: number) {
   selectIds.value.push(id);
-  run(selectIds.value);
+  showConfirm({
+    content: "你确定要删除该成员吗",
+    description: "一旦删除组织中将不存在该用户",
+  })
+    .then(() => {
+      run(selectIds.value);
+    })
+    .catch(() => {});
 }
 watch(
   () => data.value,

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+
+
+
 import TheTopNav from "../../../components/layouts/AppThirdNav.vue";
 import { useTagStore } from "@/store/tagTypeStore";
 import { ref } from "vue";
@@ -13,26 +16,33 @@ const addTagType = useTagStore();
 addTagType.addTag(typeData.value);
 
 
-import container from '../components/container.vue';
+import MyHeader from '../components/MyHeader.vue';
+import MyTabs from '../components/MyTabs.vue';
 import Rightbar from '../../../components/community/Rightbar.vue'
 </script>
 
 <template>
   <TheTopNav></TheTopNav>
   <div style="display: flex;">
-    <container></container>
+    <div class="content">
+      <MyHeader></MyHeader>
+      <MyTabs></MyTabs>
+    </div>
     <Rightbar></Rightbar>
+
   </div>
+
 </template>
 
 <style lang="scss" scoped>
-.default-layout__container {
+.content {
   width: 100%;
   padding: 0px 100px 10px 100px;
 }
+
 /* 使用媒体查询为手机端修改padding */
 @media (max-width: 768px) {
-  .default-layout__container {
+  .content {
     padding: 80px 0 60px 0;
   }
 }

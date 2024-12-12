@@ -5,6 +5,45 @@ import {
   CardFooter,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import {ref} from 'vue';
+
+interface IProp {
+  InterviewTime: string;
+  InterviewAddress: string;
+  InterviewRound: string;
+  InterviewName: string;
+  InterviewStatus: string;
+  InterviewId: string;
+  InterviewOfficerFirst: {
+    name: string;
+    id: string;
+  };
+  InterviewOfficerSecond: {
+    name: string;
+    id: string;
+  };
+  InterviewOfficerThird: {
+    name: string;
+    id: string;
+  };
+}
+const props = defineProps<
+{
+    cardMessage:IProp,
+}>()
+
+
+const dateTime = ref({
+  date: props.cardMessage.InterviewTime.split(' ')[0],
+  time: props.cardMessage.InterviewTime.split(' ')[1],
+})
+const InterviewOfficerIdArr=ref([
+    props.cardMessage.InterviewOfficerFirst.id,
+    props.cardMessage.InterviewOfficerSecond.id,
+    props.cardMessage.InterviewOfficerThird.id,
+])
+const InterviewRecordId=ref(props.cardMessage.InterviewId)
+
 </script>
 <template>
   <Card class="message-show" >
@@ -12,11 +51,11 @@ import { Button } from '@/components/ui/button'
        <div class="message-show-top">
             <div class="message-show-time">
                 <span class="min-width inline-block">
-                    2024-11-22
+                    {{ dateTime.date }}
                 </span>
                 &nbsp;
                 <span class="min-width inline-block">
-                    12:00-13:00
+                   {{ dateTime.time }}
                 </span>
             </div>
             <div class="message-show-address">
@@ -24,7 +63,7 @@ import { Button } from '@/components/ui/button'
                     面试地点：
                 </span>
                 <span class="min-width inline-block">
-                    零号楼609
+                    {{cardMessage.InterviewAddress}}
                 </span>
             </div>
             <div class="message-show-interviewInturn">
@@ -32,12 +71,12 @@ import { Button } from '@/components/ui/button'
                     面试轮次：
                 </span>
                 <span class="min-width  inline-block" >
-                    二面
+                    {{cardMessage.InterviewRound}}
                 </span>
             </div>
             <div class="message-show-name">
                 <span class="min-width">
-                    王科林
+                   {{ cardMessage.InterviewName}}
                 </span>
             </div>
        </div>
@@ -46,13 +85,15 @@ import { Button } from '@/components/ui/button'
                 <span class="min-width">
                    面试官：
                 </span>
-                <span class="min-width">
-                    贝利亚 贝利亚 贝利亚
+                <span class="min-width" >
+                    {{cardMessage.InterviewOfficerFirst.name}}
+                    {{  cardMessage.InterviewOfficerSecond.name  }}
+                    {{  cardMessage.InterviewOfficerThird.name  }}
                 </span>
             </div>
             <div class="message-show-staus">
                 <span class="min-width">
-                    已淘汰
+                  {{cardMessage.InterviewStatus }}
                 </span>
             </div>
        </div>

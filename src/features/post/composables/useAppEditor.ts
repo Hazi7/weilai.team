@@ -16,10 +16,17 @@ import Blockquote from "@tiptap/extension-blockquote";
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
 import Paragraph from "@tiptap/extension-paragraph";
-import CodeBlock from "@tiptap/extension-code-block";
 import Heading from "@tiptap/extension-heading";
+import Code from "@tiptap/extension-code";
+import { AppCodeBlock } from "@/components/editor/extensions/app-code-block";
+import Link from "@tiptap/extension-link";
+import { all, createLowlight } from "lowlight";
 
 export default function useAppEditor(editable: boolean = true) {
+  const lowlight = createLowlight(all);
+
+  // you can also register languages
+
   const editor = useEditor({
     extensions: [
       Document,
@@ -29,9 +36,12 @@ export default function useAppEditor(editable: boolean = true) {
       Paragraph,
       Text,
       Blockquote,
-      CodeBlock,
+      Code,
+      AppCodeBlock.configure({
+        lowlight,
+      }),
       Heading.configure({
-        levels: [1, 2, 3, 4, 5],
+        levels: [1, 2, 3, 4],
       }),
       HorizontalRule,
       Bold,
@@ -49,6 +59,7 @@ export default function useAppEditor(editable: boolean = true) {
       TaskItem.configure({
         nested: true,
       }),
+      Link,
     ],
     editable,
   });

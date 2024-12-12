@@ -301,10 +301,15 @@ const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorage
 
 import { reactive, watch, ref } from 'vue';
 import { useUserStore } from '@/store/userStore'
-const userStore=useUserStore()
-console.log('pinia///',userStore);
+const userStore = useUserStore()
+console.log('pinia///', userStore);
 // 获取userId
-const userId = getLocalStorageWithExpire('userId')
+let userId=0
+if (userStore.isSelf) {
+  userId = getLocalStorageWithExpire('userId')
+}else{
+  userId = userStore.userId
+}
 
 let courseList = reactive({
 
@@ -444,7 +449,6 @@ function dayTransformer(day) {
     background-color: white;
     padding: 10px;
     border-radius: 10px;
-    // box-shadow: 5px 5px 5px #ccc;
     tr{ 
         box-sizing: content-box;
         border: 1px solid black;
