@@ -9,7 +9,8 @@ import { type AxiosResponse } from "axios";
 import { computed, watch } from "vue";
 import apiClient from "@/api/axios";
 import { formatPostTime } from "@/utils/formatPostTime";
-import { useAlert } from "@/composables/useAlert";
+import { handleLikeClick } from "../../composables/Like";
+import { handleCollect } from "../../composables/Collect";
 
 export interface PostDetailResponse {
   userId: number;
@@ -30,7 +31,6 @@ export interface PostDetailResponse {
 // 从路由获取参数
 const route = useRoute<"/community/post/[id]">();
 const postId = route.params.id;
-const { showAlert } = useAlert();
 
 const getPost = () => {
   return apiClient.get(`/post/selectOne/${postId}`);
@@ -54,56 +54,12 @@ watch(
   },
 );
 //点赞
-const likeArticle = () => {
-  return apiClient.put(`/post/like/${postId}`);
+const handleLike = () => {
+  handleLikeClick(postId);
 };
-const { data: likeData, run: likeRun } = useRequest(() => likeArticle(), {
-  manual: true,
-});
-watch(
-  () => likeData.value,
-  (newLikeData) => {
-    console.log("点赞请求的响应数据:", newLikeData);
-    run();
-    if (newLikeData.code === 2009) {
-      showAlert("点赞成功", "pass");
-    } else if (newLikeData.code === 2011) {
-      showAlert("取消点赞成功", "pass");
-    } else {
-      showAlert("点赞失败", "error");
-    }
-  },
-);
-const handleLikeClick = () => {
-  likeRun();
-};
-
-// 收藏
-const { run: collectRun } = useRequest(
-  () => {
-    return apiClient.post(`/post/collect/${postId}`);
-  },
-  {
-    manual: true,
-    onSuccess: (newCollectData) => {
-      console.log("收藏请求的响应数据:", newCollectData);
-      run();
-      if (newCollectData.code === 2013) {
-        showAlert("收藏成功", "pass");
-      } else if (newCollectData.code === 2016) {
-        showAlert("取消收藏成功", "pass");
-      } else {
-        showAlert("收藏失败", "error");
-      }
-    },
-    onError: (error) => {
-      console.log("收藏请求出错:", error);
-      showAlert("收藏失败", "error");
-    },
-  },
-);
-const handleCollect = () => {
-  collectRun();
+//收藏
+const handleCollectClick = () => {
+  handleCollect(postId);
 };
 </script>
 
@@ -121,8 +77,8 @@ const handleCollect = () => {
       :post-time="formattedPostTime"
       :is-like="data?.data.isLike"
       :is-collect="data?.data.isCollect"
-      :handle-like-click="handleLikeClick"
-      :handle-collect="handleCollect"
+      :handle-like-click="handleLike"
+      :handle-collect="handleCollectClick"
     ></ArticleHeader>
     <EditorContent
       class="article-detail__content"

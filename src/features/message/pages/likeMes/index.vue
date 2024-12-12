@@ -32,6 +32,8 @@ import { useAlert } from "../../../../composables/useAlert";
 import { useRequest } from "@/composables/useRequest";
 import type { SSEMessageData } from "../../../../types/sseType";
 import { useSseStore } from "../../../../store/useSseStore";
+import { useMessageStore } from "@/store/messageStore";
+const messageStore = useMessageStore();
 const sseStore = useSseStore();
 const { data, executeRequest } = useRequest();
 const messages = ref<SSEMessageData[]>([]);
@@ -46,6 +48,7 @@ onMounted(() => {
     if (message.messageType == messageType) {
       messages.value.unshift(message);
       console.log(message);
+      messageStore.setLikeStatus(true);
     }
   });
   messageList();
@@ -63,6 +66,7 @@ const messageList = async () => {
     const allMessages = data.value?.data.AllMessages || [];
     messages.value = allMessages;
     console.log(allMessages);
+    messageStore.setLikeStatus(false);
   } else if (data.value?.code == 401) {
     showAlert("请先登录", "waring");
   } else {

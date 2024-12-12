@@ -49,7 +49,7 @@ onMounted(() => {
     if (message.messageType == messageType) {
       messages.value.unshift(message);
       console.log(message);
-      messageStore.setHasNewMessage(true);
+      messageStore.setCommentStatus(true);
     }
   });
   messageList();
@@ -64,7 +64,7 @@ const messageList = async () => {
   });
   if (data.value?.code == 200) {
     console.log(data.value);
-
+    messageStore.setCommentStatus(false);
     totalCount.value = data.value?.data.PageInfo.totalCount;
     const allMessages = data.value?.data.AllMessages || [];
     messages.value = allMessages;

@@ -49,7 +49,10 @@ const deleteMessage = async (messageId: number, messageType: number) => {
           <span v-else-if="props.message.messageType === 3" class="type"
             >评论了你的文章</span
           >
-          <span v-else-if="props.message.messageType === 4" class="hide"></span>
+          <span v-else-if="props.message.messageType === 4" class="type"
+            >评论了你</span
+          >
+          <span v-else-if="props.message.messageType === 5" class="hide"></span>
         </div>
         <div class="time">{{ formattedTime }}</div>
       </div>

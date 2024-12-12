@@ -31,7 +31,11 @@ import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 import { useMessageStore } from '@/store/messageStore';
+import { useNoticeStore } from '@/store/UseNoticeStore';
+import { useRequest } from "@/composables/useRequest";
+const { data,executeRequest } = useRequest();
 const messageStore = useMessageStore();
+const noticeStore = useNoticeStore();
 
 
 const {  logout } = UserLogin()
@@ -98,10 +102,6 @@ const items = [
   },
 ];
 
-const handleMessageClick = () => {
-  messageStore.setHasNewMessage(false)
-}
-
 interface SubItemInterface {
   title: string;
   icon: string;
@@ -116,6 +116,21 @@ console.log("点击了");
   userStore.reset();
   router.push('/personalCenter/userInfo/myPosts')
 }
+//获取未读公告数量
+const getNotReadCount = async () => {
+  await executeRequest({
+    url: `/notice/getNotReadCount`,
+    method: "get",
+  });
+  if (data.value?.code == 200) {
+    if (data.value.data > 0) {
+      noticeStore.setHasUnreadNotice(true);
+    } else {
+      noticeStore.setHasUnreadNotice(false);
+    }
+  }
+};
+getNotReadCount()
 </script>
 
 <template>
@@ -148,6 +163,7 @@ console.log("点击了");
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span >{{ item.title }}</span>
+                        <span v-if="item.title === '社区'&&noticeStore.hasUnreadNotice" class="noticeDot"></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -174,6 +190,7 @@ console.log("点击了");
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span>{{ item.title }}</span>
+                        <span v-if="item.title === '公告'&&noticeStore.hasUnreadNotice" class="noticeDot"></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -205,7 +222,6 @@ console.log("点击了");
                         :to="`/message/likeMes`"
                         active-class="sidebar__link--active"
                         class="sidebar__link"
-                        @click="handleMessageClick"
                       >
                         <Icon icon="mage:box-3d-notification" />&nbsp;
                         <span>消息</span>
@@ -324,12 +340,21 @@ console.log("点击了");
 <style lang="scss" scoped>
 .dot{
   position: absolute;
-  top: 40%;
+  top: 41%;
   right: 20px;
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background-color: #ff0000;;
+}
+.noticeDot{
+  position: absolute;
+  top: 41%;
+  right: 20px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: #ff0000;
 }
 .main-menu {
   display: none;
