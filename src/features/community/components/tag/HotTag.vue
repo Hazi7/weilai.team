@@ -18,7 +18,10 @@ getRecommendTag()
                 <Icon icon="tabler:tag" class="tagIcon"></Icon>
                 <span>热门标签</span>
             </div>
-            <Icon icon="icon-park-outline:right" class="moreTag"></Icon>
+            <router-link active-class="active" :to="`/community/${tagType}/label/suggest`">
+                <Icon icon="icon-park-outline:right" class="moreTag"></Icon>
+            </router-link>
+
         </div>
         <div class="hotTagList">
             <NoData v-if="hotTagList.length === 0" />
@@ -49,17 +52,19 @@ getRecommendTag()
             display: flex;
             align-items: center;
             color: #6d6d6d;
+            font-size: 0.9vw;
 
             .tagIcon {
                 color: #4f4e4e;
-                font-size: 20px;
-                margin-right: 10px;
+                font-size: 1vw;
+                margin-right: 5px;
             }
         }
 
         .moreTag {
             color: #4f4e4e;
-            font-size: 22px;
+            font-size: 0.9vw;
+            cursor: pointer;
         }
     }
 
@@ -72,7 +77,7 @@ getRecommendTag()
 
         .tag {
             color: #747272;
-            font-size: 12px;
+            font-size: 0.9vw;
             padding: 0px 20px;
             margin: 8px 5px;
             // border: 1px solid #88a6dd;
@@ -102,6 +107,28 @@ getRecommendTag()
 
         .tag:nth-child(6n) {
             background-color: #f7e3dc;
+        }
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .rightBarTag {
+        .hotTagList {
+            .tag {
+                padding: 0px 14px;
+                margin: 8px 4px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .rightBarTag {
+        .hotTagList {
+            .tag {
+                padding: 0px 12px;
+                margin: 8px 3px;
+            }
         }
     }
 }

@@ -32,15 +32,6 @@ defineEmits<{
     (e: "update:fontPassword", value: string | number | undefined): void;
     (e: "update:fontPasswordAgin", value: string | number | undefined): void
 }>()
-
-// const getCode = () => {
-//     if (!email.value) {
-//         showAlert("请输入邮箱", "waring");
-//         noEmail.value = true;
-//     } else {
-//         useGetCode(email.value);
-//     }
-// };
 </script>
 <template>
     <div class="fontPassConcent grid gap-4 py-4">

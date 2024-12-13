@@ -1,13 +1,12 @@
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import { Icon } from "@iconify/vue";
-import { reactive, ref } from "vue";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { computed } from "vue";
 import CommunityTag from "../../composables/CommunityTag";
 import { useTagStore } from "@/store/tagTypeStore";
 
@@ -24,18 +23,13 @@ interface UseTagList {
 
 const firstUseTagList = ref<UseTagList[]>([]);
 getUseTagList()
-    .then(() => {
-        // const allUseTagList = Object.entries(useTagList.value).map(([key, value]) => ({
-        //     tagName: key,
-        //     count: value as unknown as number
-        // }))
-        if (useTagList.value.length > 10) {
-            firstUseTagList.value = useTagList.value.slice(0, 10);
-        } else {
-            firstUseTagList.value = useTagList.value
-        }
-
-    })
+watch(useTagList, () => {
+    if (useTagList.value.length > 10) {
+        firstUseTagList.value = useTagList.value.slice(0, 10);
+    } else {
+        firstUseTagList.value = useTagList.value
+    }
+})
 
 </script>
 
