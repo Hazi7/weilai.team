@@ -31,6 +31,11 @@ addTagType.addTag(typeData.value);
         "icon": "i-mdi-file-document-multiple-outline"
       },
       {
+        "title": "最新",
+        "path": "/community/blog/latest",
+        "icon": "i-mdi-file-document-multiple-outline"
+      },
+      {
         "title": "用户",
         "path": "/community/blog/user",
         "icon": "i-mdi-file-document-multiple-outline"

@@ -25,6 +25,7 @@ export interface ArticleInfo {
   searchCount: boolean;
   size: number;
   total: number;
+  code: number;
 }
 export interface AdminPostInfo {
   countId: number;

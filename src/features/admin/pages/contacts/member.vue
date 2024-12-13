@@ -33,13 +33,7 @@ interface Item {
   name: string;
   description: string;
 }
-const onInputFocus = () => {
-  isVisible.value = true;
-};
 
-const onInputBlur = () => {
-  isVisible.value = false;
-};
 getMembers().then((res) => {
   userCount.value = res.userCount;
   teamAble.value = res.teamAble;
