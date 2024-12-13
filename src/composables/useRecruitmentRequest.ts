@@ -1,5 +1,6 @@
 
 import axios from 'axios';
+import router from '@/router';
 
 import type  {  IGetAllApplyUserDTO ,IGetAllGradeDTO,IExportInterviewResultDTO,IUpdateApplyUserDTO,IUpdateInterviewResultDTO,IGetInterviewUserDTO,IArrangeInterviewDTO } from '@/types/recruitmentType';
 // 招新模块
@@ -7,6 +8,7 @@ const BASE_UEL='http://49.232.183.67:8087/'
 const getToken = (): string => {
   const token = localStorage.getItem('token');
   if (!token) {
+    router.push('/login');
     throw new Error('拿token了吗孩子');
   }
   return JSON.parse(token).value;
@@ -119,7 +121,7 @@ export const exportResultExcel = ({clazz,dateString,grade,sex,status}:IExportInt
 
 //修改招新报名的人员的信息
 export const updateApplyUserInfo = ({clazz,email,grade,id,name,qq,sex,studentId}:IUpdateApplyUserDTO) => {
-  return axios.put(`${BASE_UEL}recruit/manage/updateRecruitUserStatus`, {clazz,email,grade,id,name,qq,sex,studentId}, {
+  return axios.put(`${BASE_UEL}recruit/manage/updateInfo`, {clazz,email,grade,id,name,qq,sex,studentId}, {
     headers: {
      'Content-Type': 'application/json',
      Authorization: 'Bearer '+ getToken(),
@@ -149,7 +151,7 @@ export const getCommentByInterviewRecordId = ({id}:{id:string}) => {
 }
 
 //获取所有面试官
-export const getAllInterviewer = ({pageNo, pageSize,name}:{pageNo:string, pageSize:string,name:string}) => {
+export const getAllInterviewer = ({pageNo, pageSize,name}:{pageNo:number, pageSize:number,name:string}) => {
   return axios.get(`${BASE_UEL}recruit/interview/listAllHr`, {
 
     params: {
@@ -165,7 +167,7 @@ export const getAllInterviewer = ({pageNo, pageSize,name}:{pageNo:string, pageSi
 //获取所有面试人员
 //状态参数标记 -1查询全部，0查询待我面试，1待反馈；2已录取；3未录取
 export const getAllInterviewUser = ({pageNo, pageSize,name,grade,round,status}:IGetInterviewUserDTO) => {
-  return axios.get(`${BASE_UEL}recruit/interview/listAllInterviewer`, {
+  return axios.get(`${BASE_UEL}recruit/interview/listAllInterview`, {
     params: {
       'pageDTO.pageNo':pageNo,'pageDTO.pageSize':pageSize,name,grade,round,status
     },
@@ -178,8 +180,9 @@ export const getAllInterviewUser = ({pageNo, pageSize,name,grade,round,status}:I
 
 //安排面试官
 //状态参数标记 round 1全部，1代表一面、2代表二面
-export const arrangeInterviewer = ({id,interviewTime,place,round,firstHr,secondHr,thirdHr}:IArrangeInterviewDTO) => {
-  return axios.post(`${BASE_UEL}recruit/interview/shceduleInterviewer`, {id,interviewTime,place,round,firstHr,secondHr,thirdHr}, {
+export const arrangeInterviewer = ({id,interviewTime,place,firstHr,secondHr,thirdHr}:IArrangeInterviewDTO) => {
+  console.log(id,interviewTime,place,firstHr,secondHr,thirdHr)
+  return axios.post(`${BASE_UEL}recruit/interview/scheduleInterviewer`, {id,interviewTime,place,firstHr,secondHr,thirdHr}, {
     headers: {
      'Content-Type': 'application/json',
      Authorization: 'Bearer '+ getToken(),

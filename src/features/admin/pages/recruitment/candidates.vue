@@ -23,18 +23,23 @@ import {
 import { useRequest } from "vue-request";
 import type {
   IAllApplyUserVO,
-  IGetAllApplyUserDTO,
   IResponseDataApplyUser,
   IAllApplyUserDTO,
-  IAllGradeDTO,
   IGradeData,
 } from "@/types/recruitmentType";
 import { interviewStatusMap } from "@/types/recruitmentType";
+import  {showConfirm} from "@/composables/useConfirm";
+import { useAlert } from "@/composables/useAlert";
+const {showAlert} = useAlert();
 const searchValue = ref("");
-
 const handleInput = (value: string) => {
+  console.log(value);
+  if (value === "") {
+    searchValue.value = "";
+   return;
+  }
   searchValue.value = value;
-  console.log(searchValue);
+
 };
 
 //下拉过滤框
@@ -79,6 +84,18 @@ const candidates_itemsObjArr = ref([
 //获得子组件的过滤条件
 const handleFilterCondition = (value: string, title: string) => {
   console.log(value, title);
+  if (value === "init" || value==="") {
+    return;
+  }
+  if (title === "年级") {
+    grade.value = value;
+  }
+  if (title === "性别") {
+    sex.value = value;
+  }
+  // if (title === "班级") {
+  //   clazz.value = value;
+  // }
 };
 
 const dateRange = ref(null); // 初始化日期范围
@@ -86,19 +103,19 @@ const dateRange = ref(null); // 初始化日期范围
 // 获得子组件的日期参数
 const handleDateRangeUpdate = (newDateRange: any) => {
   dateRange.value = newDateRange;
-  // 在这里可以对日期范围进行处理，例如发送请求或更新其他组件的数据
   handleDateRange();
 };
 //对dateRange进行处理
 const handleDateRange = () => {
-  // 在这里处理日期范围，例如将日期范围转换为字符串格式
+  // 将日期范围转换为字符串格式
   if (!dateRange.value) {
     return;
   }
   const startDate = Reflect.get(dateRange.value, "start");
   const endDate = Reflect.get(dateRange.value, "end");
   const formattedRange = `${startDate} - ${endDate}`;
-  console.log(formattedRange);
+  // console.log(formattedRange);
+  dateString.value = formattedRange;
 };
 
 const isReset = ref(false);
@@ -108,7 +125,10 @@ const resetCondition = () => {
   candidates_itemsObjArr.value.forEach((item) => {
     item.ref = "init";
   });
+  grade.value = "";
+  sex.value = "";
   dateRange.value = null;
+  dateString.value = "";
   isReset.value = true;
   setTimeout(() => {
     isReset.value = false;
@@ -143,8 +163,9 @@ const tableData = ref(<IAllApplyUserVO[]>[]);
 const pageSize = ref(10);
 const pageNo = ref(1);
 const total = ref(0);
-const getApplyUserData = ref<IResponseDataApplyUser | null>(null);
 const status = ref(0);
+const getApplyUserData = ref<IResponseDataApplyUser | null>(null);
+
 //从分页组件拿到页码信息并更新
 const changePage = (newPage: number) => {
   pageNo.value = newPage;
@@ -229,21 +250,17 @@ const arrangeInterview = (id: string,name?:string) => {
 const eliminateCandidate = (id: string) => {
   console.log(id, "淘汰");
 };
-// 模态框
-const isModalOpen = ref(false);
-const closeModal = () => {
-  isModalOpen.value = false;
-};
 
-const currentDeleteId = ref("");
 // 删除候选人
 const DeleteCandidate = (id: string) => {
-  isModalOpen.value = true;
-  currentDeleteId.value = id;
+  confirmDeleteCandidate(id);
 };
 const confirmDeleteCandidate = (id: string) => {
-  isModalOpen.value = false;
- const { data, error, loading } = useRequest(() =>
+  showConfirm({
+    title: "系统提示",
+    content: "确定删除该用户吗？",
+  }).then(()=>{
+    const { data, error, loading } = useRequest(() =>
     deleteApplyUserById({ id }),
   );
   watch(
@@ -254,13 +271,17 @@ const confirmDeleteCandidate = (id: string) => {
         return;
       }
       if (newData) {
-        alert("删除成功");
+        showAlert("删除成功", "pass");
         // 刷新表格数据
         updateParameter.value =!updateParameter.value;
       }
     },
     { immediate: true },
   );
+  })
+  .catch(()=>{
+    console.log("取消删除");
+  });
 };
 //为表格传递操作项和图标
 const actionItems = ref([
@@ -319,11 +340,18 @@ const fetchAllGrade=()=>{
 }
 fetchAllGrade();
 
+const grade=ref<string>("")
+const sex=ref<string>("")
+const dateString=ref<string>("")
+
 const getAllApplyUserRequestParams = computed(() => ({
   pageNo: pageNo.value,
   pageSize: pageSize.value,
   status: status.value,
   condition: searchValue.value,
+  grade: grade.value,
+  sex: sex.value,
+  dateString: dateString.value,
 }));
 
 //设置一个状态变量，用来强制更新
@@ -332,6 +360,7 @@ const updateParameter = ref<boolean>(false);
 watch(
   [getAllApplyUserRequestParams, updateParameter],
   ([newParams, _]) => {
+    console.log(newParams);
     const { data, error, loading } = useRequest(() =>
       getAllApplyUser(newParams),
     );
@@ -402,7 +431,7 @@ const arrangeInterviewerDialog=ref(false);
       :isOpen="updateStatus"
       @close="updateStatus = false"
     />
-    <ModalDialog :isOpen="isModalOpen" @close="closeModal">
+    <!-- <ModalDialog :isOpen="isModalOpen" @close="closeModal">
       <template #header>
         <h2>删除候选人</h2>
       </template>
@@ -418,7 +447,7 @@ const arrangeInterviewerDialog=ref(false);
         >
         <Button class="btn-style" @click="closeModal">关闭</Button>
       </template>
-    </ModalDialog>
+    </ModalDialog> -->
 
 
 

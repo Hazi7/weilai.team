@@ -135,7 +135,6 @@ const isReset = ref(false);
       </div>
     </div>
     <div class="main-content-show">
-      <MessageCard></MessageCard>
     </div>
   </div>
 </template>

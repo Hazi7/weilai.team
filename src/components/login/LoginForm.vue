@@ -27,7 +27,7 @@ const loginSchema = z.object({
         .min(1, { message: '请输入密码' })
 })
 
-
+const loading = ref(false)
 
 const validateLogin = () => {
     const loginResult = loginSchema.safeParse({
@@ -40,7 +40,7 @@ const validateLogin = () => {
     return loginResult.success
 }
 
-const { loading, getLogin } = useLogin()
+const { getLogin } = useLogin()
 
 const handleLogin = async () => {
     if (!validateLogin()) {
@@ -55,15 +55,10 @@ const handleLogin = async () => {
     getLogin(loginData.account, loginData.password)
 };
 
-// defineEmits<{
-//     (e: 'login', user: User)
-// }>()
-
 // 控制动画显示的状态
 const isVisible = ref(false)
 // 监听点击事件，触发动画
-const handleClick = (event: MouseEvent) => {
-    console.log('页面被点击了', event);
+const handleClick = () => {
     if (!isVisible.value) {
         isVisible.value = true
     }
@@ -127,12 +122,8 @@ onUnmounted(() => {
                                 filedErrors.password = result.error?.format().password;
                             }
                         }"></LoginContent>
-                    <Button v-if="!loading" type="submit" class="loginButton w-full" @click="handleLogin">
+                    <Button type="submit" class="loginButton w-full" @click="handleLogin">
                         登录
-                    </Button>
-                    <Button v-if="loading" class="loginButton" disabled>
-                        <Loader2 class="w-4 h-4 mr-2 animate-spin" />
-                        登录中...
                     </Button>
                 </div>
             </CardContent>
