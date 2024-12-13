@@ -58,6 +58,7 @@ import { onMounted, ref } from "vue";
 import { useRequest } from "@/composables/useRequest";
 import { useSseStore } from "../../../../store/useSseStore";
 import { useNoticeStore } from "@/store/UseNoticeStore";
+import { showConfirm } from "@/composables/useConfirm";
 const { data, executeRequest } = useRequest();
 import type { SSENoticeData } from "../../../../types/sseType";
 import {
@@ -119,19 +120,25 @@ const getNotReadCount = async () => {
 };
 //全部已读
 const readAllNotice = async () => {
-  await executeRequest({
-    url: `notice/markAllUnReadNoticeAsRead`,
-    method: "put",
-  });
-  console.log(data.value);
+  await showConfirm({
+    content: "确定将所有未读消息标记为已读吗？",
+  })
+    .then(() => {
+      executeRequest({
+        url: `notice/markAllUnReadNoticeAsRead`,
+        method: "put",
+      });
+      console.log(data.value);
 
-  if (data.value?.code === 200) {
-    showAlert("全部已读成功", "pass");
-    noticeList();
-    getNotReadCount();
-  } else {
-    showAlert("全部已读失败", "error");
-  }
+      if (data.value?.code === 200) {
+        showAlert("全部已读成功", "pass");
+        noticeList();
+        getNotReadCount();
+      } else {
+        showAlert("全部已读失败", "error");
+      }
+    })
+    .catch(() => {});
 };
 </script>
 

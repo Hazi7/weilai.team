@@ -9,8 +9,8 @@ import { type AxiosResponse } from "axios";
 import { computed, watch } from "vue";
 import apiClient from "@/api/axios";
 import { formatPostTime } from "@/utils/formatPostTime";
-import { handleLikeClick } from "../../composables/Like";
-import { handleCollect } from "../../composables/Collect";
+import { useLikeData } from "../../composables/Like";
+import { useCollectData } from "../../composables/Collect";
 
 export interface PostDetailResponse {
   userId: number;
@@ -31,7 +31,6 @@ export interface PostDetailResponse {
 // 从路由获取参数
 const route = useRoute<"/community/post/[id]">();
 const postId = route.params.id;
-
 const getPost = () => {
   return apiClient.get(`/post/selectOne/${postId}`);
 };
@@ -44,7 +43,6 @@ const formattedPostTime = computed(() => {
 });
 
 const { editor } = useAppEditor(false);
-
 watch(
   () => data.value,
   () => {
@@ -53,6 +51,9 @@ watch(
     }
   },
 );
+
+const { isLiked, handleLikeClick } = useLikeData();
+const { isCollected, handleCollect } = useCollectData();
 //点赞
 const handleLike = () => {
   handleLikeClick(postId);
@@ -61,6 +62,37 @@ const handleLike = () => {
 const handleCollectClick = () => {
   handleCollect(postId);
 };
+watch(
+  [isLiked],
+  ([newIsLiked]) => {
+    if (data.value && data.value.data) {
+      data.value.data.isLike = newIsLiked;
+      console.log(data.value?.data.isLike);
+      if (!newIsLiked) {
+        data.value.data.likeCount += 1;
+        data.value.data.isLike = true;
+      } else {
+        data.value.data.likeCount -= 1;
+        data.value.data.isLike = false;
+      }
+    }
+  },
+  { immediate: true },
+);
+watch(
+  [isCollected],
+  ([newIsCollect]) => {
+    if (data.value && data.value.data) {
+      console.log(newIsCollect);
+      if (newIsCollect) {
+        data.value.data.isCollect = true;
+      } else {
+        data.value.data.isCollect = false;
+      }
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>

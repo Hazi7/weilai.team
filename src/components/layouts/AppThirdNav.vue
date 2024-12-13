@@ -5,8 +5,10 @@ import {
   BreadcrumbList,
 } from "@/components/ui/breadcrumb";
 import { useRoute } from "vue-router";
+import { useMessageStore } from "@/store/messageStore";
 const route = useRoute();
 const thirdNavItems = route.meta.thirdNavItems as ThirdItemInterface[];
+const messageStore = useMessageStore();
 
 interface ThirdItemInterface {
   title: string;
@@ -29,6 +31,14 @@ interface ThirdItemInterface {
         >
           <RouterLink :to="item.path" active-class="active" class="top-link">
             {{ item.title }}
+            <span
+              v-if="
+                (item.title === '点赞/收藏' && messageStore.likeStatus) ||
+                (item.title === '评论' && messageStore.commentStatus) ||
+                (item.title === '系统通知' && messageStore.notificationStatus)
+              "
+              class="dot"
+            ></span>
           </RouterLink>
         </BreadcrumbItem>
       </BreadcrumbList>
@@ -38,6 +48,15 @@ interface ThirdItemInterface {
 
 <style lang="scss" scoped>
 $font: #8c9296;
+.dot {
+  position: absolute;
+  top: 22%;
+  right: -10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #ff0000;
+}
 .topNav {
   position: fixed;
   top: 0;

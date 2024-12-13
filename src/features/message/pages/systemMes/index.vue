@@ -3,7 +3,9 @@
     <div class="commentCon">
       <div class="titleOptions">
         <Icon icon="ant-design:clear-outlined" class="clearIcon" />
-        <div class="clearAll">清空所有({{ totalCount }})</div>
+        <div class="clearAll" @click="deleteAll">
+          清空所有({{ totalCount }})
+        </div>
       </div>
       <div class="messageCon">
         <NoData v-if="messages.length === 0" />
@@ -23,16 +25,20 @@
 </template>
 
 <script setup lang="ts">
+import { showConfirm } from "@/composables/useConfirm";
 import NoData from "../../../../components/loading/NoData.vue";
 import Rightbar from "@/components/community/Rightbar.vue";
 import { Icon } from "@iconify/vue";
 import MesItem from "../../compontent/MesItem.vue";
-import { onMounted, ref } from "vue";
-import { useRequest } from "@/composables/useRequest";
-const { data, executeRequest } = useRequest();
+import { onMounted, ref, watch } from "vue";
 import { useSseStore } from "../../../../store/useSseStore";
 import { useMessageStore } from "@/store/messageStore";
 import type { SSEMessageData } from "../../../../types/sseType";
+import { useAlert } from "@/composables/useAlert";
+import apiClient from "@/api/axios";
+import { type AxiosResponse } from "axios";
+import { useRequest } from "vue-request";
+const { showAlert } = useAlert();
 const messageStore = useMessageStore();
 const sseStore = useSseStore();
 const messages = ref<SSEMessageData[]>([]);
@@ -48,42 +54,62 @@ onMounted(() => {
       messageStore.setNotificationStatus(true);
     }
   });
-  messageList();
+  run();
 });
 
 //渲染消息列表
-const messageList = async () => {
-  messages.value = [];
-  await executeRequest({
-    url: `/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,
-    method: "get",
-  });
-  if (data.value?.code == 200) {
-    totalCount.value = data.value?.data.PageInfo.totalCount;
-    const allMessages = data.value?.data.AllMessages || [];
-    messages.value = allMessages;
-    messageStore.setNotificationStatus(false);
-  } else if (data.value?.code == 401) {
-    console.log("请先登录");
-  } else {
-    console.log("获取失败");
-    console.log(data.value);
-  }
+const messageList = () => {
+  return apiClient.get(
+    `/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,
+  );
 };
-
-//删除所有点赞/收藏消息
-const deleteAll = async () => {
-  await executeRequest({
-    url: `/message/deleteAllMessage`,
-    method: "delete",
-    requestData: { messageType },
-  });
-  if (data.value?.data.code === 200) {
-    alert("删除成功");
-  } else {
-    alert("删除失败");
-  }
-};
+const { data, run } = useRequest<AxiosResponse<SSEMessageData>>(messageList);
+watch(
+  () => data.value,
+  () => {
+    if (data.value?.code == 200) {
+      totalCount.value = data.value?.data.PageInfo.totalCount;
+      const allMessages = data.value?.data.AllMessages || [];
+      messages.value = allMessages;
+      console.log(allMessages);
+      messageStore.setNotificationStatus(false);
+    } else if (data.value?.code == 401) {
+      showAlert("请先登录", "waring");
+    } else {
+      showAlert("获取失败", "error");
+      console.log(data.value);
+    }
+  },
+);
+//清空所有
+function deleteAllMes(messageType: number) {
+  return apiClient.delete(
+    `/message/deleteAllMessages?messageType=${messageType}`,
+  );
+}
+const { data: deleteData, run: deleteRun } = useRequest(deleteAllMes, {
+  manual: true,
+});
+function deleteAll() {
+  showConfirm({
+    content: "确定清空所有评论消息吗？",
+  })
+    .then(() => {
+      deleteRun(messageType);
+    })
+    .catch(() => {});
+}
+watch(
+  () => deleteData.value,
+  () => {
+    if ((deleteData.value as any).code == 200) {
+      showAlert("删除成功", "pass");
+      run();
+    } else {
+      showAlert("删除失败", "error");
+    }
+  },
+);
 </script>
 
 <style scoped lang="scss">

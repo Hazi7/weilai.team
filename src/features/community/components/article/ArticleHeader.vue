@@ -65,6 +65,7 @@ defineProps<{
             :is-collect="isCollect"
             @click="handleCollect"
           ></ArticleCollect>
+          {{ isCollect }}
         </div>
         <div class="news-comment">
           <Icon
