@@ -46,14 +46,14 @@ getAllTagList()
     box-shadow: 0 4px 30px 0 rgba(232, 232, 237, .5);
     border-radius: 4px;
     padding: 10px;
-    margin-right: 33px;
+    margin-right: 15px;
     max-height: 65px;
     overflow: hidden;
     z-index: 1;
 
     &:hover {
         transition: all .5s;
-        max-height: 290px;
+        max-height: 500px;
         -webkit-box-shadow: 0 4px 30px 0 rgba(223, 223, 229, 0.4);
         box-shadow: 0 4px 30px 0 rgba(223, 223, 229, 0.4);
         border-radius: 4px;
@@ -106,6 +106,13 @@ getAllTagList()
     // }
 }
 
+@media screen and (min-width: 1800px) {
+    .tag-head-bar {
+        max-width: 100%;
+        margin-right: 70px;
+    }
+}
+
 @media screen and (max-width: 1200px) {
     .tag-head-bar {
         max-height: 60px;
@@ -156,6 +163,7 @@ getAllTagList()
     .tag-head-bar {
         max-height: 67px;
         top: 60px;
+        padding: 10px 10px 5px 10px;
         display: flex;
         /* 使用 Flex 布局 */
         align-items: center;
