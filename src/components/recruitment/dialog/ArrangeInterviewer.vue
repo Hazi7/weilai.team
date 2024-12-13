@@ -55,7 +55,7 @@
                 {{
                   formData.interviewer.length > 0
                     ? formData.interviewer.map(interviewer =>
-                        choices.find(choice => choice.value === interviewer)?.label
+                      (choices?.find(choice => choice?.value === interviewer)?.label) || ""
                       ).join(', ')
                     : "选择面试官"
                 }}
@@ -65,7 +65,7 @@
           </PopoverTrigger>
           <PopoverContent class="p-0" align="start">
             <Command>
-              <CommandInput placeholder="搜索面试官" />
+              <CommandInput placeholder="搜索面试官" v-model="searchName" />
               <CommandList>
                 <CommandEmpty>未找到该面试官</CommandEmpty>
                 <CommandGroup>
@@ -73,14 +73,14 @@
                     v-for="choice in choices"
                     :key="choice.value"
                     :value="choice.label"
-                    @select="() => handleInterviewerChange(choice.value)"
+                    @select="() => handleInterviewerChange(choice.value,choice.id )"
+                    :class="{ 'interviewer-selected': formData.interviewer.includes(choice.value) }"
                   >
                     <CheckIcon
                       :class="[
                         'mr-2 h-4 w-4',
-                        formData.interviewer.includes(choice.value)
-                          ? 'opacity-100'
-                          : 'opacity-0'
+                       formData.interviewer.includes(choice.value) ?
+                       'opacity-100':'opacity-50'
                       ]"
                     />
                     {{ choice.label }}
@@ -113,9 +113,7 @@
                     ? format(new Date(formData.date.year, formData.date.month - 1, formData.date.day), "yyyy-MM-dd")
                     : `选择面试日期`
                 }}
-
               </Button>
-
             </FormControl>
           </PopoverTrigger>
           <PopoverContent class="w-auto p-0" align="start">
@@ -191,6 +189,11 @@ import { format } from "date-fns";
 import { CalendarIcon } from "@radix-icons/vue";
 import { z } from "zod"; // 引入 Zod
 import type { DateValue } from "@internationalized/date";
+import {getAllInterviewer,arrangeInterviewer } from "@/composables/useRecruitmentRequest"
+import { useRequest } from "vue-request";
+import { useAlert} from "@/composables/useAlert";
+const {showAlert} = useAlert();
+
 
 const props = defineProps<{
   isOpen: boolean;
@@ -266,26 +269,58 @@ const formSchema = z.object({
     });
   }
 });
-const choices = [
-  { label: "王科林", value: "王科林" },
-  { label: "刘志文", value: "刘志文" },
-  { label: "贝利亚", value: "贝利亚" },
-];
+
+
+
+const choices = ref<[
+{ label:string, value: string ,id:string},
+]
+
+>();
+const searchName = ref("");
+//从后端拿到面试官信息
+import { onMounted} from "vue";
+
+onMounted(() => {
+  const { data, error, loading } = useRequest(() => getAllInterviewer({ pageNo: 1, pageSize: 100, name: searchName.value }));
+
+  watchEffect(() => {
+    if (error.value) {
+      console.log("error", error.value);
+    }
+    if (data.value?.data.code === 200) {
+      choices.value = data.value?.data.data.data.map((item: any) => ({
+        label: item.name,
+        value: item.name,
+        id:item.id,
+      }));
+    }
+  });
+});
 
 const formatDate = (date: DateValue | null) => {
   return date ? format(new Date(date.year, date.month - 1, date.day), "yyyy-MM-dd") : "选择日期";
 };
 
-const handleInterviewerChange = (value: string) => {
+
+const selectedInterviewersIds = ref<string[]>([]);
+
+//获取到选择的面试官的id
+const handleInterviewerChange = (value: string ,id:string) => {
   if (formData.interviewer.includes(value)) {
     formData.interviewer = formData.interviewer.filter(interviewer => interviewer !== value);
+    selectedInterviewersIds.value = selectedInterviewersIds.value.filter(id => id !== value);
+
   } else {
     if (formData.interviewer.length < 3) {
       formData.interviewer.push(value);
+      selectedInterviewersIds.value.push(id);
+    }
+    else{
+     showAlert("最多选择三个面试官", "error");
     }
   }
 };
-
 // 处理日期更新
 const handleDateUpdate = (value: DateValue | null) => {
   formData.date = value;
@@ -300,6 +335,7 @@ const errors = reactive({
   startTime: "",
   endTime: "",
 });
+
 
 const handleSubmit = () => {
   //如果错误信息不为空，清空错误信息
@@ -317,7 +353,32 @@ const handleSubmit = () => {
     Object.keys(errors).forEach(key => {
       errors[key as keyof typeof errors] = "";
     });
-    // 这里可以继续处理表单提交逻辑，例如提交数据到服务器
+    let dateString=`${formatDate(formData.date as any)}-${formData.startTime}-${formData.endTime}`;
+    // 提交表单数据
+   const { data, error, loading } = useRequest(() => arrangeInterviewer({
+    id: props.id,
+    interviewTime:dateString ,
+    place: formData.place,
+    firstHr:selectedInterviewersIds.value[0],
+    secondHr:selectedInterviewersIds.value[1],
+    thirdHr:selectedInterviewersIds.value[2]
+   }));
+   watchEffect(() => {
+
+    if (data.value) {
+      console.log("data.value:", data.value);
+      // showAlert("安排面试成功", "pass");
+      // emit("close");
+    }
+    // if (data.value?) {
+    //   showAlert("安排面试成功", "pass");
+    //   emit("close");
+    // }
+    // if (error.value) {
+    //   showAlert("安排面试失败", "error");
+    // }
+   });
+
   } else {
     console.error("表单数据无效:", result.error);
     // 处理校验错误，例如显示错误消息
@@ -330,6 +391,9 @@ const handleSubmit = () => {
 
 <style lang="scss">
 @use "@/assets/styles/recruitment.scss";
+.interviewer-selected {
+  background-color: var(--accent);
+}
 .btn-style{
   margin: 0 auto;
   width: 80%;

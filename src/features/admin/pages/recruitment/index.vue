@@ -5,10 +5,11 @@ import {
   ToggleShow,
   QuickShowCard,
   ShortcutOperation,
+  InterviewEvaluationShow,
 } from "@/components/recruitment";
 import { useRequest } from "vue-request";
 import { getMyInterviewRecord,getInterviewCount } from "@/composables/useRecruitmentRequest";
-
+import {interviewStatus, interviewStatusMap} from "@/types/recruitmentType";
 // 引入vue函数
 import { ref, watch } from "vue";
 
@@ -17,6 +18,7 @@ import { ref, watch } from "vue";
 //切换框的数据展示状态参量
 const toggleShowStatus = ref<string>("1");
 const handleToggleShowStatus = (newValue: string) => {
+  console.log(newValue);
   toggleShowStatus.value = newValue;
 };
 const toggleItems = ref([
@@ -40,48 +42,7 @@ const toggleItems = ref([
 
 
 // 卡片信息展示
-const  messageCard=ref([
-  {
-    InterviewTime: "2024-12-14 12:00-13:00",
-    InterviewAddress: "北京",
-    InterviewRound: "第一轮",
-    InterviewName: "面试1",
-    InterviewStatus: "待我反馈",
-    InterviewId: "1",
-    InterviewOfficerFirst: {
-      name: "张三",
-      id: "1",
-    },
-    InterviewOfficerSecond: {
-     name:"李四",
-      id: "2",
-    },
-    InterviewOfficerThird: {
-      name: "王五",
-      id: "3",
-    },
-  },
-  {
-    InterviewTime: "2024-12-12 13:00-14:00",
-    InterviewAddress: "北京",
-    InterviewRound: "第一轮",
-    InterviewName: "面试2",
-    InterviewStatus: "待我反馈",
-    InterviewId: "2",
-    InterviewOfficerFirst: {
-      name: "张三",
-      id: "1",
-    },
-    InterviewOfficerSecond: {
-     name: "李四",
-    },
-    InterviewOfficerThird: {
-      name: "王五",
-      id: "3",
-    },
-
-  }
-]);
+const  messageCard=ref([]);
 // 确保所有 id 都是字符串
 const normalizeInterviewCard = (card: any) => ({
   ...card,
@@ -100,12 +61,35 @@ const normalizeInterviewCard = (card: any) => ({
     (newStatus) => {
       const { data, error, loading }=
       useRequest(() =>
-  getMyInterviewRecord({ pageNo: 1, pageSize: 100,status: newStatus}),);
+  getMyInterviewRecord({ pageNo: 1, pageSize: 100,status: newStatus}));
             watch(
              [data, error, loading] ,
               ([newData, newError, loading]) => {
                 if (newData?.data.data.data) {
-                  console.log(newData?.data.data.data);
+                  console.log(newData.data.data.data);
+                  messageCard.value = newData.data.data.data.map((card:any)=>{
+                    return {
+                      ApplyUserId: card.userId,
+                      InterviewTime: card.interviewTime,
+                      InterviewAddress: card.place,
+                      InterviewRound: card.interviewRound || "刘志文没传",
+                      InterviewName: card.name,
+                      InterviewStatus:interviewStatusMap[card.interviewStatus as interviewStatus],
+                      InterviewId: card.id,
+                      InterviewOfficerFirst: {
+                        name: card.firstHr?.name,
+                        id: card.firstHr?.id || "",
+                      } ,
+                      InterviewOfficerThird: {
+                        name: card.thirdHr?.name ,
+                        id: card.thirdHr?.id || "",
+                      },
+                      InterviewOfficerSecond: {
+                        name: card.secondHr?.name,
+                        id: card.secondHr?.id || "",
+                      }
+                    }
+                  });
                 }
                 if (newError) {
                   console.log(newError);
@@ -295,6 +279,7 @@ const quickShowItems = ref([
   top: 20px;
   left: 20px;
   border: none;
+
 }
 .content-container {
   width: 100%;

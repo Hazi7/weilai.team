@@ -1,7 +1,7 @@
 type OnClickFunction = (id: string,name?:string) => void;
 
 //面试状态
-const enum interviewStatus {
+export const enum interviewStatus {
   待安排 = 0,
   待面试 = 1,
   已录取 = 2,
@@ -94,7 +94,7 @@ export interface IUpdateApplyUserDTO {
   clazz: string;
   email: string;
   grade: string;
-  id: number;
+  id: string;
   name: string;
   qq: string;
   sex: string;
@@ -113,16 +113,15 @@ export interface IUpdateInterviewResultDTO {
 export interface IGetInterviewUserDTO {
   pageNo:number;
   pageSize:number;
-  grade:string;
+  grade?:string;
   status:string;
-  name:string;
-  round:string;
+  name?:string;
+  round?:string;
 }
 
 //安排面试官  数据传输对象 发送
 export interface IArrangeInterviewDTO {
   id: string;
-  round: string;
   place: string;
   interviewTime: string;
   // 面试官id
