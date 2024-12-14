@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@handsontable/vue3": "^14.6.1",
+    "@hookform/resolvers": "^3.9.1",
     "@internationalized/date": "^3.6.0",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@radix-icons/vue": "^1.0.0",

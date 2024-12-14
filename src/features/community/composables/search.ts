@@ -1,13 +1,12 @@
+import apiClient from "@/api/axios";
 import { useAlert } from "@/composables/useAlert";
 import { useRequest } from "@/composables/useRequest";
 import type { ArticleList, Data } from "@/types/Community";
 import { ref } from "vue";
 const { showAlert } = useAlert();
-import apiClient from "@/api/axios";
 const { executeRequest, error, loading, data } = useRequest();
 let articleList = ref<ArticleList[]>([]);
 let searchResult = ref<ArticleList[]>([]);
-
 let userInfo = ref<Data>({} as Data);
 export function debounce<T>(
   func: (this: T, ...args: any[]) => void,
@@ -39,6 +38,7 @@ export async function getArticle(
   startTime: Date | string = "",
   sort = 0,
 ) {
+  setTimeout(() => {}, 1000);
   await executeRequest({
     url: `/post/selectAll?condition=${condition}&page=${page}&sort=${sort}&startTime=${startTime}&type=${type}`,
     method: "get",
@@ -69,6 +69,9 @@ export async function getUserList(content = "", pageNumber = 1, pageSize = 10) {
   executeRequest({ url: "/user/searchUser", method: "get" }).then((res) => {
     console.log(res);
   });
+}
+export async function deletes(ids: string) {
+  return apiClient.put(`/post/deletes/${ids}`);
 }
 
 export { articleList, error, loading, searchResult };

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineEmits,ref } from 'vue';
+import { defineEmits,ref,watch } from 'vue';
 
 const isLonger=ref(false);
 const emit = defineEmits(['input_src']);
@@ -19,17 +19,22 @@ const input_src=(e:Event)=>{
             return;
     }
     if( (e.target as HTMLInputElement).value===""){
-       isLonger.value=false;
-       return;
+      isLonger.value=false;
+      emit('input_src', (e.target as HTMLInputElement).value);
+      return;
     }
     if(e){
         isLonger.value=true;
         emit('input_src', (e.target as HTMLInputElement).value);
     }
     return;
+
 };
 const props = defineProps({
    placeholderText : String,
+})
+watch(isLonger,(newValue)=>{
+   console.log(newValue);
 })
 </script>
 <template>
@@ -58,7 +63,6 @@ class="auto-longer-input"
     @input="input_src($event)"
     @compositionstart="onCompositionStart"
     @compositionend="onCompositionEnd"
-
   />
 </div>
 </template>

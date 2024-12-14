@@ -49,16 +49,21 @@ defineProps({
     color: var(--secondary-foreground);
     display: flex;
     align-items: center;
-    font-size: 13px;
+    font-size: 0.9vw;
     margin-right: 10px;
   }
   &-icon {
     color: var(--secondary-foreground);
-    font-size: 17px;
+    font-size: 1vw;
     margin-right: 5px;
   }
   .already {
     color: red;
+  }
+}
+@media screen and (max-width: 1300px) and (min-width: 900px) {
+  .news-footer {
+    padding: 5px 3vw !important;
   }
 }
 </style>

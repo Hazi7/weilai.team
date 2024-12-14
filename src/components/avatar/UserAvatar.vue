@@ -41,7 +41,7 @@ console.log(props.customClass);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-height:40px ;
+  min-height:30px ;
   
 
   .avatar-info {
@@ -60,5 +60,8 @@ console.log(props.customClass);
   object-fit: cover;
   
   }
+}
+@media screen and (min-width: 900px) and (max-width: 1300px) {
+ 
 }
 </style>

@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import UseApplication from '@/composables/useApplication'
+import useApplication from '@/composables/useApplication'
 import { applicationStore } from '@/store/applicationStore'
 import { reactive, ref, watch } from 'vue'
 import {
@@ -15,19 +15,19 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import * as z from "zod";
-import useLogin from '../../composables/useLoginAll'
+// import useLogin from '../../composables/useLoginAll'
 import { Icon } from "@iconify/vue";
 
 const useApplicationStore = applicationStore()
 useApplicationStore.isGetCode()
-const { loading } = useLogin()
-
+// const { loading } = useLogin()
+const loading = ref(false)
 const stuInformData = reactive({
     clazz: '计科241' as string,
     code: '' as string | number | undefined,
     email: '' as string | number | undefined,
     name: '' as string | number | undefined,
-    qqNumber: '' as string | undefined,
+    qqNumber: '' as string | number | undefined,
     sex: '男' as string,
     studentId: '' as string | number | undefined,
     file: null as unknown as File
@@ -161,7 +161,6 @@ const emitUpdataFile = (val: File) => {
         .safeParse({
             file: val,
         });
-    console.log(result);
     if (filedErrors.value) {
         filedErrors.value.file = result.error?.format().file;
     }
@@ -217,8 +216,8 @@ const emitUpdataClazz = (val: string) => {
     stuInformData.clazz = val;
 }
 
-const { getClass, classListData, getCode, sentStuInfo } = UseApplication()
-getClass()
+const { runGetClass, classListData, getCode, sentStuInfo } = useApplication()
+runGetClass()
 
 const handleCode = async () => {
     if (!validateCode()) {
@@ -233,45 +232,6 @@ const handleCode = async () => {
     );
     getCode(stuInformData.email);
 };
-
-// function submitForm() {
-//     console.log(stuInform);
-
-//     let isValid = true;
-//     // 判断输入框是否为空，并添加 'noWrite' 类
-//     const inputs = document.querySelectorAll('input, select');
-//     inputs.forEach((input) => {
-//         const element = input as HTMLInputElement;
-//         if (!element.value && element.type !== 'file') {
-//             element.classList.add('noWrite');
-//             isValid = false;
-//             element.addEventListener('focusin', function (event) {
-//                 element.classList.remove('noWrite');
-//             })
-//         } else {
-//             element.classList.remove('noWrite');
-//         }
-//     });
-
-//     if (!isValid) {
-//         showAlert('请填写所有必填项', 'waring');
-//         return;
-//     }
-//     if (stuInform.value.file == null) {
-//         showAlert('请上传您的简介', 'waring');
-//         return;
-//     }
-//     const formData = new FormData();
-//     formData.append('clazz', stuInform.value.clazz);
-//     formData.append('code', stuInform.value.code);
-//     formData.append('email', stuInform.value.email);
-//     formData.append('name', stuInform.value.name);
-//     formData.append('qqNumber', stuInform.value.qqNumber);
-//     formData.append('sex', stuInform.value.sex);
-//     formData.append('studentId', stuInform.value.studentId);
-//     formData.append('file', stuInform.value.file);
-//     sentStuInfo(formData)
-// }
 </script>
 
 <template>
