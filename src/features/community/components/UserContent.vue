@@ -215,12 +215,13 @@ const handleScroll = async (e: any) => {
 @media screen and (max-width: 768px) {
   .news-item {
     padding: 5px;
+    padding-top: 10px;
     margin-bottom: 8px;
     .news-writer {
       padding-left: 10px;
       .avatar {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
       }
 
       .work-info,
