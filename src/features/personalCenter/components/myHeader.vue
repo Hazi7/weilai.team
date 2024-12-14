@@ -6,7 +6,7 @@
         <CarouselItem v-for="(item, index) in userInfo.lifePhoto" :key="index">
           <div class="p-1">
             <Card>
-              <CardContent class="flex items-center justify-center">
+              <CardContent class="flex items-center justify-center p-2">
                 <img :src="item ? item : '/logo.png'" alt="生活照片" class="w-[100%] h-[300px] object-cover" />
               </CardContent>
             </Card>
@@ -15,12 +15,9 @@
       </CarouselContent>
     </Carousel>
     <Skeleton v-if="!userInfo.lifePhoto || userInfo.lifePhoto.length == 0" class="w-[100%] h-[300px] bg-gray-100" />
-    <div class="myInfo"> 
+    <div class="myInfo">
       <div class="container-left">
-        <Avatar class="w-[100px] h-[100px] -mt-[50px] mr-[20px] ml-[20px] z-20 bg-white">
-          <AvatarImage :src="userInfo.headPortrait ? userInfo.headPortrait : '/logo.png'" alt="@radix-vue" />
-          <AvatarFallback>头像</AvatarFallback>
-        </Avatar>
+        <UserAvatar class="w-[100px] h-[100px] -mt-[50px] mr-[20px] ml-[20px] z-20" :avatar="userInfo.headPortrait" />
         <div class="infoBox">
           <p class="nameAndSex">
             {{ userInfo.name }}
@@ -33,45 +30,76 @@
       <div class="container-right" v-if="userStore.isSelf">
         <Dialog>
           <DialogTrigger as-child>
-            <Button variant="outline" class="bg-green-100 text-green-600">
+            <Button variant="outline"
+              class="bg-blue-100 text-blue-600 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-100"
+              @click="initForm">
               修改信息
             </Button>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px] bg-white max-h-[500px] overflow-y-auto">
-            <DialogClose id="dialogClose"></DialogClose>
             <DialogHeader>
               <DialogTitle>修改信息</DialogTitle>
               <DialogDescription>
                 在这里修改您的信息，完成之后点击保存即可
               </DialogDescription>
             </DialogHeader>
-            <div class="grid gap-4 py-4">
-              <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="phone" class="text-right"> 电话 </Label>
-                <Input id="phone" class="col-span-3" v-model:="phone" />
-              </div>
-              <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="qq" class="text-right"> QQ </Label>
-                <Input id="qq" class="col-span-3" v-model="qq" />
-              </div>
-              <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="graduationDestination" class="text-right">
-                  毕业去向
-                </Label>
-                <Input id="graduationDestination" class="col-span-3" v-model="graduationDestination" />
-              </div>
-              <div class="grid grid-cols-4 items-center gap-4">
-                <Label for="userDestination" class="text-right">
-                  个性签名
-                </Label>
-                <Textarea id="userDestination" class="col-span-3" v-model="userDestination" />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit" @click="submitForm"> 保存 </Button>
-            </DialogFooter>
+            <form @submit="onSubmit">
+              <FormField v-slot="{ componentField }" name="phone">
+                <FormItem>
+                  <FormLabel>电话</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="请输入11位电话号码" v-bind="componentField" />
+                  </FormControl>
+                  <FormDescription>
+
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+              <FormField v-slot="{ componentField }" name="qq">
+                <FormItem>
+                  <FormLabel>QQ</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="请输入QQ账号" v-bind="componentField" />
+                  </FormControl>
+                  <FormDescription>
+
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+              <FormField v-slot="{ componentField }" name="graduationDestination">
+                <FormItem>
+                  <FormLabel>毕业去向</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="请输入毕业去向" v-bind="componentField" />
+                  </FormControl>
+                  <FormDescription>
+
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+              <FormField v-slot="{ componentField }" name="userDestination">
+                <FormItem>
+                  <FormLabel>个性签名</FormLabel>
+                  <FormControl>
+                    <Textarea type="text" placeholder="请输入个性签名" v-bind="componentField" />
+                  </FormControl>
+                  <FormDescription>
+
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+              <Button type="submit">
+                保存
+              </Button>
+            </form>
           </DialogContent>
         </Dialog>
+
+
       </div>
     </div>
     <!-- 编辑信息 -->
@@ -123,11 +151,11 @@
       </div>
     </div>
 
-    <div class="lastLoginTime" v-if="userInfo.lastLoginTime&&userStore.isSelf">
+    <div class="lastLoginTime" v-if="userInfo.lastLoginTime && userStore.isSelf">
 
       <p>
         <Icon style="display: inline-block;" icon="mdi:calendar-outline" />
-        上次登录时间：<span>{{ formatDateToYYYYMMDD(userInfo.lastLoginTime) }}</span>
+        上次登录时间：<span>{{ formatPostTime(userInfo.lastLoginTime) }}</span>
       </p>
 
     </div>
@@ -138,7 +166,6 @@
 // 引入组件
 import { Icon } from '@iconify/vue';
 import { reactive, ref } from 'vue';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -157,7 +184,14 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
 import { Skeleton } from '@/components/ui/skeleton'
 import Autoplay from 'embla-carousel-autoplay'
-
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 //引入pinia 
 import { useUserStore } from '@/store/userStore'
 
@@ -169,32 +203,26 @@ const { getLocalStorageWithExpire, setLocalStorageWithExpire } = useLocalStorage
 import { useDateFormatter } from '@/composables/useDateFormatter'
 import type { RefSymbol } from '@vue/reactivity';
 import { Store } from 'lucide-vue-next';
-const { formatDateToYYYYMMDD } = useDateFormatter()
+import UserAvatar from "@/components/avatar/UserAvatar.vue";
+import { formatPostTime } from '@/utils/formatPostTime';
 
-const userStore=useUserStore()
-console.log('pinia///',userStore);
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import * as z from 'zod'
 
-const plugin = Autoplay({
-  delay: 2000,
-  stopOnMouseEnter: true,
-  stopOnInteraction: false,
-})
 
-//控制更多信息的显示与隐藏
-let isShow = ref(false)
-function changeIsShow() {
-  isShow.value = !isShow.value
-}
+import { useAlert } from "@/composables/useAlert"
+const { showAlert } = useAlert();
 
-// 获取userId
-let userId=0
-if (userStore.isSelf) {
-  userId = getLocalStorageWithExpire('userId')
-}else{
-  userId = userStore.userId
-}
+const phoneNumberRegex = /^1[3-9]\d{9}$/;
+const qqNumberRegex = /^[1-9][0-9]{4,10}$/;
+const formSchema = toTypedSchema(z.object({
+  phone: z.string().min(11, '请输入11位电话号码').regex(phoneNumberRegex, { message: '请输入正确的电话号码' }).optional(),
+  qq: z.string().regex(qqNumberRegex, { message: '请输入正确的QQ账号' }).optional(),
+  userDestination: z.string().max(50, '个性签名不能超过50个字'),
+  graduationDestination: z.string().max(20, '毕业去向不能超过20个字'),
+}))
 
-// 定义userInfo储存用户信息
 let userInfo = reactive<UserInfo>({
   clazz: '',
   direction: '',
@@ -232,6 +260,42 @@ interface UserInfo {
   userDestination: string
 }
 
+const form = useForm({
+  validationSchema: formSchema,
+})
+
+const onSubmit = form.handleSubmit((values) => {
+  console.log('修改信息表单提交成功!', values)
+  executeRequest({ url: '/user/updateUserInfo', method: 'put', requestData: values }).then(() => {
+    console.log('修改成功：', data.value);
+    showAlert('修改成功', 'pass');
+    getUserInfo()
+  })
+})
+
+const userStore = useUserStore()
+
+const plugin = Autoplay({
+  delay: 2000,
+  stopOnMouseEnter: true,
+  stopOnInteraction: false,
+})
+
+//控制更多信息的显示与隐藏
+let isShow = ref(false)
+function changeIsShow() {
+  isShow.value = !isShow.value
+}
+
+// 获取userId
+let userId = 0
+if (userStore.isSelf) {
+  userId = getLocalStorageWithExpire('userId')
+} else {
+  userId = userStore.userId
+}
+console.log('userId:', userId);
+
 let phone = ref('')
 let qq = ref('')
 let userDestination = ref('')
@@ -248,46 +312,28 @@ async function getUserInfo() {
     userDestination.value = userInfo.userDestination
     graduationDestination.value = userInfo.graduationDestination
   }
-  console.log('请求结果',data.value);
-  
-  
+  console.log('请求结果', data.value);
+
+
 }
 // 打开页面立刻调用一次函数
 getUserInfo()
 
-const phoneNumberRegex = /^1[3-9]\d{9}$/;
-const qqNumberRegex = /^[1-9][0-9]{4,10}$/;
-
-async function submitForm() {
-  if (!phoneNumberRegex.test(phone.value) || !phone) {
-    console.log('手机号格式错误');
-    return
-  } else if (!qqNumberRegex.test(qq.value) || !qq) {
-    console.log('qq号格式错误');
-    return
-  } else if (graduationDestination.value.length > 20) {
-    console.log('毕业去向字数超过最大限制');
-  } else if (userDestination.value.length > 50) {
-    console.log('毕业去向字数过少');
-  }
-  const dataToSend = {
-    phone: phone.value,
-    userDestination: userDestination.value,
-    graduationDestination: graduationDestination.value,
-    qq: qq.value,
-  }
-  document.getElementById('dialogClose').click()
-
-  console.log(dataToSend);
-
-  await executeRequest({ url: '/user/updateUserInfo', method: 'put', requestData: dataToSend })
-
-  console.log('修改成功：', data.value);
-  getUserInfo()
+function initForm() {
+  form.setValues({
+    phone: userInfo.phone,
+    qq: userInfo.qq,
+    userDestination: userInfo.userDestination,
+    graduationDestination: userInfo.graduationDestination,
+  });
 }
 
 </script>
 <style lang="scss" scoped>
+.text-destructive {
+  color: rgb(255, 103, 103);
+}
+
 .header {
   width: 100%;
   background-color: white;
