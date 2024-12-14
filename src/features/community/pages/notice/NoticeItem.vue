@@ -7,6 +7,7 @@ import UserAvatar from "@/components/avatar/UserAvatar.vue";
 import { useAlert } from "@/composables/useAlert";
 const { data, executeRequest } = useRequest();
 import type { SSENoticeData } from "../../../../types/sseType";
+import { showConfirm } from "@/composables/useConfirm";
 import {
   Tooltip,
   TooltipContent,
@@ -85,33 +86,45 @@ function handleNotice() {
 let noticeTxt = handleNotice();
 
 //删除单个公告
-const deleteNotice = async (noticeId: string) => {
-  await executeRequest({
-    url: `/notice/deleteNotice/${noticeId}`,
-    method: "delete",
-  });
-  if (data.value?.code === 200) {
-    props.noticeList();
-    showAlert("删除成功", "pass");
-  } else {
-    showAlert("删除失败", "error");
-  }
+const deleteNotice = async (noticeId: number) => {
+  showConfirm({
+    content: "确定删除该公告吗？",
+  })
+    .then(async () => {
+      await executeRequest({
+        url: `/notice/deleteNotice/${noticeId}`,
+        method: "delete",
+      });
+      if (data.value?.code === 200) {
+        props.noticeList();
+        showAlert("删除成功", "pass");
+      } else {
+        showAlert("删除失败", "error");
+      }
+    })
+    .catch(() => {});
 };
 //标记单个为已读
 const readNotice = async (noticeId: string) => {
-  await executeRequest({
-    url: `/notice/markUnReadNoticeAsRead/${noticeId}`,
-    method: "put",
-  });
-  console.log(data.value);
-  if (data.value?.code === 200) {
-    props.noticeList();
-    showAlert("标记已读成功", "pass");
-  } else {
-    console.log(data.value);
+  showConfirm({
+    content: "确定标记该公告为已读吗？",
+  })
+    .then(async () => {
+      await executeRequest({
+        url: `/notice/markUnReadNoticeAsRead/${noticeId}`,
+        method: "put",
+      });
+      console.log(data.value);
+      if (data.value?.code === 200) {
+        props.noticeList();
+        showAlert("标记已读成功", "pass");
+      } else {
+        console.log(data.value);
 
-    showAlert("标记失败", "error");
-  }
+        showAlert("标记失败", "error");
+      }
+    })
+    .catch(() => {});
 };
 </script>
 

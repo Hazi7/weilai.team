@@ -16,7 +16,6 @@ import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
 
 import UserLogin from "@/composables/useLoginAll";
-import { useMessageStore } from '@/store/messageStore';
 import { useUserStore } from '@/store/userStore';
 import { Icon } from "@iconify/vue";
 import {
@@ -30,10 +29,7 @@ import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
 import { useMessageStore } from '@/store/messageStore';
-import { useNoticeStore } from '@/store/UseNoticeStore';
-import { useRequest } from "@/composables/useRequest";
-const { data,executeRequest } = useRequest();
-
+import { useNoticeStore } from '@/store/UseNoticeStore'
 import type { UserInfo } from "@/components/comment/index.ts";
 import { useRequest } from '@/composables/useRequest';
 const { data, executeRequest } = useRequest()

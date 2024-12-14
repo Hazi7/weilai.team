@@ -6,25 +6,20 @@
           全部({{ total }})
           <div v-if="noticeStore.hasUnreadNotice" class="dot"></div>
         </div>
-        <div class="noRead">
-          <!-- 未读({{ 444 }}) -->
-        </div>
+        <div class="noRead">未读({{ notReadCount }})</div>
         <div class="settings">
-          <DropdownMenu>
+          <DropdownMenu :style="{ width: '80px' }">
             <DropdownMenuTrigger>
               <Icon icon="carbon:settings-adjust" class="settingIcon"
             /></DropdownMenuTrigger>
             <DropdownMenuContent
               class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg p-0"
               side="bottom"
-              :side-offset="3"
+              :side-offset="1"
             >
-              <DropdownMenuSeparator :style="{ minWidth: '80px' }" />
+              <DropdownMenuSeparator />
               <DropdownMenuItem class="drop-menu-item" @click="readAllNotice"
                 >全部已读</DropdownMenuItem
-              >
-              <DropdownMenuItem class="drop-menu-item"
-                >我的发布</DropdownMenuItem
               >
             </DropdownMenuContent>
           </DropdownMenu>
@@ -41,7 +36,6 @@
             <NoticeItem :notice="notice" :notice-list="noticeList" />
           </div>
         </div>
-        <!-- <div class="aaa"><CommentList :post-id="postId"/></div> -->
       </div>
     </div>
     <Rightbar />
@@ -143,6 +137,9 @@ const readAllNotice = async () => {
 </script>
 
 <style scoped lang="scss">
+.min-w-56 {
+  min-width: 80px;
+}
 .drop-menu-item {
   width: 100%;
   background-color: white;
@@ -183,6 +180,7 @@ const readAllNotice = async () => {
     cursor: pointer;
     position: relative;
     margin-left: 20px;
+    margin-right: 15px;
     padding-right: 13px;
     .dot {
       width: 8px;
@@ -199,7 +197,6 @@ const readAllNotice = async () => {
     height: 30px;
     color: gray;
     cursor: pointer;
-    margin-left: 20px;
     margin-right: 100px;
   }
   .settings {

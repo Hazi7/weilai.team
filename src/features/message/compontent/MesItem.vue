@@ -15,11 +15,6 @@ const props = defineProps<{
 const emit = defineEmits(["like", "comment", "system"]);
 const formattedTime = computed(() => formatPostTime(props.message.createdAt));
 const { showAlert } = useAlert();
-//删除单个信息
-function deleteOnes(messageId: number) {
-  return apiClient.delete(`/message/deleteOneMessage/${messageId}`);
-}
-const { data, run } = useRequest(deleteOnes);
 const deleteMessage = () => {
   showConfirm({
     content: "确定删除此条消息吗？",
@@ -29,6 +24,14 @@ const deleteMessage = () => {
     })
     .catch(() => {});
 };
+//删除单个信息
+function deleteOnes(messageId: number) {
+  return apiClient.delete(`/message/deleteOneMessage/${messageId}`);
+}
+const { data, run } = useRequest(deleteOnes, {
+  manual: true,
+});
+
 watch(
   () => data.value,
   () => {

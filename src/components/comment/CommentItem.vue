@@ -8,6 +8,7 @@ import sonComment from "./SonComment.vue";
 import { formatPostTime } from "@/utils/formatPostTime";
 import { useAlert } from "@/composables/useAlert";
 import UserAvatar from "../avatar/UserAvatar.vue";
+import { showConfirm } from "@/composables/useConfirm";
 
 const props = defineProps({
   comment: {
@@ -41,7 +42,6 @@ const showMore = ref(true);
 const commentTime = computed(() => {
   return formatPostTime(props.comment.commentTime);
 });
-
 // 展开回复输入框
 const toggleForm = () => {
   isFormVisible.value = !isFormVisible.value;
@@ -105,16 +105,22 @@ const likeComment = async (commentId: number) => {
 };
 //删除一级评论
 const deleteComment = async (commentId: number) => {
-  await executeRequest({
-    url: `/comment/deleteComment/${commentId}`,
-    method: "delete",
-  });
-  if (data.value?.code === 200) {
-    props.getFirstComment();
-    showAlert("删除成功", "pass");
-  } else {
-    showAlert("删除失败", "error");
-  }
+  showConfirm({
+    content: "确定删除该评论吗？",
+  })
+    .then(async () => {
+      await executeRequest({
+        url: `/comment/deleteComment/${commentId}`,
+        method: "delete",
+      });
+      if (data.value?.code === 200) {
+        props.getFirstComment();
+        showAlert("删除成功", "pass");
+      } else {
+        showAlert("删除失败", "error");
+      }
+    })
+    .catch(() => {});
 };
 
 onMounted(async () => {
@@ -177,7 +183,7 @@ defineExpose({ userInfo });
         @reply="handleLike"
       />
       <!-- 子评论 -->
-      <div class="son-comments">
+      <div v-if="sonComments.length > 0" class="son-comments">
         <sonComment
           v-for="son in sonComments"
           :key="son.commentId"

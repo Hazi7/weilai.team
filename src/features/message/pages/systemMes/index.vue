@@ -8,14 +8,27 @@
         </div>
       </div>
       <div class="messageCon">
-        <NoData v-if="messages.length === 0" />
+        <NoData v-if="totalCount === 0" />
+        <div v-else-if="loading" class="loading-item">
+          <div
+            v-for="index in 6"
+            :key="index"
+            class="flex items-center space-x-4"
+          >
+            <Skeleton class="h-12 w-12 rounded-full bg-[--muted]" />
+            <div class="space-y-2">
+              <Skeleton class="h-4 w-[250px] bg-[--muted]" />
+              <Skeleton class="h-4 w-[200px] bg-[--muted]" />
+            </div>
+          </div>
+        </div>
         <div v-else class="messageList">
           <div
             v-for="message in messages"
             :key="message.messageId"
             class="mess"
           >
-            <MesItem :message="message" @system="messageList" />
+            <MesItem :message="message" @comment="run()" />
           </div>
         </div>
       </div>
@@ -25,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import { Skeleton } from "@/components/ui/skeleton";
 import { showConfirm } from "@/composables/useConfirm";
 import NoData from "../../../../components/loading/NoData.vue";
 import Rightbar from "@/components/community/Rightbar.vue";
@@ -63,7 +77,12 @@ const messageList = () => {
     `/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,
   );
 };
-const { data, run } = useRequest<AxiosResponse<SSEMessageData>>(messageList);
+const { data, run, loading } = useRequest<AxiosResponse<SSEMessageData>>(
+  messageList,
+  {
+    loadingKeep: 1000,
+  },
+);
 watch(
   () => data.value,
   () => {
@@ -113,6 +132,17 @@ watch(
 </script>
 
 <style scoped lang="scss">
+.loading-item {
+  width: 94%;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 45px;
+  .items-center {
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 10px;
+  }
+}
 .comments {
   width: 690px;
 }

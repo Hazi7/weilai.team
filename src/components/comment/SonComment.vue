@@ -7,6 +7,7 @@ import { createUserInfo, getUserInfo } from "./index";
 import { useAlert } from "@/composables/useAlert";
 import UserAvatar from "../avatar/UserAvatar.vue";
 import { formatPostTime } from "@/utils/formatPostTime";
+import { showConfirm } from "@/composables/useConfirm";
 
 const props = defineProps({
   son: {
@@ -64,16 +65,22 @@ const likeComment = async (commentId: number) => {
 //删除子评论
 const deleteComment = async (commentId: number) => {
   const CommentIded = transformId(commentId);
-  await executeRequest({
-    url: `/comment/deleteComment/${CommentIded}`,
-    method: "delete",
-  });
-  if (data.value?.code === 200) {
-    showAlert("删除成功", "pass");
-    emit("deleted", props.parentId);
-  } else {
-    showAlert("删除失败", "error");
-  }
+  showConfirm({
+    content: "确定删除该评论吗？",
+  })
+    .then(async () => {
+      await executeRequest({
+        url: `/comment/deleteComment/${CommentIded}`,
+        method: "delete",
+      });
+      if (data.value?.code === 200) {
+        showAlert("删除成功", "pass");
+        emit("deleted", props.parentId);
+      } else {
+        showAlert("删除失败", "error");
+      }
+    })
+    .catch(() => {});
 };
 
 const handleReply = () => {

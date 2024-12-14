@@ -6,11 +6,12 @@ import { EditorContent } from "@tiptap/vue-3";
 import { useRoute } from "vue-router";
 import ArticleHeader from "../../components/article/ArticleHeader.vue";
 import { type AxiosResponse } from "axios";
-import { computed, watch } from "vue";
+import { computed, watch, ref } from "vue";
 import apiClient from "@/api/axios";
 import { formatPostTime } from "@/utils/formatPostTime";
-import { useLikeData } from "../../composables/Like";
-import { useCollectData } from "../../composables/Collect";
+import { likeData, likeRun } from "../../composables/Like";
+import { collectRun, collectData } from "../../composables/Collect";
+import { useAlert } from "@/composables/useAlert";
 
 export interface PostDetailResponse {
   userId: number;
@@ -31,6 +32,7 @@ export interface PostDetailResponse {
 // 从路由获取参数
 const route = useRoute<"/community/post/[id]">();
 const postId = route.params.id;
+const { showAlert } = useAlert();
 const getPost = () => {
   return apiClient.get(`/post/selectOne/${postId}`);
 };
@@ -43,55 +45,60 @@ const formattedPostTime = computed(() => {
 });
 
 const { editor } = useAppEditor(false);
+const isCollect = ref(data.value?.data.isCollect);
+const isLike = ref(data.value?.data.isLike);
+const likeCount = ref<number>(data.value?.data.likeCount || 0);
 watch(
   () => data.value,
   () => {
     if (data.value?.data.postTxt) {
       editor.value?.commands.setContent(JSON.parse(data.value?.data.postTxt));
     }
+    isCollect.value = data.value?.data.isCollect;
+    isLike.value = data.value?.data.isLike;
+    likeCount.value = data.value?.data.likeCount || 0;
   },
+  { immediate: true },
 );
 
-const { isLiked, handleLikeClick } = useLikeData();
-const { isCollected, handleCollect } = useCollectData();
 //点赞
 const handleLike = () => {
-  handleLikeClick(postId);
-};
-//收藏
-const handleCollectClick = () => {
-  handleCollect(postId);
+  likeRun(postId);
 };
 watch(
-  [isLiked],
-  ([newIsLiked]) => {
-    if (data.value && data.value.data) {
-      data.value.data.isLike = newIsLiked;
-      console.log(data.value?.data.isLike);
-      if (!newIsLiked) {
-        data.value.data.likeCount += 1;
-        data.value.data.isLike = true;
-      } else {
-        data.value.data.likeCount -= 1;
-        data.value.data.isLike = false;
-      }
+  () => likeData.value,
+  (newLikeData) => {
+    console.log("点赞请求的响应数据:", newLikeData);
+    if (newLikeData && newLikeData.code === 2009) {
+      showAlert("点赞成功", "pass");
+      isLike.value = true;
+      likeCount.value += 1;
+    } else if (newLikeData && newLikeData.code === 2011) {
+      showAlert("取消点赞成功", "pass");
+      isLike.value = false;
+      likeCount.value -= 1;
+    } else {
+      showAlert("点赞失败", "error");
     }
   },
-  { immediate: true },
 );
+//收藏
+const handleCollect = () => {
+  collectRun(postId);
+};
 watch(
-  [isCollected],
-  ([newIsCollect]) => {
-    if (data.value && data.value.data) {
-      console.log(newIsCollect);
-      if (newIsCollect) {
-        data.value.data.isCollect = true;
-      } else {
-        data.value.data.isCollect = false;
-      }
+  () => collectData.value,
+  (newCollectData) => {
+    if (newCollectData && newCollectData.code === 2013) {
+      showAlert("收藏成功", "pass");
+      isCollect.value = true;
+    } else if (newCollectData && newCollectData.code === 2016) {
+      showAlert("取消收藏成功", "pass");
+      isCollect.value = false;
+    } else {
+      showAlert("收藏失败", "error");
     }
   },
-  { immediate: true },
 );
 </script>
 
@@ -101,16 +108,16 @@ watch(
       :tags="data?.data.postTags"
       :title="data?.data.title"
       :view-count="data?.data.viewCount"
-      :like-count="data?.data.likeCount"
+      :like-count="likeCount"
       :comment-count="data?.data.commentCount"
       :is-loading="loading"
       :author="data?.data.name"
       :avatar="data?.data.headPortrait"
       :post-time="formattedPostTime"
-      :is-like="data?.data.isLike"
-      :is-collect="data?.data.isCollect"
+      :is-like="isLike"
+      :is-collect="isCollect"
       :handle-like-click="handleLike"
-      :handle-collect="handleCollectClick"
+      :handle-collect="handleCollect"
     ></ArticleHeader>
     <EditorContent
       class="article-detail__content"
