@@ -88,7 +88,7 @@ import {
   checkType,
   getArticle,
 } from "@community/composables/search";
-import { nextTick, onMounted, provide, ref, watch } from "vue";
+import { onMounted, provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import NewsFooter from "./NewsFooter.vue";
 const loadinglen = ref(0);
@@ -192,10 +192,6 @@ if (!props.isTag) {
   );
 }
 onMounted(async () => {
-  await nextTick(() => {
-    console.log(scrollRef);
-  });
-
   window.addEventListener("scroll", handleScroll, true);
 });
 
@@ -212,7 +208,6 @@ const handleScroll = async (e: any) => {
       getArticle(props.type, props.condition, current.value).then((res) => {
         loading.value = true;
         if (res.records.length > 0) {
-          console.log("请求到数据");
           loadinglen.value = res.records.length;
 
           res.records.forEach((record) => {
