@@ -201,7 +201,7 @@ const handleScroll = async (e: any) => {
     document.documentElement.clientHeight || document.body.clientHeight;
   let scrollHeight =
     document.documentElement.scrollHeight || document.body.scrollHeight;
-  if (scrollTop + clientHeight > scrollHeight) {
+  if (scrollTop + clientHeight > scrollHeight - 100) {
     if (current.value < pages.value) {
       current.value++;
       //数据为加载完，继续赋值
