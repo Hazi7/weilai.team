@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TheTopNav from "@/components/layouts/AppThirdNav.vue";
-import { ref } from "vue";
 import { useTagStore } from "@/store/tagTypeStore";
+import { ref } from "vue";
 interface TagData {
   type: number;
   tagType: string;
@@ -31,13 +31,19 @@ addTagType.addTag(typeData.value);
         "icon": "i-mdi-file-document-multiple-outline"
       },
       {
-        "title": "用户",
-        "path": "/community/blog/user",
+        "title": "最新",
+        "path": "/community/blog/latest",
         "icon": "i-mdi-file-document-multiple-outline"
       },
+
       {
         "title": "标签",
         "path": "/community/blog/label/suggest",
+        "icon": "i-mdi-file-document-multiple-outline"
+      },
+      {
+        "title": "用户",
+        "path": "/community/blog/user",
         "icon": "i-mdi-file-document-multiple-outline"
       }
     ]

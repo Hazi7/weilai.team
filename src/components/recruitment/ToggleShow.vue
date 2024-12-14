@@ -33,7 +33,6 @@ function toggleActive(index: number) {
 
 watch(status, (newValue) => {
     // 发送事件
-
     emit('transferToggleShowStatus',newValue);
 });
 

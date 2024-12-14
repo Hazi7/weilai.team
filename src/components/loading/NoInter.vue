@@ -8,7 +8,7 @@ function goBack() {
     <div class="NoInternet">
         <div class="noInter-center">
             <!-- <WifiOff :size="200" color="#999"/> -->
-            <img src="../assets/Error Alien Spaceship.png" alt="">
+            <img src="/src/assets/img/noInter.png" alt="">
             <div class="noInter-left">
                 <h1>Sorry~</h1>
                 <p class="text-center">网页走丢了，请稍后重试</p>

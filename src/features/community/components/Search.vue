@@ -160,16 +160,6 @@ function skip(e: Event) {
   </div>
 </template>
 <style lang="scss" scoped>
-// .command_box {
-//   background-color: white;
-//   border: 1px solid rgb(208, 217, 228);
-//   position: relative;
-//   overflow: visible;
-//   width: 250px;
-//   float: right;
-//   height: 45px;
-//   border-radius: 25px;
-// }
 .search_container {
   margin-bottom: 10px;
   height: 45px;
@@ -198,6 +188,10 @@ function skip(e: Event) {
     transform: translateY(-50%);
   }
   &_list {
+    padding: 8px 10px;
+    position: absolute;
+    width: 110%;
+    transform: translateX(-5%);
     border-radius: var(--radius);
     background-color: white;
     box-shadow:
@@ -214,12 +208,19 @@ function skip(e: Event) {
     cursor: default;
   }
   &_item {
-    padding: 5px 6px;
+    display: flex;
+    align-items: center;
+    padding: 3px 2px;
     font-size: 15px;
     color: var(--secondary-foreground);
     a {
+      cursor: pointer;
       width: 100%;
       display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      font-size: 13px;
+      text-overflow: ellipsis;
     }
     &:hover {
       background-color: #f8f8fa;
@@ -235,29 +236,13 @@ function skip(e: Event) {
     display: flex;
     position: fixed;
     z-index: 5;
-    top: 80px;
+    top: 70px;
     height: 60px;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
   }
   .search {
-    // &_input {
-    //   border-style: none !important;
-    // }
-    // &_list {
-    //   box-shadow:
-    //     0px 2px 5px rgba(0, 0, 0, 0.1),
-    //     inset 0px 0.2px 0.5px rgba(0, 0, 0, 0.24);
-    //   border: 1px solid var(--secondary-border);
-    //   position: absolute;
-    //   top: 50px;
-    //   padding: 5px 0;
-    //   border-radius: 2px;
-    //   width: 250px;
-    //   z-index: 5;
-    //   background-color: white;
-    // }
     width: 90%;
     float: right;
     background-color: #fafafa;
@@ -275,7 +260,7 @@ function skip(e: Event) {
       border: 1px solid #d0d9e4;
       border-radius: 25px;
       padding: 5px 10px;
-      padding-left: 30px;
+      padding-left: 40px;
     }
     .search-icon {
       position: absolute;
@@ -301,10 +286,92 @@ function skip(e: Event) {
     }
     &_item {
       padding: 5px 6px;
-      font-size: 15px;
       color: var(--secondary-foreground);
       a {
         width: 100%;
+        font-size: 15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; //行数
+        text-overflow: ellipsis; //省略号
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        white-space: normal;
+        word-break: break-all;
+      }
+      &:hover {
+        background-color: #f8f8fa;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1300px) and (min-width: 900px) {
+  .search_container {
+    margin-bottom: 10px;
+    height: 35px;
+  }
+  .search {
+    float: right;
+    position: relative;
+    &_input_box {
+      position: relative;
+    }
+    input {
+      text-decoration: none;
+      list-style: none;
+      outline-style: none;
+      font-size: 0.9vw;
+      width: 200px;
+      height: 30px;
+      border: 1px solid #d0d9e4;
+      border-radius: 25px;
+      padding: 5px 5px;
+      padding-left: 20px;
+    }
+    .search-icon {
+      position: absolute;
+
+      top: 50%;
+      left: 2%;
+      transform: translateY(-50%);
+      svg {
+        font-size: 16px !important;
+      }
+    }
+    &_list {
+      padding: 8px 10px;
+      position: absolute;
+      width: 110%;
+      transform: translateX(-5%);
+      border-radius: var(--radius);
+      background-color: white;
+      box-shadow:
+        0px 2px 5px rgba(0, 0, 0, 0.1),
+        inset 0px 0.2px 0.5px rgba(0, 0, 0, 0.24);
+    }
+    &_empty {
+      width: 100%;
+      height: 150px;
+      text-align: center;
+      line-height: 150px;
+      font-size: 15px;
+      color: var(--secondary-foreground);
+      cursor: default;
+    }
+    &_item {
+      display: flex;
+      align-items: center;
+      padding: 3px 2px;
+      font-size: 15px;
+      color: var(--secondary-foreground);
+      a {
+        cursor: pointer;
+        width: 100%;
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        font-size: 13px;
+        text-overflow: ellipsis;
       }
       &:hover {
         background-color: #f8f8fa;

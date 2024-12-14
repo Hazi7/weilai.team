@@ -21,6 +21,10 @@ import type {
   tableHeadersVO,
 } from "@/types/recruitmentType";
 
+// import {NoData} from "@/components/loading/NoData.vue";
+
+
+
 const props = defineProps<{
   items: IAllApplyUserVO[];
   headers: tableHeadersVO[];
@@ -86,7 +90,7 @@ watch(() => props.items, () => {
         v-show="items.length === 0"
         style="font-size: large; height: 40px; text-align: center"
       >
-        <TableCell colspan="100%"> 暂无数据 </TableCell>
+        <TableCell colspan="100%"><NoData/> </TableCell>
       </TableRow>
       <TableRow v-for="item in items" :key="item.id" class="hover-tr">
         <TableCell
@@ -113,13 +117,13 @@ watch(() => props.items, () => {
               <Icon icon="tabler:dots" style="display: inline-block;font-size: 18px; cursor: pointer;"
               />
             </PopoverTrigger>
-            <PopoverContent class="popover-content" >
+            <PopoverContent class="popover-content" style="z-index: 10;" >
               <div>
                 <div
                   class="pop-content-item"
                   v-for="(i, index) in actionItems"
                   :key="index"
-                  @click=" i.onclick(item.id);"
+                  @click=" i.onclick(item.id,item.name);"
                   >
                   <Icon :icon=i.icon
                   :key="index"

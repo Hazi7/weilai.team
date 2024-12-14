@@ -1,12 +1,11 @@
+import apiClient from "@/api/axios";
 import { useAlert } from "@/composables/useAlert";
 import { useRequest } from "@/composables/useRequest";
 import type { ContactData, MemeberData } from "@/types/Contacts";
 import { ref } from "vue";
-import AddMember from "../components/contacts/AddMember.vue";
 const { showAlert } = useAlert();
 const { executeRequest, error, loading, data } = useRequest();
 const contactsData = ref<ContactData>();
-import apiClient from "@/api/axios";
 export async function getMembers(pageNumber = 1, pageSize = 10) {
   await executeRequest({
     url: `/userManager/teamInfo/getTeamUserList/${pageNumber}/${pageSize}`,
@@ -80,6 +79,12 @@ export async function changeInfosForMembers(modifyManyUserDTO: {}) {
   return apiClient.put(
     `/userManager/teamInfo/modifyManyUser `,
     modifyManyUserDTO,
+  );
+}
+export async function cancelGroupLeader(group: string, userId: number) {
+  console.log(group, userId);
+  return apiClient.delete(
+    `/userManager/teamInfo/cancelGroupLarder/${userId}/${group} `,
   );
 }
 export { loading };

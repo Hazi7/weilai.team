@@ -22,18 +22,13 @@ const emit = defineEmits(["close"]);
 
 
 const props = defineProps({
-  visible: Boolean
+  isOpen: Boolean
 });
 
 
 const selectStatus = ref("");
 
 const close = (event: Event) => {
-  // 阻止冒泡
-  event.stopPropagation();
-  // 阻止默认事件
-  event.preventDefault();
-  console.log("close");
   // 点击遮罩层关闭
   if (event.target === event.currentTarget) {
     emit("close");
@@ -45,7 +40,7 @@ const close = (event: Event) => {
 
 <template>
   <Teleport to="body">
-  <div class="outer" v-if="props.visible"  @click="close($event)">
+  <div class="outer" v-if="props.isOpen"  @click="close($event)">
     <Form  class="form-container">
       <FormField name="status" control="selectStatus" class="bg-white">
         <div class="form-label">修改状态框</div>
