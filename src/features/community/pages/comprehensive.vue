@@ -36,14 +36,15 @@ addTagType.addTag(typeData.value);
         "path": "/community/comprehensive/latest",
         "icon": "i-mdi-file-document-multiple-outline"
       },
-      {
-        "title": "用户",
-        "path": "/community/comprehensive/user",
-        "icon": "i-mdi-file-document-multiple-outline"
-      },
+
       {
         "title": "标签",
         "path": "/community/comprehensive/label/suggest",
+        "icon": "i-mdi-file-document-multiple-outline"
+      },
+      {
+        "title": "用户",
+        "path": "/community/comprehensive/user",
         "icon": "i-mdi-file-document-multiple-outline"
       }
     ]

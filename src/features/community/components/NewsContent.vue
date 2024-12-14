@@ -88,7 +88,7 @@ import {
   checkType,
   getArticle,
 } from "@community/composables/search";
-import { nextTick, onMounted, provide, ref, watch } from "vue";
+import { onMounted, provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import NewsFooter from "./NewsFooter.vue";
 const loadinglen = ref(0);
@@ -192,10 +192,6 @@ if (!props.isTag) {
   );
 }
 onMounted(async () => {
-  await nextTick(() => {
-    console.log(scrollRef);
-  });
-
   window.addEventListener("scroll", handleScroll, true);
 });
 
@@ -205,14 +201,13 @@ const handleScroll = async (e: any) => {
     document.documentElement.clientHeight || document.body.clientHeight;
   let scrollHeight =
     document.documentElement.scrollHeight || document.body.scrollHeight;
-  if (scrollTop + clientHeight > scrollHeight) {
+  if (scrollTop + clientHeight > scrollHeight - 100) {
     if (current.value < pages.value) {
       current.value++;
       //数据为加载完，继续赋值
       getArticle(props.type, props.condition, current.value).then((res) => {
         loading.value = true;
         if (res.records.length > 0) {
-          console.log("请求到数据");
           loadinglen.value = res.records.length;
 
           res.records.forEach((record) => {
@@ -330,6 +325,7 @@ const handleScroll = async (e: any) => {
 
 @media screen and (max-width: 768px) {
   #news {
+    padding: 0 10px;
     margin-top: 150px;
     .news-item {
       padding: 5px;
@@ -352,9 +348,16 @@ const handleScroll = async (e: any) => {
         }
       }
       .news-content {
-        padding: 10px 55px;
+        padding: 5px 55px;
         .news-title {
           font-weight: 540;
+          display: -webkit-box;
+          -webkit-line-clamp: 1; //行数
+          text-overflow: ellipsis; //省略号
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          white-space: normal;
+          word-break: break-all;
         }
         .news-details {
           font-size: 14.5px;
@@ -371,27 +374,26 @@ const handleScroll = async (e: any) => {
             word-break: break-all;
           }
         }
-        .news-label {
-          margin-top: 10px;
-          display: flex;
-          .type {
-            width: 50px;
-            padding: 0;
-            font-size: 14px;
-            color: #909ba6;
-            text-align: center;
-            border-radius: 15px;
-            border: 2px solid #e1edf8;
-            margin-right: 8px;
-          }
+      }
+      .news-label {
+        display: flex;
+        .type {
+          width: 50px;
+          padding: 0;
+          font-size: 12px;
+          color: #909ba6;
+          text-align: center;
+          border-radius: 15px;
+          border: 2px solid #e1edf8;
+          margin-right: 8px;
+        }
 
-          .labels {
-            display: flex;
-            color: #909ba6;
-            font-size: 14px;
-            .label-item {
-              margin: 0 5px;
-            }
+        .labels {
+          display: flex;
+          color: #909ba6;
+          font-size: 12px;
+          .label-item {
+            margin: 0 5px;
           }
         }
       }

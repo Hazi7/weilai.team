@@ -236,7 +236,7 @@ function skip(e: Event) {
     display: flex;
     position: fixed;
     z-index: 5;
-    top: 80px;
+    top: 70px;
     height: 60px;
     left: 50%;
     transform: translateX(-50%);
@@ -260,7 +260,7 @@ function skip(e: Event) {
       border: 1px solid #d0d9e4;
       border-radius: 25px;
       padding: 5px 10px;
-      padding-left: 30px;
+      padding-left: 40px;
     }
     .search-icon {
       position: absolute;
@@ -286,10 +286,17 @@ function skip(e: Event) {
     }
     &_item {
       padding: 5px 6px;
-      font-size: 15px;
       color: var(--secondary-foreground);
       a {
         width: 100%;
+        font-size: 15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; //行数
+        text-overflow: ellipsis; //省略号
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        white-space: normal;
+        word-break: break-all;
       }
       &:hover {
         background-color: #f8f8fa;

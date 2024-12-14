@@ -1,12 +1,11 @@
 <template>
-  <a class="news-item" v-for="item in userList">
+  <a
+    class="news-item"
+    v-for="item in userList"
+    @click="skipPersonCenter(item.userId)"
+  >
     <div class="news-writer">
       <div class="avatar">
-        <!-- <img v-if="item.headPortrait" :src="`${item.headPortrait}`" alt="" />
-        <div v-else class="flex items-center space-x-4">
-          <Skeleton class="bg-[--muted] h-12 w-12 rounded-full" />
-        </div> -->
-
         <Avatar
           :avatar="item.headPortrait"
           :customClass="`w-[50px] h-[50px]`"
@@ -17,39 +16,40 @@
         <div class="work-info">
           <span class="origin">原创 {{ item.postCount }}</span>
           <span class="read">阅读 {{ item.viewCount }}</span>
-          <span class="like">点赞</span>
+          <!-- <span class="like">点赞</span> -->
         </div>
         <div class="brief">{{ item.userDestination }}</div>
       </div>
     </div>
   </a>
-  <a class="news-item">
-    <div class="news-writer">
-      <div class="avatar">
-        <img src="@/assets/img/headImg.jpg" alt="" />
-      </div>
-      <div class="writer-info">
-        <div class="work-info">
-          <span class="origin">原创 400</span>
-          <span class="read">阅读 123</span>
-          <span class="like">点赞</span>
-        </div>
-        <div class="brief">致力于干饭</div>
-      </div>
-    </div>
-  </a>
+  <div v-if="!userList.length">
+    <NoData />
+  </div>
+  <div v-if="isOver && userList.length > 0" class="over">已经到底了</div>
 </template>
 
 <script setup lang="ts">
 import Avatar from "@/components/avatar/UserAvatar.vue";
+import NoData from "@/components/loading/NoData.vue";
 import { useRequest } from "@/composables/useRequest";
 import { useUserStore } from "@/store/userStore";
 import type { UserData, UserInfo } from "@/types/Community";
-import { ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 const userStore = useUserStore();
-console.log(userStore.userId);
-
+const router = useRouter();
+const current = ref<number>(1);
+const pages = ref<number>(1);
+const total = ref<number>(0);
+const content = ref("");
+const isOver = ref(false);
+function skipPersonCenter(id: number) {
+  userStore.setUserId(id);
+  userStore.setIsSelf(false);
+  router.push({
+    path: `/personalCenter/userInfo`,
+  });
+}
 const props = defineProps({
   content: {
     type: String,
@@ -72,38 +72,50 @@ watch(
 
 const { executeRequest, error, loading, data } = useRequest();
 const userList = ref<UserInfo[]>([]);
-async function getUserList(content = "", pageNumber = 1) {
+async function getUserList(content = "", pageNumber = 1, pageSize = 30) {
   await executeRequest({
-    url: `/user/searchUser?content=${content}&pageNumber=${pageNumber}&pageSize=10 `,
+    url: `/user/searchUser?content=${content}&pageNumber=${pageNumber}&pageSize=${pageSize} `,
     method: "get",
   });
   const res = data.value as UserData;
-  userList.value = res.data.searchUsers;
-}
-getUserList(props.content);
-// async function checkImageUrl(url: string) {
-//   return new Promise((resolve, reject) => {
-//     let img = new Image();
-//     img.onload = () => {
-//       resolve(true);
-//     };
-//     img.onerror = () => {
-//       reject(false);
-//     };
-//     img.src = url;
-//   });
-// }
 
-// 调用checkImageUrl函数并处理结果
-// checkImageUrl(
-//   "http://49.232.183.67:19000/wlgzs-official-website/user/2024-11-15/3b031693-7d54-40a0-9656-f72b01f7f662IDEAbackgroundImage.jpg",
-// )
-//   .then((result) => {
-//     console.log(Boolean(result)); // 将结果转换为布尔值并打印
-//   })
-//   .catch((error) => {
-//     console.log("检查图片链接时出错：", error);
-//   });
+  current.value = res.data.pageInfo.current;
+  pages.value = res.data.pageInfo.pages;
+  total.value = res.data.pageInfo.total;
+  return res.data;
+}
+getUserList(props.content).then((res) => {
+  userList.value = res.searchUsers;
+});
+onMounted(async () => {
+  window.addEventListener("scroll", handleScroll, true);
+});
+
+const handleScroll = async (e: any) => {
+  let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  const clientHeight =
+    document.documentElement.clientHeight || document.body.clientHeight;
+  let scrollHeight =
+    document.documentElement.scrollHeight || document.body.scrollHeight;
+
+  if (scrollTop + clientHeight > scrollHeight - 100) {
+    console.log("到底了");
+    if (current.value < pages.value) {
+      current.value++;
+      isOver.value = false;
+      //数据为加载完，继续赋值
+      getUserList(content.value, pages.value).then((res) => {
+        if (res.searchUsers.length > 0) {
+          res.searchUsers.forEach((record) => {
+            userList.value.push(record);
+          });
+        }
+      });
+    } else {
+      isOver.value = true;
+    }
+  }
+};
 </script>
 
 <style scoped lang="scss">
@@ -194,16 +206,22 @@ getUserList(props.content);
     }
   }
 }
-
+.over {
+  text-align: center;
+  font-size: 12px;
+  color: var(--secondary-foreground);
+  font-weight: 500;
+}
 @media screen and (max-width: 768px) {
   .news-item {
     padding: 5px;
+    padding-top: 10px;
     margin-bottom: 8px;
     .news-writer {
       padding-left: 10px;
       .avatar {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
       }
 
       .work-info,
