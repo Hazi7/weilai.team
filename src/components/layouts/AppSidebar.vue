@@ -16,7 +16,6 @@ import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
 
 import UserLogin from "@/composables/useLoginAll";
-import { useMessageStore } from '@/store/messageStore';
 import { useUserStore } from '@/store/userStore';
 import { Icon } from "@iconify/vue";
 import {
@@ -29,7 +28,8 @@ import { RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
-
+import { useMessageStore } from '@/store/messageStore';
+import { useNoticeStore } from '@/store/UseNoticeStore'
 import type { UserInfo } from "@/components/comment/index.ts";
 import { useRequest } from '@/composables/useRequest';
 const { data, executeRequest } = useRequest()
@@ -38,10 +38,11 @@ interface Info{
   value:number,
   expires:number
 }
-let info:Info=JSON.parse(localStorage.getItem("userId") as string) 
+let info:Info=JSON.parse(localStorage.getItem("userId") as string)
 
 
 const messageStore = useMessageStore();
+const noticeStore = useNoticeStore();
 const userInfo=ref<UserInfo>();
 async function getUserInfo (){
   await executeRequest({ url: `/user/getUserInfoByUserId/${info.value}`,method: 'get' })
@@ -105,10 +106,6 @@ const items = [
   },
 ];
 
-const handleMessageClick = () => {
-  messageStore.setHasNewMessage(false)
-}
-
 interface SubItemInterface {
   title: string;
   icon: string;
@@ -121,6 +118,21 @@ function skipToPersonalCenter(){
   userStore.reset();
   router.push('/personalCenter/userInfo')
 }
+//获取未读公告数量
+const getNotReadCount = async () => {
+  await executeRequest({
+    url: `/notice/getNotReadCount`,
+    method: "get",
+  });
+  if (data.value?.code == 200) {
+    if (data.value.data > 0) {
+      noticeStore.setHasUnreadNotice(true);
+    } else {
+      noticeStore.setHasUnreadNotice(false);
+    }
+  }
+};
+getNotReadCount()
 </script>
 
 <template>
@@ -153,6 +165,7 @@ function skipToPersonalCenter(){
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span >{{ item.title }}</span>
+                        <span v-if="item.title === '社区'&&noticeStore.hasUnreadNotice" class="noticeDot"></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -179,6 +192,7 @@ function skipToPersonalCenter(){
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span>{{ item.title }}</span>
+                        <span v-if="item.title === '公告'&&noticeStore.hasUnreadNotice" class="noticeDot"></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -210,7 +224,6 @@ function skipToPersonalCenter(){
                         :to="`/message/likeMes`"
                         active-class="sidebar__link--active"
                         class="sidebar__link"
-                        @click="handleMessageClick"
                       >
                         <Icon icon="mage:box-3d-notification" />&nbsp;
                         <span>消息</span>
@@ -265,7 +278,7 @@ function skipToPersonalCenter(){
                     个人资料
                     </DropdownMenuItem class="drop-menu-item">
                   </router-link>
-        
+
 
                     <DropdownMenuItem class="drop-menu-item" @click="logout()">
                       <LogOut />
@@ -321,12 +334,21 @@ function skipToPersonalCenter(){
 <style lang="scss" scoped>
 .dot{
   position: absolute;
-  top: 40%;
+  top: 41%;
   right: 20px;
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background-color: #ff0000;;
+}
+.noticeDot{
+  position: absolute;
+  top: 41%;
+  right: 20px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: #ff0000;
 }
 .main-menu {
   display: none;
@@ -433,9 +455,6 @@ function skipToPersonalCenter(){
 }
 
 @media screen and (max-width: 768px) {
-  .sidebar{
-    display: none;
-  }
   .main-menu{
   padding: 8px 25px;
   display: flex;

@@ -1,36 +1,59 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { computed, defineProps, defineEmits } from "vue";
-import { useRequest } from "@/composables/useRequest";
+import { computed, defineProps, defineEmits, watch } from "vue";
 import { formatPostTime } from "@/utils/formatPostTime";
 import UserAvatar from "@/components/avatar/UserAvatar.vue";
 import type { SSEMessageData } from "../../../types/sseType";
+import { showConfirm } from "@/composables/useConfirm";
+import { useAlert } from "@/composables/useAlert";
+import apiClient from "@/api/axios";
+import { useRequest } from "vue-request";
 
-const { data, executeRequest } = useRequest();
 const props = defineProps<{
   message: SSEMessageData;
 }>();
 const emit = defineEmits(["like", "comment", "system"]);
 const formattedTime = computed(() => formatPostTime(props.message.createdAt));
-//删除单个信息
-const deleteMessage = async (messageId: number, messageType: number) => {
-  await executeRequest({
-    url: `/message/deleteOneMessage/${messageId}`,
-    method: "delete",
-  });
-  if (data.value?.code === 200) {
-    alert("删除成功");
-    if (messageType === 1 || messageType === 2) {
-      emit("like");
-    } else if (messageType === 3) {
-      emit("comment");
-    } else if (messageType === 4) {
-      emit("system");
-    }
-  } else {
-    alert("删除失败");
-  }
+const { showAlert } = useAlert();
+const deleteMessage = () => {
+  showConfirm({
+    content: "确定删除此条消息吗？",
+  })
+    .then(() => {
+      run(props.message.messageId);
+    })
+    .catch(() => {});
 };
+//删除单个信息
+function deleteOnes(messageId: number) {
+  return apiClient.delete(`/message/deleteOneMessage/${messageId}`);
+}
+const { data, run } = useRequest(deleteOnes, {
+  manual: true,
+});
+
+watch(
+  () => data.value,
+  () => {
+    if (data.value?.code === 200) {
+      showAlert("删除成功", "pass");
+      if (props.message.messageType === 1 || props.message.messageType === 2) {
+        emit("like");
+      } else if (
+        props.message.messageType === 3 ||
+        props.message.messageType === 4
+      ) {
+        emit("comment");
+      } else if (props.message.messageType === 5) {
+        emit("system");
+      }
+    } else if (data.value?.code === 4003) {
+      showAlert("未查找到信息", "error");
+    } else {
+      showAlert("删除失败", "error");
+    }
+  },
+);
 </script>
 
 <template>
@@ -49,7 +72,10 @@ const deleteMessage = async (messageId: number, messageType: number) => {
           <span v-else-if="props.message.messageType === 3" class="type"
             >评论了你的文章</span
           >
-          <span v-else-if="props.message.messageType === 4" class="hide"></span>
+          <span v-else-if="props.message.messageType === 4" class="type"
+            >评论了你</span
+          >
+          <span v-else-if="props.message.messageType === 5" class="hide"></span>
         </div>
         <div class="time">{{ formattedTime }}</div>
       </div>
@@ -65,9 +91,7 @@ const deleteMessage = async (messageId: number, messageType: number) => {
       <Icon
         icon="fluent:delete-24-regular"
         class="deleteIcon"
-        @click="
-          deleteMessage(props.message.messageId, props.message.messageType)
-        "
+        @click="deleteMessage()"
       />
     </div>
   </div>

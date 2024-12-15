@@ -22,6 +22,7 @@ const props = defineProps<{
   };
   userId: number;
   parentId: number;
+  isFormVisible: boolean;
 }>();
 
 const { data, executeRequest } = useRequest();

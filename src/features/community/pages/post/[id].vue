@@ -6,9 +6,11 @@ import { EditorContent } from "@tiptap/vue-3";
 import { useRoute } from "vue-router";
 import ArticleHeader from "../../components/article/ArticleHeader.vue";
 import { type AxiosResponse } from "axios";
-import { computed, watch } from "vue";
+import { computed, watch, ref } from "vue";
 import apiClient from "@/api/axios";
 import { formatPostTime } from "@/utils/formatPostTime";
+import { likeData, likeRun } from "../../composables/Like";
+import { collectRun, collectData } from "../../composables/Collect";
 import { useAlert } from "@/composables/useAlert";
 
 export interface PostDetailResponse {
@@ -31,7 +33,6 @@ export interface PostDetailResponse {
 const route = useRoute<"/community/post/[id]">();
 const postId = route.params.id;
 const { showAlert } = useAlert();
-
 const getPost = () => {
   return apiClient.get(`/post/selectOne/${postId}`);
 };
@@ -44,67 +45,61 @@ const formattedPostTime = computed(() => {
 });
 
 const { editor } = useAppEditor(false);
-
+const isCollect = ref(data.value?.data.isCollect);
+const isLike = ref(data.value?.data.isLike);
+const likeCount = ref<number>(data.value?.data.likeCount || 0);
 watch(
   () => data.value,
   () => {
     if (data.value?.data.postTxt) {
       editor.value?.commands.setContent(JSON.parse(data.value?.data.postTxt));
     }
+    isCollect.value = data.value?.data.isCollect;
+    isLike.value = data.value?.data.isLike;
+    likeCount.value = data.value?.data.likeCount || 0;
   },
+  { immediate: true },
 );
+
 //点赞
-const likeArticle = () => {
-  return apiClient.put(`/post/like/${postId}`);
+const handleLike = () => {
+  likeRun(postId);
 };
-const { data: likeData, run: likeRun } = useRequest(() => likeArticle(), {
-  manual: true,
-});
 watch(
   () => likeData.value,
   (newLikeData) => {
     console.log("点赞请求的响应数据:", newLikeData);
-    run();
-    if (newLikeData.code === 2009) {
+    if (newLikeData && newLikeData.code === 2009) {
       showAlert("点赞成功", "pass");
-    } else if (newLikeData.code === 2011) {
+      isLike.value = true;
+      likeCount.value += 1;
+    } else if (newLikeData && newLikeData.code === 2011) {
       showAlert("取消点赞成功", "pass");
+      isLike.value = false;
+      likeCount.value -= 1;
     } else {
       showAlert("点赞失败", "error");
     }
   },
 );
-const handleLikeClick = () => {
-  likeRun();
+//收藏
+const handleCollect = () => {
+  collectRun(postId);
 };
-
-// 收藏
-const { run: collectRun } = useRequest(
-  () => {
-    return apiClient.post(`/post/collect/${postId}`);
-  },
-  {
-    manual: true,
-    onSuccess: (newCollectData) => {
-      console.log("收藏请求的响应数据:", newCollectData);
-      run();
-      if (newCollectData.code === 2013) {
-        showAlert("收藏成功", "pass");
-      } else if (newCollectData.code === 2016) {
-        showAlert("取消收藏成功", "pass");
-      } else {
-        showAlert("收藏失败", "error");
-      }
-    },
-    onError: (error) => {
-      console.log("收藏请求出错:", error);
+watch(
+  () => collectData.value,
+  (newCollectData) => {
+    if (newCollectData && newCollectData.code === 2013) {
+      showAlert("收藏成功", "pass");
+      isCollect.value = true;
+    } else if (newCollectData && newCollectData.code === 2016) {
+      showAlert("取消收藏成功", "pass");
+      isCollect.value = false;
+    } else {
       showAlert("收藏失败", "error");
-    },
+    }
   },
 );
-const handleCollect = () => {
-  collectRun();
-};
 </script>
 
 <template>
@@ -113,15 +108,15 @@ const handleCollect = () => {
       :tags="data?.data.postTags"
       :title="data?.data.title"
       :view-count="data?.data.viewCount"
-      :like-count="data?.data.likeCount"
+      :like-count="likeCount"
       :comment-count="data?.data.commentCount"
       :is-loading="loading"
       :author="data?.data.name"
       :avatar="data?.data.headPortrait"
       :post-time="formattedPostTime"
-      :is-like="data?.data.isLike"
-      :is-collect="data?.data.isCollect"
-      :handle-like-click="handleLikeClick"
+      :is-like="isLike"
+      :is-collect="isCollect"
+      :handle-like-click="handleLike"
       :handle-collect="handleCollect"
     ></ArticleHeader>
     <EditorContent

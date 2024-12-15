@@ -66,4 +66,22 @@ defineProps({
     padding: 5px 3vw !important;
   }
 }
+@media screen and (max-width: 768px) {
+  .news-footer {
+    padding-top: 5px;
+    & > div {
+      color: var(--secondary-foreground);
+      display: flex;
+
+      align-items: center;
+      font-size: 12px;
+      margin-right: 10px;
+    }
+    &-icon {
+      color: var(--secondary-foreground);
+      font-size: 12px;
+      margin-right: 5px;
+    }
+  }
+}
 </style>

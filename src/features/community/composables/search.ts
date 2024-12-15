@@ -65,7 +65,7 @@ export function checkType(type: any) {
   return "";
 }
 
-export async function getUserList(content = "", pageNumber = 1, pageSize = 10) {
+export async function getUserList(content = "", pageNumber = 1, pageSize = 30) {
   executeRequest({ url: "/user/searchUser", method: "get" }).then((res) => {
     console.log(res);
   });

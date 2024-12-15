@@ -6,12 +6,14 @@ import type {
   SSEEventType,
 } from "../types/sseType";
 import { useMessageStore } from "./messageStore";
+import { useNoticeStore } from "@/store/UseNoticeStore";
 import {
   fetchEventSource,
   type EventSourceMessage,
 } from "@microsoft/fetch-event-source";
 
 const messageStore = useMessageStore();
+const noticeStore = useNoticeStore();
 type Observer<T> = (data: T) => void;
 export const useSseStore = defineStore("sse", () => {
   const sseUrl = ref<string>("");
@@ -77,13 +79,32 @@ export const useSseStore = defineStore("sse", () => {
         return;
       }
 
+      if (data.hasOwnProperty("messageType")) {
+        const messageType = data.messageType;
+        switch (messageType) {
+          case 1:
+          case 2:
+            messageStore.setLikeStatus(true);
+            break;
+          case 3:
+            messageStore.setCommentStatus(true);
+            break;
+          case 4:
+            messageStore.setNotificationStatus(true);
+            break;
+          default:
+            console.warn(`接收到未知类型的messageType: ${messageType}`);
+            break;
+        }
+      }
+
       if (data.hasOwnProperty("noticeId")) {
         const newNotice: SSENoticeData = data;
         notify("notice", newNotice);
+        noticeStore.setHasUnreadNotice(true);
       } else if (data.hasOwnProperty("messageId")) {
         const newMessage: SSEMessageData = data;
         notify("message", newMessage);
-        messageStore.setHasNewMessage(true);
       }
     } catch (error) {
       console.error("解析SSE消息数据失败", error);
