@@ -40,16 +40,19 @@
                             </p>
                         </div>
                         <DropdownMenu v-if="userStore.isSelf">
-                            <DropdownMenuTrigger class="ellipsis">
+                            <DropdownMenuTrigger class="ellipsis h-4">
                                 <Icon icon="lucide:ellipsis" />
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent class="p-0  bg-white">
-                                <DropdownMenuLabel>操作</DropdownMenuLabel>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn deletePost" @click="deletePost(item.id)">删除文章</Button>
+                            <DropdownMenuContent class=" bg-white">
+                                <DropdownMenuItem class="text-gray-500 cursor-pointer">
+                                    <Icon icon="material-symbols:delete-outline" />
+                                    <span @click="deletePost(item.id)">
+                                        删除文章
+                                    </span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Button class="operationsBtn updatePost">修改文章</Button>
+                                <DropdownMenuItem class="text-gray-500 cursor-pointer">
+                                    <Icon icon="jam:write" />
+                                    <span>修改文章</span>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -92,7 +95,8 @@ import { useDateFormatter } from '@/composables/useDateFormatter'
 import { get } from '@vueuse/core';
 const { formatDateToYYYYMMDD } = useDateFormatter()
 import { useUserStore } from '@/store/userStore'
-import  NoData  from '@/components/loading/NoData.vue'
+import NoData from '@/components/loading/NoData.vue'
+import { showConfirm } from "@/composables/useConfirm"
 
 const userStore = useUserStore()
 console.log('pinia///', userStore);
@@ -149,28 +153,20 @@ async function getPosts() {
 //打开页面立刻调用一次获取文章
 getPosts()
 
-async function deletePost(id: number) {
+function deletePost(id: number) {
 
-    await executeRequest({ url: `/post/delete/${id}`, method: 'put' })
-    console.log(data.value);
-    getPosts()
+    showConfirm({
+        content: "你确定要删除该文章吗",
+        description: "一旦删除文章将不存在",
+    }).then(() => {
+        executeRequest({ url: `/post/delete/${id}`, method: 'put' }).then(() => {
+            console.log(data.value);
+            getPosts()
+        })
+    })
 }
 </script>
 <style lang="scss" scoped>
-.operationsBtn {
-    width: 100%;
-}
-
-.deletePost {
-    background-color: rgb(255, 172, 172);
-    color: rgb(255, 0, 0);
-}
-
-.updatePost {
-    background-color: #acdeff;
-    color: rgb(0, 0, 255);
-}
-
 .myPosts {
     margin-top: 20px;
     width: 100%;
@@ -203,6 +199,7 @@ async function deletePost(id: number) {
                 background-color: white;
                 padding: 10px;
                 border: 1px solid #d9d9d9;
+                align-items: center;
 
                 .postInfo {
                     margin-left: 20px;

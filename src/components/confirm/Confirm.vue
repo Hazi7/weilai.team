@@ -14,9 +14,9 @@ import { Icon } from "@iconify/vue";
 import { ref } from "vue";
 
 const props = defineProps<{
-  title?: string| undefined;
-  content?: string| undefined ;
-  description?: string| undefined;
+  title?: string | undefined;
+  content?: string | undefined;
+  description?: string | undefined;
   confirmText?: string | undefined;
 
   cancelText?: string | undefined;
@@ -34,10 +34,10 @@ const dialogVisible = ref(true);
         <AlertDialogTitle>{{ title ? title : "提示" }}</AlertDialogTitle>
         <AlertDialogDescription class="info flex">
           <Icon icon="pajamas:status-alert" />
-          <span class="content">{{
+          <span id="content">{{
             content ? content : "你确定执行该操作吗？"
           }}</span>
-          <span class="description">
+          <span id="description">
             {{ description ? `(${description})` : "" }}</span
           >
         </AlertDialogDescription>
@@ -64,7 +64,7 @@ const dialogVisible = ref(true);
     margin-right: 10px;
   }
 
-  .description {
+  #description {
     font-size: 14px;
   }
 }

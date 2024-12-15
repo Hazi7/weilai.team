@@ -5,7 +5,7 @@
         class="flex items-center"
         style="margin: 5px 0px; height: 5vh; width: 100%"
       >
-        <TabsList>
+        <TabsList class="bg-white">
           <div class="top-title">
             <span>{{ grade }}未来软件工作室</span>
           </div>
@@ -107,8 +107,6 @@
                   /></TableCell>
                   <TableCell class="font-medium">
                     {{ user.name }}
-                    <!-- <Icon v-if="user.isLeader" icon="fluent-mdl2:party-leader"
-                  /> -->
                   </TableCell>
                   <TableCell>
                     {{
@@ -153,10 +151,19 @@
                               编辑
                             </DropdownMenuItem>
                           </DialogTrigger>
-                          <DropdownMenuItem @click="deleteOne(user.id)"
+                          <DropdownMenuItem
+                            @click="deleteOne(user.id)"
+                            v-if="!user.isLeader"
                             ><Icon
                               icon="uiw:user-delete"
                             />删除</DropdownMenuItem
+                          >
+                          <DropdownMenuItem
+                            @click="cancelLeader(user.id)"
+                            v-else
+                            ><Icon
+                              icon="uiw:user-delete"
+                            />撤销组长</DropdownMenuItem
                           >
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -203,6 +210,7 @@ import AddMember from "@/features/admin/components/contacts/AddMember.vue";
 import MemberInfo from "@/features/admin/components/contacts/MemberInfo.vue";
 import SelectLeader from "@/features/admin/components/contacts/SelectLeader.vue";
 import {
+  cancelGroupLeader,
   deletes,
   getMembersByGroupAndGrade,
 } from "@/features/admin/composables/useContacts";
@@ -222,7 +230,6 @@ const selectIds = ref<number[]>([]);
 const tableData = ref<TeamUserList[]>([]);
 const haveLeader = ref(false);
 const isAllSelected = ref(false);
-const deleteOneArr = ref<number[]>([]);
 // 记录当前数据的索引
 const trIndex = ref<number>();
 const route = useRoute();
@@ -311,7 +318,7 @@ const handleItemSelect = (item: any) => {
     }
   });
 };
-const { data, run, loading } = useRequest(deletes, { manual: true });
+const { data, run } = useRequest(deletes, { manual: true });
 // 批量删除功能
 function deleteMembers() {
   if (selectIds.value.length > 0) {
@@ -327,6 +334,7 @@ function deleteMembers() {
     return showAlert("请选择后再进行删除", "waring");
   }
 }
+
 // 删除一个
 function deleteOne(id: number) {
   selectIds.value.push(id);
@@ -350,6 +358,27 @@ watch(
     selectIds.value = [];
   },
 );
+
+// 撤销组长
+const { data: cancelData, run: cancel } = useRequest(cancelGroupLeader, {
+  manual: true,
+});
+watch(
+  () => cancelData.value,
+  (newVal) => {
+    console.log(newVal);
+    if (newVal && newVal.code == 200) {
+      showAlert("操作成功", "pass");
+      updateData(grade.value, group.value);
+    }
+  },
+);
+function cancelLeader(id: number) {
+  let str = `${grade.value}$${group.value}`;
+  showConfirm({ content: "确定收回其组长的权限吗" }).then(() => {
+    cancel(str, id);
+  });
+}
 </script>
 
 <style lang="scss" scoped>

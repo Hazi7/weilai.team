@@ -37,36 +37,39 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRequest } from "@/composables/useRequest";
 
-import { Calendar } from "@/components/ui/calendar";
-import type { ArticleList } from "@/types/Community";
-import { checkType, getArticle } from "@community/composables/search";
-import { Icon } from "@iconify/vue";
-import { MoreHorizontal } from "lucide-vue-next";
-import { ref, watch } from "vue";
 import NoData from "@/components/loading/NoData.vue";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
+import { useAlert } from "@/composables/useAlert";
+import { showConfirm } from "@/composables/useConfirm";
 import { useDateFormatter } from "@/composables/useDateFormatter";
 import { cn } from "@/lib/utils";
+import router from "@/router";
+import type { ArticleList } from "@/types/Community";
+import { checkType, deletes, getArticle } from "@community/composables/search";
+import { Icon } from "@iconify/vue";
 import { getLocalTimeZone, type DateValue } from "@internationalized/date";
-import { Calendar as CalendarIcon } from "lucide-vue-next";
+import { Calendar as CalendarIcon, MoreHorizontal } from "lucide-vue-next";
+import { ref, watch } from "vue";
+import { useRequest } from "vue-request";
+const { showAlert } = useAlert();
 const { formatDatetoDay } = useDateFormatter();
-const { executeRequest, error, loading, data } = useRequest();
+
 const postList = ref<ArticleList[]>([]);
 // 初始化数据
 const isAllSelected = ref(false);
 const selectType = ref("");
-// const selectTime = ref<Date | string>("");
 const selectTime = ref<string>("");
 const value = ref<DateValue>();
 const condition = ref("");
 // 声明一个批量删除的数组
-const deleteTodos = ref([]);
+const deleteTodos = ref<Array<number>>([]);
 
 let total = ref<number>();
 let page = ref(1);
@@ -121,20 +124,30 @@ async function searchArticle() {
   total.value = res.total;
   pageSize.value = res.size;
 }
-function deleteArticle(id: number) {
-  executeRequest({ url: `/post/delete/${id}`, method: "put" }).then(() => {
-    getArticle(page.value).then((res) => {
-      postList.value = res.records;
+// 删除文章(单选)
+const { data, run } = useRequest(deletes, { manual: true });
+function deleteArticles(oneId?: number) {
+  if (oneId !== 0) {
+    deleteTodos.value.push(oneId as number);
+    const str = deleteTodos.value.join(",");
+    showConfirm({ description: "一旦删除无法恢复" }).then(() => {
+      run(str);
+      watch(
+        () => data.value,
+        (newVal) => {
+          console.log(newVal);
+          if (newVal && newVal.code === 2002) {
+            // 检查 newVal 是否存在
+            showAlert("删除成功", "pass");
+            postList.value = postList.value.filter((item) => item.id !== oneId);
+          }
+        },
+      );
     });
-  });
+  }
 }
-function deleteArticles() {
-  executeRequest({ url: "/post/deleteAll", method: "put" }).then(() => {
-    getArticle(page.value).then((res) => {
-      postList.value = res.records;
-    });
-  });
-}
+// 监听删除请求数据变化
+
 // 实现全选反选多选
 function handleSelectAll() {
   if (postList.value.length === 0) return;
@@ -262,7 +275,7 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
               </div>
               <div class="header-operation">
                 <div class="operation">
-                  <button>
+                  <!-- <button>
                     <RouterLink
                       to="/admin/recruitment/detail"
                       class="addMember operation-btn"
@@ -271,7 +284,7 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
                       &nbsp;
                       <span>添加成员</span>
                     </RouterLink>
-                  </button>
+                  </button> -->
                   <button>
                     <button class="addMember operation-btn">
                       <span>批量管理</span>
@@ -360,9 +373,22 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent class="bg-white">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem @click="deleteArticle(item.id)"
-                            >Delete</DropdownMenuItem
+                          <DropdownMenuItem>
+                            <Icon
+                              icon="cuida:edit-outline"
+                            />编辑</DropdownMenuItem
+                          >
+                          <DropdownMenuItem @click="deleteArticles(item.id)"
+                            ><Icon
+                              icon="uiw:user-delete"
+                            />删除</DropdownMenuItem
+                          >
+                          <DropdownMenuItem
+                            @click="router.push(`/community/post/${item.id}`)"
+                          >
+                            <Icon
+                              icon="ic:outline-article"
+                            />查看详情</DropdownMenuItem
                           >
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -374,7 +400,7 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
                 <NoData />
               </div>
             </CardContent>
-            <CardFooter class="justify-center">
+            <CardFooter class="justify-center" v-show="postList.length">
               <div class="pagination-container">
                 <Pagination
                   :totalItems="total"
@@ -395,7 +421,6 @@ function df(date: any, format = "yyyy - MM - dd HH:mm") {
 $font: #8c9296;
 tr {
   text-align: center;
-  // border-bottom: 1.5px solid var(--border);
   font-size: 14.5px;
   height: 40px !important;
   box-sizing: border-box;
@@ -409,10 +434,12 @@ tr {
 }
 th {
   text-align: center;
+  font-size: 1vw;
   color: var(--secondary-foreground);
 }
 td {
   padding: 0.5em;
+  font-size: 1vw;
 }
 .group-leader {
   background-color: var(--secondary);
@@ -472,11 +499,6 @@ td {
   margin-bottom: 5px;
   width: 100%;
   .select-type {
-    // button {
-    //   padding: 0.5vw 0.8vw;
-    //   height: 6vh;
-    //   width: 13vw;
-    // }
     select {
       font-size: 0.9vw;
     }
@@ -485,11 +507,7 @@ td {
     &-type,
     &-time {
       margin-right: 5px;
-      // button {
-      //   padding: 0.5vw 0.8vw;
-      //   height: 6vh;
-      //   font-size: 0.9vw;
-      // }
+
       span {
         width: max-content;
         padding: 0.2vw;
@@ -650,6 +668,115 @@ td {
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 150px;
+  }
+}
+@media screen and (min-width: 900px) and (max-width: 2600px) {
+  td {
+    height: 25px;
+  }
+  .header-link {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+    width: 100%;
+    .select-type {
+      select {
+        font-size: 0.9vw;
+      }
+    }
+    .select {
+      &-type,
+      &-time {
+        margin-right: 5px;
+
+        span {
+          width: max-content;
+          padding: 0.2vw;
+          font-size: 0.9vw;
+          margin-right: 5px;
+        }
+        display: flex;
+        font-size: 14px;
+        color: var(--secondary-foreground);
+        align-items: center;
+      }
+      &-time {
+        &-btn {
+          width: 15vw;
+          font-size: 0.9vw;
+          height: 30px;
+          padding: 0 10px;
+        }
+      }
+      &-type {
+        button {
+          outline: none;
+          width: 150px;
+          height: 30px;
+          padding: 0px 10px;
+        }
+      }
+    }
+  }
+  .header-search {
+    display: flex;
+    align-items: center;
+    span {
+      font-size: 0.9vw;
+      width: max-content;
+      color: var(--secondary-foreground);
+      margin-right: 5px;
+    }
+    .search_input_box {
+      float: right;
+      position: relative;
+
+      &_input_box {
+        position: relative;
+      }
+      input {
+        text-decoration: none;
+        list-style: none;
+        outline-style: none;
+        width: 180px;
+
+        height: 30px;
+        font-size: 0.9vw;
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        padding: 0px 10px;
+        padding-left: 10px;
+      }
+      .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 2%;
+        transform: translateY(-50%);
+      }
+      &_list {
+        border-radius: var(--radius);
+        background-color: white;
+        box-shadow:
+          0px 2px 5px rgba(0, 0, 0, 0.1),
+          inset 0px 0.2px 0.5px rgba(0, 0, 0, 0.24);
+      }
+
+      &_item {
+        padding: 5px 6px;
+        font-size: 15px;
+        color: var(--secondary-foreground);
+        a {
+          width: 100%;
+        }
+        &:hover {
+          background-color: #f8f8fa;
+        }
+      }
+    }
+  }
+  #radix-vue-popover-content-v-46 {
+    font-size: 0.9vw;
   }
 }
 </style>

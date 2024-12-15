@@ -27,7 +27,7 @@ addTagType.addTag(typeData.value);
     "redirect": "/community/discussion/recommend",
     "thirdNavItems": [
       {
-        "title": "推荐",
+        "title": "热门",
         "path": "/community/discussion/recommend",
         "icon": "i-mdi-file-document-multiple-outline"
       },

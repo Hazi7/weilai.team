@@ -16,7 +16,6 @@ import SidebarMenuItem from "@/components/ui/sidebar/SidebarMenuItem.vue";
 import SidebarProvider from "@/components/ui/sidebar/SidebarProvider.vue";
 
 import UserLogin from "@/composables/useLoginAll";
-import { useMessageStore } from '@/store/messageStore';
 import { useUserStore } from '@/store/userStore';
 import { Icon } from "@iconify/vue";
 import {
@@ -24,29 +23,40 @@ import {
   ChevronsUpDown,
   LogOut
 } from "lucide-vue-next";
-import { watch } from "vue";
+import { ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import Button from "../ui/button/Button.vue";
 import SidebarFooter from "../ui/sidebar/SidebarFooter.vue";
 import SidebarHeader from "../ui/sidebar/SidebarHeader.vue";
+import { useMessageStore } from '@/store/messageStore';
+import { useNoticeStore } from '@/store/UseNoticeStore'
+import type { UserInfo } from "@/components/comment/index.ts";
+import { useRequest } from '@/composables/useRequest';
+const { data, executeRequest } = useRequest()
+// 获取个人id用于渲染
+interface Info{
+  value:number,
+  expires:number
+}
+let info:Info=JSON.parse(localStorage.getItem("userId") as string)
+
+
 const messageStore = useMessageStore();
+const noticeStore = useNoticeStore();
+const userInfo=ref<UserInfo>();
+async function getUserInfo (){
+  await executeRequest({ url: `/user/getUserInfoByUserId/${info.value}`,method: 'get' })
+  userInfo.value=data.value.data as UserInfo
+}
+getUserInfo()
 
-
+watch(()=>data.value,()=>{
+  console.log(data.value)
+})
 const {  logout } = UserLogin()
 const route = useRoute();
 const router = useRouter();
 const subNavItems = route.meta.subNavItems as SubItemInterface[] | undefined;
-watch(
-  route,
-  (newVal) => {
-    console.log("meta改变了");
-
-    console.log(newVal, "111");
-  },
-  {
-    deep: true,
-  },
-);
 const subNavs = [
   {
     title: "综合",
@@ -96,10 +106,6 @@ const items = [
   },
 ];
 
-const handleMessageClick = () => {
-  messageStore.setHasNewMessage(false)
-}
-
 interface SubItemInterface {
   title: string;
   icon: string;
@@ -109,11 +115,24 @@ interface SubItemInterface {
 const userStore=useUserStore()
 
 function skipToPersonalCenter(){
-console.log("点击了");
-
   userStore.reset();
   router.push('/personalCenter/userInfo')
 }
+//获取未读公告数量
+const getNotReadCount = async () => {
+  await executeRequest({
+    url: `/notice/getNotReadCount`,
+    method: "get",
+  });
+  if (data.value?.code == 200) {
+    if (data.value.data > 0) {
+      noticeStore.setHasUnreadNotice(true);
+    } else {
+      noticeStore.setHasUnreadNotice(false);
+    }
+  }
+};
+getNotReadCount()
 </script>
 
 <template>
@@ -146,6 +165,7 @@ console.log("点击了");
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span >{{ item.title }}</span>
+                        <span v-if="item.title === '社区'&&noticeStore.hasUnreadNotice" class="noticeDot"></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -172,6 +192,7 @@ console.log("点击了");
                       >
                         <Icon :icon="`${item.icon}`" />&nbsp;
                         <span>{{ item.title }}</span>
+                        <span v-if="item.title === '公告'&&noticeStore.hasUnreadNotice" class="noticeDot"></span>
                       </RouterLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -189,7 +210,7 @@ console.log("点击了");
                     <SidebarMenuButton class="sidebar__button">
                       <RouterLink
 
-                        :to="`/personalCenter/userInfo/myPosts`"
+                        :to="`/personalCenter/userInfo`"
                         active-class="sidebar__link--active"
                         class="sidebar__link mb-1 "
                         @click="skipToPersonalCenter"
@@ -203,7 +224,6 @@ console.log("点击了");
                         :to="`/message/likeMes`"
                         active-class="sidebar__link--active"
                         class="sidebar__link"
-                        @click="handleMessageClick"
                       >
                         <Icon icon="mage:box-3d-notification" />&nbsp;
                         <span>消息</span>
@@ -240,7 +260,7 @@ console.log("点击了");
                       class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     >
                       <!-- <img src="@/assets/img/headImg.jpg" alt="" class="avatar" /> -->
-                       <div class="avatar"> <Avatar    /></div>
+                       <div class="avatar"> <Avatar  :avatar="userInfo?.headPortrait"  /></div>
 
                       <div class="grid flex-1 text-left text-sm leading-tight">
                         <span class="truncate">爆米奇</span>
@@ -258,7 +278,7 @@ console.log("点击了");
                     个人资料
                     </DropdownMenuItem class="drop-menu-item">
                   </router-link>
-        
+
 
                     <DropdownMenuItem class="drop-menu-item" @click="logout()">
                       <LogOut />
@@ -298,7 +318,7 @@ console.log("点击了");
         </RouterLink>
       </DropdownMenuContent>
     </DropdownMenu>
-    <RouterLink to="/personalCenter/userInfo/myPosts"
+    <RouterLink to="/personalCenter/userInfo"
       ><Button class="main-menu-button"
         ><Icon icon="bi:person" class="main-menu-icon" /></Button
     ></RouterLink>
@@ -314,12 +334,21 @@ console.log("点击了");
 <style lang="scss" scoped>
 .dot{
   position: absolute;
-  top: 40%;
+  top: 41%;
   right: 20px;
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background-color: #ff0000;;
+}
+.noticeDot{
+  position: absolute;
+  top: 41%;
+  right: 20px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: #ff0000;
 }
 .main-menu {
   display: none;

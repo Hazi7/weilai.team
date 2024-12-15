@@ -8,14 +8,27 @@
         </div>
       </div>
       <div class="messageCon">
-        <NoData v-if="messages.length === 0" />
+        <div v-if="loading" class="loading-item">
+          <div
+            v-for="index in 6"
+            :key="index"
+            class="flex items-center space-x-4"
+          >
+            <Skeleton class="h-12 w-12 rounded-full bg-[--muted]" />
+            <div class="space-y-2">
+              <Skeleton class="h-4 w-[250px] bg-[--muted]" />
+              <Skeleton class="h-4 w-[200px] bg-[--muted]" />
+            </div>
+          </div>
+        </div>
+        <NoData v-else-if="totalCount === 0" />
         <div v-else class="messageList">
           <div
             v-for="message in messages"
             :key="message.messageId"
             class="mess"
           >
-            <MesItem :message="message" @comment="messageList" />
+            <MesItem :message="message" @comment="run()" />
           </div>
         </div>
       </div>
@@ -25,17 +38,20 @@
 </template>
 
 <script setup lang="ts">
+import { Skeleton } from "@/components/ui/skeleton";
+import { showConfirm } from "@/composables/useConfirm";
 import NoData from "../../../../components/loading/NoData.vue";
 import Rightbar from "@/components/community/Rightbar.vue";
 import { Icon } from "@iconify/vue";
 import MesItem from "../../compontent/MesItem.vue";
 import type { SSEMessageData } from "../../../../types/sseType";
 import { useSseStore } from "../../../../store/useSseStore";
-import { onMounted, ref } from "vue";
-import { useRequest } from "@/composables/useRequest";
+import { onMounted, ref, watch } from "vue";
 import { useMessageStore } from "@/store/messageStore";
 import { useAlert } from "@/composables/useAlert";
-const { data, executeRequest } = useRequest();
+import apiClient from "@/api/axios";
+import { type AxiosResponse } from "axios";
+import { useRequest } from "vue-request";
 const { showAlert } = useAlert();
 const sseStore = useSseStore();
 const messageStore = useMessageStore();
@@ -49,52 +65,86 @@ onMounted(() => {
     if (message.messageType == messageType) {
       messages.value.unshift(message);
       console.log(message);
-      messageStore.setHasNewMessage(true);
+      messageStore.setCommentStatus(true);
     }
   });
-  messageList();
+  run();
 });
 
 //渲染消息列表
-const messageList = async () => {
-  messages.value = [];
-  await executeRequest({
-    url: `/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,
-    method: "get",
-  });
-  if (data.value?.code == 200) {
-    console.log(data.value);
-
-    totalCount.value = data.value?.data.PageInfo.totalCount;
-    const allMessages = data.value?.data.AllMessages || [];
-    messages.value = allMessages;
-  } else if (data.value?.code == 401) {
-    showAlert("请先登录", "waring");
-  } else {
-    console.log(data.value);
-  }
+const messageList = () => {
+  return apiClient.get(
+    `/message/getMessageInfo?messageType=${messageType}&pageSize=${pageSize}&pageNumber=${pageNumber}`,
+  );
 };
+const { data, loading, run } = useRequest<AxiosResponse<SSEMessageData>>(
+  messageList,
+  {
+    loadingKeep: 1000,
+  },
+);
+watch(
+  () => data.value,
+  () => {
+    if (data.value?.code == 200) {
+      messageStore.setCommentStatus(false);
+      totalCount.value = data.value?.data.PageInfo.totalCount;
+      const allMessages = data.value?.data.AllMessages || [];
+      messages.value = allMessages;
+    } else if (data.value?.code == 401) {
+      showAlert("请先登录", "waring");
+    } else {
+      showAlert("获取失败", "error");
+      console.log(data.value);
+    }
+  },
+);
 
 //删除所有评论消息
-const deleteAll = async () => {
-  await executeRequest({
-    url: `/message/deleteAllMessages`,
-    method: "delete",
-    requestData: { messageType },
-  });
-  if (data.value.code === 200) {
-    showAlert("删除成功", "pass");
-    messageList();
-  } else {
-    showAlert("删除失败", "error");
-    console.log(data.value);
-  }
-};
+function deleteAllMes(messageType: number) {
+  return apiClient.delete(
+    `/message/deleteAllMessages?messageType=${messageType}`,
+  );
+}
+const { data: deleteData, run: deleteRun } = useRequest(deleteAllMes, {
+  manual: true,
+});
+function deleteAll() {
+  showConfirm({
+    content: "确定清空所有评论消息吗？",
+  })
+    .then(() => {
+      deleteRun(messageType);
+    })
+    .catch(() => {});
+}
+watch(
+  () => deleteData.value,
+  () => {
+    if ((deleteData.value as any).code == 200) {
+      showAlert("清除成功", "pass");
+      run();
+    } else {
+      showAlert("清除失败", "error");
+    }
+  },
+);
 </script>
 
 <style scoped lang="scss">
 .comments {
   width: 690px;
+}
+.loading-item {
+  width: 94%;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 45px;
+  .items-center {
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 10px;
+  }
 }
 .messageList {
   width: 95%;
