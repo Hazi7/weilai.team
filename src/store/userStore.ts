@@ -23,4 +23,8 @@ export const useUserStore = defineStore("user", {
     getUserId: (state) => state.userId,
     getIsSelf: (state) => state.isSelf,
   },
+  persist: {
+    key: "userStore",
+    storage: localStorage,
+  },
 });
