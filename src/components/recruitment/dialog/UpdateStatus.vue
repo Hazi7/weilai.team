@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {  ref ,defineProps, watch,defineEmits} from 'vue';
+import {  ref ,defineProps, watch,defineEmits,toRaw} from 'vue';
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,13 +17,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {updateApplyUserStatus } from "@/composables/useRecruitmentRequest";
+import { useRequest } from 'vue-request';
+import { useAlert } from '@/composables/useAlert';
+const { showAlert } = useAlert();
+
 
 const emit = defineEmits(["close"]);
 
 
-const props = defineProps({
-  isOpen: Boolean
-});
+const props = defineProps<{
+  isOpen: boolean;
+  ids: string[];
+}>();
 
 
 const selectStatus = ref("");
@@ -34,7 +40,31 @@ const close = (event: Event) => {
     emit("close");
   }
   return;
+};
 
+
+const handleSubmit = () => {
+  // 校验表单
+  if (!selectStatus.value) {
+    showAlert("请选择状态", "error");
+    return;
+  }
+  // 提交表单
+  // updateApplyUserStatus({ids:props.ids,interviewStatus:selectStatus.value});
+  const { run,data } = useRequest(updateApplyUserStatus, {
+    manual: true,
+    onSuccess: () => {
+      showAlert("修改成功", "pass");
+      emit("close");
+    },
+    onError: () => {
+      showAlert("修改失败", "error");
+    },
+  });
+  run( {ids:props.ids, interviewStatus:selectStatus.value});
+  console.log("data:", data);
+  //清除状态
+  selectStatus.value = "";
 };
 </script>
 
@@ -59,10 +89,10 @@ const close = (event: Event) => {
               <SelectItem  value="3">已淘汰</SelectItem>
             </SelectContent>
           </Select>
-          <FormDescription class="form-description">请选择你想要修改的状态</FormDescription>
+          <FormDescription class="form-description">选择想要修改的状态</FormDescription>
           <FormMessage />
         </FormItem>
-      <Button type="submit" class="button btn-style w-[80%]">提交</Button>
+      <Button type="submit" class="button btn-style w-[80%]" @click.prevent="handleSubmit">提交</Button>
     </FormField>
   </Form>
   </div>

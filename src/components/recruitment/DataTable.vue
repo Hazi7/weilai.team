@@ -60,6 +60,13 @@ watch(() => props.items, () => {
   selectedIds.value = [];
 });
 
+// 导出选中的 id
+const emit = defineEmits(["sendSelectedIds"]);
+//监听selectedIds的变化
+watch(selectedIds, (newValue, oldValue) => {
+  //将选中的id实时传递给父组件
+  emit("sendSelectedIds", newValue);
+}, { deep: true });
 
 </script>
 

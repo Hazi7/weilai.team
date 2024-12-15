@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 import router from '@/router';
-
+import { toRaw } from 'vue';
 import type  {  IGetAllApplyUserDTO ,IGetAllGradeDTO,IExportInterviewResultDTO,IUpdateApplyUserDTO,IUpdateInterviewResultDTO,IGetInterviewUserDTO,IArrangeInterviewDTO } from '@/types/recruitmentType';
 // 招新模块
 const BASE_UEL='http://49.232.183.67:8087/'
@@ -10,6 +10,7 @@ const getToken = (): string => {
   if (!token) {
     router.push('/login');
     throw new Error('拿token了吗孩子');
+    return "";
   }
   return JSON.parse(token).value;
 };
@@ -128,6 +129,20 @@ export const updateApplyUserInfo = ({clazz,email,grade,id,name,qq,sex,studentId}
     }
   })
 }
+
+//修改报名人员的状态
+export const updateApplyUserStatus = ({ids,interviewStatus}:{ids:string[],interviewStatus:string}) => {
+  console.log(toRaw(ids),interviewStatus)
+  return axios.put(`${BASE_UEL}recruit/manage/updateRecruitUserStatus`,
+    {
+    params: {ids:toRaw(ids),interviewStatus},
+    headers: {
+     'Content-Type': 'application/json',
+     Authorization: 'Bearer '+ getToken(),
+    }
+  })
+}
+
 
 //面试官评价
 export const evaluateInterview = ({comment,id,round,status,userId}:IUpdateInterviewResultDTO) => {

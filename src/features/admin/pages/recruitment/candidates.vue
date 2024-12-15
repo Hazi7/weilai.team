@@ -405,8 +405,16 @@ watch(
 
 //dialog
 const updateStatus = ref(false);
+const currentTableSelectIds = ref<string[]>([]);
 //修改状态、
+const handleTableSelectIds = (ids: string[]) => {
+  currentTableSelectIds.value = ids;
+};
 const handleEditStatus = () => {
+  if (currentTableSelectIds.value.length === 0) {
+    showAlert("请选择候选人以更改状态", "error");
+    return;
+  }
   //把修改状态的弹窗组件展示
   updateStatus.value = true;
 };
@@ -430,25 +438,8 @@ const arrangeInterviewerDialog=ref(false);
     <UpdateStatus
       :isOpen="updateStatus"
       @close="updateStatus = false"
+      :ids="currentTableSelectIds"
     />
-    <!-- <ModalDialog :isOpen="isModalOpen" @close="closeModal">
-      <template #header>
-        <h2>删除候选人</h2>
-      </template>
-      <p>你确定要删除该条候选人的数据吗？</p>
-      <p style="color: red; font-size: 0.5em">
-        （此项操作无法撤销，请慎重操作！！！）
-      </p>
-      <template #footer>
-        <Button
-          class="btn-style"
-          @click="confirmDeleteCandidate(currentDeleteId)"
-          >确定</Button
-        >
-        <Button class="btn-style" @click="closeModal">关闭</Button>
-      </template>
-    </ModalDialog> -->
-
 
 
     <div class="filter-items">
@@ -496,6 +487,7 @@ const arrangeInterviewerDialog=ref(false);
         :items="tableData"
         :headers="headers"
         :actionItems="actionItems"
+        @send-selected-ids="handleTableSelectIds"
       ></DataTable>
       <div class="pagination-container">
         <Pagination
